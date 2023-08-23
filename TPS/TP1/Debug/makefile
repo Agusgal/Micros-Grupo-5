@@ -25,7 +25,7 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := IRQ
+BUILD_ARTIFACT_NAME := Encoder_tests
 BUILD_ARTIFACT_EXTENSION := axf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
@@ -37,24 +37,24 @@ all:
 	+@$(MAKE) --no-print-directory main-build && $(MAKE) --no-print-directory post-build
 
 # Main-build Target
-main-build: IRQ.axf
+main-build: Encoder_tests.axf
 
 # Tool invocations
-IRQ.axf: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
+Encoder_tests.axf: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Linker'
-	arm-none-eabi-gcc -nostdlib -Xlinker -Map="IRQ.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T IRQ_Debug.ld -o "IRQ.axf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -nostdlib -Xlinker -Map="Encoder_tests.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T Encoder_tests_Debug.ld -o "Encoder_tests.axf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) IRQ.axf
+	-$(RM) Encoder_tests.axf
 	-@echo ' '
 
 post-build:
 	-@echo 'Performing post-build steps'
-	-arm-none-eabi-size "IRQ.axf"; # arm-none-eabi-objcopy -v -O binary "IRQ.axf" "IRQ.bin" ; # checksum -p MK64FN1M0xxx12 -d "IRQ.bin";
+	-arm-none-eabi-size "Encoder_tests.axf"; # arm-none-eabi-objcopy -v -O binary "Encoder_tests.axf" "Encoder_tests.bin" ; # checksum -p MK64FN1M0xxx12 -d "Encoder_tests.bin";
 	-@echo ' '
 
 .PHONY: all clean dependents main-build post-build

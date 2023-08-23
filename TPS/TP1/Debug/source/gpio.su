@@ -1,8 +1,8 @@
 ../source/gpio.c:68:6:gpioMode	32	static
-../source/gpio.c:122:6:gpioWrite	24	static
-../source/gpio.c:138:6:gpioRead	24	static
-../source/gpio.c:146:6:gpioToggle	24	static
-../source/gpio.c:158:6:gpioFlank	24	static
-../source/gpio.c:182:6:gpioIRQconfig	24	static
-../source/gpio.c:190:6:writeDigit	16	static
-../source/gpio.c:339:6:updateDisplay	24	static
+../source/gpio.c:123:6:gpioWrite	24	static
+../source/gpio.c:139:6:gpioRead	24	static
+../source/gpio.c:147:6:gpioToggle	24	static
+../source/gpio.c:159:6:gpioFlank	24	static
+../source/gpio.c:183:6:gpioIRQconfig	24	static
+../source/gpio.c:191:6:writeDigit	16	static
+../source/gpio.c:340:6:updateDisplay	24	static

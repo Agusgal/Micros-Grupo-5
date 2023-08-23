@@ -104,6 +104,7 @@ void gpioMode(pin_t pin, uint8_t mode)
 		case(OUTPUT):
 			port_ptr->PCR[number]|=PORT_PCR_PE(0);          		//Pull UP/Down Disable
 			gpio_ptr->PDDR |= (1<<number);
+			port_ptr->GPCHR|=PORT_GPCHR_GPWD(PORT_PCR_DSE(1));
 			break;
 		case(OUTPUT_PULLDOWN):
 			port_ptr->PCR[number]|=PORT_PCR_PE(1);          		//Pull UP/Down
@@ -340,21 +341,21 @@ void updateDisplay(int number){
 	static int dp_num[4]={0,0,0,0};
 	static int dp_digit=0;
 
-	if (number>-1)
-	{
-		int temp = number;
-		for (int i = 3; i >= 0; i--)
-		{
-			dp_num[i] = temp % 10;
-			temp /= 10;
-		}
-	}
-	else
+	if (number==-1)
 	{
 		writeDigit(dp_num[dp_digit],dp_digit);
 		dp_digit++;
 		dp_digit=dp_digit%4;
 	}
+	else
+		{
+			int temp = number;
+			for (int i = 3; i >= 0; i--)
+			{
+				dp_num[i] = temp % 10;
+				temp /= 10;
+			}
+		}
 }
 
 

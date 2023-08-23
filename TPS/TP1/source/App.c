@@ -56,8 +56,8 @@ void App_Init (void)
     hw_EnableInterrupts();
     NVIC_EnableIRQ(PORTC_IRQn);
     gpioIRQconfig(PIN_SW3,PORT_eInterruptFalling);
-    gpioIRQconfig(PIN_CH_A,PORT_eInterruptFalling);
-    gpioIRQconfig(PIN_CH_B,PORT_eInterruptFalling);
+    gpioIRQconfig(PIN_CH_A,PORT_eInterruptEither);
+    gpioIRQconfig(PIN_CH_B,PORT_eInterruptRising);
 }
 
 /* Función que se llama constantemente en un ciclo infinito */
@@ -79,32 +79,5 @@ void idle(void)
 
 }
 
-
-
-__ISR__ PORTC_IRQHandler(void)
-{
-	int port_isr=0;
-	bool
-	while ((port_isr<32) && !(PORTC->PCR[port_isr] & (PORT_PCR_ISF_MASK)))
-		port_isr++;
-	PORTC->PCR[port_isr] |= PORT_PCR_ISF_MASK;
-	if (port_isr==PIN2NUM(PIN_CH_A)
-
-	int a=0;
-}
-
-
-__ISR__ SysTick_Handler(void)
-{
-	updateDisplay(-1);
-}
-
-void SysTick_Init (void)
-{
-	SysTick->CTRL = 0x00;
-	SysTick->LOAD = 1249999L; //12499999L; // <= 125 ms @ 100Mhz
-	SysTick->VAL  = 0x00;
-	SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
-}
 /*******************************************************************************
  ******************************************************************************/

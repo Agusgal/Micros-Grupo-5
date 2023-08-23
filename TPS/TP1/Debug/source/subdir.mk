@@ -5,14 +5,17 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../source/App.c \
+../source/IRQ.c \
 ../source/gpio.c 
 
 C_DEPS += \
 ./source/App.d \
+./source/IRQ.d \
 ./source/gpio.d 
 
 OBJS += \
 ./source/App.o \
+./source/IRQ.o \
 ./source/gpio.o 
 
 
@@ -28,7 +31,7 @@ source/%.o: ../source/%.c source/subdir.mk
 clean: clean-source
 
 clean-source:
-	-$(RM) ./source/App.d ./source/App.o ./source/gpio.d ./source/gpio.o
+	-$(RM) ./source/App.d ./source/App.o ./source/IRQ.d ./source/IRQ.o ./source/gpio.d ./source/gpio.o
 
 .PHONY: clean-source
 

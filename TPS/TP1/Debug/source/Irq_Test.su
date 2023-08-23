@@ -1,4 +1,0 @@
-../source/Irq_Test.c:55:6:idle	4	static
-../source/Irq_Test.c:62:9:PORTA_IRQHandler	8	static
-../source/Irq_Test.c:74:9:SysTick_Handler	8	static
-../source/Irq_Test.c:92:6:SysTick_Init	4	static

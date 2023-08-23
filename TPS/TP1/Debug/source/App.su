@@ -2,6 +2,3 @@
 ../source/App.c:34:6:App_Init	8	static
 ../source/App.c:64:6:App_Run	4	static
 ../source/App.c:77:6:idle	4	static
-../source/App.c:84:9:PORTC_IRQHandler	16	static
-../source/App.c:94:9:SysTick_Handler	16	static
-../source/App.c:99:6:SysTick_Init	4	static
