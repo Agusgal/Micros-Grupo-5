@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include "MK64F12.h"
 #include "hardware.h"
+#include "IRQ.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -23,7 +24,7 @@
 
 void idle(void);
 void SysTick_Init (void);
-
+void EncoderRead(void);
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -41,12 +42,19 @@ void App_Init (void)
 	gpioMode(PIN_SEG_F,OUTPUT_PULLDOWN);
 	gpioMode(PIN_SEG_G,OUTPUT_PULLDOWN);
 	gpioMode(PIN_SEG_DP,OUTPUT);
+
 	gpioMode(PIN_SEL0,OUTPUT);
 	gpioMode(PIN_SEL1,OUTPUT);
+
+	gpioMode(PIN_LED_RED,OUTPUT);
+	gpioMode(PIN_LED_GREEN,OUTPUT);
+	gpioMode(PIN_LED_BLUE,OUTPUT);
+
 	gpioMode(PIN_SW3,INPUT);
 	gpioMode(PIN_CH_A,INPUT);
 	gpioMode(PIN_CH_B,INPUT);
 	gpioMode(PIN_SW2,INPUT_PULLUP);
+
 	writeDigit(-1,0);
 	writeDigit(-1,1);
 	writeDigit(-1,2);
@@ -55,16 +63,17 @@ void App_Init (void)
     SysTick_Init();
     hw_EnableInterrupts();
     NVIC_EnableIRQ(PORTC_IRQn);
-    gpioIRQconfig(PIN_SW3,PORT_eInterruptFalling);
+    gpioIRQconfig(PIN_SW2,PORT_eInterruptFalling);
     gpioIRQconfig(PIN_CH_A,PORT_eInterruptEither);
-    gpioIRQconfig(PIN_CH_B,PORT_eInterruptRising);
+    gpioIRQconfig(PIN_CH_B,PORT_eInterruptEither);
+    gpioWrite(PIN_LED_RED,!LED_ACTIVE);
+	gpioWrite(PIN_LED_GREEN,!LED_ACTIVE);
+	gpioWrite(PIN_LED_BLUE,!LED_ACTIVE);
 }
 
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-
-
 }
 
 
@@ -78,6 +87,7 @@ void idle(void)
 {
 
 }
+
 
 /*******************************************************************************
  ******************************************************************************/

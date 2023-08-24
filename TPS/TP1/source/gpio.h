@@ -21,7 +21,7 @@
 
 // Ports
 enum { PA, PB, PC, PD, PE };
-enum { IDLE, PRESSED, RELEASED};
+enum { IDLE=0, PRESSED, RELEASED};
 
 // Convert port and number into pin ID
 // Ex: PTB5  -> PORTNUM2PIN(PB,5)  -> 0x25
