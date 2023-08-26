@@ -1,0 +1,5 @@
+/.metadata/
+
+# To reduce the size of information to download
+*.pdf
+/images

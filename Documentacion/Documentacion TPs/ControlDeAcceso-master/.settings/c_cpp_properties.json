@@ -1,0 +1,13 @@
+{
+    "env": 
+    {
+        "myDefaultIncludePath": ["${workspaceFolder}", "${workspaceFolder}/source"]
+    },
+    "configurations": [
+    {
+        "name": "TP",    
+        "includePath": ["${myDefaultIncludePath}", "/source/drivers","/source/startup", "/source/MCAL", "/source/board", "/source/FSM", "/source/database"]
+    }
+    ],
+    "version": 4
+}
