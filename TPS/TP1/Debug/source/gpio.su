@@ -4,5 +4,3 @@
 ../source/gpio.c:147:6:gpioToggle	24	static
 ../source/gpio.c:159:6:gpioFlank	24	static
 ../source/gpio.c:183:6:gpioIRQconfig	24	static
-../source/gpio.c:191:6:writeDigit	16	static
-../source/gpio.c:340:6:updateDisplay	24	static

@@ -24,9 +24,7 @@
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-enum encoderStates {ACW1=1,ACW2,ACW3,ACW4,CW1,CW2,CW3,CW4};
-enum events {ANTI_CLOCKWISE_TURN, CLOCKWISE_TURN,SW2_PRESS};
-enum FSM_states {SELECTING_NUMBER,SELECTING_DIGIT};
+
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
