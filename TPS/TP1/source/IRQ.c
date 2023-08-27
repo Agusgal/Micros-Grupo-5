@@ -90,13 +90,18 @@ __ISR__ SysTick_Handler(void)
 		IRQHandler(EncoderStatus());
 		counter=0;
 	}
+	if (counter==5)
+	{
+		if(EncoderSwitchRead())
+			gpioToggle(PIN_LED_RED);
+	}
 
 }
 
 void SysTick_Init (void)
 {
 	SysTick->CTRL = 0x00;
-	SysTick->LOAD = 100000L-1; //1 ms
+	SysTick->LOAD = 10000L-1; //1 ms
 	SysTick->VAL  = 0x00;
 	SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
 }

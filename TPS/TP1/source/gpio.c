@@ -120,21 +120,16 @@ void gpioMode(pin_t pin, uint8_t mode)
 
 }
 
-bool gpioWrite(pin_t pin, bool value)
+void gpioWrite(pin_t pin, bool value)
 {
 	uint8_t port=PIN2PORT(pin);
 	uint8_t number=PIN2NUM(pin);
 	GPIO_Type * gpio_ptr= GPIO_PTR(port);
-	if ((gpio_ptr->PDDR) & (1<<number)){
-		if (value)
-			gpio_ptr->PSOR=(1<<number);
-		else
-			gpio_ptr->PCOR=(1<<number);
-	return 1;
-		}
+	if (value)
+		gpio_ptr->PSOR=(1<<number);
 	else
-		return 0;
-	}
+		gpio_ptr->PCOR=(1<<number);
+}
 
 bool gpioRead(pin_t pin)
 {
@@ -149,35 +144,7 @@ bool gpioToggle(pin_t pin)
 	uint8_t port=PIN2PORT(pin);
 	uint8_t number=PIN2NUM(pin);
 	GPIO_Type * gpio_ptr= GPIO_PTR(port);
-	if ((gpio_ptr->PDDR) & (1<<number)){
-			gpio_ptr->PTOR = (1<<number);
-			return 1;
-		}
-	else
-		return 0;
-}
-bool gpioFlank(pin_t pin, bool active)		// Detector de Flancos en pines de input
-{
-	static bool state[NUM_PINS] = {IDLE};
-	bool change=LOW;
-	bool pinRead;
-	if (pin >= 0 && pin < NUM_PINS)
-		pinRead = gpioRead(pin);
-
-	switch (state[pin])
-	{
-		case IDLE:
-			if (pinRead==active){
-				state[pin]=PRESSED;
-				change=HIGH;
-				}
-				break;
-		case PRESSED:
-			if (pinRead==!active)
-				state[pin]=IDLE;
-			break;
-	}
-	return change;
+	gpio_ptr->PTOR = (1<<number);
 }
 
 void gpioIRQconfig (pin_t pin, PORTEvent_t irq_config)

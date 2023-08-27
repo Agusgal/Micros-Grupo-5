@@ -39,6 +39,7 @@ enum FSM_states {SELECTING_NUMBER,SELECTING_DIGIT};
 void Encoder_Init(void);
 
 int EncoderStatus(void);
+bool EncoderSwitchRead(void);
 
 /*******************************************************************************
  ******************************************************************************/

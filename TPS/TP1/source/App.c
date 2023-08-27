@@ -39,12 +39,12 @@ void App_Init (void)
 {
 
 	gpioMode(PIN_LED_RED,OUTPUT);
-	gpioMode(PIN_LED_GREEN,OUTPUT);
-	gpioMode(PIN_LED_BLUE,OUTPUT);
+	//gpioMode(PIN_LED_GREEN,OUTPUT);
+	//gpioMode(PIN_LED_BLUE,OUTPUT);
 
-	gpioMode(PIN_SW3,INPUT);
+	//gpioMode(PIN_SW3,INPUT);
 
-	gpioMode(PIN_SW2,INPUT_PULLUP);
+	//gpioMode(PIN_SW2,INPUT_PULLUP);
 	Display_Init();
 	Encoder_Init();
 
@@ -56,8 +56,8 @@ void App_Init (void)
     //gpioIRQconfig(PIN_CH_A,PORT_eInterruptEither);
     //gpioIRQconfig(PIN_CH_B,PORT_eInterruptEither);
     gpioWrite(PIN_LED_RED,!LED_ACTIVE);
-	gpioWrite(PIN_LED_GREEN,!LED_ACTIVE);
-	gpioWrite(PIN_LED_BLUE,!LED_ACTIVE);
+	//gpioWrite(PIN_LED_GREEN,!LED_ACTIVE);
+	//gpioWrite(PIN_LED_BLUE,!LED_ACTIVE);
 }
 
 /* Función que se llama constantemente en un ciclo infinito */

@@ -105,7 +105,7 @@ void gpioMode (pin_t pin, uint8_t mode);
  * @param pin the pin to write (according PORTNUM2PIN)
  * @param val Desired value (HIGH or LOW)
  */
-bool gpioWrite(pin_t pin, bool value);
+void gpioWrite(pin_t pin, bool value);
 /**
  * @brief Toggle the value of a digital pin (HIGH<->LOW)
  * @param pin the pin to toggle (according PORTNUM2PIN)

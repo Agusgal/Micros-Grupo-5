@@ -33,6 +33,7 @@ void Encoder_Init(void)
 {
 	gpioMode(PIN_CH_A,INPUT);
 	gpioMode(PIN_CH_B,INPUT);
+	gpioMode(PIN_DEC_SW,INPUT);
 }
 
 int EncoderStatus(void)
@@ -111,6 +112,28 @@ int EncoderStatus(void)
 			break;
 	}
 	return IDLE;
+
+}
+
+bool EncoderSwitchRead(void)
+{
+	static int sw_state = IDLE;
+	bool change=LOW;
+	bool sw_Read=gpioRead(PIN_DEC_SW);
+	switch (sw_state)
+	{
+		case IDLE:
+			if (sw_Read==HIGH){
+				sw_state=PRESSED;
+				change=HIGH;
+				}
+				break;
+		case PRESSED:
+			if (sw_Read==LOW)
+				sw_state=IDLE;
+			break;
+	}
+	return change;
 }
 
 
