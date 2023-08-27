@@ -1,5 +1,0 @@
-../source/gpio.c:68:6:gpioMode	32	static
-../source/gpio.c:123:6:gpioWrite	24	static
-../source/gpio.c:134:6:gpioRead	24	static
-../source/gpio.c:142:6:gpioToggle	24	static
-../source/gpio.c:150:6:gpioIRQconfig	24	static
