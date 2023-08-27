@@ -119,15 +119,10 @@ void gpioWrite(pin_t pin, bool value);
  */
 bool gpioRead(pin_t pin);
 
-bool gpioToggle(pin_t pin);
-
-bool gpioFlank(pin_t pin, bool active);
+void gpioToggle(pin_t pin);
 
 void gpioIRQconfig (pin_t pin, PORTEvent_t irq_config);
 
-void writeDigit (int number,uint8_t digit);
-
-void updateDisplay(int number);
 
 /*******************************************************************************
  ******************************************************************************/

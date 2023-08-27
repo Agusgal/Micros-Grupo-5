@@ -47,7 +47,6 @@ int EncoderStatus(void)
 
 	switch (state)
 	{
-
 		case IDLE:
 			if (!CH_A & CH_B)
 				state=ACW1;
@@ -115,25 +114,29 @@ int EncoderStatus(void)
 
 }
 
-bool EncoderSwitchRead(void)
+char EncoderSwitchRead(void)
 {
 	static int sw_state = IDLE;
-	bool change=LOW;
+
 	bool sw_Read=gpioRead(PIN_DEC_SW);
 	switch (sw_state)
 	{
 		case IDLE:
-			if (sw_Read==HIGH){
-				sw_state=PRESSED;
-				change=HIGH;
-				}
-				break;
+			if (sw_Read==HIGH)
+				return RISING_FLANK;
+			else
+				return LOW;
+			break;
 		case PRESSED:
 			if (sw_Read==LOW)
+			{
 				sw_state=IDLE;
+				return LOW;
+			}
+			else
+				return HIGH;
 			break;
 	}
-	return change;
 }
 
 

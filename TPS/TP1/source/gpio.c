@@ -139,7 +139,7 @@ bool gpioRead(pin_t pin)
 	return gpio_ptr->PDIR & (1<<number);
 }
 
-bool gpioToggle(pin_t pin)
+void gpioToggle(pin_t pin)
 {
 	uint8_t port=PIN2PORT(pin);
 	uint8_t number=PIN2NUM(pin);
