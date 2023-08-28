@@ -1,52 +1,54 @@
 /***************************************************************************//**
-  @file     App.c
-  @brief    Application functions
-  @author   Bruno Di Sanzo
+  @file     SysTick.h
+  @brief    SysTick driver
+  @author   Nicol�s Magliola
  ******************************************************************************/
+
+#ifndef _SYSTICK_H_
+#define _SYSTICK_H_
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
-#include "queue.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-
+#define TOTAL_NUM_CALLBACK_FUNCTIONS	15	// Total number of callback functions
+#define SYSTICK_ISR_PERIOD_US 125000U		// Period of SysTick in microseconds
 
 /*******************************************************************************
- * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
+ * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
+/*******************************************************************************
+ * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
+ ******************************************************************************/
 
 /*******************************************************************************
- *******************************************************************************
-                        GLOBAL FUNCTION DEFINITIONS
- *******************************************************************************
+ * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
 /**
- * @brief Configures the specified pin to behave either as an input or an output
- * @param pin the pin whose mode you wish to set (according PORTNUM2PIN)
- * @param mode INPUT, OUTPUT, INPUT_PULLUP or INPUT_PULLDOWN.
+ * @brief Initialize SysTic driver
+ * @return Initialization and registration succeed
  */
-void queue_init (void)
-{
+void SysTick_Init ();
 
-}
-
-
-
-/*******************************************************************************
- *******************************************************************************
-                        LOCAL FUNCTION DEFINITIONS
- *******************************************************************************
- ******************************************************************************/
-
-
+/**
+ * @brief Initialize SysTic driver
+ * @param funcallback Function to be call every SysTick
+ * @param period Period in which the function will be called in microseconds (us)
+ * @return Initialization and registration succeed
+ */
+bool SysTick_Reg_Callback (void (*funCallback)(void), uint32_t period);
 
 
 /*******************************************************************************
  ******************************************************************************/
+
+#endif // _SYSTICK_H_
