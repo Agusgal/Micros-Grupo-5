@@ -28,8 +28,21 @@ enum events{
 			NONE_EV,
 			ENC_LEFT_EV,
 			ENC_RIGHT_EV,
-			ENC_PRESSED_EV,
+			ENC_PRESSED_EV,//TODO
 			CARD_SWIPE_EV,
+
+			ID_FAIL_ENC_EV,
+			ID_FAIL_CARD_EV,
+
+			ID_OK_ENC_EV,
+			ID_OK_CARD_EV,
+
+			PIN_FAIL_EV,
+			PIN_OK_EV,
+
+			FIVE_SEC_LAPSE_EV,
+			MIN_LAPSE_EV,
+
 			};
 
 

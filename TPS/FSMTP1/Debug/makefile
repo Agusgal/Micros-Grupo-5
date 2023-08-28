@@ -8,6 +8,9 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include source/FSM/subdir.mk
+-include source/EventQueue/subdir.mk
+-include source/Drivers/subdir.mk
 -include source/subdir.mk
 -include SDK/startup/subdir.mk
 -include SDK/CMSIS/subdir.mk
@@ -25,25 +28,25 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: MyBlink.axf
+all: FSMTP1.axf
 
 # Tool invocations
-MyBlink.axf: $(OBJS) $(USER_OBJS)
+FSMTP1.axf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Linker'
-	arm-none-eabi-gcc -nostdlib -Xlinker -Map="MyBlink.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T "Blink_Debug.ld" -o "MyBlink.axf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -nostdlib -Xlinker -Map="FSMTP1.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T "Blink_Debug.ld" -o "FSMTP1.axf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
 
 # Other Targets
 clean:
-	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) MyBlink.axf
+	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) FSMTP1.axf
 	-@echo ' '
 
 post-build:
 	-@echo 'Performing post-build steps'
-	-arm-none-eabi-size "MyBlink.axf"; # arm-none-eabi-objcopy -v -O binary "MyBlink.axf" "MyBlink.bin" ; # checksum -p MK64FN1M0xxx12 -d "MyBlink.bin";
+	-arm-none-eabi-size "FSMTP1.axf"; # arm-none-eabi-objcopy -v -O binary "FSMTP1.axf" "FSMTP1.bin" ; # checksum -p MK64FN1M0xxx12 -d "FSMTP1.bin";
 	-@echo ' '
 
 .PHONY: all clean dependents post-build

@@ -17,4 +17,7 @@ SUBDIRS := \
 SDK/CMSIS \
 SDK/startup \
 source \
+source/Drivers \
+source/EventQueue \
+source/FSM \
 

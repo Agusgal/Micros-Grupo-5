@@ -20,7 +20,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-// States
+/* States
 enum states{
 			ID_ENTRY,
 			ENCODER_ENTRY,
@@ -30,15 +30,30 @@ enum states{
 			GREEN_LED_ON,
 			BRIGHTNESS,
 			WRONG_ID};
+*/
+
+typedef struct state state;
+
+struct state {void(*funct)(void);
+				uint8_t event;
+				state *next_state;};
 
 
+
+#define END_TABLE 0xFF
 
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-
-typedef uint8_t pin_t;
+extern state ID_ENTRY[];
+extern state ENCODER_ENTRY[];
+extern state CARD_ENTRY[];
+extern state PIN_ENTRY[];
+extern state RED_LED_ON[];
+extern state GREEN_LED_ON[];
+extern state BRIGHTNESS[];
+extern state WRONG_ID[];
 
 
 /*******************************************************************************
@@ -49,7 +64,7 @@ typedef uint8_t pin_t;
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
-
+state* fsm_dispatcher (state* p_state, uint8_t curr_event, uint8_t next_state);
 
 /*******************************************************************************
  ******************************************************************************/
