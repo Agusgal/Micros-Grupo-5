@@ -8,3 +8,6 @@ Documentacion/Documentacion TPs/ControlDeAcceso-master/.settings/language.settin
 Documentacion/Documentacion TPs/ControlDeAcceso-master/source/.DS_Store
 TPS/.DS_Store
 TPS/TP1/.project
+*.o
+*.su
+*.d
