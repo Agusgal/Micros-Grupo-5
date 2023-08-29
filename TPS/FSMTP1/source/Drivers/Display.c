@@ -74,7 +74,7 @@ void writeMessage(char * message, bool scroll)
 	if (scroll)
 		updateDisplay("CONT_SCR_R");
 }
-void pauseMessage()
+void clearMessage()
 {
 	updateDisplay("");
 }
@@ -82,7 +82,7 @@ void pauseScroll()
 {
 	updateDisplay("PAUSE_SCR");
 }
-void continueScroll(char scroll)
+void startScroll(char scroll)
 {
 	if (scroll=='R' | scroll=='r' )
 		updateDisplay("CONT_SCR_R");
@@ -96,6 +96,11 @@ void ScrollRightOnce()
 void ScrollLeftOnce()
 {
 	updateDisplay("SCR_L");
+}
+
+void muxDisplay()
+{
+	updateDisplay("MUX");
 }
 /*******************************************************************************
  *******************************************************************************
