@@ -119,7 +119,7 @@ void gpioWrite(pin_t pin, bool value);
  */
 bool gpioRead(pin_t pin);
 
-bool gpioToggle(pin_t pin);
+void gpioToggle(pin_t pin);
 
 bool gpioFlank(pin_t pin, bool active);
 

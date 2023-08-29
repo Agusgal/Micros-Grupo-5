@@ -15,7 +15,7 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define US_TO_S	1000000
+
 
 typedef enum
 {
@@ -75,7 +75,7 @@ __ISR__ SysTick_Handler(void);
 void SysTick_Init ()
 {
 	SysTick->CTRL = 0x00;
-	SysTick->LOAD = (__CORE_CLOCK__/ US_TO_S) * SYSTICK_ISR_PERIOD_US - 1; //12499999L; // <= 125 ms @ 100Mhz
+	SysTick->LOAD = (__CORE_CLOCK__/ S_TO_US) * SYSTICK_ISR_PERIOD_US - 1; //12499999L; // <= 125 ms @ 100Mhz
 	SysTick->VAL  = 0x00;
 	SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
 }
@@ -108,7 +108,16 @@ bool SysTick_Reg_Callback (void (*funCallback)(void), uint32_t period)
  ******************************************************************************/
 __ISR__ SysTick_Handler(void)
 {
-	updateDisplay("MUX");
+	// Iterate through all the callbacks
+	for (uint32_t i = 0; i < num_Callbacks; i++)
+	{
+		systick_Callback_Array[i].counter--;
+		if (!systick_Callback_Array[i].counter) //If the counter reaches 0
+		{
+			(*systick_Callback_Array[i].fun_Callback)(); // Callback's calling.
+			systick_Callback_Array[i].counter = systick_Callback_Array[i].num_Cycles;	  //Counter re-establishment.
+		}
+	}
 }
 
 

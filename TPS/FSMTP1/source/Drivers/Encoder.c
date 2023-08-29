@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include "board.h"
 #include "Encoder.h"
-
+#include "Systick.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -23,7 +23,6 @@
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
-
 
 
 /*******************************************************************************
@@ -38,10 +37,12 @@ void Encoder_Init(void)
 	gpioMode(PIN_CH_A,INPUT);
 	gpioMode(PIN_CH_B,INPUT);
 	gpioMode(PIN_DEC_SW,INPUT);
+	SysTick_Reg_Callback(EncoderStatus,20000);
 }
 
-int EncoderStatus(void)
+void EncoderStatus(void)
 {
+
 	static int state=IDLE;
 	bool CH_A=gpioRead(PIN_CH_A);
 	bool CH_B=gpioRead(PIN_CH_B);
@@ -80,7 +81,7 @@ int EncoderStatus(void)
 			if (CH_A & CH_B)
 			{
 				state=IDLE;
-				return ANTI_CLOCKWISE_TURN;
+				//return ANTI_CLOCKWISE_TURN;
 			}
 			else if (!CH_A & !CH_B)
 				state=ACW2;
@@ -107,7 +108,7 @@ int EncoderStatus(void)
 			if (CH_A & CH_B)
 			{
 				state=IDLE;
-				return CLOCKWISE_TURN;
+				//return CLOCKWISE_TURN;
 			}
 			else if (!CH_A & !CH_B)
 				state=CW2;
@@ -115,31 +116,31 @@ int EncoderStatus(void)
 				state=CW3;
 			break;
 	}
-	return IDLE;
+	//return IDLE;
 
 }
 
-bool EncoderSwitchRead(void)
+void EncoderSwitchRead(void)
 {
 	static int sw_state = LOW;
 	bool sw_Read=gpioRead(PIN_DEC_SW);
 	if ((sw_state==HIGH) && (sw_Read == HIGH))
 	{
 		sw_state=HIGH;
-		return RISING_FLANK;
+		//return RISING_FLANK;
 	}
 	else if (sw_state==LOW) // && sw_Read == HIGH pero no hace falta
 	{
-		return LOW;
+		//return LOW;
 	}
 	else if ((sw_state==HIGH) && (sw_Read == HIGH))
 	{
-		return HIGH;
+		//return HIGH;
 	}
 	else if (sw_state==HIGH)
 	{
 		sw_state=LOW;
-		return LOW;
+		//return LOW;
 	}
 }
 

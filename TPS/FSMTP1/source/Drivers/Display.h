@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-
+#include <stdio.h>
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -36,7 +36,17 @@
 void Display_Init(void);
 void updateDisplay(char txt []);
 void writeDigit (int number,uint8_t digit);
+void writeMessage(char * message, bool scroll);
+void pauseMessage();
+void pauseScroll();
+void continueScroll(char scroll);
+void ScrollRightOnce();
+void ScrollLeftOnce();
+void toggleScroll();
+void muxDisplay();
 
+
+char * int2str (int num);
 /*******************************************************************************
  ******************************************************************************/
 

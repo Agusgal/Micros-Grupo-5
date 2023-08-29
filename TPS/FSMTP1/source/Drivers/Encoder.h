@@ -25,8 +25,9 @@
  ******************************************************************************/
 
 enum encoderStates {ACW1=1,ACW2,ACW3,ACW4,CW1,CW2,CW3,CW4};
-enum events {ANTI_CLOCKWISE_TURN=1, CLOCKWISE_TURN,SW2_PRESS};
-enum FSM_states {SELECTING_NUMBER,SELECTING_DIGIT};
+enum events {ANTI_CLOCKWISE_TURN=1, CLOCKWISE_TURN,ENC_SW_PRESS};
+
+
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
@@ -38,9 +39,10 @@ enum FSM_states {SELECTING_NUMBER,SELECTING_DIGIT};
 
 void Encoder_Init(void);
 
-int EncoderStatus(void);
-bool EncoderSwitchRead(void);
+void EncoderStatus(void);
+void EncoderSwitchRead(void);
 
+// NO SIRVEN, SOLO PARA TEST
 /*******************************************************************************
  ******************************************************************************/
 

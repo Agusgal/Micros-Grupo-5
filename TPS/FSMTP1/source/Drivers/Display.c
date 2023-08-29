@@ -11,12 +11,14 @@
 #include "gpio.h"
 #include "board.h"
 #include <string.h>
+#include "Systick.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 #define PRINT_ARRAY_LENGTH 30
 #define SPARE_SPACE_4_SCROLL -3
 #define SCROLL_TIMER_LIMIT 50
+#define ABS(x) ((x) < 0 ? -(x) : (x))
 
 enum scroll_type {no_scroll,scroll_left,scroll_right};
 
@@ -65,6 +67,7 @@ void Display_Init(void)
 	writeDigit(-1,1);
 	writeDigit(-1,2);
 	writeDigit(-1,3);
+	SysTick_Reg_Callback(muxDisplay,2000);
 
 }
 
@@ -96,6 +99,14 @@ void ScrollRightOnce()
 void ScrollLeftOnce()
 {
 	updateDisplay("SCR_L");
+}
+void toggleScroll()
+{
+	updateDisplay("TOGGLE_SCR");
+}
+void muxDisplay()
+{
+	updateDisplay("MUX");
 }
 /*******************************************************************************
  *******************************************************************************
@@ -192,7 +203,13 @@ void updateDisplay(char * txt)
 
 	else if (!strcmp(txt,"PAUSE_SCR"))
 		scroll_type=no_scroll;
-
+	else if (!strcmp(txt,"TOGGLE_SCR"))
+	{
+		if (scroll_type==no_scroll)
+			scroll_type=scroll_right;
+		else
+			scroll_type=no_scroll;
+	}
 	else if (!strcmp(txt,"MUX"))
 	{
 		if ((scroll_index==input_txt_length) && (scroll_type==scroll_right))
@@ -232,6 +249,33 @@ void updateDisplay(char * txt)
 
 }
 
+char * int2str (int num)
+{
+	static char string [20];
+	for (int i=0;i<20;i++)
+		string[i]=0;
+	int numDigits = 0;
+	int temp = num;
+
+	// Count the number of digits in the number
+	while (temp != 0)
+	{
+		temp /= 10;
+		numDigits++;
+	}
+
+	// Create an array to hold the digits
+	temp = num;
+
+	// Extract the digits and store them in the array
+	for (int i = numDigits - 1; i >= 0; i--) {
+		string[i] = temp % 10;
+		string[i]+='0';
+		temp /= 10;
+	}
+	return string;
+
+}
 
 /*******************************************************************************
  ******************************************************************************/
