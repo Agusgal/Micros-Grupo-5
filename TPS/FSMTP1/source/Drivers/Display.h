@@ -4,8 +4,8 @@
   @author   Nicolás Magliola
  ******************************************************************************/
 
-#ifndef _FSM_H_
-#define _FSM_H_
+#ifndef _DISPLAY_H_
+#define _DISPLAY_H_
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
@@ -13,32 +13,16 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "MK64F12.h"
 
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-// States
-enum states{
-			ID_ENTRY,
-			ENCODER_ENTRY,
-			CARD_ENTRY,
-			PIN_ENTRY,
-			RED_LED_ON,
-			GREEN_LED_ON,
-			BRIGHTNESS,
-			WRONG_ID};
-
-
-
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-
-typedef uint8_t pin_t;
 
 
 /*******************************************************************************
@@ -49,9 +33,10 @@ typedef uint8_t pin_t;
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
-
+void Display_Init(void);
+void updateDisplay(int number);
 
 /*******************************************************************************
  ******************************************************************************/
 
-#endif // _FSM_H_
+#endif // _GPIO_H_

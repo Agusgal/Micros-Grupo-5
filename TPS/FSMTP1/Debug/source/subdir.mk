@@ -4,19 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../source/App.c \
-../source/Display.c \
-../source/IRQ.c 
+../source/App.c 
 
 C_DEPS += \
-./source/App.d \
-./source/Display.d \
-./source/IRQ.d 
+./source/App.d 
 
 OBJS += \
-./source/App.o \
-./source/Display.o \
-./source/IRQ.o 
+./source/App.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -31,7 +25,7 @@ source/%.o: ../source/%.c source/subdir.mk
 clean: clean-source
 
 clean-source:
-	-$(RM) ./source/App.d ./source/App.o ./source/Display.d ./source/Display.o ./source/IRQ.d ./source/IRQ.o
+	-$(RM) ./source/App.d ./source/App.o
 
 .PHONY: clean-source
 

@@ -11,3 +11,5 @@ TPS/TP1/.project
 *.o
 *.su
 *.d
+*.ld
+TPS/FSMTP1/Debug/makefile

@@ -4,8 +4,8 @@
   @author   Nicolás Magliola
  ******************************************************************************/
 
-#ifndef _FSM_H_
-#define _FSM_H_
+#ifndef _ENCODER_H_
+#define _ENCODER_H_
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
@@ -13,31 +13,20 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "MK64F12.h"
 
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-// Events
-enum events{
-			NONE_EV,
-			ENC_LEFT_EV,
-			ENC_RIGHT_EV,
-			ENC_PRESSED_EV,
-			CARD_SWIPE_EV,
-			};
-
-
-
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
-typedef uint8_t pin_t;
-
+enum encoderStates {ACW1=1,ACW2,ACW3,ACW4,CW1,CW2,CW3,CW4};
+enum events {ANTI_CLOCKWISE_TURN=1, CLOCKWISE_TURN,SW2_PRESS};
+enum FSM_states {SELECTING_NUMBER,SELECTING_DIGIT};
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
@@ -47,9 +36,12 @@ typedef uint8_t pin_t;
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
+void Encoder_Init(void);
 
+int EncoderStatus(void);
+bool EncoderSwitchRead(void);
 
 /*******************************************************************************
  ******************************************************************************/
 
-#endif // _FSM_H_
+#endif // _GPIO_H_

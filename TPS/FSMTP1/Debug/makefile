@@ -8,8 +8,6 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include source/FSM/subdir.mk
--include source/EventQueue/subdir.mk
 -include source/Drivers/subdir.mk
 -include source/subdir.mk
 -include SDK/startup/subdir.mk
