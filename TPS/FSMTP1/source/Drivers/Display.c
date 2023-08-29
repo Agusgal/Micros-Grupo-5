@@ -10,15 +10,36 @@
 #include "Display.h"
 #include "gpio.h"
 #include "board.h"
+#include <string.h>
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
+#define PRINT_ARRAY_LENGTH 30
+#define SPARE_SPACE_4_SCROLL -3
+#define SCROLL_TIMER_LIMIT 50
 
+enum scroll_type {no_scroll,scroll_left,scroll_right};
+
+const unsigned char sevseg_digits_code[75]= {
+/*  0     1     2     3     4     5     6     7     8     9     :     ;     */
+    0x7E, 0x30, 0x6D, 0x79, 0x33, 0x5B, 0x5F, 0x70, 0x7F, 0x7B, 0x00, 0x00,
+/*  <     =     >     ?     @     A     B     C     D     E     F     G     */
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x77, 0x1F, 0x4E, 0x3D, 0x4F, 0x47, 0x5E,
+/*  H     I     J     K     L     M     N     O     P     Q     R     S     */
+    0x37, 0x06, 0x3C, 0x57, 0x0E, 0x55, 0x15, 0x1D, 0x67, 0x73, 0x05, 0x5B,
+/*  T     U     V     W     X     Y     Z     [     \     ]     ^     _     */
+    0x0F, 0x3E, 0x1C, 0x5C, 0x13, 0x3B, 0x6D, 0x00, 0x00, 0x00, 0x00, 0x00,
+/*  `     a     b     c     d     e     f     g     h     i     j     k     */
+    0x00, 0x77, 0x1F, 0x4E, 0x3D, 0x4F, 0x47, 0x5E, 0x37, 0x06, 0x3C, 0x57,
+/*  l     m     n     o     p     q     r     s     t     u     v     w     */
+    0x0E, 0x55, 0x15, 0x1D, 0x67, 0x73, 0x05, 0x5B, 0x0F, 0x3E, 0x1C, 0x5C,
+/*  x     y     z     */
+    0x13, 0x3B, 0x6D };
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
-
+void sevenSegmentDecoder (uint8_t code);
 
 /*******************************************************************************
  *******************************************************************************
@@ -46,25 +67,84 @@ void Display_Init(void)
 	writeDigit(-1,3);
 
 }
-void updateDisplay(int number){
-	static int dp_num[4]={0,0,0,0};
-	static int dp_digit=0;
 
-	if (number==-1)
-	{
-		writeDigit(dp_num[dp_digit],dp_digit);
-		dp_digit++;
-		dp_digit=dp_digit%4;
-	}
-	else
+void updateDisplay(char * txt)
+{
+	static char txt2print[PRINT_ARRAY_LENGTH]={0};
+	static uint8_t input_txt_length=0;
+	static uint8_t mux_digit=0;
+	static int scroll_index=0;
+	static uint8_t scroll_type=no_scroll;
+	static uint8_t scroll_timer=0;
+
+	if (scroll_type==scroll_right)
 		{
-			int temp = number;
-			for (int i = 3; i >= 0; i--)
+			scroll_timer++;
+			if (scroll_timer==SCROLL_TIMER_LIMIT)
 			{
-				dp_num[i] = temp % 10;
-				temp /= 10;
+				scroll_index++;
+				scroll_timer=0;
 			}
 		}
+		else if (scroll_type==scroll_left)
+		{
+			scroll_timer++;
+			if (scroll_timer==SCROLL_TIMER_LIMIT)
+			{
+				scroll_index--;
+				scroll_timer=0;
+			}
+		}
+
+	if (!strcmp(txt,"CONT_SCR_R"))
+		scroll_type=scroll_right;
+	else if (!strcmp(txt,"CONT_SCR_L"))
+		scroll_type=scroll_left;
+	else if (!strcmp(txt,"SCR_R"))
+		scroll_index++;
+	else if (!strcmp(txt,"SCR_L"))
+		scroll_index--;
+	else if (!strcmp(txt,"PAUSE_SCR"))
+		scroll_type=no_scroll;
+	else if (!strcmp(txt,"MUX"))
+	{
+		if ((scroll_index==input_txt_length) && (scroll_type==scroll_right))
+			scroll_index=SPARE_SPACE_4_SCROLL;
+
+		if ((scroll_index==SPARE_SPACE_4_SCROLL-1) && (scroll_type==scroll_left))
+			scroll_index=input_txt_length-1;
+
+		if ((scroll_index+mux_digit)<0)
+			writeDigit(0,mux_digit);
+		else
+			writeDigit(txt2print[scroll_index+mux_digit],mux_digit);
+		mux_digit++;
+		if (mux_digit==4)
+			mux_digit=0;
+	}
+	else
+	{
+		int i=0;
+		input_txt_length=0;
+		while (txt[i]!='\0')
+		{
+			input_txt_length++;
+			txt2print[i]=txt[i];
+			i++;
+		}
+		while (i<PRINT_ARRAY_LENGTH)
+		{
+			txt2print[i]=0;
+			i++;
+		}
+		scroll_index=0;
+		scroll_type=no_scroll;
+		scroll_timer=0;
+	}
+
+
+
+
 }
 
 /*******************************************************************************
@@ -74,10 +154,9 @@ void updateDisplay(int number){
  ******************************************************************************/
 
 
-void writeDigit (int number,uint8_t digit)
+void writeDigit (int character,uint8_t digit)
 {
-	if (number>10)
-		number=number%10;
+	uint8_t code;
 	switch (digit)
 		{
 			case 0:
@@ -97,129 +176,29 @@ void writeDigit (int number,uint8_t digit)
 				gpioWrite(PIN_SEL1,1);
 				break;
 		}
-	switch (number)
-	{
-		case -1:
-			gpioWrite(PIN_SEG_A,0);
-			gpioWrite(PIN_SEG_B,0);
-			gpioWrite(PIN_SEG_C,0);
-			gpioWrite(PIN_SEG_D,0);
-			gpioWrite(PIN_SEG_E,0);
-			gpioWrite(PIN_SEG_F,0);
-			gpioWrite(PIN_SEG_G,0);
-			gpioWrite(PIN_SEG_DP,0);
-			break;
-		case 0:
-			gpioWrite(PIN_SEG_A,1);
-			gpioWrite(PIN_SEG_B,1);
-			gpioWrite(PIN_SEG_C,1);
-			gpioWrite(PIN_SEG_D,1);
-			gpioWrite(PIN_SEG_E,1);
-			gpioWrite(PIN_SEG_F,1);
-			gpioWrite(PIN_SEG_G,0);
-			gpioWrite(PIN_SEG_DP,0);
-			break;
-		case 1:
-			gpioWrite(PIN_SEG_A,0);
-			gpioWrite(PIN_SEG_B,1);
-			gpioWrite(PIN_SEG_C,1);
-			gpioWrite(PIN_SEG_D,0);
-			gpioWrite(PIN_SEG_E,0);
-			gpioWrite(PIN_SEG_F,0);
-			gpioWrite(PIN_SEG_G,0);
-			gpioWrite(PIN_SEG_DP,0);
-			break;
-		case 2:
-			gpioWrite(PIN_SEG_A,1);
-			gpioWrite(PIN_SEG_B,1);
-			gpioWrite(PIN_SEG_C,0);
-			gpioWrite(PIN_SEG_D,1);
-			gpioWrite(PIN_SEG_E,1);
-			gpioWrite(PIN_SEG_F,0);
-			gpioWrite(PIN_SEG_G,1);
-			gpioWrite(PIN_SEG_DP,0);
-			break;
-		case 3:
-			gpioWrite(PIN_SEG_A,1);
-			gpioWrite(PIN_SEG_B,1);
-			gpioWrite(PIN_SEG_C,1);
-			gpioWrite(PIN_SEG_D,1);
-			gpioWrite(PIN_SEG_E,0);
-			gpioWrite(PIN_SEG_F,0);
-			gpioWrite(PIN_SEG_G,1);
-			gpioWrite(PIN_SEG_DP,0);
-			break;
-		case 4:
-			gpioWrite(PIN_SEG_A,0);
-			gpioWrite(PIN_SEG_B,1);
-			gpioWrite(PIN_SEG_C,1);
-			gpioWrite(PIN_SEG_D,0);
-			gpioWrite(PIN_SEG_E,0);
-			gpioWrite(PIN_SEG_F,1);
-			gpioWrite(PIN_SEG_G,1);
-			gpioWrite(PIN_SEG_DP,0);
-			break;
-		case 5:
-			gpioWrite(PIN_SEG_A,1);
-			gpioWrite(PIN_SEG_B,0);
-			gpioWrite(PIN_SEG_C,1);
-			gpioWrite(PIN_SEG_D,1);
-			gpioWrite(PIN_SEG_E,0);
-			gpioWrite(PIN_SEG_F,1);
-			gpioWrite(PIN_SEG_G,1);
-			gpioWrite(PIN_SEG_DP,0);
-			break;
-		case 6:
-			gpioWrite(PIN_SEG_A,1);
-			gpioWrite(PIN_SEG_B,0);
-			gpioWrite(PIN_SEG_C,1);
-			gpioWrite(PIN_SEG_D,1);
-			gpioWrite(PIN_SEG_E,1);
-			gpioWrite(PIN_SEG_F,1);
-			gpioWrite(PIN_SEG_G,1);
-			gpioWrite(PIN_SEG_DP,0);
-			break;
-		case 7:
-			gpioWrite(PIN_SEG_A,1);
-			gpioWrite(PIN_SEG_B,1);
-			gpioWrite(PIN_SEG_C,1);
-			gpioWrite(PIN_SEG_D,0);
-			gpioWrite(PIN_SEG_E,0);
-			gpioWrite(PIN_SEG_F,0);
-			gpioWrite(PIN_SEG_G,0);
-			gpioWrite(PIN_SEG_DP,0);
-			break;
-		case 8:
-			gpioWrite(PIN_SEG_A,1);
-			gpioWrite(PIN_SEG_B,1);
-			gpioWrite(PIN_SEG_C,1);
-			gpioWrite(PIN_SEG_D,1);
-			gpioWrite(PIN_SEG_E,1);
-			gpioWrite(PIN_SEG_F,1);
-			gpioWrite(PIN_SEG_G,1);
-			gpioWrite(PIN_SEG_DP,0);
-			break;
-		case 9:
-			gpioWrite(PIN_SEG_A,1);
-			gpioWrite(PIN_SEG_B,1);
-			gpioWrite(PIN_SEG_C,1);
-			gpioWrite(PIN_SEG_D,1);
-			gpioWrite(PIN_SEG_E,0);
-			gpioWrite(PIN_SEG_F,1);
-			gpioWrite(PIN_SEG_G,1);
-			gpioWrite(PIN_SEG_DP,0);
-			break;
-		case 10:
-			gpioWrite(PIN_SEG_A,0);
-			gpioWrite(PIN_SEG_B,0);
-			gpioWrite(PIN_SEG_C,0);
-			gpioWrite(PIN_SEG_D,0);
-			gpioWrite(PIN_SEG_E,0);
-			gpioWrite(PIN_SEG_F,0);
-			gpioWrite(PIN_SEG_G,0);
-			gpioWrite(PIN_SEG_DP,1);
-			break;
-	}
+
+	if ((character > (unsigned char)'z') || (character==' ') || (character==0))
+		code = 0x00;
+	else if (character == '.')
+		code = 0x80;
+	else code = sevseg_digits_code[character - '0'];
+
+	sevenSegmentDecoder(code);
+}
+
+
+void sevenSegmentDecoder (uint8_t code)
+{
+
+
+		gpioWrite(PIN_SEG_DP,(code >> 7) & 1);
+		gpioWrite(PIN_SEG_A,(code >> 6) & 1);
+		gpioWrite(PIN_SEG_B,(code >> 5) & 1);
+		gpioWrite(PIN_SEG_C,(code >> 4) & 1);
+		gpioWrite(PIN_SEG_D,(code >> 3) & 1);
+		gpioWrite(PIN_SEG_E,(code >> 2) & 1);
+		gpioWrite(PIN_SEG_F,(code >> 1) & 1);
+		gpioWrite(PIN_SEG_G,(code >> 0) & 1);
 
 }
 

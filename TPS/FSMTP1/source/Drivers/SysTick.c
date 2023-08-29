@@ -10,7 +10,7 @@
 
 #include "SysTick.h"
 #include "hardware.h"
-
+#include "Drivers/Display.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -108,16 +108,7 @@ bool SysTick_Reg_Callback (void (*funCallback)(void), uint32_t period)
  ******************************************************************************/
 __ISR__ SysTick_Handler(void)
 {
-	// Iterate through all the callbacks
-	for (uint32_t i = 0; i < num_Callbacks; i++)
-	{
-		systick_Callback_Array[i].counter--;
-		if (!systick_Callback_Array[i].counter) //If the counter reaches 0
-		{
-			(*systick_Callback_Array[i].fun_Callback)(); // Callback's calling.
-			systick_Callback_Array[i].counter = systick_Callback_Array[i].num_Cycles;	  //Counter re-establishment.
-		}
-	}
+	updateDisplay("MUX");
 }
 
 

@@ -13,3 +13,7 @@ TPS/TP1/.project
 *.d
 *.ld
 TPS/FSMTP1/Debug/makefile
+*.ld
+TPS/FSMTP1/.cproject
+*.su
+*.launch

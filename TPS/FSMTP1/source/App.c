@@ -42,7 +42,7 @@ void App_Init (void)
 	//gpioMode(PIN_LED_GREEN,OUTPUT);
 	//gpioMode(PIN_LED_BLUE,OUTPUT);
 
-	//gpioMode(PIN_SW3,INPUT);
+	gpioMode(PIN_SW3,INPUT);
 
 	//gpioMode(PIN_SW2,INPUT_PULLUP);
 	Display_Init();
@@ -58,11 +58,42 @@ void App_Init (void)
     gpioWrite(PIN_LED_RED,!LED_ACTIVE);
 	//gpioWrite(PIN_LED_GREEN,!LED_ACTIVE);
 	//gpioWrite(PIN_LED_BLUE,!LED_ACTIVE);
+    updateDisplay("00000");
 }
 
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
+	static int counter=0;
+	bool flank=gpioFlank(PIN_SW3,SW_ACTIVE);
+
+
+	if (flank & (counter==0))
+	{
+		counter++;
+		updateDisplay("HOlA BUEN DIA COMO ESTAS");
+	}
+	else if (flank & (counter==1))
+	{
+		counter++;
+		updateDisplay("CONT_SCR_R");
+	}
+	else if (flank & (counter==2))
+	{
+		counter++;
+		updateDisplay("PAUSE_SCR");
+	}
+	else if (flank & (counter==3))
+		{
+			counter++;
+			updateDisplay("SCR_L");
+		}
+	else if (flank & (counter==4))
+		{
+			counter=0;
+			updateDisplay("CONT_SCR_L");
+		}
+
 }
 
 

@@ -125,10 +125,6 @@ bool gpioFlank(pin_t pin, bool active);
 
 void gpioIRQconfig (pin_t pin, PORTEvent_t irq_config);
 
-void writeDigit (int number,uint8_t digit);
-
-void updateDisplay(int number);
-
 /*******************************************************************************
  ******************************************************************************/
 

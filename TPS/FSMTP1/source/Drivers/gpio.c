@@ -155,6 +155,30 @@ void gpioIRQconfig (pin_t pin, PORTEvent_t irq_config)
 		port_ptr->PCR[number]|=PORT_PCR_IRQC(irq_config);
 }
 
+bool gpioFlank(pin_t pin, bool active)		// Detector de Flancos en pines de input
+{
+	static bool state = IDLE;
+	bool change=LOW;
+	bool pinRead;
+
+	pinRead = gpioRead(pin);
+
+	switch (state)
+	{
+		case IDLE:
+			if (pinRead==active){
+				state=PRESSED;
+				change=HIGH;
+				}
+				break;
+		case PRESSED:
+			if (pinRead==!active)
+				state=IDLE;
+			break;
+	}
+	return change;
+}
+
 
 
 
