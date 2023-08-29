@@ -84,9 +84,9 @@ void pauseScroll()
 }
 void continueScroll(char scroll)
 {
-	if (scroll=='R' | scroll=='r' )
+	if ((scroll=='R') | (scroll=='r') )
 		updateDisplay("CONT_SCR_R");
-	if (scroll=='L' | scroll=='l' )
+	if ((scroll=='L') | (scroll=='l') )
 		updateDisplay("CONT_SCR_l");
 }
 void ScrollRightOnce()

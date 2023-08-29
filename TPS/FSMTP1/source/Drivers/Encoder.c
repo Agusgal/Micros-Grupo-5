@@ -16,6 +16,10 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
+#define IDLE 0
+#define RISING_FLANK 2
+
+
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
@@ -117,23 +121,26 @@ int EncoderStatus(void)
 
 bool EncoderSwitchRead(void)
 {
-	static int sw_state = IDLE;
-	bool change=LOW;
+	static int sw_state = LOW;
 	bool sw_Read=gpioRead(PIN_DEC_SW);
-	switch (sw_state)
+	if ((sw_state==HIGH) && (sw_Read == HIGH))
 	{
-		case IDLE:
-			if (sw_Read==HIGH){
-				sw_state=PRESSED;
-				change=HIGH;
-				}
-				break;
-		case PRESSED:
-			if (sw_Read==LOW)
-				sw_state=IDLE;
-			break;
+		sw_state=HIGH;
+		return RISING_FLANK;
 	}
-	return change;
+	else if (sw_state==LOW) // && sw_Read == HIGH pero no hace falta
+	{
+		return LOW;
+	}
+	else if ((sw_state==HIGH) && (sw_Read == HIGH))
+	{
+		return HIGH;
+	}
+	else if (sw_state==HIGH)
+	{
+		sw_state=LOW;
+		return LOW;
+	}
 }
 
 
