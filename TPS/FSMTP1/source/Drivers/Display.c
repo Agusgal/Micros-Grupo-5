@@ -68,6 +68,88 @@ void Display_Init(void)
 
 }
 
+void writeMessage(char * message, bool scroll)
+{
+	updateDisplay(message);
+	if (scroll)
+		updateDisplay("CONT_SCR_R");
+}
+void pauseMessage()
+{
+	updateDisplay("");
+}
+void pauseScroll()
+{
+	updateDisplay("PAUSE_SCR");
+}
+void continueScroll(char scroll)
+{
+	if (scroll=='R' | scroll=='r' )
+		updateDisplay("CONT_SCR_R");
+	if (scroll=='L' | scroll=='l' )
+		updateDisplay("CONT_SCR_l");
+}
+void ScrollRightOnce()
+{
+	updateDisplay("SCR_R");
+}
+void ScrollLeftOnce()
+{
+	updateDisplay("SCR_L");
+}
+/*******************************************************************************
+ *******************************************************************************
+                        LOCAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
+
+
+void writeDigit (int character,uint8_t digit)
+{
+	uint8_t code;
+	switch (digit)
+	{
+		case 0:
+			gpioWrite(PIN_SEL0,0);
+			gpioWrite(PIN_SEL1,0);
+			break;
+		case 1:
+			gpioWrite(PIN_SEL1,0);
+			gpioWrite(PIN_SEL0,1);
+			break;
+		case 2:
+			gpioWrite(PIN_SEL1,1);
+			gpioWrite(PIN_SEL0,0);
+			break;
+		case 3:
+			gpioWrite(PIN_SEL0,1);
+			gpioWrite(PIN_SEL1,1);
+			break;
+	}
+
+	if ((character > (unsigned char)'z') || (character==' ') || (character==0))
+		code = 0x00;
+	else if (character == '.')
+		code = 0x80;
+	else code = sevseg_digits_code[character - '0'];
+
+	sevenSegmentDecoder(code);
+}
+
+
+void sevenSegmentDecoder (uint8_t code)
+{
+		gpioWrite(PIN_SEG_DP,(code >> 7) & 1);
+		gpioWrite(PIN_SEG_A,(code >> 6) & 1);
+		gpioWrite(PIN_SEG_B,(code >> 5) & 1);
+		gpioWrite(PIN_SEG_C,(code >> 4) & 1);
+		gpioWrite(PIN_SEG_D,(code >> 3) & 1);
+		gpioWrite(PIN_SEG_E,(code >> 2) & 1);
+		gpioWrite(PIN_SEG_F,(code >> 1) & 1);
+		gpioWrite(PIN_SEG_G,(code >> 0) & 1);
+}
+
+
 void updateDisplay(char * txt)
 {
 	static char txt2print[PRINT_ARRAY_LENGTH]={0};
@@ -98,14 +180,19 @@ void updateDisplay(char * txt)
 
 	if (!strcmp(txt,"CONT_SCR_R"))
 		scroll_type=scroll_right;
+
 	else if (!strcmp(txt,"CONT_SCR_L"))
 		scroll_type=scroll_left;
+
 	else if (!strcmp(txt,"SCR_R"))
 		scroll_index++;
+
 	else if (!strcmp(txt,"SCR_L"))
 		scroll_index--;
+
 	else if (!strcmp(txt,"PAUSE_SCR"))
 		scroll_type=no_scroll;
+
 	else if (!strcmp(txt,"MUX"))
 	{
 		if ((scroll_index==input_txt_length) && (scroll_type==scroll_right))
@@ -122,6 +209,7 @@ void updateDisplay(char * txt)
 		if (mux_digit==4)
 			mux_digit=0;
 	}
+
 	else
 	{
 		int i=0;
@@ -142,65 +230,8 @@ void updateDisplay(char * txt)
 		scroll_timer=0;
 	}
 
-
-
-
 }
 
-/*******************************************************************************
- *******************************************************************************
-                        LOCAL FUNCTION DEFINITIONS
- *******************************************************************************
- ******************************************************************************/
-
-
-void writeDigit (int character,uint8_t digit)
-{
-	uint8_t code;
-	switch (digit)
-		{
-			case 0:
-				gpioWrite(PIN_SEL0,0);
-				gpioWrite(PIN_SEL1,0);
-				break;
-			case 1:
-				gpioWrite(PIN_SEL1,0);
-				gpioWrite(PIN_SEL0,1);
-				break;
-			case 2:
-				gpioWrite(PIN_SEL1,1);
-				gpioWrite(PIN_SEL0,0);
-				break;
-			case 3:
-				gpioWrite(PIN_SEL0,1);
-				gpioWrite(PIN_SEL1,1);
-				break;
-		}
-
-	if ((character > (unsigned char)'z') || (character==' ') || (character==0))
-		code = 0x00;
-	else if (character == '.')
-		code = 0x80;
-	else code = sevseg_digits_code[character - '0'];
-
-	sevenSegmentDecoder(code);
-}
-
-
-void sevenSegmentDecoder (uint8_t code)
-{
-
-
-		gpioWrite(PIN_SEG_DP,(code >> 7) & 1);
-		gpioWrite(PIN_SEG_A,(code >> 6) & 1);
-		gpioWrite(PIN_SEG_B,(code >> 5) & 1);
-		gpioWrite(PIN_SEG_C,(code >> 4) & 1);
-		gpioWrite(PIN_SEG_D,(code >> 3) & 1);
-		gpioWrite(PIN_SEG_E,(code >> 2) & 1);
-		gpioWrite(PIN_SEG_F,(code >> 1) & 1);
-		gpioWrite(PIN_SEG_G,(code >> 0) & 1);
-
-}
 
 /*******************************************************************************
  ******************************************************************************/
