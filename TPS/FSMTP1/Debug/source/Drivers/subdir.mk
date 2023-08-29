@@ -5,18 +5,21 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../source/Drivers/CardReader_DRV.c \
+../source/Drivers/Display.c \
 ../source/Drivers/Encoder.c \
 ../source/Drivers/SysTick.c \
 ../source/Drivers/gpio.c 
 
 OBJS += \
 ./source/Drivers/CardReader_DRV.o \
+./source/Drivers/Display.o \
 ./source/Drivers/Encoder.o \
 ./source/Drivers/SysTick.o \
 ./source/Drivers/gpio.o 
 
 C_DEPS += \
 ./source/Drivers/CardReader_DRV.d \
+./source/Drivers/Display.d \
 ./source/Drivers/Encoder.d \
 ./source/Drivers/SysTick.d \
 ./source/Drivers/gpio.d 

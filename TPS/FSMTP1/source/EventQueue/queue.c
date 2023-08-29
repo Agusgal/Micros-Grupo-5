@@ -14,7 +14,7 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define	MAX_NUMBER_OF_EVENTS
+#define	MAX_NUMBER_OF_EVENTS	15
 
 static Event_Type queue [MAX_NUMBER_OF_EVENTS];
 static uint8_t num_Of_Events = 0;
@@ -45,7 +45,7 @@ void queue_Init (void)
  * @param event The element to add to the queue
  * @return Number of pending events. Returns value OVERFLOW if the maximun number of events is reached
  */
-uint8_t push_Queue_Element(Event_Type event)
+int8_t push_Queue_Element(Event_Type event)
 {
 	// Check for EventQueue Overflow
 	if (num_Of_Events > MAX_NUMBER_OF_EVENTS-1)
@@ -68,19 +68,17 @@ uint8_t push_Queue_Element(Event_Type event)
 
 /**
  * @brief Pulls the earliest event from the queue
- * @param queueStatus Pointer to a variable that stores the status of the queue. If no events, OVERFLOW is returned.
  * @return Event_Type variable with the current event if no OVERFLOW is detected.
  */
-Event_Type pull_Queue_Element(uint8_t *queueStatus)
+Event_Type pull_Queue_Element(void)
 {
-	EventType event = {0,0,0};
-	if (number_Of_Elements < 1)
+	Event_Type event = *pout;
+
+	if (num_Of_Events > 0)
 	{
-		*queueStatus = OVERFLOW;
-		return event;
+		num_Of_Events--;
+		pout++;
 	}
-	event = *pout++;
-	*queueStatus = --number_Of_Elements;
 
 	if (pout == MAX_NUMBER_OF_EVENTS + queue)
 	{
@@ -98,7 +96,7 @@ Event_Type pull_Queue_Element(uint8_t *queueStatus)
  */
 uint8_t get_Queue_Status()
 {
-	return number_Of_Elements;
+	return num_Of_Events;
 }
 
 /*******************************************************************************

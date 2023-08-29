@@ -8,13 +8,12 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
-#include <IRQ.h>
 #include "Drivers/board.h"
 #include "Drivers/gpio.h"
 #include <stdio.h>
 #include "MK64F12.h"
 #include "hardware.h"
-#include "Display.h"
+#include "Drivers/Display.h"
 #include "Drivers/Encoder.h"
 
 /*******************************************************************************

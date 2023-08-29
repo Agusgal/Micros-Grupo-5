@@ -109,10 +109,6 @@ bool gpioRead (pin_t pin);
  */
 void gpioIRQ_Config (pin_t pin, PORTEvent_t irq_config);
 
-bool gpioFlank(pin_t pin, bool active);
-
-void writeDigit (int number,uint8_t digit);
-
 
 /*******************************************************************************
  ******************************************************************************/
