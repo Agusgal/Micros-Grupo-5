@@ -23,7 +23,12 @@
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-
+enum cardState
+{
+	IDLE,
+	READING,
+	FINISH
+};
 
 
 /*******************************************************************************
@@ -47,10 +52,10 @@ uint8_t getCardReader_Status(void);
 
 /**
  * @brief Get the card data
- * @param data Pointer to an array that will store the data from the card
+ * @param data Pointer to an array that will store the data from the card (at least 40 bytes)
  * @return True if data could be succesfully read, False otherwise
  */
-bool getCardReader_Data(uint8_t (*data) [40]);
+bool getCardReader_Data(uint8_t *data);
 
 /*******************************************************************************
  ******************************************************************************/
