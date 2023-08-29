@@ -18,7 +18,7 @@
 
 static Event_Type queue [MAX_NUMBER_OF_EVENTS];
 static uint8_t num_Of_Events = 0;
-static uint8_t *pin, *pout;
+static Event_Type *pin, *pout;
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/

@@ -8,8 +8,8 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 #include "Display.h"
-#include "gpio.h"
-#include "board.h"
+#include "Drivers/gpio.h"
+#include "Drivers/board.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/

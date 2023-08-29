@@ -1,160 +1,157 @@
-/*
- * Copyright 2016-2020 NXP
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * o Redistributions of source code must retain the above copyright notice, this list
- *   of conditions and the following disclaimer.
- *
- * o Redistributions in binary form must reproduce the above copyright notice, this
- *   list of conditions and the following disclaimer in the documentation and/or
- *   other materials provided with the distribution.
- *
- * o Neither the name of NXP Semiconductor, Inc. nor the names of its
- *   contributors may be used to endorse or promote products derived from this
- *   software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/***************************************************************************//**
+  @file     App.c
+  @brief    Application functions
+  @author   Bruno Di Sanzo
+ ******************************************************************************/
+
+/*******************************************************************************
+ * INCLUDE HEADER FILES
+ ******************************************************************************/
+
+#include "gpio.h"
+
+
+/*******************************************************************************
+ * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
+ ******************************************************************************/
+
+#define PORT(port)							((PORT_Type *) (PORTA_BASE + 0x00001000u * (port)))
+
+#define SIM_SCGC5_PORT_SHIFT(port)			(9U + (uint32_t)(port))
+#define SIM_SCGC5_PORT_MASK(port)			((uint32_t)(1U << SIM_SCGC5_PORT_SHIFT((port))))
+#define SIM_SCGC5_PORT(x, port) 			(((uint32_t)((uint32_t) (x) << SIM_SCGC5_PORT_SHIFT((port)))) & SIM_SCGC5_PORT_MASK((port)))
+
+#define GPIO(p)								((GPIO_Type *) (GPIOA_BASE + (p) * 0x00000040u))
+
+typedef enum
+{
+	PORT_mAnalog,
+	PORT_mGPIO,
+	PORT_mAlt2,
+	PORT_mAlt3,
+	PORT_mAlt4,
+	PORT_mAlt5,
+	PORT_mAlt6,
+	PORT_mAlt7,
+
+} PORTMux_t;
+
+/*******************************************************************************
+ * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
+ ******************************************************************************/
+
+
+/*******************************************************************************
+ *******************************************************************************
+                        GLOBAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
 
 /**
- * @file    gpio.c
- * @brief   Application entry point.
+ * @brief Configures the specified pin to behave either as an input or an output
+ * @param pin the pin whose mode you wish to set (according PORTNUM2PIN)
+ * @param mode INPUT, OUTPUT, INPUT_PULLUP or INPUT_PULLDOWN.
  */
-#include "gpio.h"
-#include <stdio.h>
-#include "board.h"
-#include "MK64F12.h"
-//#include "fsl_debug_console.h"
-/* TODO: insert other include files here. */
-
-/* TODO: insert other definitions and declarations here. */
-
-/*
- * @brief   Application entry point.
- */
-/*
- * main.c
- *
- *  Created on: August 10, 2023
- *      Author: Daniel Jacoby - Laboratorio de Microprocesadores
- *  Purpose: Show GPIO example
- */
-
-
-
-#define __FOREVER__ 	for(;;)
-
-#define PIN_RED_LED 		22     	//PTB22
-#define PIN_BLUE_LED 		21     	//PTB21
-#define PIN_GREEN_LED 		26 	   	//PTE26
-#define PIN_PUSH_BUTTON  	4 		//PTA4
-
-
-
-
-
-void gpioMode(pin_t pin, uint8_t mode)
+void gpioMode (pin_t pin, uint8_t mode)
 {
-	uint8_t port=PIN2PORT(pin);
-	uint8_t number=PIN2NUM(pin);
+	uint8_t port = PIN2PORT(pin);
+	uint8_t pin_number = PIN2NUM(pin);
 
+	//1-Enable clocking for ports
+	SIM->SCGC5 |= SIM_SCGC5_PORT_MASK(port);
 
-	PORT_Type * port_ptr= PORT_PTR(port);
-	GPIO_Type * gpio_ptr= GPIO_PTR(port);
+	//2-Configure port control register bits (pin properties)
 
-	static bool clk_en [5]={0};		// Activamos los registros de clock gating (una vez por puerto)
-	if (clk_en[port]==0)
-	{
-		SIM->SCGC5 |= (SIM_SCGC5_PORTA_MASK << port);
-		clk_en[port]=1;
-	}
+	PORT(port)->PCR[pin_number]=0x0; //Clear all bits
+	PORT(port)->PCR[pin_number]|=PORT_PCR_MUX(PORT_mGPIO); 		//Set MUX to GPIO
+	PORT(port)->PCR[pin_number]|=PORT_PCR_IRQC(PORT_eDisabled);  //Disable interrupts
 
-	port_ptr->PCR[number]=0x0; 		//Clear
-	port_ptr->PCR[number]|=PORT_PCR_MUX(PORT_mGPIO); 		//Set MUX to GPIO
-
-
+	// Configure GPIO DDR registers and PullUp/PullDown
 	switch(mode)
 	{
-		case(INPUT):
-			port_ptr->PCR[number]|=PORT_PCR_PE(0);          		//Pull UP/Down Disable
-			gpio_ptr->PDDR &= ~(1<<number);
-			break;
-		case(INPUT_PULLUP):
-			port_ptr->PCR[number]|=PORT_PCR_PE(1);          		//Pull UP/Down Enable
-			port_ptr->PCR[number]|=PORT_PCR_PS(1);          		//Pull UP
-			gpio_ptr->PDDR &= ~(1<<number);
-			break;
-		case(INPUT_PULLDOWN):
-			port_ptr->PCR[number]|=PORT_PCR_PE(1);          		//Pull UP/Down Enable
-			port_ptr->PCR[number]|=PORT_PCR_PS(0);          		//Pull Down
-			gpio_ptr->PDDR &= ~(1<<number);
-			break;
-		case(OUTPUT):
-			port_ptr->PCR[number]|=PORT_PCR_PE(0);          		//Pull UP/Down Disable
-			gpio_ptr->PDDR |= (1<<number);
-			port_ptr->GPCHR|=PORT_GPCHR_GPWD(PORT_PCR_DSE(1));
-			break;
-		case(OUTPUT_PULLDOWN):
-			port_ptr->PCR[number]|=PORT_PCR_PE(1);          		//Pull UP/Down
-			port_ptr->PCR[number]|=PORT_PCR_PS(0);          		//Pull Down
-			gpio_ptr->PDDR |= (1<<number);
-			break;
-		case(OUTPUT_PULLUP):
-			port_ptr->PCR[number]|=PORT_PCR_PE(1);          		//Pull UP/Down  Enable
-			port_ptr->PCR[number]|=PORT_PCR_PS(1);          		//Pull UP
-			gpio_ptr->PDDR |= (1<<number);
-			break;
+	case INPUT_PULLUP:
+		GPIO(port)->PDDR &= ~(1 << pin_number);	// leave the other bits unaffected
+		PORT(port)->PCR[pin_number]|=PORT_PCR_PE(1);          		//Pull UP/Down  Enable
+		PORT(port)->PCR[pin_number]|=PORT_PCR_PS(1);          		//Pull UP
+		break;
+
+	case INPUT_PULLDOWN:
+		GPIO(port)->PDDR &= ~(1 << pin_number);	// leave the other bits unaffected
+		PORT(port)->PCR[pin_number]|=PORT_PCR_PE(1);          		//Pull UP/Down  Enable
+		PORT(port)->PCR[pin_number]|=PORT_PCR_PS(0);          		//Pull Down
+		break;
+
+	case INPUT:
+		GPIO(port)->PDDR &= ~(1 << pin_number);	// leave the other bits unaffected
+		break;
+
+	case OUTPUT:
+		GPIO(port)->PDDR |= (1 << pin_number);		// leave the other bits unaffected
+		break;
+
+	default:
+		break;
 	}
 
 }
 
-void gpioWrite(pin_t pin, bool value)
+/**
+ * @brief Write a HIGH or a LOW value to a digital pin
+ * @param pin the pin to write (according PORTNUM2PIN)
+ * @param val Desired value (HIGH or LOW)
+ */
+void gpioWrite (pin_t pin, bool value)
 {
-	uint8_t port=PIN2PORT(pin);
-	uint8_t number=PIN2NUM(pin);
-	GPIO_Type * gpio_ptr= GPIO_PTR(port);
 	if (value)
-		gpio_ptr->PSOR=(1<<number);
+	{
+		GPIO(PIN2PORT(pin))->PSOR = (1 << PIN2NUM(pin));
+	}
 	else
-		gpio_ptr->PCOR=(1<<number);
+	{
+		GPIO(PIN2PORT(pin))->PCOR = (1 << PIN2NUM(pin));
+	}
+
 }
 
-bool gpioRead(pin_t pin)
+/**
+ * @brief Toggle the value of a digital pin (HIGH<->LOW)
+ * @param pin the pin to toggle (according PORTNUM2PIN)
+ */
+void gpioToggle (pin_t pin)
 {
-	uint8_t port=PIN2PORT(pin);
-	uint8_t number=PIN2NUM(pin);
-	GPIO_Type * gpio_ptr= GPIO_PTR(port);
-	return gpio_ptr->PDIR & (1<<number);
+	GPIO(PIN2PORT(pin))->PTOR = (1 << PIN2NUM(pin));
 }
 
-bool gpioToggle(pin_t pin)
+/**
+ * @brief Reads the value from a specified digital pin, either HIGH or LOW.
+ * @param pin the pin to read (according PORTNUM2PIN)
+ * @return HIGH or LOW
+ */
+bool gpioRead (pin_t pin)
 {
-	uint8_t port=PIN2PORT(pin);
-	uint8_t number=PIN2NUM(pin);
-	GPIO_Type * gpio_ptr= GPIO_PTR(port);
-	gpio_ptr->PTOR = (1<<number);
+	return (GPIO(PIN2PORT(pin))->PDIR >> PIN2NUM(pin)) & 0x00000001U;
 }
 
-void gpioIRQconfig (pin_t pin, PORTEvent_t irq_config)
+/**
+ * @brief				Set IRQ settings for the specified pin
+ * @param pin			The pin to configure
+ * @param irq_config	The IRQ configuration
+ */
+void gpioIRQ_Config (pin_t pin, PORTEvent_t irq_config)
 {
-		uint8_t port=PIN2PORT(pin);
-		uint8_t number=PIN2NUM(pin);
-		PORT_Type * port_ptr= PORT_PTR(port);
-		port_ptr->PCR[number]|=PORT_PCR_IRQC(irq_config);
+	PORT(PIN2PORT(pin))->PCR[PIN2NUM(pin)] |= PORT_PCR_IRQC(irq_config);
 }
 
+/*******************************************************************************
+ *******************************************************************************
+                        LOCAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
 
+
+
+
+/*******************************************************************************
+ ******************************************************************************/
 
 

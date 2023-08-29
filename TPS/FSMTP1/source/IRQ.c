@@ -9,12 +9,13 @@
  ******************************************************************************/
 
 #include <IRQ.h>
-#include "board.h"
-#include "gpio.h"
+#include "Drivers/board.h"
+#include "Drivers/gpio.h"
+#include "Display.h"
 #include <stdio.h>
 #include "MK64F12.h"
 #include "hardware.h"
-#include "Encoder.h"
+#include "Drivers/Encoder.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/

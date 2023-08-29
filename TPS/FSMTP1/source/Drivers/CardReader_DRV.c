@@ -9,23 +9,48 @@
  ******************************************************************************/
 
 #include "SysTick.h"
+#include "gpio.h"
 
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
+#define	PIN_CLOCK  		0     	//PTA0
+#define PORT_CLOCK		PA
 
+#define	PIN_DATA		1		//PTA1
+#define PORT_DATA		PA
+
+#define PIN_ENABLE		2		//PTA2
+#define PORT_ENABLE		PA
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
-
+*******************************************************************************/
 
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
+/**
+ * @brief Initialize CardReader driver
+ * @return Initialization succeed
+ */
+bool cardReader_Init(void)
+{
+	// Clock pin
+	gpioMode(PORTNUM2PIN(PORT_CLOCK, PIN_CLOCK), INPUT);
 
+	// Data pin
+	gpioMode(PORTNUM2PIN(PORT_CLOCK, PIN_CLOCK), INPUT);
+
+	// Enable pin
+	gpioMode(PORTNUM2PIN(PORT_CLOCK, PIN_CLOCK), INPUT);
+
+	return true;
+
+}
 
 
 /*******************************************************************************
