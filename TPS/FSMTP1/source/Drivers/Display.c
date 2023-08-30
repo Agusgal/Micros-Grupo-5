@@ -11,12 +11,15 @@
 #include "gpio.h"
 #include "board.h"
 #include <string.h>
+#include "Systick.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 #define PRINT_ARRAY_LENGTH 30
 #define SPARE_SPACE_4_SCROLL -3
 #define SCROLL_TIMER_LIMIT 50
+#define MAX_BRIGHTNESS_COUNTER 10
+#define ABS(x) ((x) < 0 ? -(x) : (x))
 
 enum scroll_type {no_scroll,scroll_left,scroll_right};
 
@@ -26,7 +29,7 @@ const unsigned char sevseg_digits_code[75]= {
 /*  <     =     >     ?     @     A     B     C     D     E     F     G     */
     0x00, 0x00, 0x00, 0x00, 0x00, 0x77, 0x1F, 0x4E, 0x3D, 0x4F, 0x47, 0x5E,
 /*  H     I     J     K     L     M     N     O     P     Q     R     S     */
-    0x37, 0x06, 0x3C, 0x57, 0x0E, 0x55, 0x15, 0x1D, 0x67, 0x73, 0x05, 0x5B,
+    0x37, 0x06, 0x3C, 0x57, 0x0E, 0x76, 0x15, 0x1D, 0x67, 0x73, 0x05, 0x5B,
 /*  T     U     V     W     X     Y     Z     [     \     ]     ^     _     */
     0x0F, 0x3E, 0x1C, 0x5C, 0x13, 0x3B, 0x6D, 0x00, 0x00, 0x00, 0x00, 0x00,
 /*  `     a     b     c     d     e     f     g     h     i     j     k     */
@@ -49,14 +52,14 @@ void sevenSegmentDecoder (uint8_t code);
 
 void Display_Init(void)
 {
-	gpioMode(PIN_SEG_A,OUTPUT);
-	gpioMode(PIN_SEG_B,OUTPUT);
-	gpioMode(PIN_SEG_C,OUTPUT);
-	gpioMode(PIN_SEG_D,OUTPUT);
-	gpioMode(PIN_SEG_E,OUTPUT);
-	gpioMode(PIN_SEG_F,OUTPUT);
-	gpioMode(PIN_SEG_G,OUTPUT);
-	gpioMode(PIN_SEG_DP,OUTPUT);
+	gpioMode(PIN_SEG_A,OUTPUT_PULLDOWN);
+	gpioMode(PIN_SEG_B,OUTPUT_PULLDOWN);
+	gpioMode(PIN_SEG_C,OUTPUT_PULLDOWN);
+	gpioMode(PIN_SEG_D,OUTPUT_PULLDOWN);
+	gpioMode(PIN_SEG_E,OUTPUT_PULLDOWN);
+	gpioMode(PIN_SEG_F,OUTPUT_PULLDOWN);
+	gpioMode(PIN_SEG_G,OUTPUT_PULLDOWN);
+	gpioMode(PIN_SEG_DP,OUTPUT_PULLDOWN);
 
 	gpioMode(PIN_SEL0,OUTPUT);
 	gpioMode(PIN_SEL1,OUTPUT);
@@ -65,6 +68,7 @@ void Display_Init(void)
 	writeDigit(-1,1);
 	writeDigit(-1,2);
 	writeDigit(-1,3);
+	SysTick_Reg_Callback(muxDisplay,1000);
 
 }
 
@@ -74,7 +78,7 @@ void writeMessage(char * message, bool scroll)
 	if (scroll)
 		updateDisplay("CONT_SCR_R");
 }
-void clearMessage()
+void pauseMessage()
 {
 	updateDisplay("");
 }
@@ -82,11 +86,11 @@ void pauseScroll()
 {
 	updateDisplay("PAUSE_SCR");
 }
-void startScroll(char scroll)
+void continueScroll(char scroll)
 {
-	if ((scroll=='R') | (scroll=='r'))
+	if ((scroll=='R') | (scroll=='r') )
 		updateDisplay("CONT_SCR_R");
-	if ((scroll=='L') | (scroll=='l'))
+	if ((scroll=='L') | (scroll=='l') )
 		updateDisplay("CONT_SCR_l");
 }
 void ScrollRightOnce()
@@ -97,11 +101,23 @@ void ScrollLeftOnce()
 {
 	updateDisplay("SCR_L");
 }
-
+void toggleScroll()
+{
+	updateDisplay("TOGGLE_SCR");
+}
 void muxDisplay()
 {
 	updateDisplay("MUX");
 }
+void incBrightness()
+{
+	updateDisplay("+B");
+}
+void decBrightness()
+{
+	updateDisplay("-B");
+}
+
 /*******************************************************************************
  *******************************************************************************
                         LOCAL FUNCTION DEFINITIONS
@@ -163,6 +179,8 @@ void updateDisplay(char * txt)
 	static int scroll_index=0;
 	static uint8_t scroll_type=no_scroll;
 	static uint8_t scroll_timer=0;
+	static uint8_t brightness_level=0;
+	static uint8_t brightness_counter=0;
 
 	if (scroll_type==scroll_right)
 		{
@@ -197,22 +215,50 @@ void updateDisplay(char * txt)
 
 	else if (!strcmp(txt,"PAUSE_SCR"))
 		scroll_type=no_scroll;
-
+	else if (!strcmp(txt,"TOGGLE_SCR"))
+	{
+		if (scroll_type==no_scroll)
+			scroll_type=scroll_right;
+		else
+			scroll_type=no_scroll;
+	}
+	else if (!strcmp(txt,"+B"))
+	{
+		brightness_level++;
+	}
+	else if (!strcmp(txt,"-B"))
+	{
+		brightness_level--;
+	}
 	else if (!strcmp(txt,"MUX"))
 	{
 		if ((scroll_index==input_txt_length) && (scroll_type==scroll_right))
 			scroll_index=SPARE_SPACE_4_SCROLL;
 
-		if ((scroll_index==SPARE_SPACE_4_SCROLL-1) && (scroll_type==scroll_left))
+		else if ((scroll_index==SPARE_SPACE_4_SCROLL-1) && (scroll_type==scroll_left))
 			scroll_index=input_txt_length-1;
 
 		if ((scroll_index+mux_digit)<0)
 			writeDigit(0,mux_digit);
 		else
-			writeDigit(txt2print[scroll_index+mux_digit],mux_digit);
+		{
+			if ((brightness_counter<=brightness_level) && (brightness_level !=0))
+			{
+				writeDigit(txt2print[scroll_index+mux_digit],mux_digit);
+			}
+			else
+				writeDigit(0,mux_digit);
+
+		}
+
 		mux_digit++;
 		if (mux_digit==4)
+		{
 			mux_digit=0;
+			brightness_counter++;
+		if (brightness_counter==MAX_BRIGHTNESS_COUNTER)
+			brightness_counter=0;
+		}
 	}
 
 	else
@@ -237,6 +283,33 @@ void updateDisplay(char * txt)
 
 }
 
+char * int2str (int num)
+{
+	static char string [20];
+	for (int i=0;i<20;i++)
+		string[i]=0;
+	int numDigits = 0;
+	int temp = num;
+
+	// Count the number of digits in the number
+	while (temp != 0)
+	{
+		temp /= 10;
+		numDigits++;
+	}
+
+	// Create an array to hold the digits
+	temp = num;
+
+	// Extract the digits and store them in the array
+	for (int i = numDigits - 1; i >= 0; i--) {
+		string[i] = temp % 10;
+		string[i]+='0';
+		temp /= 10;
+	}
+	return string;
+
+}
 
 /*******************************************************************************
  ******************************************************************************/

@@ -10,12 +10,12 @@
 
 #include "SysTick.h"
 #include "hardware.h"
-
+#include "Drivers/Display.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define US_TO_S	1000000
+
 
 typedef enum
 {
@@ -75,7 +75,7 @@ __ISR__ SysTick_Handler(void);
 void SysTick_Init ()
 {
 	SysTick->CTRL = 0x00;
-	SysTick->LOAD = (__CORE_CLOCK__/ US_TO_S) * SYSTICK_ISR_PERIOD_US - 1; //12499999L; // <= 125 ms @ 100Mhz
+	SysTick->LOAD = (__CORE_CLOCK__/ S_TO_US) * SYSTICK_ISR_PERIOD_US - 1; //12499999L; // <= 125 ms @ 100Mhz
 	SysTick->VAL  = 0x00;
 	SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
 }
