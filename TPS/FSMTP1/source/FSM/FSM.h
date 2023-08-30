@@ -15,6 +15,8 @@
 #include <stdbool.h>
 #include "MK64F12.h"
 
+#include "../EventQueue/queue.h"
+
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -57,7 +59,7 @@ extern state WRONG_ID[];
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
-state* fsm_dispatcher (state* p_state, uint8_t curr_event);
+state* fsm_dispatcher (state* p_state, Event_Type curr_event);
 
 state* get_initial_state(void);
 

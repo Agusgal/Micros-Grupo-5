@@ -38,7 +38,7 @@ void Encoder_Init(void)
 	gpioMode(PIN_CH_B,INPUT);
 	gpioMode(PIN_DEC_SW,INPUT);
 }
-
+int a = 1;
 int EncoderStatus(void)
 {
 	static int state=IDLE;

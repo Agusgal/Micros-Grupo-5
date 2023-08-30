@@ -24,7 +24,8 @@
 
 #define	OVERFLOW	-1
 // Events
-enum events{
+
+typedef enum {
 			NONE_EV,
 			ENC_LEFT_EV,
 			ENC_RIGHT_EV,
@@ -43,7 +44,7 @@ enum events{
 			FIVE_SEC_LAPSE_EV,
 			MIN_LAPSE_EV,
 
-			};
+			}Event_Type;
 
 
 /*******************************************************************************
@@ -52,10 +53,10 @@ enum events{
 
 typedef uint8_t pin_t;
 
-typedef struct Event
-{
-	uint8_t ID;
-} Event_Type;
+//typedef struct Event
+//{
+	//uint8_t ID;
+//} Event_Type;
 
 
 /*******************************************************************************
