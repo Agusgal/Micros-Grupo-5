@@ -25,14 +25,14 @@
  ******************************************************************************/
 enum cardState
 {
-	IDLE,
+	IDLE_,
 	READING,
 	FINISH
 };
 
 #define	SS	0b0001001
 #define	FS	0b0001101
-#define	ES	0b0011111
+#define	ES_	0b0011111
 
 #define NUMBER_OF_CHARACTERS	40
 

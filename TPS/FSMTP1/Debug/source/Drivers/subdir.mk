@@ -4,6 +4,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../source/Drivers/BoardLeds.c \
 ../source/Drivers/CardReader_DRV.c \
 ../source/Drivers/Display.c \
 ../source/Drivers/Encoder.c \
@@ -11,6 +12,7 @@ C_SRCS += \
 ../source/Drivers/gpio.c 
 
 C_DEPS += \
+./source/Drivers/BoardLeds.d \
 ./source/Drivers/CardReader_DRV.d \
 ./source/Drivers/Display.d \
 ./source/Drivers/Encoder.d \
@@ -18,6 +20,7 @@ C_DEPS += \
 ./source/Drivers/gpio.d 
 
 OBJS += \
+./source/Drivers/BoardLeds.o \
 ./source/Drivers/CardReader_DRV.o \
 ./source/Drivers/Display.o \
 ./source/Drivers/Encoder.o \
@@ -37,7 +40,7 @@ source/Drivers/%.o: ../source/Drivers/%.c source/Drivers/subdir.mk
 clean: clean-source-2f-Drivers
 
 clean-source-2f-Drivers:
-	-$(RM) ./source/Drivers/CardReader_DRV.d ./source/Drivers/CardReader_DRV.o ./source/Drivers/Display.d ./source/Drivers/Display.o ./source/Drivers/Encoder.d ./source/Drivers/Encoder.o ./source/Drivers/SysTick.d ./source/Drivers/SysTick.o ./source/Drivers/gpio.d ./source/Drivers/gpio.o
+	-$(RM) ./source/Drivers/BoardLeds.d ./source/Drivers/BoardLeds.o ./source/Drivers/CardReader_DRV.d ./source/Drivers/CardReader_DRV.o ./source/Drivers/Display.d ./source/Drivers/Display.o ./source/Drivers/Encoder.d ./source/Drivers/Encoder.o ./source/Drivers/SysTick.d ./source/Drivers/SysTick.o ./source/Drivers/gpio.d ./source/Drivers/gpio.o
 
 .PHONY: clean-source-2f-Drivers
 

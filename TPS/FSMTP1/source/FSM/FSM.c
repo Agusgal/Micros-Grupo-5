@@ -7,7 +7,7 @@
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-<<<<<<<< HEAD:TPS/FSMTP1/source/FSM/FSM.c
+
 
 #include "FSM.h"
 
@@ -16,14 +16,9 @@
 
 
 
-
-========
-#include "gpio.h"
 #include <stdio.h>
-#include "board.h"
-#include "Encoder.h"
-#include "Systick.h"
->>>>>>>> tests-jp:TPS/FSMTP1/source/Drivers/BoardLeds.c
+
+
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -44,7 +39,7 @@
  ******************************************************************************/
 
 
-<<<<<<<< HEAD:TPS/FSMTP1/source/FSM/FSM.c
+
 
 
 /**
@@ -75,31 +70,6 @@ state* fsm_dispatcher (state* p_state, Event_Type curr_event)
 	p_state = p_state->next_state;
 
 	return p_state;
-========
-void BoardLeds_Init(void)
-{
-	gpioMode(PIN_ST_0,OUTPUT);
-	gpioMode(PIN_ST_1,OUTPUT);
-	gpioWrite(PIN_ST_0,0);
-	gpioWrite(PIN_ST_1,0);
-
-}
-
-void led1On ()
-{
-	gpioWrite(PIN_ST_0,0);
-	gpioWrite(PIN_ST_1,1);
-}
-void led2On ()
-{
-	gpioWrite(PIN_ST_0,1);
-	gpioWrite(PIN_ST_1,0);
-}
-void led3On ()
-{
-	gpioWrite(PIN_ST_0,1);
-	gpioWrite(PIN_ST_1,1);
->>>>>>>> tests-jp:TPS/FSMTP1/source/Drivers/BoardLeds.c
 }
 
 

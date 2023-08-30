@@ -131,7 +131,7 @@ __ISR__ PORTA_IRQHandler(void)
 				new_bit_position = 0;
 
 				// Check for End Sentinel
-				if(tempData == ES)
+				if(tempData == ES_)
 				{
 					cardState = FINISH;
 				}
