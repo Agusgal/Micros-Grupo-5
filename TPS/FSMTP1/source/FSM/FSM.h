@@ -59,6 +59,10 @@ extern state WRONG_ID[];
 
 state* fsm_dispatcher (state* p_state, uint8_t curr_event);
 
+state* get_initial_state(void);
+
+void start_fsm(void);
+
 /*******************************************************************************
  ******************************************************************************/
 

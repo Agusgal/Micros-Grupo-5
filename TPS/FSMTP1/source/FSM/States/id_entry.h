@@ -18,8 +18,8 @@
 /**
  * @brief Initializes user input
  */
-void init_id (void);
+void init_id(void);
 
-
+void waiting_id(void);
 
 #endif /* ID_ENTRY_H_ */

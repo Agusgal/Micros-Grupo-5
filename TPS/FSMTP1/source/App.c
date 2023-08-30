@@ -52,6 +52,7 @@ void App_Init (void)
 	//Init Queue
 
 	//Init display
+	Display_Init();
 
 	//Init Leds
 
@@ -60,8 +61,11 @@ void App_Init (void)
 	//Init reader
 
 	//Init Encoder
+	Encoder_Init();
 
 	//Init fsm
+	current_state = get_initial_state();
+	start_fsm();
 
 
 	gpioMode(PIN_LED_RED,OUTPUT);
@@ -71,8 +75,6 @@ void App_Init (void)
 	//gpioMode(PIN_SW3,INPUT);
 
 	//gpioMode(PIN_SW2,INPUT_PULLUP);
-	Display_Init();
-	Encoder_Init();
 
     hw_DisableInterrupts();
     SysTick_Init();
