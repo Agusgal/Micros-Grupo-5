@@ -1,7 +1,7 @@
 /***************************************************************************//**
-  @file     gpio.h
-  @brief    Simple GPIO Pin services, similar to Arduino
-  @author   Nicolás Magliola
+  @file     queue.h
+  @brief    Event queue impelmentation
+  @author   Bruno Di Sanzo, Agustin Galdeman
  ******************************************************************************/
 
 #ifndef _queue_H_
@@ -51,6 +51,7 @@ enum events{
  ******************************************************************************/
 
 typedef uint8_t pin_t;
+
 typedef struct Event
 {
 	uint8_t ID;
@@ -87,6 +88,8 @@ Event_Type pull_Queue_Element(void);
  * @return Returns the number of pending events in the queue
  */
 uint8_t get_Queue_Status();
+
+
 
 /*******************************************************************************
  ******************************************************************************/

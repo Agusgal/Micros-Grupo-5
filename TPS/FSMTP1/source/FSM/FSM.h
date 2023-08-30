@@ -20,27 +20,20 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-/* States
-enum states{
-			ID_ENTRY,
-			ENCODER_ENTRY,
-			CARD_ENTRY,
-			PIN_ENTRY,
-			RED_LED_ON,
-			GREEN_LED_ON,
-			BRIGHTNESS,
-			WRONG_ID};
-*/
+
+#define END_TABLE 0xFF
+
+
 
 typedef struct state state;
 
-struct state {void(*funct)(void);
-				uint8_t event;
-				state *next_state;};
+struct state
+{
+	void(*funct)(void);
+	uint8_t event;
+	state *next_state;
+};
 
-
-
-#define END_TABLE 0xFF
 
 
 /*******************************************************************************
@@ -64,7 +57,7 @@ extern state WRONG_ID[];
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
-state* fsm_dispatcher (state* p_state, uint8_t curr_event, uint8_t next_state);
+state* fsm_dispatcher (state* p_state, uint8_t curr_event);
 
 /*******************************************************************************
  ******************************************************************************/

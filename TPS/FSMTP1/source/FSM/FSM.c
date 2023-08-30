@@ -11,7 +11,6 @@
 #include "FSM.h"
 
 
-
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -59,7 +58,6 @@ state* fsm_dispatcher (state* p_state, uint8_t curr_event)
 	p_state = p_state->next_state;
 
 	return p_state;
-
 }
 
 
@@ -67,29 +65,29 @@ state* fsm_dispatcher (state* p_state, uint8_t curr_event)
 
 state ID_ENTRY[]=
 {
-		{waiting_id,NONE_EV,ID_ENTRY},
+		{waiting_id, NONE_EV, ID_ENTRY},
 
-		{init_id,ENC_LEFT_EV,ENCODER_ENTRY},
+		{init_id, ENC_LEFT_EV, ENCODER_ENTRY},
 
-		{init_id,ENC_RIGHT_EV,ENCODER_ENTRY},
+		{init_id, ENC_RIGHT_EV, ENCODER_ENTRY},
 
-		{init_id,ENC_PRESSED_EV,ENCODER_ENTRY},
+		{init_id, ENC_PRESSED_EV, ENCODER_ENTRY},
 
-		{init_id,CARD_SWIPE_EV,CARD_ENTRY}
+		{init_id, CARD_SWIPE_EV, CARD_ENTRY}
 };
 
 
 state ENCODER_ENTRY[]=
 {
-		{up_number,ENC_LEFT_EV,ENCODER_ENTRY},
+		{up_number, ENC_LEFT_EV,ENCODER_ENTRY},
 
-		{down_number,ENC_RIGHT_EV,ENCODER_ENTRY},
+		{down_number, ENC_RIGHT_EV,ENCODER_ENTRY},
 
-		{ok_number,ENC_PRESSED_EV,ENCODER_ENTRY},
+		{ok_number, ENC_PRESSED_EV,ENCODER_ENTRY},
 
-		{msg_fail,ID_FAIL_ENC_EV,RED_LED_ON},
+		{msg_fail, ID_FAIL_ENC_EV,RED_LED_ON},
 
-		{msg_ok,ID_OK_ENC_EV,PIN_ENTRY}
+		{msg_ok, ID_OK_ENC_EV,PIN_ENTRY}
 
 };
 
@@ -129,64 +127,6 @@ state WRONG_ID[]=
 
 };
 
-
-
-
-/*void fsm (bool timer_sec, bool timer_min)
-{
-	switch(states)
-	{
-	case ID_ENTRY:
-
-		if(encoder) //aca habria que llamar a alguna funcion que devuelva que se esta ingresando la contra
-			states = ENCODER_ENTRY;
-		else if (card)
-			states = CARD_ENTRY;
-
-		break;
-
-	case ENCODER_ENTRY:
-			if(id_encoder == ENCODER)//hay que ver como se hace esto, y como es la base de datos
-				states = PIN_ENTRY;
-			else
-				states = RED_LED_ON;
-		break;
-
-	case CARD_ENTRY:
-			if(id_card == CARD)//hay que ver como se hace esto, y como es la base de datos
-				states = PIN_ENTRY;
-
-			else
-				states = RED_LED_ON;
-		break;
-
-	case PIN_ENTRY:
-			if()
-		break;
-
-	case RED_LED_ON:
-
-			break;
-
-	case GREEN_LED_ON:
-
-			break;
-
-	case BRIGHTNESS:
-
-			break;
-
-	case WRONG_ID:
-
-			break;
-
-	default:
-		break;
-	}
-
-}
-
-*/
 
 /*******************************************************************************
  *******************************************************************************
