@@ -16,8 +16,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-#define IDLE 0
-#define RISING_FLANK 2
+
 
 
 /*******************************************************************************
@@ -37,10 +36,10 @@ void Encoder_Init(void)
 	gpioMode(PIN_CH_A,INPUT);
 	gpioMode(PIN_CH_B,INPUT);
 	gpioMode(PIN_DEC_SW,INPUT);
-	SysTick_Reg_Callback(EncoderStatus,20000);
+	//SysTick_Reg_Callback(EncoderStatus,20000);
 }
 
-void EncoderStatus(void)
+int EncoderStatus(void)
 {
 
 	static int state=IDLE;
@@ -81,7 +80,7 @@ void EncoderStatus(void)
 			if (CH_A & CH_B)
 			{
 				state=IDLE;
-				//return ANTI_CLOCKWISE_TURN;
+				return ANTI_CLOCKWISE_TURN;
 			}
 			else if (!CH_A & !CH_B)
 				state=ACW2;
@@ -108,7 +107,7 @@ void EncoderStatus(void)
 			if (CH_A & CH_B)
 			{
 				state=IDLE;
-				//return CLOCKWISE_TURN;
+				return CLOCKWISE_TURN;
 			}
 			else if (!CH_A & !CH_B)
 				state=CW2;
@@ -116,31 +115,31 @@ void EncoderStatus(void)
 				state=CW3;
 			break;
 	}
-	//return IDLE;
+	return IDLE;
 
 }
 
-void EncoderSwitchRead(void)
+int EncoderSwitchRead(void)
 {
 	static int sw_state = LOW;
 	bool sw_Read=gpioRead(PIN_DEC_SW);
-	if ((sw_state==HIGH) && (sw_Read == HIGH))
+	if ((sw_state==LOW) && (sw_Read == LOW))
 	{
 		sw_state=HIGH;
-		//return RISING_FLANK;
+		return RISING_FLANK;
 	}
 	else if (sw_state==LOW) // && sw_Read == HIGH pero no hace falta
 	{
-		//return LOW;
+		return LOW;
 	}
-	else if ((sw_state==HIGH) && (sw_Read == HIGH))
+	else if ((sw_state==HIGH) && (sw_Read == LOW))
 	{
-		//return HIGH;
+		return HIGH;
 	}
 	else if (sw_state==HIGH)
 	{
 		sw_state=LOW;
-		//return LOW;
+		return LOW;
 	}
 }
 

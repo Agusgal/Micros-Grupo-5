@@ -4,8 +4,8 @@
   @author   Nicolás Magliola
  ******************************************************************************/
 
-#ifndef _DISPLAY_H_
-#define _DISPLAY_H_
+#ifndef _ENCODER_H_
+#define _ENCODER_H_
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <stdio.h>
+
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -24,6 +24,10 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
+enum encoderStates {ACW1=1,ACW2,ACW3,ACW4,CW1,CW2,CW3,CW4};
+enum events {ANTI_CLOCKWISE_TURN=1, CLOCKWISE_TURN,ENC_SW_PRESS};
+
+
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
@@ -33,22 +37,12 @@
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
-void Display_Init(void);
-void updateDisplay(char txt []);
-void writeDigit (int number,uint8_t digit);
-void writeMessage(char * message, bool scroll);
-void pauseMessage();
-void pauseScroll();
-void continueScroll(char scroll);
-void ScrollRightOnce();
-void ScrollLeftOnce();
-void toggleScroll();
-void muxDisplay();
-void incBrightness();
-void decBrightness();
+void BoardLeds_Init(void);
 
+void led1On ();
+void led2On ();
+void led3On ();
 
-char * int2str (int num);
 /*******************************************************************************
  ******************************************************************************/
 

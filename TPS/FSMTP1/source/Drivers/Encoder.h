@@ -19,7 +19,8 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-
+#define IDLE 0
+#define RISING_FLANK 2
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -38,9 +39,8 @@ enum events {ANTI_CLOCKWISE_TURN=1, CLOCKWISE_TURN,ENC_SW_PRESS};
  ******************************************************************************/
 
 void Encoder_Init(void);
-
-void EncoderStatus(void);
-void EncoderSwitchRead(void);
+int EncoderStatus(void);
+int EncoderSwitchRead(void);
 
 // NO SIRVEN, SOLO PARA TEST
 /*******************************************************************************

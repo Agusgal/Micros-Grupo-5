@@ -1,55 +1,71 @@
 /***************************************************************************//**
-  @file     gpio.h
-  @brief    Simple GPIO Pin services, similar to Arduino
+  @file     App.c
+  @brief    Application functions
   @author   Nicolás Magliola
  ******************************************************************************/
-
-#ifndef _DISPLAY_H_
-#define _DISPLAY_H_
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-
-#include <stdint.h>
-#include <stdbool.h>
+#include "gpio.h"
 #include <stdio.h>
-
+#include "board.h"
+#include "Encoder.h"
+#include "Systick.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
+#define IDLE 0
+#define RISING_FLANK 2
+
 
 /*******************************************************************************
- * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
+ * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
 
 /*******************************************************************************
- * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
+ *******************************************************************************
+                        GLOBAL FUNCTION DEFINITIONS
+ *******************************************************************************
  ******************************************************************************/
+
+
+void BoardLeds_Init(void)
+{
+	gpioMode(PIN_ST_0,OUTPUT);
+	gpioMode(PIN_ST_1,OUTPUT);
+	gpioWrite(PIN_ST_0,0);
+	gpioWrite(PIN_ST_1,0);
+
+}
+
+void led1On ()
+{
+	gpioWrite(PIN_ST_0,0);
+	gpioWrite(PIN_ST_1,1);
+}
+void led2On ()
+{
+	gpioWrite(PIN_ST_0,1);
+	gpioWrite(PIN_ST_1,0);
+}
+void led3On ()
+{
+	gpioWrite(PIN_ST_0,1);
+	gpioWrite(PIN_ST_1,1);
+}
+
+
 
 /*******************************************************************************
- * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
+ *******************************************************************************
+                        LOCAL FUNCTION DEFINITIONS
+ *******************************************************************************
  ******************************************************************************/
 
-void Display_Init(void);
-void updateDisplay(char txt []);
-void writeDigit (int number,uint8_t digit);
-void writeMessage(char * message, bool scroll);
-void pauseMessage();
-void pauseScroll();
-void continueScroll(char scroll);
-void ScrollRightOnce();
-void ScrollLeftOnce();
-void toggleScroll();
-void muxDisplay();
-void incBrightness();
-void decBrightness();
 
 
-char * int2str (int num);
 /*******************************************************************************
  ******************************************************************************/
-
-#endif // _GPIO_H_
