@@ -30,6 +30,11 @@ enum cardState
 	FINISH
 };
 
+#define	SS	0b0001001
+#define	FS	0b0001101
+#define	ES	0b0011111
+
+#define NUMBER_OF_CHARACTERS	40
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
@@ -53,7 +58,7 @@ uint8_t getCardReader_Status(void);
 /**
  * @brief Get the card data
  * @param data Pointer to an array that will store the data from the card (at least 40 bytes)
- * @return True if data could be succesfully read, False otherwise
+ * @return True if data could be successfully read, False otherwise
  */
 bool getCardReader_Data(uint8_t *data);
 

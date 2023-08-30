@@ -27,22 +27,31 @@
 #define PIN_ENABLE		2		//PTA2
 #define PORT_ENABLE		PA
 
+#define	BIT_MASK(b)		(~(0b11111111<<(b)))// To be used to obtain the (b-1) least significant bits with &
+
 #define SEQUENCE_MASK	0b00011111
 #define NEW_BIT_POSITION	5
 
-#define	SS	0b0001001
-#define	FS	0b0001101
-#define	ES	0b0011111
-
 static uint8_t cardState = IDLE;
 static uint8_t data [40];
-static uint8_t number_Of_Characters = 0;
+static uint8_t number_of_characters = 0;
 static uint8_t tempData = 0;
-static uint8_t
+static uint8_t new_bit_position;
+
+// For timer
+#define TIME_CONSTANT		100000	// 0.1 segs
+#define	TIMER_RESET_VALUE	1 // 1 segs
+
+static uint32_t counter = 0;
+static uint32_t start_timer = false;
+
+static bool	data_ready = false;
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
 *******************************************************************************/
+static void cardReader_PISR(void);
+
 
 /*******************************************************************************
  *******************************************************************************
@@ -65,6 +74,7 @@ bool cardReader_Init(void)
 	// Enable pin
 	gpioMode(PORTNUM2PIN(PORT_CLOCK, PIN_CLOCK), INPUT);
 
+	SysTick_Reg_Callback(cardReader_PISR, TIME_CONSTANT);
 
 	return true;
 
@@ -78,12 +88,17 @@ bool cardReader_Init(void)
  ******************************************************************************/
 __ISR__ PORTA_IRQHandler(void)
 {
+	// If there is a clock event, reset the timer that erases everything every 1sec
+	counter = TIMER_RESET_VALUE;
+
 	//Check for enable (ACTIVE LOW)
 	if(gpioRead(PORTNUM2PIN(PORT_ENABLE, PIN_ENABLE)))
 	{
 		tempData = 0;
 		cardState = IDLE;
-		number_Of_Characters = 0;
+		number_of_characters = 0;
+		new_bit_position = 0;
+		data_ready = false;
 	}
 	else
 	{
@@ -99,25 +114,67 @@ __ISR__ PORTA_IRQHandler(void)
 			if(tempData == SS)
 			{
 				data[0] = tempData;
-				number_Of_Characters++;
+				number_of_characters++;
 				cardState = READING;
 			}
 
 			break;
 
 		case READING:
-			tempData = (tempData & SEQUENCE_MASK) | (!gpioRead(PORTNUM2PIN(PORT_DATA, PIN_DATA)) << NEW_BIT_POSITION);
-						tempData <<= 1;
+			// Store the new bit (ACTIVE LOW) in the free position
+			tempData = (tempData & BIT_MASK(new_bit_position)) | (!gpioRead(PORTNUM2PIN(PORT_DATA, PIN_DATA)) << new_bit_position++);
 
+			//Store character if 5 digits were detected
+			if(new_bit_position == 5 && number_of_characters < NUMBER_OF_CHARACTERS)
+			{
+				data[number_of_characters++] = tempData;
+				new_bit_position = 0;
+
+				// Check for End Sentinel
+				if(tempData == ES)
+				{
+					cardState = FINISH;
+				}
+			}
 			break;
 
 		case FINISH:
+			tempData = (tempData & BIT_MASK(new_bit_position)) | (!gpioRead(PORTNUM2PIN(PORT_DATA, PIN_DATA)) << new_bit_position++);
 
+			//Store character if 5 digits were detected (should be LRC)
+			if(new_bit_position == 5 && number_of_characters < NUMBER_OF_CHARACTERS)
+			{
+				data[number_of_characters] = tempData;
+				number_of_characters = 0;
+				new_bit_position = 0;
+				data_ready = true;
+				// Wait for timer to restart the state machine
+			}
 			break;
 
 		default:
-
 			break;
+		}
+	}
+
+}
+
+/**
+ * @brief	Timer
+ */
+static void cardReader_PISR(void)
+{
+	if(counter)
+	{
+		counter--;
+		// If counter reaches 0, restart everything
+		if(!counter)
+		{
+			tempData = 0;
+			cardState = IDLE;
+			number_of_characters = 0;
+			new_bit_position = 0;
+			data_ready = false;
 		}
 	}
 
