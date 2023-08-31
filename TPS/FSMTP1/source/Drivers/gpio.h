@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     gpio.h
   @brief    Simple GPIO Pin services, similar to Arduino
-  @author   Nicolás Magliola
+  @author   Grupo 5
  ******************************************************************************/
 
 #ifndef _GPIO_H_
@@ -13,6 +13,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "MK64F12.h"
 
 
 /*******************************************************************************
@@ -21,7 +22,6 @@
 
 // Ports
 enum { PA, PB, PC, PD, PE };
-enum { IDLE=0, PRESSED, RELEASED};
 
 // Convert port and number into pin ID
 // Ex: PTB5  -> PORTNUM2PIN(PB,5)  -> 0x25
@@ -29,8 +29,7 @@ enum { IDLE=0, PRESSED, RELEASED};
 #define PORTNUM2PIN(p,n)    (((p)<<5) + (n))
 #define PIN2PORT(p)         (((p)>>5) & 0x07)
 #define PIN2NUM(p)          ((p) & 0x1F)
-#define PORT_PTR(port)		( (PORT_Type *) (PORTA_BASE + 0x1000 * (port)) )
-#define GPIO_PTR(port)		( (GPIO_Type *) (GPIOA_BASE + 0x40   * (port)) )
+
 
 // Modes
 #ifndef INPUT
@@ -38,12 +37,8 @@ enum { IDLE=0, PRESSED, RELEASED};
 #define OUTPUT              1
 #define INPUT_PULLUP        2
 #define INPUT_PULLDOWN      3
-#define OUTPUT_PULLUP       4
-#define OUTPUT_PULLDOWN     5
-
 #endif // INPUT
 
-#define NUM_PINS 			100
 
 // Digital values
 #ifndef LOW
@@ -60,19 +55,6 @@ typedef uint8_t pin_t;
 
 typedef enum
 {
-	PORT_mAnalog,
-	PORT_mGPIO,
-	PORT_mAlt2,
-	PORT_mAlt3,
-	PORT_mAlt4,
-	PORT_mAlt5,
-	PORT_mAlt6,
-	PORT_mAlt7,
-
-} PORTMux_t;
-
-typedef enum
-{
 	PORT_eDisabled				= 0x00,
 	PORT_eDMARising				= 0x01,
 	PORT_eDMAFalling			= 0x02,
@@ -83,7 +65,6 @@ typedef enum
 	PORT_eInterruptEither		= 0x0B,
 	PORT_eInterruptAsserted		= 0x0C,
 } PORTEvent_t;
-
 
 
 /*******************************************************************************
@@ -100,30 +81,45 @@ typedef enum
  * @param mode INPUT, OUTPUT, INPUT_PULLUP or INPUT_PULLDOWN.
  */
 void gpioMode (pin_t pin, uint8_t mode);
+
 /**
  * @brief Write a HIGH or a LOW value to a digital pin
  * @param pin the pin to write (according PORTNUM2PIN)
  * @param val Desired value (HIGH or LOW)
  */
-void gpioWrite(pin_t pin, bool value);
+void gpioWrite (pin_t pin, bool value);
+
 /**
  * @brief Toggle the value of a digital pin (HIGH<->LOW)
  * @param pin the pin to toggle (according PORTNUM2PIN)
  */
-//void gpioToggle (pin_t pin);
+void gpioToggle (pin_t pin);
 
 /**
  * @brief Reads the value from a specified digital pin, either HIGH or LOW.
  * @param pin the pin to read (according PORTNUM2PIN)
  * @return HIGH or LOW
  */
-bool gpioRead(pin_t pin);
+bool gpioRead (pin_t pin);
 
-void gpioToggle(pin_t pin);
+/**
+ * @brief				Set IRQ settings for the specified pin
+ * @param pin			The pin to configure
+ * @param irq_config	The IRQ configuration
+ */
+void gpioIRQ_Config (pin_t pin, PORTEvent_t irq_config);
 
+/**
+ * @brief				Clear interrupt flag
+ * @param pin			The pin to configure
+ */
+void gpio_clear_interrupt_flag(pin_t pin);
+
+/**
+ * @brief
+ */
 bool gpioFlank(pin_t pin, bool active);
 
-void gpioIRQconfig (pin_t pin, PORTEvent_t irq_config);
 
 /*******************************************************************************
  ******************************************************************************/

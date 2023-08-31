@@ -52,14 +52,14 @@ void sevenSegmentDecoder (uint8_t code);
 
 void Display_Init(void)
 {
-	gpioMode(PIN_SEG_A,OUTPUT_PULLDOWN);
-	gpioMode(PIN_SEG_B,OUTPUT_PULLDOWN);
-	gpioMode(PIN_SEG_C,OUTPUT_PULLDOWN);
-	gpioMode(PIN_SEG_D,OUTPUT_PULLDOWN);
-	gpioMode(PIN_SEG_E,OUTPUT_PULLDOWN);
-	gpioMode(PIN_SEG_F,OUTPUT_PULLDOWN);
-	gpioMode(PIN_SEG_G,OUTPUT_PULLDOWN);
-	gpioMode(PIN_SEG_DP,OUTPUT_PULLDOWN);
+	gpioMode(PIN_SEG_A,OUTPUT);
+	gpioMode(PIN_SEG_B,OUTPUT);
+	gpioMode(PIN_SEG_C,OUTPUT);
+	gpioMode(PIN_SEG_D,OUTPUT);
+	gpioMode(PIN_SEG_E,OUTPUT);
+	gpioMode(PIN_SEG_F,OUTPUT);
+	gpioMode(PIN_SEG_G,OUTPUT);
+	gpioMode(PIN_SEG_DP,OUTPUT);
 
 	gpioMode(PIN_SEL0,OUTPUT);
 	gpioMode(PIN_SEL1,OUTPUT);

@@ -25,14 +25,14 @@
  ******************************************************************************/
 enum cardState
 {
-	IDLE_,
+	IDLE,
 	READING,
 	FINISH
 };
 
-#define	SS	0b0001001
-#define	FS	0b0001101
-#define	ES_	0b0011111
+#define	SS	0b0001011U
+#define	FS	0b0001101U
+#define	ES	0b0011111U
 
 #define NUMBER_OF_CHARACTERS	40
 
@@ -51,16 +51,23 @@ bool cardReader_Init(void);
 
 /**
  * @brief Initialize CardReader driver
- * @return 2 if the data is ready, 1 if the data is being read, 0 if no data was obtained.
+ * @return True if the data is ready, False if not ready.
  */
-uint8_t getCardReader_Status(void);
+bool getCardReader_Status(void);
 
 /**
  * @brief Get the card data
  * @param data Pointer to an array that will store the data from the card (at least 40 bytes)
+ */
+void getCardReader_Data(uint8_t *data_buffer);
+
+/**
+ * @brief Check if data is valid with the LRC
+ * @param data_buffer Pointer to an array that stores the data from the card (at least 40 bytes)
+ * @param number_of_characters	Size of the data_buffer (should be at most 40)
  * @return True if data could be successfully read, False otherwise
  */
-bool getCardReader_Data(uint8_t *data);
+bool checkLRC_CardReader_Data(uint8_t *data_buffer, uint8_t number_of_characters);
 
 /*******************************************************************************
  ******************************************************************************/
