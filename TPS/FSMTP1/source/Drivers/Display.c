@@ -68,7 +68,7 @@ void Display_Init(void)
 	writeDigit(-1,1);
 	writeDigit(-1,2);
 	writeDigit(-1,3);
-	SysTick_Reg_Callback(muxDisplay,1000);
+	SysTick_Reg_Callback(muxDisplay,700);
 
 }
 
@@ -179,7 +179,7 @@ void updateDisplay(char * txt)
 	static int scroll_index=0;
 	static uint8_t scroll_type=no_scroll;
 	static uint8_t scroll_timer=0;
-	static uint8_t brightness_level=10;
+	static uint8_t brightness_level=0;
 	static uint8_t brightness_counter=0;
 
 	if (scroll_type==scroll_right)
@@ -224,11 +224,16 @@ void updateDisplay(char * txt)
 	}
 	else if (!strcmp(txt,"+B"))
 	{
-		brightness_level++;
+		if (brightness_level<5)
+			brightness_level++;
+		else if (brightness_level==5)
+			brightness_level=10;
+
 	}
 	else if (!strcmp(txt,"-B"))
 	{
-		brightness_level--;
+		if (brightness_level>0)
+			brightness_level--;
 	}
 	else if (!strcmp(txt,"MUX"))
 	{
@@ -242,7 +247,7 @@ void updateDisplay(char * txt)
 			writeDigit(0,mux_digit);
 		else
 		{
-			if ((brightness_counter<=brightness_level) && (brightness_level !=0))
+			if ((brightness_counter<=brightness_level))
 			{
 				writeDigit(txt2print[scroll_index+mux_digit],mux_digit);
 			}

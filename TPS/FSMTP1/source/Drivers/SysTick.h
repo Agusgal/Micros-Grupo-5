@@ -19,7 +19,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 #define TOTAL_NUM_CALLBACK_FUNCTIONS	15	// Total number of callback functions
-#define SYSTICK_ISR_PERIOD_US 1000U		// Period of SysTick in microseconds
+#define SYSTICK_ISR_PERIOD_US 500U		// Period of SysTick in microseconds
 #define S_TO_US		1000000
 #define MS_TO_US	1000
 /*******************************************************************************

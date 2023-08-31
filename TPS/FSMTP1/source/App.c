@@ -74,7 +74,7 @@ void App_Init (void)
     hw_DisableInterrupts();
     SysTick_Init();
     hw_EnableInterrupts();
-
+    writeMessage("8888",false);
 }
 
 
@@ -108,10 +108,8 @@ void fill_queue(void)
 {
 	//check for Card events
 	int enc=getEncoderSwitch_State();
-	if (enc==FIVE_SEC_PRESS)
-		writeMessage("Cinco segundos che",true);
-	else if (enc==RISING_FLANK)
-		pauseMessage();
+	 if (enc==RISING_FLANK)
+		incBrightness();
 
 	//else if (getEncoderSwitch_State()==RELEASED)
 	//	pauseMessage();
