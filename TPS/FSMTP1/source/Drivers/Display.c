@@ -17,7 +17,7 @@
  ******************************************************************************/
 #define PRINT_ARRAY_LENGTH 30
 #define SPARE_SPACE_4_SCROLL -3
-#define SCROLL_TIMER_LIMIT 50
+#define SCROLL_TIMER_LIMIT 200
 #define MAX_BRIGHTNESS_COUNTER 10
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -179,7 +179,7 @@ void updateDisplay(char * txt)
 	static int scroll_index=0;
 	static uint8_t scroll_type=no_scroll;
 	static uint8_t scroll_timer=0;
-	static uint8_t brightness_level=0;
+	static uint8_t brightness_level=10;
 	static uint8_t brightness_counter=0;
 
 	if (scroll_type==scroll_right)

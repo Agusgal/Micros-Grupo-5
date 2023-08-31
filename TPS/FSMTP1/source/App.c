@@ -10,13 +10,16 @@
 
 #include <stdio.h>
 
-#include "Drivers/board.h"
-#include "Drivers/gpio.h"
+
 
 #include "MK64F12.h"
 #include "hardware.h"
+
 #include "Drivers/Display.h"
 #include "Drivers/Encoder.h"
+#include "Drivers/board.h"
+#include "Drivers/gpio.h"
+#include "Drivers/BoardLeds.h"
 
 #include "EventQueue/queue.h"
 #include "FSM/FSM.h"
@@ -55,6 +58,7 @@ void App_Init (void)
 	Display_Init();
 
 	//Init Leds
+	BoardLeds_Init();
 
 	//Init Timers
 
@@ -67,25 +71,10 @@ void App_Init (void)
 	current_state = get_initial_state();
 	start_fsm();
 
-
-	gpioMode(PIN_LED_RED,OUTPUT);
-	//gpioMode(PIN_LED_GREEN,OUTPUT);
-	//gpioMode(PIN_LED_BLUE,OUTPUT);
-
-	//gpioMode(PIN_SW3,INPUT);
-
-	//gpioMode(PIN_SW2,INPUT_PULLUP);
-
     hw_DisableInterrupts();
     SysTick_Init();
     hw_EnableInterrupts();
-    //NVIC_EnableIRQ(PORTC_IRQn);
-    //gpioIRQconfig(PIN_SW2,PORT_eInterruptFalling);
-    //gpioIRQconfig(PIN_CH_A,PORT_eInterruptEither);
-    //gpioIRQconfig(PIN_CH_B,PORT_eInterruptEither);
-    gpioWrite(PIN_LED_RED,!LED_ACTIVE);
-	//gpioWrite(PIN_LED_GREEN,!LED_ACTIVE);
-	//gpioWrite(PIN_LED_BLUE,!LED_ACTIVE);
+
 }
 
 
@@ -118,6 +107,14 @@ void idle(void)
 void fill_queue(void)
 {
 	//check for Card events
+	int enc=getEncoderSwitch_State();
+	if (enc==FIVE_SEC_PRESS)
+		writeMessage("Cinco segundos che",true);
+	else if (enc==RISING_FLANK)
+		pauseMessage();
+
+	//else if (getEncoderSwitch_State()==RELEASED)
+	//	pauseMessage();
 
 	//check for encoder turn events
 
