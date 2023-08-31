@@ -8,7 +8,6 @@ C_SRCS += \
 ../source/Drivers/CardReader_DRV.c \
 ../source/Drivers/Display.c \
 ../source/Drivers/Encoder.c \
-../source/Drivers/FrdmLeds.c \
 ../source/Drivers/SysTick.c \
 ../source/Drivers/gpio.c 
 
@@ -17,7 +16,6 @@ OBJS += \
 ./source/Drivers/CardReader_DRV.o \
 ./source/Drivers/Display.o \
 ./source/Drivers/Encoder.o \
-./source/Drivers/FrdmLeds.o \
 ./source/Drivers/SysTick.o \
 ./source/Drivers/gpio.o 
 
@@ -26,7 +24,6 @@ C_DEPS += \
 ./source/Drivers/CardReader_DRV.d \
 ./source/Drivers/Display.d \
 ./source/Drivers/Encoder.d \
-./source/Drivers/FrdmLeds.d \
 ./source/Drivers/SysTick.d \
 ./source/Drivers/gpio.d 
 

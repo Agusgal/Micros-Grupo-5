@@ -15,7 +15,7 @@
 #include "board.h"
 #include "Encoder.h"
 #include "Systick.h"
-
+#include "BoardLeds.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/

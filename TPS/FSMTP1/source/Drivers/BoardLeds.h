@@ -24,9 +24,6 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
-
-enum encoderStates {ACW1=1,ACW2,ACW3,ACW4,CW1,CW2,CW3,CW4};
-enum events {ANTI_CLOCKWISE_TURN=1, CLOCKWISE_TURN,ENC_SW_PRESS};
 typedef enum ledID {RED_LED = PIN_LED_RED , BLUE_LED = PIN_LED_BLUE, GREEN_LED = PIN_LED_GREEN} ledID;
 
 
