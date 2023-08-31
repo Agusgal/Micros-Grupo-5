@@ -23,12 +23,14 @@ void init_id()
 {
 	//give some feedback on user input (leds)
 	//stop display multiplexing (animations)
+	pauseMessage();
+
 }
 
 
 void waiting_id()
 {
-	writeMessage("Waiting", true);
+	writeMessage("Please insert your ID", true);
 	//llama funciones de drivers de display para mostrar mensaje
 	//
 }
