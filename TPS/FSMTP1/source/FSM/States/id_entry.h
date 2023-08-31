@@ -18,7 +18,6 @@
 /**
  * @brief Initializes user input
  */
-void init_id(void);
 
 void init_cardswipe(void);
 
