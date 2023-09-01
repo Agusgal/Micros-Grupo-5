@@ -156,6 +156,40 @@ bool checkLRC_CardReader_Data(uint8_t *data_buffer, uint8_t number_of_characters
 
 }
 
+/**
+* @brief Get the card ID
+* @param data_buffer Pointer to an array that stores the data from the card (at least 40 bytes)
+* @param number_of_characters	Size of the data_buffer (should be at most 40)
+* @param ID_buffer Pointer to an array that stores the data from the card (at least 9 bytes)
+* @return True if data could be successfully read, False otherwise
+*/
+bool getCard_ID(uint8_t *data_buffer, uint8_t number_of_characters, uint8_t *ID_buffer)
+{
+	uint8_t i, j = 0;
+	uint8_t max_number_of_characters = (number_of_characters < NUMBER_OF_CHARACTERS) ?  number_of_characters : NUMBER_OF_CHARACTERS;
+	bool FSFound = false;
+
+	for(i = 1; i < max_number_of_characters && !FSFound && j < 19; i++)
+	{
+		if(data_buffer[i] == FS)
+		{
+			FSFound = true;
+		}
+		else
+		{
+			if((data_buffer[i] & 0b00001111) > 9)
+			{
+				return false;
+			}
+			ID_buffer[j++] = data_buffer[i] & 0b00001111;
+		}
+	}
+
+	// If no Field Separator return false
+	return FSFound;
+
+}
+
 
 /*******************************************************************************
  *******************************************************************************
