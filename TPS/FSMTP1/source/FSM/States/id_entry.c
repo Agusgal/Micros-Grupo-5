@@ -9,30 +9,21 @@
 
 #include "Drivers/Display.h"
 #include "Drivers/Encoder.h"
+#include "Drivers/BoardLeds.h"
 
-#define ID_SIZE 8
-
-
-//Variables to keep track of user ID input
-static uint8_t id[ID_SIZE];
-static uint8_t curr_pos = 0;
+#include "User/userInput.h"
+#include "User/userData.h"
 
 
 
-void init_id()
+
+void init_cardswipe(void)
 {
-	//give some feedback on user input (leds)
-	//stop display multiplexing (animations)
-	pauseMessage();
-
+	//?
 }
 
 
-void waiting_id()
+void welcome_animation()
 {
-	writeMessage("Please insert your ID", true);
-	//llama funciones de drivers de display para mostrar mensaje
-	//
+	writeMessage("Insert ID", true);
 }
-
-

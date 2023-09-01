@@ -19,9 +19,12 @@
  * @brief Initializes user input
  */
 
+
+void init_id(void);
+
 void up_number(void);
 void down_number(void);
-void ok_number_encoder(void);
+void accept_number(void);
 void msg_fail_encoder(void);
 void msg_ok_encoder(void);
 

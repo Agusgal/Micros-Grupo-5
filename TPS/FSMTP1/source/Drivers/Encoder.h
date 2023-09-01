@@ -4,11 +4,8 @@
   @author   Nicolás Magliola
  ******************************************************************************/
 
-
-
 #ifndef _ENCODER_H_
 #define _ENCODER_H_
-
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
@@ -22,17 +19,14 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-#define IDLE 0
-#define RISING_FLANK 2
-
-enum encoderStates {ACW1=1,ACW2,ACW3,ACW4,CW1,CW2,CW3,CW4};
-enum events {ANTI_CLOCKWISE_TURN=1, CLOCKWISE_TURN,ENC_SW_PRESS};
-
-
-
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
+
+enum encoderStates {ACW1=1,ACW2,ACW3,ACW4,CW1,CW2,CW3,CW4};
+enum encoderOutPuts {NO_MOVE,RIGHT_TURN,LEFT_TURN};
+enum encoderSwitchOutPuts {RELEASED,PRESSED,RISING_FLANK,FIVE_SEC_PRESS};
+
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
@@ -42,11 +36,13 @@ enum events {ANTI_CLOCKWISE_TURN=1, CLOCKWISE_TURN,ENC_SW_PRESS};
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
-
 void Encoder_Init(void);
-int EncoderStatus(void);
-int EncoderSwitchRead(void);
 
+void Encoder_Update(void);
+void EncoderSwitch_Update(void);
+
+int getEncoderSwitch_State(void);
+int getEncoder_State(void);
 
 /*******************************************************************************
  ******************************************************************************/

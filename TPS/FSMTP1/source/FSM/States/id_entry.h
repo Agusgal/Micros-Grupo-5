@@ -18,8 +18,9 @@
 /**
  * @brief Initializes user input
  */
-void init_id(void);
 
-void waiting_id(void);
+void init_cardswipe(void);
+
+void welcome_animation(void);
 
 #endif /* ID_ENTRY_H_ */

@@ -17,7 +17,7 @@
  ******************************************************************************/
 #define PRINT_ARRAY_LENGTH 30
 #define SPARE_SPACE_4_SCROLL -3
-#define SCROLL_TIMER_LIMIT 50
+#define SCROLL_TIMER_LIMIT 255 //TODO
 #define MAX_BRIGHTNESS_COUNTER 10
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -31,7 +31,7 @@ const unsigned char sevseg_digits_code[75]= {
 /*  H     I     J     K     L     M     N     O     P     Q     R     S     */
     0x37, 0x06, 0x3C, 0x57, 0x0E, 0x76, 0x15, 0x1D, 0x67, 0x73, 0x05, 0x5B,
 /*  T     U     V     W     X     Y     Z     [     \     ]     ^     _     */
-    0x0F, 0x3E, 0x1C, 0x5C, 0x13, 0x3B, 0x6D, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x0F, 0x3E, 0x1C, 0x5C, 0x13, 0x3B, 0x6D, 0x5B, 0x00, 0x5D, 0x00, 0x00,
 /*  `     a     b     c     d     e     f     g     h     i     j     k     */
     0x00, 0x77, 0x1F, 0x4E, 0x3D, 0x4F, 0x47, 0x5E, 0x37, 0x06, 0x3C, 0x57,
 /*  l     m     n     o     p     q     r     s     t     u     v     w     */
@@ -68,7 +68,7 @@ void Display_Init(void)
 	writeDigit(-1,1);
 	writeDigit(-1,2);
 	writeDigit(-1,3);
-	SysTick_Reg_Callback(muxDisplay,1000);
+	SysTick_Reg_Callback(muxDisplay,700);
 
 }
 
@@ -152,6 +152,12 @@ void writeDigit (int character,uint8_t digit)
 		code = 0x00;
 	else if (character == '.')
 		code = 0x80;
+	else if (character == '-')
+		code = 0x01;
+	else if (character == '*')
+			code = 0x2A;
+	else if (character == ']')
+			code = 0x5D;
 	else code = sevseg_digits_code[character - '0'];
 
 	sevenSegmentDecoder(code);
@@ -224,11 +230,16 @@ void updateDisplay(char * txt)
 	}
 	else if (!strcmp(txt,"+B"))
 	{
-		brightness_level++;
+		if (brightness_level<5)
+			brightness_level++;
+		else if (brightness_level==5)
+			brightness_level=10;
+
 	}
 	else if (!strcmp(txt,"-B"))
 	{
-		brightness_level--;
+		if (brightness_level>0)
+			brightness_level--;
 	}
 	else if (!strcmp(txt,"MUX"))
 	{
@@ -242,7 +253,7 @@ void updateDisplay(char * txt)
 			writeDigit(0,mux_digit);
 		else
 		{
-			if ((brightness_counter<=brightness_level) && (brightness_level !=0))
+			if ((brightness_counter<=brightness_level))
 			{
 				writeDigit(txt2print[scroll_index+mux_digit],mux_digit);
 			}

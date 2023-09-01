@@ -31,6 +31,8 @@
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
+static void pass(void);
+
 
 /*******************************************************************************
  *******************************************************************************
@@ -80,14 +82,14 @@ state* get_initial_state()
 
 void start_fsm()
 {
-	//show some kind of feedback.
+	welcome_animation();
 }
 
 
 
 state ID_ENTRY[]=
 {
-		{waiting_id, NONE_EV, ID_ENTRY},
+		{pass, NONE_EV, ID_ENTRY},
 
 		{init_id, ENC_LEFT_EV, ENCODER_ENTRY},
 
@@ -101,11 +103,11 @@ state ID_ENTRY[]=
 
 state ENCODER_ENTRY[]=
 {
-		{up_number, ENC_LEFT_EV, ENCODER_ENTRY},
+		{down_number, ENC_LEFT_EV, ENCODER_ENTRY},
 
-		{down_number, ENC_RIGHT_EV, ENCODER_ENTRY},
+		{up_number, ENC_RIGHT_EV, ENCODER_ENTRY},
 
-		{ok_number_encoder, ENC_PRESSED_EV, ENCODER_ENTRY},
+		{accept_number, ENC_PRESSED_EV, ENCODER_ENTRY},
 
 		{msg_fail_encoder, ID_FAIL_ENC_EV, RED_LED_ON},
 
@@ -158,5 +160,9 @@ state WRONG_ID[]=
 
 
 
+static void pass(void)
+{
+
+}
 /*******************************************************************************
  ******************************************************************************/
