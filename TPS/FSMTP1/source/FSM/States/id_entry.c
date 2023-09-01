@@ -25,5 +25,5 @@ void init_cardswipe(void)
 
 void welcome_animation()
 {
-	writeMessage("Welcome", true);
+	writeMessage("Insert ID", true);
 }

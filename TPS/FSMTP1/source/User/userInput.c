@@ -9,11 +9,11 @@
 #include <stdbool.h>
 
 
-static void delete_last_entry(int8_t *input_array, int array_size);
+static void delete_last_entry(char *input_array, int array_size);
 
 
 
-void reset_array(int8_t *input_array, uint8_t *curr_pos, int array_size)
+void reset_array(char *input_array, char *curr_pos, int array_size)
 {
 	for(int i = 0; i < array_size; i++)
 	{
@@ -24,59 +24,59 @@ void reset_array(int8_t *input_array, uint8_t *curr_pos, int array_size)
 }
 
 
-void decrease_number(int8_t *input_array, uint8_t curr_pos)
+void decrease_number(char *input_array, char curr_pos)
 {
-	if (input_array[curr_pos] > 0)
+	if (input_array[curr_pos] > '0')
 	{
 		input_array[curr_pos]--;
 	}
-	else if (input_array[curr_pos] == 0 || input_array[curr_pos] == EMPTY_CHAR)
+	else if (input_array[curr_pos] == '0' || input_array[curr_pos] == EMPTY_CHAR)
 	{
 		input_array[curr_pos]++;
 	}
 	else
 	{
-		input_array[curr_pos] = BACKSPACE;
+		input_array[curr_pos] = BACKSPACE_L;
 	}
 }
 
-void increase_number(int8_t *input_array, uint8_t curr_pos)
+void increase_number(char *input_array, char curr_pos)
 {
-	if (input_array[curr_pos] == BACKSPACE)
+	if (input_array[curr_pos] == BACKSPACE_R)
 	{
-		input_array[curr_pos] = 0;
+		input_array[curr_pos] = '0';
 	}
 	else if (input_array[curr_pos] == EMPTY_CHAR)
 	{
-		input_array[curr_pos] = 0;
+		input_array[curr_pos] = '0';
 	}
-	else if (input_array[curr_pos] < 9)
+	else if (input_array[curr_pos] < '9')
 	{
 		input_array[curr_pos]++;
 	}
 	else
 	{
-		input_array[curr_pos] = BACKSPACE;
+		input_array[curr_pos] = BACKSPACE_R;
 	}
 }
 
-void input_number(int8_t *input_array, uint8_t *curr_pos, int array_size)
+void input_number(char *input_array, char *curr_pos, int array_size)
 {
-	if(input_array[*curr_pos] == BACKSPACE)
+	if(input_array[*curr_pos] == BACKSPACE_L || input_array[*curr_pos] == BACKSPACE_R)
 	{
 		delete_last_entry(input_array, array_size);
 		*(curr_pos)--;
 	}
-	else if ((input_array[*curr_pos] >= 0 && input_array[*curr_pos] <= 9) && (curr_pos != array_size - 1))
+	else if ((input_array[*curr_pos] >= '0' && input_array[*curr_pos] <= '9') && (curr_pos != array_size - 1))
 	{
 		*(curr_pos)++;
 		input_array[*curr_pos] = EMPTY_CHAR;
-		//write on display //TODO: DONDE ESCRIBO?????/
+
 	}
 }
 
 
-int get_used_entries(int8_t *input_array, int array_size)
+int get_used_entries(char *input_array, int array_size)
 {
 	int length = 0;
 	bool found = false;
@@ -84,7 +84,7 @@ int get_used_entries(int8_t *input_array, int array_size)
 	while (!found && length < array_size)
 	{
 		int8_t last_char = input_array[length];
-		if (last_char == BACKSPACE || last_char == EMPTY_CHAR)
+		if (last_char == BACKSPACE_L || last_char == BACKSPACE_R || last_char == EMPTY_CHAR)
 		{
 			found = true;
 		}
@@ -99,7 +99,7 @@ int get_used_entries(int8_t *input_array, int array_size)
 
 
 
-static void delete_last_entry(int8_t *input_array, int array_size)
+static void delete_last_entry(char *input_array, int array_size)
 {
 	int used_size = get_used_entries(input_array, array_size);
 

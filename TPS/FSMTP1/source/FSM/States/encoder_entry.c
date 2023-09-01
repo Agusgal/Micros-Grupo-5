@@ -11,11 +11,12 @@
 #include "Drivers/Encoder.h"
 
 #include "User/userInput.h"
+#include "Drivers/BoardLeds.h"
 
 #define ID_SIZE 8
 
 //Variables to keep track of user ID input
-static uint8_t id[ID_SIZE];
+static int8_t id[ID_SIZE];
 static uint8_t curr_pos = 0;
 
 
@@ -40,29 +41,31 @@ void down_number(void)
 
 void accept_number(void)
 {
-
+	input_number(id, curr_pos,ID_SIZE);
+	writeMessage(id,false);
 }
+
 
 void msg_fail_encoder(void)
 {
-
+	writeMessage("ID not found", true);
 }
 
 void msg_ok_encoder(void)
 {
-
+	writeMessage("ID found", true);
 }
 
 
 void init_id()
 {
-	//give some feedback on user input (leds)
-	led_blue_on();
+	//give some feedback on user input (leds). Toggles LED until correct ID is found
+	led_toggle(BLUE_LED);
 
 	//reset user input array
-	reset_array(id, curr_pos, ID_SIZE);
+	reset_array(id, &curr_pos, ID_SIZE);
 
 	//erase screen
-	writeMessage("", false);
+	pauseMessage();
 
 }

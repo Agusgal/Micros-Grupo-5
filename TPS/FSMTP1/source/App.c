@@ -53,6 +53,7 @@ static state *current_state;
 void App_Init (void)
 {
 	//Init Queue
+	queue_Init();
 
 	//Init display
 	Display_Init();
@@ -74,7 +75,7 @@ void App_Init (void)
     hw_DisableInterrupts();
     SysTick_Init();
     hw_EnableInterrupts();
-    writeMessage("8888",false);
+    //writeMessage("8888",false);
 }
 
 
@@ -107,16 +108,43 @@ void idle(void)
 void fill_queue(void)
 {
 	//check for Card events
-	int enc=getEncoderSwitch_State();
+
+
+
+
+	/* para debuggear el brightness
+	 int enc=getEncoderSwitch_State();
 	 if (enc==RISING_FLANK)
 		incBrightness();
 
-	//else if (getEncoderSwitch_State()==RELEASED)
-	//	pauseMessage();
+	if (getEncoderSwitch_State()==RELEASED)
+	{
+		pauseMessage();
+	}
+	*/
 
 	//check for encoder turn events
 
+	int move_enc = getEncoder_State();
+
+	if(move_enc == 1) //move right
+	{
+		push_Queue_Element(ENC_RIGHT_EV);
+	}
+
+	else if (move_enc == 2)
+	{
+		push_Queue_Element(ENC_LEFT_EV);
+	}
+
 	//check for encoder press events
+	if (getEncoderSwitch_State())
+	{
+		push_Queue_Element(ENC_PRESSED_EV);
+	}
+
+
+
 
 	//check for timer events.
 
