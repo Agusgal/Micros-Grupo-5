@@ -85,12 +85,8 @@ void App_Run (void)
 {
 	fill_queue();
 
-	Event_Type event;
-	if (get_Queue_Status())
-	{
-		event = pull_Queue_Element();
-	}
 
+	Event_Type event = pull_Queue_Element();
 
 	if (event != NONE_EV)
 	{
