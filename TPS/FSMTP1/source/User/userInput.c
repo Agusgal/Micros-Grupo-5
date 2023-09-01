@@ -30,9 +30,9 @@ void decrease_number(char *input_array, char curr_pos)
 	{
 		input_array[curr_pos]--;
 	}
-	else if (input_array[curr_pos] == '0' || input_array[curr_pos] == EMPTY_CHAR)
+	else if (input_array[curr_pos] == EMPTY_CHAR)
 	{
-		input_array[curr_pos]++;
+		input_array[curr_pos] = '0';
 	}
 	else
 	{
@@ -71,7 +71,6 @@ void input_number(char *input_array, char *curr_pos, int array_size)
 	{
 		*(curr_pos)++;
 		input_array[*curr_pos] = EMPTY_CHAR;
-
 	}
 }
 
