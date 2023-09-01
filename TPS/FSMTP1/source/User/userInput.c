@@ -26,13 +26,17 @@ void reset_array(char *input_array, char *curr_pos, int array_size)
 
 void decrease_number(char *input_array, char curr_pos)
 {
-	if (input_array[curr_pos] > '0')
+	if (input_array[curr_pos] > '0' && input_array[curr_pos] <= '9')
 	{
 		input_array[curr_pos]--;
 	}
-	else if (input_array[curr_pos] == '0' || input_array[curr_pos] == EMPTY_CHAR)
+	else if (input_array[curr_pos] == EMPTY_CHAR)
 	{
-		input_array[curr_pos]++;
+		input_array[curr_pos] = '0';
+	}
+	else if (input_array[curr_pos] == BACKSPACE_L)
+	{
+		input_array[curr_pos] = '9';
 	}
 	else
 	{

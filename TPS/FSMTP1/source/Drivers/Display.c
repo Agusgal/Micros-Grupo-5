@@ -154,8 +154,8 @@ void writeDigit (int character,uint8_t digit)
 		code = 0x80;
 	else if (character == '-')
 		code = 0x01;
-	else if (character == '[')
-			code = 0x5B;
+	else if (character == '*')
+			code = 0x2A;
 	else if (character == ']')
 			code = 0x5D;
 	else code = sevseg_digits_code[character - '0'];
