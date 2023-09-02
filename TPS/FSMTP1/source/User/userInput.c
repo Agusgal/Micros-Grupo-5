@@ -114,6 +114,7 @@ static void delete_last_entry(char *input_array, int array_size)
 	else
 	{
 		input_array[used_size - 1] = EMPTY_CHAR;
+		input_array[used_size] = EMPTY_CHAR;
 		//write on display //TODO: DONDE ESCRIBO>?????
 	}
 }
