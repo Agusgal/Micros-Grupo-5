@@ -85,7 +85,6 @@ void App_Run (void)
 {
 	fill_queue();
 
-
 	Event_Type event = pull_Queue_Element();
 
 	if (event != NONE_EV)
@@ -140,7 +139,7 @@ void fill_queue(void)
 	}
 
 	//check for encoder press events
-	if (getEncoderSwitch_State())
+	if (!getEncoderSwitch_State())
 	{
 		push_Queue_Element(ENC_PRESSED_EV);
 	}

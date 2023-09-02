@@ -56,11 +56,10 @@ state* fsm_dispatcher (state* p_state, Event_Type curr_event)
 
 	while(flag)
 	{
-		if(p_state->event == curr_event && p_state->event != END_TABLE)
+		if(p_state->event == curr_event || p_state->event == END_TABLE)
 		{
 			flag=0;
 		}
-
 		else
 		{
 			p_state++;
@@ -111,7 +110,9 @@ state ENCODER_ENTRY[]=
 
 		{msg_fail_encoder, ID_FAIL_ENC_EV, RED_LED_ON},
 
-		{msg_ok_encoder, ID_OK_ENC_EV, PIN_ENTRY}
+		{msg_ok_encoder, ID_OK_ENC_EV, PIN_ENTRY},
+
+		{pass, END_TABLE, ENCODER_ENTRY},
 
 };
 
@@ -119,7 +120,9 @@ state CARD_ENTRY[]=
 {
 		//{msg_fail, ID_FAIL_CARD_EV, RED_LED_ON},
 
-		//{msg_ok, ID_OK_CARD_EV, PIN_ENTRY}
+		//{msg_ok, ID_OK_CARD_EV, PIN_ENTRY},
+
+		{pass, END_TABLE, CARD_ENTRY},
 
 };
 
@@ -133,6 +136,10 @@ state PIN_ENTRY[]=
 
 state RED_LED_ON[]=
 {
+		{pass, NONE_EV, RED_LED_ON},
+
+		{pass, END_TABLE, RED_LED_ON},
+
 		//{five_sec_red, FIVE_SEC_LAPSE_EV, ID_ENTRY},
 
 		//{one_min_red, MIN_LAPSE_EV, WRONG_ID}

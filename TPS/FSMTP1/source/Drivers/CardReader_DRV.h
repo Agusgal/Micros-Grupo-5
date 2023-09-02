@@ -23,11 +23,11 @@
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-enum cardState
+enum cardStatus
 {
-	IDLE,
-	READING,
-	FINISH
+	CARD_SUCCESS,
+	CARD_FAIL,
+	CARD_IDLE
 };
 
 #define	SS	0b0001011U
@@ -51,9 +51,9 @@ bool cardReader_Init(void);
 
 /**
  * @brief Initialize CardReader driver
- * @return True if the data is ready, False if not ready.
+ * @return 0 if the data is ready, 1 if the data is wrong, 2 if no data was obtained.
  */
-bool getCardReader_Status(void);
+uint8_t getCardReader_Status(void);
 
 /**
  * @brief Get the card data

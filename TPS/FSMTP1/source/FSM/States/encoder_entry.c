@@ -66,7 +66,6 @@ void accept_number(void)
 	//if every number was written the we check if the id is valid
 	if (curr_pos > 7 )
 	{
-
 		id[ID_SIZE - 1] = '\0';
 		bool id_ok = check_encoder_id(id);
 

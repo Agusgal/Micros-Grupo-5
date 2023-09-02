@@ -24,7 +24,6 @@ void reset_array(char *input_array, uint8_t *curr_pos, int array_size)
 	*curr_pos = 0;
 }
 
-
 void decrease_number(char *input_array, char curr_pos)
 {
 	if (input_array[curr_pos] > '0' && input_array[curr_pos] <= '9')
@@ -78,7 +77,7 @@ void input_number(char *input_array, uint8_t *curr_pos, int array_size)
 	else if ((input_array[*curr_pos] >= '0' && input_array[*curr_pos] <= '9') && (curr_pos != array_size - 1))
 	{
 		(*curr_pos)++;
-		input_array[*curr_pos] = EMPTY_CHAR;
+		//input_array[*curr_pos] = EMPTY_CHAR;
 	}
 
 }

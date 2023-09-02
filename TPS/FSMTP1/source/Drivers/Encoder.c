@@ -23,7 +23,7 @@
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 static int encoder=NO_MOVE;
-static int encoder_sw=IDLE;
+static int encoder_sw=IDLE_;
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -133,14 +133,14 @@ void EncoderSwitch_Update(void)
 	}
 	else if (sw_state==LOW) // && sw_Read == HIGH pero no hace falta
 	{
-		encoder_sw = IDLE;
+		encoder_sw = IDLE_;
 		duration_counter=0;
 	}
 	else if ((sw_state==HIGH) && (sw_Read == LOW))
 	{
 		duration_counter++;
 		if (duration_counter>=FIVE_SECOND_COUNTER)
-			encoder_sw=FIVE_SEC_PRESS;
+			encoder_sw=FIVE_SEC_PRESSING;
 		else
 			encoder_sw=PRESSED;
 	}
@@ -158,7 +158,7 @@ void EncoderSwitch_Update(void)
 int getEncoderSwitch_State(void)
 {
 	int aux=encoder_sw;
-	encoder_sw=IDLE;
+	encoder_sw=IDLE_;
 	return aux;
 }
 

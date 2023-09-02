@@ -18,19 +18,26 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define	PIN_CLOCK  		2     	//PTA0
+#define	PIN_CLOCK  		2     	//PTB2  Clock Green
 #define PORT_CLOCK		PB
 
-#define	PIN_DATA		3		//PTA1
+#define	PIN_DATA		3		//PTB3 Data Blue
 #define PORT_DATA		PB
 
-#define PIN_ENABLE		10		//PTA2
+#define PIN_ENABLE		10		//PTB10 Enable Yellow
 #define PORT_ENABLE		PB
 
 #define	BIT_MASK(b)		((uint8_t)(~(0b11111111<<(b))))// To be used to obtain the (b-1) least significant bits with &
 
 #define SEQUENCE_MASK	((uint8_t)0b00011111)
 #define NEW_BIT_POSITION	5
+
+enum cardState
+{
+	IDLE,
+	READING,
+	FINISH
+};
 
 static uint8_t cardState = IDLE;
 static uint8_t data [40];
@@ -44,7 +51,8 @@ static uint8_t new_bit_position = 0;
 
 static uint32_t counter = 0;
 
-static bool	data_ready = false;
+static uint8_t data_ready = CARD_IDLE;
+static bool data_reading = false;
 
 // For debugging
 //#define	DEBUG_CARD
@@ -88,9 +96,9 @@ bool cardReader_Init(void)
 
 /**
  * @brief Initialize CardReader driver
- * @return 2 if the data is ready, 1 if the data is being read, 0 if no data was obtained.
+ * @return 0 if the data is ready, 1 if the data is wrong, 2 if no data was obtained.
  */
-bool getCardReader_Status(void)
+uint8_t getCardReader_Status(void)
 {
 	return data_ready;
 }
@@ -211,7 +219,7 @@ __ISR__ PORTB_IRQHandler(void)
 		cardState = IDLE;
 		number_of_characters = 0;
 		new_bit_position = 0;
-		data_ready = false;
+		data_ready = CARD_FAIL;
 	}
 	else
 	{
@@ -219,6 +227,8 @@ __ISR__ PORTB_IRQHandler(void)
 		{
 
 		case IDLE:
+			data_reading = true;
+			data_ready = CARD_IDLE;
 			// Store the new bit (ACTIVE LOW) in the fifth position and shift the byte
 			tempData = (tempData & SEQUENCE_MASK) | (!gpioRead(PORTNUM2PIN(PORT_DATA, PIN_DATA)) << NEW_BIT_POSITION);
 			tempData >>= 1;
@@ -260,7 +270,8 @@ __ISR__ PORTB_IRQHandler(void)
 			if(new_bit_position == 5 && number_of_characters < NUMBER_OF_CHARACTERS)
 			{
 				data[number_of_characters] = tempData;
-				data_ready = true;
+				data_ready = CARD_SUCCESS;
+				data_reading = false;
 				// Wait for timer to restart the state machine
 			}
 			break;
@@ -287,7 +298,14 @@ static void cardReader_PISR(void)
 			cardState = IDLE;
 			number_of_characters = 0;
 			new_bit_position = 0;
-			data_ready = false;
+			if(data_reading)
+			{
+				data_ready = CARD_FAIL;
+			}
+			else
+			{
+				data_ready = CARD_IDLE;
+			}
 		}
 	}
 
