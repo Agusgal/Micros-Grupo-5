@@ -65,20 +65,23 @@ void increase_number(char *input_array, char curr_pos)
 	}
 }
 
-void input_number(char *input_array, uint8_t *curr_pos, int array_size)
+bool input_number(char *input_array, uint8_t *curr_pos, int array_size)
 {
+	bool last;
 	if(input_array[*curr_pos] == BACKSPACE_L || input_array[*curr_pos] == BACKSPACE_R)
 	{
-		bool last = delete_last_entry(input_array, array_size);
-		if (! last)
+		last = delete_last_entry(input_array, array_size);
+		if (!last)
 		{
 			(*curr_pos)--;
 		}
+		return last;
 	}
 	else if ((input_array[*curr_pos] >= '0' && input_array[*curr_pos] <= '9') && (curr_pos != array_size - 1))
 	{
 		(*curr_pos)++;
 		input_array[*curr_pos] = EMPTY_CHAR;
+		return last;
 	}
 
 }
@@ -113,7 +116,6 @@ static bool delete_last_entry(char *input_array, int array_size)
 
 	if (used_size == 0)
 	{
-		push_Queue_Element(RETURN_EV);
 		return true;
 	}
 	else

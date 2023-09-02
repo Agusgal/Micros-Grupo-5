@@ -55,7 +55,10 @@ void down_number(void)
 
 void accept_number(void)
 {
-	input_number(id, &curr_pos,ID_SIZE);
+	bool is_last = false;
+	is_last = input_number(id, &curr_pos,ID_SIZE);
+
+
 	writeMessage(id,false);
 	for(int i = 0; i < curr_pos-3; i++)
 	{
@@ -77,6 +80,11 @@ void accept_number(void)
 		{
 			push_Queue_Element(ID_FAIL_ENC_EV);
 		}
+	}
+
+	if (is_last)
+	{
+		push_Queue_Element(RETURN_EV);
 	}
 }
 

@@ -13,7 +13,7 @@ char *user_pin1 = "1234";
 
 bool check_encoder_id(char *id)
 {
-	if (! strcmp(id, user_id1))
+	if (!strcmp(id, user_id1))
 	{
 		return true;
 	}
