@@ -20,6 +20,7 @@
 #include "Drivers/board.h"
 #include "Drivers/gpio.h"
 #include "Drivers/BoardLeds.h"
+#include "Drivers/CardReader_DRV.h"
 
 #include "EventQueue/queue.h"
 #include "FSM/FSM.h"
@@ -107,7 +108,7 @@ void idle(void)
 
 void fill_queue(void)
 {
-	bool card_var = getCardReader_Status();
+	uint8_t card_var = getCardReader_Status();
 
 
 
@@ -148,7 +149,7 @@ void fill_queue(void)
 		push_Queue_Element(CARD_SWIPE_EV);
 	}
 
-	else if (card_var)
+	else if (card_var == CARD_FAIL)
 	{
 		push_Queue_Element(CARD_MIDSWIPE_EV);
 	}

@@ -125,7 +125,7 @@ state CARD_ENTRY[]=
 
 		{msg_ok_card, ID_OK_CARD_EV, PIN_ENTRY},
 
-		{pass, RETURN_EV, ID_ENTRY},
+		{msg_error_card, RETURN_EV, ID_ENTRY},
 
 		{pass, END_TABLE, CARD_ENTRY},
 

@@ -49,7 +49,10 @@ void init_cardswipe(void)
 
 }
 
-
+void init_failed_cardswipe(void)
+{
+	push_Queue_Element(RETURN_EV);
+}
 
 static void initialize_id_array(void)
 {
@@ -61,11 +64,16 @@ static void initialize_id_array(void)
 
 void msg_fail_card()
 {
-	writeMessage("id failed", true);
+	writeMessage("Incorrect card ID", true);
 }
 
 void msg_ok_card()
 {
-	writeMessage("correct id",true);
+	writeMessage("Correct card ID",true);
+}
+
+void msg_error_card()
+{
+	writeMessage("Card reading failed", true);
 }
 

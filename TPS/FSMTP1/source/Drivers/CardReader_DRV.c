@@ -46,7 +46,7 @@ static uint8_t tempData = 0;
 static uint8_t new_bit_position = 0;
 
 // For timer
-#define TIME_CONSTANT		1000000	// 0.1 segs
+#define TIME_CONSTANT		100000	// 0.1 segs
 #define	TIMER_RESET_VALUE	10 // 1 segs
 
 static uint32_t counter = 0;
@@ -99,7 +99,9 @@ void cardReader_Init(void)
  */
 uint8_t getCardReader_Status(void)
 {
-	return data_ready;
+	uint8_t aux = data_ready;
+	data_ready = CARD_IDLE;
+	return aux;
 }
 
 /**
@@ -218,6 +220,7 @@ __ISR__ PORTB_IRQHandler(void)
 		number_of_characters = 0;
 		new_bit_position = 0;
 		data_ready = CARD_FAIL;
+		data_reading = false;
 	}
 	else
 	{
@@ -304,6 +307,7 @@ static void cardReader_PISR(void)
 			{
 				data_ready = CARD_IDLE;
 			}
+			data_reading = false;
 		}
 	}
 

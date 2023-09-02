@@ -31,7 +31,7 @@ typedef enum {
 			ENC_RIGHT_EV,
 			ENC_PRESSED_EV,
 			CARD_SWIPE_EV,
-			CARD_MIDSWIPE_EV;
+			CARD_MIDSWIPE_EV,
 			RETURN_EV,
 
 			ID_FAIL_ENC_EV,
@@ -44,7 +44,7 @@ typedef enum {
 			PIN_OK_EV,
 
 			FIVE_SEC_LAPSE_EV,
-			MIN_LAPSE_EV,
+			MIN_LAPSE_EV
 
 			}Event_Type;
 
