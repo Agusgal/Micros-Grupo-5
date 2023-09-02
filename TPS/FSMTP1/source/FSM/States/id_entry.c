@@ -16,13 +16,6 @@
 
 
 
-
-void init_cardswipe(void)
-{
-	//?
-}
-
-
 void welcome_animation()
 {
 	writeMessage("Insert ID", true);

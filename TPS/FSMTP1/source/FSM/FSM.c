@@ -13,6 +13,7 @@
 
 #include "States/id_entry.h"
 #include "States/encoder_entry.h"
+#include "States/card_entry.h"
 
 
 
@@ -96,7 +97,7 @@ state ID_ENTRY[]=
 
 		{init_id, ENC_PRESSED_EV, ENCODER_ENTRY},
 
-		{init_id, CARD_SWIPE_EV, CARD_ENTRY}
+		{init_cardswipe, CARD_SWIPE_EV, CARD_ENTRY}
 };
 
 
@@ -118,9 +119,11 @@ state ENCODER_ENTRY[]=
 
 state CARD_ENTRY[]=
 {
-		//{msg_fail, ID_FAIL_CARD_EV, RED_LED_ON},
+		{msg_fail_card, ID_FAIL_CARD_EV, RED_LED_ON},
 
-		//{msg_ok, ID_OK_CARD_EV, PIN_ENTRY},
+		{msg_ok_card, ID_OK_CARD_EV, PIN_ENTRY},
+
+		{pass, RETURN_EV, ID_ENTRY},
 
 		{pass, END_TABLE, CARD_ENTRY},
 

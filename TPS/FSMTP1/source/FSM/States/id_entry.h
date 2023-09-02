@@ -19,7 +19,6 @@
  * @brief Initializes user input
  */
 
-void init_cardswipe(void);
 
 void welcome_animation(void);
 

@@ -76,7 +76,7 @@ static void cardReader_PISR(void);
  * @brief Initialize CardReader driver
  * @return Initialization succeed
  */
-bool cardReader_Init(void)
+void cardReader_Init(void)
 {
 	// Clock pin
 	gpioMode(PORTNUM2PIN(PORT_CLOCK, PIN_CLOCK), INPUT);
@@ -90,7 +90,6 @@ bool cardReader_Init(void)
 
 	SysTick_Reg_Callback(cardReader_PISR, TIME_CONSTANT);
 
-	return true;
 
 }
 
@@ -133,7 +132,7 @@ bool checkLRC_CardReader_Data(uint8_t *data_buffer, uint8_t number_of_characters
 	for(i = 1; i < max_number_of_characters && !ESFound; i++)
 	{
 		aux ^= data_buffer[i];
-		if(data_buffer[i] == ES)
+		if(data_buffer[i] == ES_)
 		{
 			ESFound = true;
 		}
@@ -177,7 +176,7 @@ bool getCard_ID(uint8_t *data_buffer, uint8_t number_of_characters, uint8_t *ID_
 	uint8_t max_number_of_characters = (number_of_characters < NUMBER_OF_CHARACTERS) ?  number_of_characters : NUMBER_OF_CHARACTERS;
 	bool FSFound = false;
 
-	for(i = 1; i < max_number_of_characters && !FSFound && j < 19; i++)
+	for(i = 1; i < max_number_of_characters && !FSFound && j < 20; i++)
 	{
 		if(data_buffer[i] == FS)
 		{
@@ -197,7 +196,6 @@ bool getCard_ID(uint8_t *data_buffer, uint8_t number_of_characters, uint8_t *ID_
 	return FSFound;
 
 }
-
 
 /*******************************************************************************
  *******************************************************************************
@@ -255,7 +253,7 @@ __ISR__ PORTB_IRQHandler(void)
 				new_bit_position = 0;
 
 				// Check for End Sentinel
-				if(tempData == ES)
+				if(tempData == ES_)
 				{
 					cardState = FINISH;
 				}

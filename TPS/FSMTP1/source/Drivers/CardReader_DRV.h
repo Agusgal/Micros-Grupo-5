@@ -30,9 +30,9 @@ enum cardStatus
 	CARD_IDLE
 };
 
-#define	SS	0b0001011U
-#define	FS	0b0001101U
-#define	ES	0b0011111U
+#define	SS	0b0001011
+#define	FS	0b0001101
+#define	ES_	0b0011111
 
 #define NUMBER_OF_CHARACTERS	40
 
@@ -47,7 +47,7 @@ enum cardStatus
  * @brief Initialize CardReader driver
  * @return Initialization succeed
  */
-bool cardReader_Init(void);
+void cardReader_Init(void);
 
 /**
  * @brief Initialize CardReader driver

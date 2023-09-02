@@ -61,9 +61,8 @@ void App_Init (void)
 	//Init Leds
 	BoardLeds_Init();
 
-	//Init Timers
-
-	//Init reader
+	//Init card_reader
+	cardReader_Init();
 
 	//Init Encoder
 	Encoder_Init();
@@ -142,6 +141,11 @@ void fill_queue(void)
 	if (!getEncoderSwitch_State())
 	{
 		push_Queue_Element(ENC_PRESSED_EV);
+	}
+
+	if (!getCardReader_Status())
+	{
+		push_Queue_Element(CARD_SWIPE_EV);
 	}
 
 

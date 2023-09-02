@@ -1,9 +1,11 @@
 #ifndef CARD_ENTRY_H
 #define CARD_ENTRY_H
 
-#include ""
 
+void init_cardswipe(void);
 
+void msg_fail_card(void);
 
+void msg_ok_card(void);
 
 #endif /* CARD_ENTRY_H */
