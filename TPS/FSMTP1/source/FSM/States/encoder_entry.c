@@ -63,7 +63,7 @@ void accept_number(void)
 	}
 
 	//if every number was written the we check if the id is valid
-	if (curr_pos > 7)
+	if (curr_pos > 7 )
 	{
 
 		id[ID_SIZE-1] = '\0';

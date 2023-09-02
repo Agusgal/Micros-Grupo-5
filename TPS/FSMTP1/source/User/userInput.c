@@ -10,7 +10,7 @@
 #include "EventQueue/queue.h"
 
 
-static void delete_last_entry(char *input_array, int array_size);
+static bool delete_last_entry(char *input_array, int array_size);
 
 
 
@@ -69,8 +69,11 @@ void input_number(char *input_array, uint8_t *curr_pos, int array_size)
 {
 	if(input_array[*curr_pos] == BACKSPACE_L || input_array[*curr_pos] == BACKSPACE_R)
 	{
-		delete_last_entry(input_array, array_size);
-		(*curr_pos)--;
+		bool last = delete_last_entry(input_array, array_size);
+		if (! last)
+		{
+			(*curr_pos)--;
+		}
 	}
 	else if ((input_array[*curr_pos] >= '0' && input_array[*curr_pos] <= '9') && (curr_pos != array_size - 1))
 	{
@@ -104,19 +107,20 @@ int get_used_entries(char *input_array, int array_size)
 
 
 
-static void delete_last_entry(char *input_array, int array_size)
+static bool delete_last_entry(char *input_array, int array_size)
 {
 	int used_size = get_used_entries(input_array, array_size);
 
 	if (used_size == 0)
 	{
 		push_Queue_Element(ID_OK_ENC_EV);
+		return true;
 	}
 	else
 	{
 		input_array[used_size - 1] = EMPTY_CHAR;
 		input_array[used_size] = EMPTY_CHAR;
-		//write on display //TODO: DONDE ESCRIBO>?????
+		return false;
 	}
 }
 

@@ -20,8 +20,8 @@
 #define BACKSPACE_L '*'
 
 
-void reset_array(char *input_array, uint8_t *curr_pos, int array_size);
 
+void reset_array(char *input_array, uint8_t *curr_pos, int array_size);
 
 void decrease_number(char *input_array, char curr_pos);
 
