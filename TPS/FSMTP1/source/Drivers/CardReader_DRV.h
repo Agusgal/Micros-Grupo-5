@@ -69,6 +69,15 @@ void getCardReader_Data(uint8_t *data_buffer);
  */
 bool checkLRC_CardReader_Data(uint8_t *data_buffer, uint8_t number_of_characters);
 
+/**
+ * @brief Get the card ID
+ * @param data_buffer Pointer to an array that stores the data from the card (at least 40 bytes)
+ * @param number_of_characters	Size of the data_buffer (should be at most 40)
+ * @param ID_buffer Pointer to an array that stores the data from the card (at least 9 bytes)
+ * @return True if data could be successfully read, False otherwise
+ */
+bool getCard_ID(uint8_t *data_buffer, uint8_t number_of_characters, uint8_t *ID_buffer);
+
 /*******************************************************************************
  ******************************************************************************/
 
