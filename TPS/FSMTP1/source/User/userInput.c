@@ -13,7 +13,7 @@ static void delete_last_entry(char *input_array, int array_size);
 
 
 
-void reset_array(char *input_array, char *curr_pos, int array_size)
+void reset_array(char *input_array, uint8_t *curr_pos, int array_size)
 {
 	for(int i = 0; i < array_size; i++)
 	{
@@ -64,18 +64,19 @@ void increase_number(char *input_array, char curr_pos)
 	}
 }
 
-void input_number(char *input_array, char *curr_pos, int array_size)
+void input_number(char *input_array, uint8_t *curr_pos, int array_size)
 {
 	if(input_array[*curr_pos] == BACKSPACE_L || input_array[*curr_pos] == BACKSPACE_R)
 	{
 		delete_last_entry(input_array, array_size);
-		*(curr_pos)--;
+		(*curr_pos)--;
 	}
 	else if ((input_array[*curr_pos] >= '0' && input_array[*curr_pos] <= '9') && (curr_pos != array_size - 1))
 	{
-		*(curr_pos)++;
+		(*curr_pos)++;
 		input_array[*curr_pos] = EMPTY_CHAR;
 	}
+
 }
 
 
@@ -108,7 +109,7 @@ static void delete_last_entry(char *input_array, int array_size)
 
 	if (used_size == 0)
 	{
-		//deberia volver a otro estado?????
+		//TODO deberia volver a otro estado?????
 	}
 	else
 	{

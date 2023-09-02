@@ -26,7 +26,12 @@ void up_number(void)
 	increase_number(id, curr_pos);
 
 	//update display
+	pauseMessage();
 	writeMessage(id, false);
+	for(int i = 0; i < curr_pos-3; i++)
+	{
+		ScrollRightOnce();
+	}
 }
 
 void down_number(void)
@@ -35,14 +40,25 @@ void down_number(void)
 	decrease_number(id, curr_pos);
 
 	//update display
+	pauseMessage();
 	writeMessage(id, false);
+	for(int i = 0; i < curr_pos-3; i++)
+	{
+		ScrollRightOnce();
+	}
 
 }
 
 void accept_number(void)
 {
-	input_number(id, curr_pos,ID_SIZE);
+	input_number(id, &curr_pos,ID_SIZE);
 	writeMessage(id,false);
+	for(int i = 0; i < curr_pos-3; i++)
+	{
+		ScrollRightOnce();
+	}
+
+
 }
 
 

@@ -46,6 +46,7 @@ void toggleScroll();
 void muxDisplay();
 void incBrightness();
 void decBrightness();
+void writeScroll(uint8_t displacement);
 
 
 char * int2str (int num);
