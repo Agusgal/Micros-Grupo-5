@@ -8,7 +8,7 @@
 #ifndef USERDATA_H_
 #define USERDATA_H_
 
-#define ID_SIZE 8
+#define ID_SIZE_USER 8
 
 #include <stdbool.h>
 
