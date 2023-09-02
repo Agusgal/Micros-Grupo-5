@@ -57,9 +57,8 @@ void accept_number(void)
 {
 	input_number(id, &curr_pos,ID_SIZE);
 
-
 	writeMessage(id,false);
-	for(int i = 0; i < curr_pos-3; i++)
+	for(int i = 0; i < curr_pos - 3; i++)
 	{
 		ScrollRightOnce();
 	}
@@ -68,7 +67,7 @@ void accept_number(void)
 	if (curr_pos > 7 )
 	{
 
-		id[ID_SIZE-1] = '\0';
+		id[ID_SIZE - 1] = '\0';
 		bool id_ok = check_encoder_id(id);
 
 		if (id_ok)
