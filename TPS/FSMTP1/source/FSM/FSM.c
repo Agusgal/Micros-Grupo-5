@@ -97,7 +97,9 @@ state ID_ENTRY[]=
 
 		{init_id, ENC_PRESSED_EV, ENCODER_ENTRY},
 
-		{init_cardswipe, CARD_SWIPE_EV, CARD_ENTRY}
+		{init_cardswipe, CARD_SWIPE_EV, CARD_ENTRY},
+
+		{init_failed_cardswipe, CARD_MIDSWIPE_EV, CARD_ENTRY}
 };
 
 

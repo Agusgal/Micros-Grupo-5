@@ -107,7 +107,7 @@ void idle(void)
 
 void fill_queue(void)
 {
-	//check for Card events
+	bool card_var = getCardReader_Status();
 
 
 
@@ -143,9 +143,14 @@ void fill_queue(void)
 		push_Queue_Element(ENC_PRESSED_EV);
 	}
 
-	if (!getCardReader_Status())
+	if (!card_var)
 	{
 		push_Queue_Element(CARD_SWIPE_EV);
+	}
+
+	else if (card_var)
+	{
+		push_Queue_Element(CARD_MIDSWIPE_EV);
 	}
 
 
