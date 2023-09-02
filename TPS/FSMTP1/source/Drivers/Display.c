@@ -175,7 +175,12 @@ void sevenSegmentDecoder (uint8_t code)
 		gpioWrite(PIN_SEG_F,(code >> 1) & 1);
 		gpioWrite(PIN_SEG_G,(code >> 0) & 1);
 }
+static int scroll_index=0;
 
+void writeScroll(uint8_t displacement)
+{
+	scroll_index+=displacement;
+}
 
 void updateDisplay(char * txt)
 {

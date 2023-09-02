@@ -75,7 +75,7 @@ Event_Type pull_Queue_Element(void)
 {
 	Event_Type event = *pout;
 
-	if (num_Of_Events = 0)
+	if (num_Of_Events == 0)
 	{
 		return NONE_EV;
 	}
