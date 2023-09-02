@@ -31,6 +31,7 @@ typedef enum {
 			ENC_RIGHT_EV,
 			ENC_PRESSED_EV,//TODO
 			CARD_SWIPE_EV,
+			RETURN_EV,
 
 			ID_FAIL_ENC_EV,
 			ID_FAIL_CARD_EV,

@@ -9,6 +9,7 @@
 #define USER_USERINPUT_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 
 

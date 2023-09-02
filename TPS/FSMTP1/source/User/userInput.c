@@ -7,6 +7,7 @@
 
 #include "userInput.h"
 #include <stdbool.h>
+#include "EventQueue/queue.h"
 
 
 static void delete_last_entry(char *input_array, int array_size);
@@ -109,7 +110,7 @@ static void delete_last_entry(char *input_array, int array_size)
 
 	if (used_size == 0)
 	{
-		//TODO deberia volver a otro estado?????
+		push_Queue_Element(ID_OK_ENC_EV);
 	}
 	else
 	{
