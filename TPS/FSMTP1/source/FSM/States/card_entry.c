@@ -59,4 +59,13 @@ static void initialize_id_array(void)
 	}
 }
 
+void msg_fail_card()
+{
+
+}
+
+void msg_ok_card()
+{
+
+}
 
