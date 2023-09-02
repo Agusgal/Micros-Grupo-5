@@ -50,6 +50,7 @@ static uint8_t new_bit_position = 0;
 #define	TIMER_RESET_VALUE	10 // 1 segs
 
 static uint32_t counter = 0;
+static bool counter_enable = false;
 
 static uint8_t data_ready = CARD_IDLE;
 
@@ -227,6 +228,7 @@ __ISR__ PORTB_IRQHandler(void)
 		{
 
 		case IDLE:
+			counter_enable = true;
 			data_ready = CARD_IDLE;
 			// Store the new bit (ACTIVE LOW) in the fifth position and shift the byte
 			tempData = (tempData & SEQUENCE_MASK) | (!gpioRead(PORTNUM2PIN(PORT_DATA, PIN_DATA)) << NEW_BIT_POSITION);
@@ -271,6 +273,7 @@ __ISR__ PORTB_IRQHandler(void)
 				data[number_of_characters] = tempData;
 				data_ready = CARD_SUCCESS;
 				counter = 0;
+				counter_enable = false;
 				// Wait for data reading from app
 			}
 			break;
@@ -287,7 +290,7 @@ __ISR__ PORTB_IRQHandler(void)
  */
 static void cardReader_PISR(void)
 {
-	if(counter)
+	if(counter && counter_enable)
 	{
 		counter--;
 		// If counter reaches 0, restart everything
