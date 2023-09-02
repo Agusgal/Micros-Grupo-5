@@ -13,6 +13,10 @@
 #include "User/userInput.h"
 #include "Drivers/BoardLeds.h"
 
+#include "EventQueue/queue.h"
+
+#include "User/userData.h"
+
 #define ID_SIZE 8
 
 //Variables to keep track of user ID input
@@ -28,7 +32,7 @@ void up_number(void)
 	//update display
 	pauseMessage();
 	writeMessage(id, false);
-	for(int i = 0; i < curr_pos-3; i++)
+	for(int i = 0; i < curr_pos - 3; i++)
 	{
 		ScrollRightOnce();
 	}
@@ -58,7 +62,21 @@ void accept_number(void)
 		ScrollRightOnce();
 	}
 
+	//if every number was written the we check if the id is valid
+	if (curr_pos > 7)
+	{
 
+		bool id_ok = check_encoder_id(id);
+
+		if (id_ok)
+		{
+			push_Queue_Element(ID_OK_ENC_EV);
+		}
+		else
+		{
+			push_Queue_Element(ID_FAIL_ENC_EV);
+		}
+	}
 }
 
 
