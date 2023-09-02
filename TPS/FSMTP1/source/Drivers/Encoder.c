@@ -23,7 +23,7 @@
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 static int encoder=NO_MOVE;
-static int encoder_sw=RELEASED;
+static int encoder_sw=IDLE;
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
