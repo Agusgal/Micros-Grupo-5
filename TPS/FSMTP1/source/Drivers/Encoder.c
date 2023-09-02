@@ -133,13 +133,13 @@ void EncoderSwitch_Update(void)
 	}
 	else if (sw_state==LOW) // && sw_Read == HIGH pero no hace falta
 	{
-		encoder_sw = RELEASED;
+		encoder_sw = IDLE;
 		duration_counter=0;
 	}
 	else if ((sw_state==HIGH) && (sw_Read == LOW))
 	{
 		duration_counter++;
-		if (duration_counter==FIVE_SECOND_COUNTER)
+		if (duration_counter>=FIVE_SECOND_COUNTER)
 			encoder_sw=FIVE_SEC_PRESS;
 		else
 			encoder_sw=PRESSED;
@@ -147,7 +147,10 @@ void EncoderSwitch_Update(void)
 	else if (sw_state==HIGH)
 	{
 		sw_state=LOW;
-		encoder_sw = RELEASED;
+		if (duration_counter>=FIVE_SECOND_COUNTER)
+			encoder_sw=FIVE_SEC_PRESS;
+		else
+			encoder_sw = RELEASED;
 		duration_counter=0;
 	}
 }
@@ -155,7 +158,7 @@ void EncoderSwitch_Update(void)
 int getEncoderSwitch_State(void)
 {
 	int aux=encoder_sw;
-	encoder_sw=RELEASED;
+	encoder_sw=IDLE;
 	return aux;
 }
 
