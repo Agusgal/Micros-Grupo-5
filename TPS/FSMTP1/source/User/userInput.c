@@ -113,7 +113,7 @@ static bool delete_last_entry(char *input_array, int array_size)
 
 	if (used_size == 0)
 	{
-		push_Queue_Element(ID_OK_ENC_EV);
+		push_Queue_Element(RETURN_EV);
 		return true;
 	}
 	else
