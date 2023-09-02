@@ -18,6 +18,7 @@
 #define PRINT_ARRAY_LENGTH 30
 #define SPARE_SPACE_4_SCROLL -3
 #define SCROLL_TIMER_LIMIT 255 //TODO
+#define	BLINK_PERIOD 250	// TODO
 #define MAX_BRIGHTNESS_COUNTER 10
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -117,6 +118,27 @@ void decBrightness()
 {
 	updateDisplay("-B");
 }
+void blinkDigit(uint8_t digit)
+{
+	switch (digit)
+	{
+	case 0:
+		updateDisplay("BLINK1");
+		break;
+	case 1:
+		updateDisplay("BLINK2");
+		break;
+	case 2:
+		updateDisplay("BLINK3");
+		break;
+	case 3:
+		updateDisplay("BLINK4");
+		break;
+	default:
+		updateDisplay("NO_BLINK");
+	}
+
+}
 
 /*******************************************************************************
  *******************************************************************************
@@ -192,6 +214,8 @@ void updateDisplay(char * txt)
 	static uint8_t scroll_timer=0;
 	static uint8_t brightness_level=0;
 	static uint8_t brightness_counter=0;
+	static uint8_t blinking=0;
+	static char blink_counter=0;
 
 	if (scroll_type==scroll_right)
 		{
@@ -211,10 +235,36 @@ void updateDisplay(char * txt)
 				scroll_timer=0;
 			}
 		}
+	if (blinking)
+		blink_counter++;
 
 	if (!strcmp(txt,"CONT_SCR_R"))
 		scroll_type=scroll_right;
-
+	else if (!strcmp(txt,"BLINK1"))
+	{
+		blinking=1;
+		blink_counter=0;
+	}
+	else if (!strcmp(txt,"BLINK2"))
+	{
+		blinking=2;
+		blink_counter=0;
+	}
+	else if (!strcmp(txt,"BLINK3"))
+	{
+		blinking=3;
+		blink_counter=0;
+	}
+	else if (!strcmp(txt,"BLINK4"))
+	{
+		blinking=4;
+		blink_counter=0;
+	}
+	else if (!strcmp(txt,"NO_BLINK"))
+	{
+		blinking=0;
+		blink_counter=0;
+	}
 	else if (!strcmp(txt,"CONT_SCR_L"))
 		scroll_type=scroll_left;
 
@@ -254,11 +304,15 @@ void updateDisplay(char * txt)
 		else if ((scroll_index==SPARE_SPACE_4_SCROLL-1) && (scroll_type==scroll_left))
 			scroll_index=input_txt_length-1;
 
+		if (blink_counter==2*BLINK_PERIOD)
+			blink_counter=0;
+		else
+
 		if ((scroll_index+mux_digit)<0)
 			writeDigit(0,mux_digit);
 		else
 		{
-			if ((brightness_counter<=brightness_level))
+			if ((brightness_counter<=brightness_level) && (blink_counter<BLINK_PERIOD) && ((mux_digit+1)!=(blinking)))
 			{
 				writeDigit(txt2print[scroll_index+mux_digit],mux_digit);
 			}
