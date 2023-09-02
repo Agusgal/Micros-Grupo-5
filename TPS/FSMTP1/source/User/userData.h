@@ -16,7 +16,7 @@
 
 bool check_encoder_id(char *id);
 bool check_card_id (uint8_t *id);
-bool check_pin(char *id);
+bool check_pin(char *pin);
 
 
 

@@ -14,6 +14,7 @@
 #include "States/id_entry.h"
 #include "States/encoder_entry.h"
 #include "States/card_entry.h"
+#include "States/pin_entry.h"
 
 
 
@@ -123,7 +124,7 @@ state CARD_ENTRY[]=
 {
 		{msg_fail_card, ID_FAIL_CARD_EV, RED_LED_ON},
 
-		{msg_ok_card, ID_OK_CARD_EV, PIN_ENTRY},
+		{init_pin, ID_OK_CARD_EV, PIN_ENTRY},
 
 		{msg_error_card, RETURN_EV, ID_ENTRY},
 
@@ -133,13 +134,21 @@ state CARD_ENTRY[]=
 
 state PIN_ENTRY[]=
 {
-		//{msg_fail_pin,PIN_FAIL_EV, RED_LED_ON},
+		{pin_down_number, ENC_LEFT_EV, ENCODER_ENTRY},
 
-		//{msg_ok_pin, PIN_OK_EV, GREEN_LED_ON},
+		{pin_up_number, ENC_RIGHT_EV, ENCODER_ENTRY},
 
-		//{pass, RETURN_EV, ID_ENTRY},
+		{pin_accept_number, ENC_PRESSED_EV, ENCODER_ENTRY},
 
-		//{pass, END_TABLE, CARD_ENTRY},
+		{msg_fail_pin, PIN_FAIL_EV, RED_LED_ON},
+
+		{msg_ok_pin, PIN_OK_EV, GREEN_LED_ON},
+
+		{msg_pin_short, PIN_SHORT_EV, PIN_ENTRY},
+
+		{pass, RETURN_EV, ID_ENTRY},
+
+		{pass, END_TABLE, CARD_ENTRY},
 
 };
 

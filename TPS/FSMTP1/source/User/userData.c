@@ -10,7 +10,7 @@
 
 uint8_t user_card_id1[19] = {4,5,4,0,7,5,0,0,7,1,5,8,0,0,8,7,99,99,99};
 char *user_id1 = "11111111";
-char *user_pin1 = "1234";
+char *user_pin1 = "1111";
 
 bool check_encoder_id(char *id)
 {
@@ -37,9 +37,16 @@ bool check_card_id (uint8_t *id)
 	return true;
 }
 
-bool check_pin(char *id)
+bool check_pin(char *pin)
 {
-
+	if (!strcmp(pin, user_pin1))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 

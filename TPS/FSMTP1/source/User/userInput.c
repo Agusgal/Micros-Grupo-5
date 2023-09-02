@@ -83,6 +83,80 @@ void input_number(char *input_array, uint8_t *curr_pos, int array_size)
 }
 
 
+bool input_pin_number(char *input_array, uint8_t *curr_pos, int array_size)
+{
+	if(input_array[*curr_pos] == BACKSPACE_L || input_array[*curr_pos] == BACKSPACE_R)
+	{
+		bool last = delete_last_entry(input_array, array_size);
+		if (!last)
+		{
+			(*curr_pos)--;
+		}
+		return false;
+	}
+	else if ((input_array[*curr_pos] >= '0' && input_array[*curr_pos] <= '9') && (curr_pos != array_size - 1))
+	{
+		(*curr_pos)++;
+		//input_array[*curr_pos] = EMPTY_CHAR;
+		return false;
+	}
+	else if (input_array[*curr_pos] == INPUT_PIN)
+	{
+		return true;
+	}
+
+}
+
+
+void increase_pin_number(char *input_array, uint8_t curr_pos)
+{
+	if (input_array[curr_pos] == BACKSPACE_R)
+	{
+		input_array[curr_pos] = INPUT_PIN;
+	}
+	else if (input_array[curr_pos] == EMPTY_CHAR || input_array[curr_pos] == INPUT_PIN)
+	{
+		input_array[curr_pos] = '0';
+	}
+	else if (input_array[curr_pos] < '9')
+	{
+		input_array[curr_pos]++;
+	}
+	else if (input_array[curr_pos] == '9')
+	{
+		input_array[curr_pos] = BACKSPACE_R;
+	}
+}
+
+void decrease_pin_number(char *input_array, uint8_t curr_pos)
+{
+	if (input_array[curr_pos] > '0' && input_array[curr_pos] <= '9')
+	{
+		input_array[curr_pos]--;
+	}
+	else if (input_array[curr_pos] == EMPTY_CHAR)
+	{
+		input_array[curr_pos] = '0';
+	}
+	else if (input_array[curr_pos] == BACKSPACE_L)
+	{
+		input_array[curr_pos] = '9';
+	}
+	else if (input_array[curr_pos] == INPUT_PIN)
+	{
+		input_array[curr_pos] = BACKSPACE_L;
+	}
+	else if (input_array[curr_pos] == '0')
+	{
+		input_array[curr_pos] = INPUT_PIN;
+	}
+}
+
+
+
+
+//Local functions
+
 int get_used_entries(char *input_array, int array_size)
 {
 	int length = 0;
@@ -102,9 +176,6 @@ int get_used_entries(char *input_array, int array_size)
 	}
 	return length;
 }
-
-
-
 
 static bool delete_last_entry(char *input_array, int array_size)
 {
