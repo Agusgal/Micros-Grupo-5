@@ -27,7 +27,7 @@ void init_cardswipe(void)
 	initialize_id_array();
 	getCardReader_Data(card_id_raw);
 
-	if(checkLRC_CardReader_Data(card_id_raw, NUMBER_OF_CHARACTERS))
+	if(!checkLRC_CardReader_Data(card_id_raw, NUMBER_OF_CHARACTERS))
 	{
 		push_Queue_Element(RETURN_EV);
 	}
@@ -61,11 +61,11 @@ static void initialize_id_array(void)
 
 void msg_fail_card()
 {
-
+	writeMessage("id failed", true);
 }
 
 void msg_ok_card()
 {
-
+	writeMessage("correct id",true);
 }
 

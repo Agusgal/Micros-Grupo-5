@@ -131,9 +131,13 @@ state CARD_ENTRY[]=
 
 state PIN_ENTRY[]=
 {
-		//{msg_fail,PIN_FAIL_EV, RED_LED_ON},
+		//{msg_fail_pin,PIN_FAIL_EV, RED_LED_ON},
 
-		//{msg_ok, PIN_OK_EV, GREEN_LED_ON}
+		//{msg_ok_pin, PIN_OK_EV, GREEN_LED_ON},
+
+		//{pass, RETURN_EV, ID_ENTRY},
+
+		//{pass, END_TABLE, CARD_ENTRY},
 
 };
 

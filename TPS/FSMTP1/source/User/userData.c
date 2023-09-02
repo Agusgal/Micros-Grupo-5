@@ -8,7 +8,7 @@
 #include "userData.h"
 #include <string.h>
 
-
+uint8_t user_card_id1[19] = {4,5,4,0,7,5,0,0,7,1,5,8,0,0,8,7,99,99,99};
 char *user_id1 = "11111111";
 char *user_pin1 = "1234";
 
@@ -28,10 +28,10 @@ bool check_card_id (uint8_t *id)
 {
 	for (int i = 0; i < 19; i++)
 	{
-		//if (id[i] != user_card_id1[i])
-		///{
-		//	return false;
-		//}
+		if (id[i] != user_card_id1[i])
+		{
+			return false;
+		}
 	}
 
 	return true;
