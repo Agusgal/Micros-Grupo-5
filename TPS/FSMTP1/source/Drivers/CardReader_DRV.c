@@ -52,7 +52,6 @@ static uint8_t new_bit_position = 0;
 static uint32_t counter = 0;
 
 static uint8_t data_ready = CARD_IDLE;
-static bool data_reading = false;
 
 // For debugging
 //#define	DEBUG_CARD
@@ -112,6 +111,7 @@ uint8_t getCardReader_Status(void)
 void getCardReader_Data(uint8_t *data_buffer)
 {
 	uint8_t i;
+	cardState = IDLE;
 	for(i = 0; i < NUMBER_OF_CHARACTERS; i++)
 	{
 		data_buffer[i] = data[i];
@@ -220,15 +220,13 @@ __ISR__ PORTB_IRQHandler(void)
 		number_of_characters = 0;
 		new_bit_position = 0;
 		data_ready = CARD_FAIL;
-		data_reading = false;
 	}
-	else
+	//else
 	{
 		switch(cardState)
 		{
 
 		case IDLE:
-			data_reading = true;
 			data_ready = CARD_IDLE;
 			// Store the new bit (ACTIVE LOW) in the fifth position and shift the byte
 			tempData = (tempData & SEQUENCE_MASK) | (!gpioRead(PORTNUM2PIN(PORT_DATA, PIN_DATA)) << NEW_BIT_POSITION);
@@ -272,8 +270,8 @@ __ISR__ PORTB_IRQHandler(void)
 			{
 				data[number_of_characters] = tempData;
 				data_ready = CARD_SUCCESS;
-				data_reading = false;
-				// Wait for timer to restart the state machine
+				counter = 0;
+				// Wait for data reading from app
 			}
 			break;
 
@@ -299,15 +297,7 @@ static void cardReader_PISR(void)
 			cardState = IDLE;
 			number_of_characters = 0;
 			new_bit_position = 0;
-			if(data_reading)
-			{
-				data_ready = CARD_FAIL;
-			}
-			else
-			{
-				data_ready = CARD_IDLE;
-			}
-			data_reading = false;
+			data_ready = CARD_FAIL;
 		}
 	}
 

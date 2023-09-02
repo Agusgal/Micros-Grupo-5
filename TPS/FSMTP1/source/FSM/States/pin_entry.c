@@ -116,6 +116,6 @@ void msg_ok_pin(void)
 
 void init_pin()
 {
-	reset_array(pin, curr_pos, PIN_SIZE);
 	writeMessage("Correct card ID", true);
+	reset_array(pin, &curr_pos, PIN_SIZE);
 }

@@ -134,11 +134,11 @@ state CARD_ENTRY[]=
 
 state PIN_ENTRY[]=
 {
-		{pin_down_number, ENC_LEFT_EV, ENCODER_ENTRY},
+		{pin_down_number, ENC_LEFT_EV, PIN_ENTRY},
 
-		{pin_up_number, ENC_RIGHT_EV, ENCODER_ENTRY},
+		{pin_up_number, ENC_RIGHT_EV, PIN_ENTRY},
 
-		{pin_accept_number, ENC_PRESSED_EV, ENCODER_ENTRY},
+		{pin_accept_number, ENC_PRESSED_EV, PIN_ENTRY},
 
 		{msg_fail_pin, PIN_FAIL_EV, RED_LED_ON},
 
@@ -148,7 +148,7 @@ state PIN_ENTRY[]=
 
 		{pass, RETURN_EV, ID_ENTRY},
 
-		{pass, END_TABLE, CARD_ENTRY},
+		{pass, END_TABLE, PIN_ENTRY},
 
 };
 
