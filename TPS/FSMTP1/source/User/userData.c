@@ -28,10 +28,10 @@ bool check_card_id (uint8_t *id)
 {
 	for (int i = 0; i < 19; i++)
 	{
-		if (id[i] != user_card_id1[i])
-		{
-			return false;
-		}
+		//if (id[i] != user_card_id1[i])
+		///{
+		//	return false;
+		//}
 	}
 
 	return true;
