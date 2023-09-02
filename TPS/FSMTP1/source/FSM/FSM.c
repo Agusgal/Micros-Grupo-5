@@ -113,7 +113,7 @@ state ENCODER_ENTRY[]=
 
 		{msg_ok_encoder, ID_OK_ENC_EV, PIN_ENTRY},
 
-		{welcome_animation, RETURN_EV, ID_ENTRY}
+		{pass, RETURN_EV, ID_ENTRY}
 
 };
 

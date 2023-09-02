@@ -55,8 +55,7 @@ void down_number(void)
 
 void accept_number(void)
 {
-	bool is_last = false;
-	is_last = input_number(id, &curr_pos,ID_SIZE);
+	input_number(id, &curr_pos,ID_SIZE);
 
 
 	writeMessage(id,false);
@@ -82,10 +81,6 @@ void accept_number(void)
 		}
 	}
 
-	if (is_last)
-	{
-		push_Queue_Element(RETURN_EV);
-	}
 }
 
 

@@ -27,7 +27,7 @@ void decrease_number(char *input_array, char curr_pos);
 
 void increase_number(char *input_array, char curr_pos);
 
-bool input_number(char *input_array, uint8_t *curr_pos, int array_size);
+void input_number(char *input_array, uint8_t *curr_pos, int array_size);
 
 int get_used_entries(char *input_array, int array_size);
 
