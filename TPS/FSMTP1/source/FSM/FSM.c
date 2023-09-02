@@ -111,9 +111,7 @@ state ENCODER_ENTRY[]=
 
 		{msg_fail_encoder, ID_FAIL_ENC_EV, RED_LED_ON},
 
-		{msg_ok_encoder, ID_OK_ENC_EV, PIN_ENTRY},
-
-		{pass, RETURN_EV, ID_ENTRY}
+		{msg_ok_encoder, ID_OK_ENC_EV, PIN_ENTRY}
 
 };
 
