@@ -17,7 +17,7 @@
 
 #include "User/userData.h"
 
-#define ID_SIZE 8
+#define ID_SIZE 9
 
 //Variables to keep track of user ID input
 static int8_t id[ID_SIZE];
@@ -66,6 +66,7 @@ void accept_number(void)
 	if (curr_pos > 7)
 	{
 
+		id[ID_SIZE-1] = '\0';
 		bool id_ok = check_encoder_id(id);
 
 		if (id_ok)
