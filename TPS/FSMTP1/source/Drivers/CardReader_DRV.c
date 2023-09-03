@@ -47,10 +47,14 @@ static uint8_t new_bit_position = 0;
 
 // For timer
 #define TIME_CONSTANT		100000	// 0.1 segs
-#define	TIMER_RESET_VALUE	10 // 1 segs
+#define	TIMER_RESET_VALUE	50 		// 5 segs
+#define	FINISH_TIMER_RESET_VALUE 10 // 1 segs
 
 static uint32_t counter = 0;
 static bool counter_enable = false;
+
+static uint32_t finish_counter = 0;
+static bool finish_timer_enable = false;
 
 static uint8_t data_ready = CARD_IDLE;
 
@@ -116,12 +120,6 @@ void getCardReader_Data(uint8_t *data_buffer)
 	{
 		data_buffer[i] = data[i];
 	}
-	tempData = 0;
-	cardState = IDLE;
-	number_of_characters = 0;
-	new_bit_position = 0;
-	data_ready = CARD_IDLE;
-	counter_enable = false;
 }
 
 /**
@@ -227,6 +225,7 @@ __ISR__ PORTB_IRQHandler(void)
 		new_bit_position = 0;
 		data_ready = CARD_FAIL;
 		counter_enable = false;
+		finish_timer_enable = false;
 	}
 	else
 	{
@@ -279,6 +278,8 @@ __ISR__ PORTB_IRQHandler(void)
 				data[number_of_characters] = tempData;
 				data_ready = CARD_SUCCESS;
 				counter_enable = false;
+				finish_timer_enable = true;
+				finish_counter = FINISH_TIMER_RESET_VALUE;
 				// Wait for data reading from app
 			}
 			break;
@@ -295,6 +296,7 @@ __ISR__ PORTB_IRQHandler(void)
  */
 static void cardReader_PISR(void)
 {
+	// Mistake counter
 	if(counter && counter_enable)
 	{
 		counter--;
@@ -307,6 +309,24 @@ static void cardReader_PISR(void)
 			new_bit_position = 0;
 			data_ready = CARD_FAIL;
 			counter_enable = false;
+			finish_timer_enable = false;
+		}
+	}
+
+	// Finish counter
+	if(finish_counter && finish_timer_enable)
+	{
+		finish_counter--;
+		// If counter reaches 0, restart everything
+		if(!finish_counter)
+		{
+			tempData = 0;
+			cardState = IDLE;
+			number_of_characters = 0;
+			new_bit_position = 0;
+			data_ready = CARD_IDLE;
+			counter_enable = false;
+			finish_timer_enable = false;
 		}
 	}
 
