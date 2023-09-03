@@ -125,11 +125,12 @@ void fill_queue(void)
 
 	//Check for Encoder press events
 	int encoder_state = getEncoderSwitch_State();
+
 	if (encoder_state == RELEASED)
 	{
 		push_Queue_Element(ENC_PRESSED_EV);
 	}
-	else if (FIVE_SEC_PRESS)
+	else if(encoder_state == FIVE_SEC_PRESS)
 	{
 		push_Queue_Element(INCREASE_BRIGHTNESS_EV);
 	}

@@ -16,9 +16,8 @@
 #include "States/card_entry.h"
 #include "States/pin_entry.h"
 #include "States/open.h"
+#include "States/brightness.h"
 
-
-#include <stdio.h>
 
 
 /*******************************************************************************
@@ -34,7 +33,7 @@
  ******************************************************************************/
 
 static void pass(void);
-
+//static state *brightness_previous_state;
 
 /*******************************************************************************
  *******************************************************************************
@@ -42,51 +41,13 @@ static void pass(void);
  *******************************************************************************
  ******************************************************************************/
 
-
-
-
-
-/**
- * @brief
- * @param
- * @param
- */
-
-state* fsm_dispatcher (state* p_state, Event_Type curr_event)
+state BRIGHTNESS[]=
 {
-	bool flag = 1;
-
-	while(flag)
-	{
-		if(p_state->event == curr_event || p_state->event == END_TABLE)
-		{
-			flag=0;
-		}
-		else
-		{
-			p_state++;
-		}
-	}
-
-	(*p_state->funct)();
-
-	p_state = p_state->next_state;
-
-	return p_state;
-}
-
-
-state* get_initial_state()
-{
-	return ID_ENTRY;
-}
-
-void start_fsm()
-{
-	welcome_animation();
-}
-
-
+		{pass, ENC_PRESSED_EV, BRIGHTNESS},
+		{incr_bri, ENC_RIGHT_EV, BRIGHTNESS},
+		{decr_bri, ENC_LEFT_EV, BRIGHTNESS},
+		{pass, END_TABLE, BRIGHTNESS},
+};
 
 state ID_ENTRY[]=
 {
@@ -100,7 +61,9 @@ state ID_ENTRY[]=
 
 		{init_cardswipe, CARD_SWIPE_EV, CARD_ENTRY},
 
-		{init_failed_cardswipe, CARD_MIDSWIPE_EV, CARD_ENTRY}
+		{init_failed_cardswipe, CARD_MIDSWIPE_EV, CARD_ENTRY},
+
+		{pass, INCREASE_BRIGHTNESS_EV, BRIGHTNESS},
 };
 
 
@@ -115,6 +78,8 @@ state ENCODER_ENTRY[]=
 		{msg_fail_encoder, ID_FAIL_ENC_EV, RED_LED_ON},
 
 		{msg_ok_encoder, ID_OK_ENC_EV, PIN_ENTRY},
+
+		{pass, INCREASE_BRIGHTNESS_EV, BRIGHTNESS},
 
 		{pass, END_TABLE, ENCODER_ENTRY},
 
@@ -176,6 +141,55 @@ state WRONG_ID[]=
 };
 
 
+
+
+/**
+ * @brief
+ * @param
+ * @param
+ */
+
+state* fsm_dispatcher (state* p_state, Event_Type curr_event)
+{
+	bool flag = 1;
+
+	while(flag)
+	{
+		if(p_state->event == curr_event || p_state->event == END_TABLE)
+		{
+			flag=0;
+			if (curr_event == INCREASE_BRIGHTNESS_EV)
+			{
+				BRIGHTNESS[0].next_state = p_state;
+			}
+		}
+		else
+		{
+			p_state++;
+		}
+	}
+
+	(*p_state->funct)();
+
+	p_state = p_state->next_state;
+
+	return p_state;
+}
+
+
+state* get_initial_state()
+{
+	return ID_ENTRY;
+}
+
+void start_fsm()
+{
+	welcome_animation();
+}
+
+
+
+
 /*******************************************************************************
  *******************************************************************************
                         LOCAL FUNCTION DEFINITIONS
@@ -188,5 +202,7 @@ static void pass(void)
 {
 
 }
+
+
 /*******************************************************************************
  ******************************************************************************/

@@ -36,7 +36,7 @@ typedef enum
 
 } PORTMux_t;
 
-enum { IDLE=0, PRESSED, RELEASED};
+//enum { IDLE=0, PRESSED, RELEASED};
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -157,6 +157,7 @@ void gpio_clear_interrupt_flag(pin_t pin)
 /**
  * @brief
  */
+/*
 bool gpioFlank(pin_t pin, bool active)		// Detector de Flancos en pines de input
 {
 	static bool state = IDLE;
@@ -179,7 +180,7 @@ bool gpioFlank(pin_t pin, bool active)		// Detector de Flancos en pines de input
 			break;
 	}
 	return change;
-}
+}*/
 
 /*******************************************************************************
  *******************************************************************************

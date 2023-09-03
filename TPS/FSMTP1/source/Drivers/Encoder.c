@@ -127,38 +127,38 @@ void EncoderSwitch_Update(void)
 	bool sw_Read=gpioRead(PIN_DEC_SW);
 	if ((sw_state==LOW) && (sw_Read == LOW))
 	{
-		sw_state=HIGH;
+		sw_state = HIGH;
 		encoder_sw = RISING_FLANK;
 		duration_counter++;
 	}
-	else if (sw_state==LOW) // && sw_Read == HIGH pero no hace falta
+	else if (sw_state == LOW) // && sw_Read == HIGH pero no hace falta
 	{
 		encoder_sw = IDLE_;
-		duration_counter=0;
+		duration_counter = 0;
 	}
-	else if ((sw_state==HIGH) && (sw_Read == LOW))
+	else if ((sw_state == HIGH) && (sw_Read == LOW))
 	{
 		duration_counter++;
-		if (duration_counter>=FIVE_SECOND_COUNTER)
-			encoder_sw=FIVE_SEC_PRESSING;
+		if (duration_counter >= FIVE_SECOND_COUNTER)
+			encoder_sw = FIVE_SEC_PRESSING;
 		else
-			encoder_sw=PRESSED;
+			encoder_sw = PRESSED;
 	}
-	else if (sw_state==HIGH)
+	else if (sw_state == HIGH)
 	{
-		sw_state=LOW;
-		if (duration_counter>=FIVE_SECOND_COUNTER)
-			encoder_sw=FIVE_SEC_PRESS;
+		sw_state = LOW;
+		if (duration_counter >= FIVE_SECOND_COUNTER)
+			encoder_sw = FIVE_SEC_PRESS;
 		else
 			encoder_sw = RELEASED;
-		duration_counter=0;
+		duration_counter = 0;
 	}
 }
 
 int getEncoderSwitch_State(void)
 {
-	int aux=encoder_sw;
-	encoder_sw=IDLE_;
+	int aux = encoder_sw;
+	encoder_sw = IDLE_;
 	return aux;
 }
 

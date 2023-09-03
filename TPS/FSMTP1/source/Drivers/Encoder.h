@@ -23,9 +23,9 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
-enum encoderStates {ACW1=1,ACW2,ACW3,ACW4,CW1,CW2,CW3,CW4};
-enum encoderOutPuts {NO_MOVE,RIGHT_TURN,LEFT_TURN};
-enum encoderSwitchOutPuts {RELEASED,PRESSED,RISING_FLANK,FIVE_SEC_PRESS,IDLE_,FIVE_SEC_PRESSING};
+enum encoderStates {ACW1=1, ACW2, ACW3, ACW4, CW1, CW2, CW3, CW4};
+enum encoderOutPuts {NO_MOVE, RIGHT_TURN,LEFT_TURN};
+enum encoderSwitchOutPuts {RELEASED, PRESSED, RISING_FLANK, FIVE_SEC_PRESS, IDLE_, FIVE_SEC_PRESSING};
 
 
 /*******************************************************************************

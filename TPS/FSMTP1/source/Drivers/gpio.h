@@ -118,7 +118,7 @@ void gpio_clear_interrupt_flag(pin_t pin);
 /**
  * @brief
  */
-bool gpioFlank(pin_t pin, bool active);
+//bool gpioFlank(pin_t pin, bool active);
 
 
 /*******************************************************************************
