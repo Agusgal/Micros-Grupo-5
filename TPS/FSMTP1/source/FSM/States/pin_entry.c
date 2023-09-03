@@ -67,6 +67,7 @@ void pin_accept_number(void)
 	}
 	else if (is_last && curr_pos < 3)
 	{
+		reset_array(pin, &curr_pos, PIN_SIZE);
 		push_Queue_Element(PIN_SHORT_EV);
 	}
 }
