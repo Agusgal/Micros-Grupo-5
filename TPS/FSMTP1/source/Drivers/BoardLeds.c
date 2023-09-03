@@ -66,31 +66,54 @@ void BoardLeds_Init(void)
 
 }
 
-void led1On ()
+void led1On()
 {
 	gpioWrite(PIN_ST_0,0);
 	gpioWrite(PIN_ST_1,1);
 }
-void led2On ()
+
+void led2On()
 {
 	gpioWrite(PIN_ST_0,1);
 	gpioWrite(PIN_ST_1,0);
 }
-void led3On ()
+
+void led3On()
 {
 	gpioWrite(PIN_ST_0,1);
 	gpioWrite(PIN_ST_1,1);
-
 }
+
+void led1Off()
+{
+	gpioWrite(PIN_ST_0,0);
+	gpioWrite(PIN_ST_1,1);
+}
+
+void led2Off()
+{
+	gpioWrite(PIN_ST_0,1);
+	gpioWrite(PIN_ST_1,0);
+}
+
+void led3Off()
+{
+	gpioWrite(PIN_ST_0,1);
+	gpioWrite(PIN_ST_1,1);
+}
+
+
 
 void led_red_on()
 {
 	gpioWrite(PIN_LED_RED,0);
+	led3On();
 }
 
 void led_green_on()
 {
 	gpioWrite(PIN_LED_GREEN,0);
+	led1On();
 }
 
 void led_blue_on()
@@ -106,7 +129,7 @@ void led_toggle(ledID ledId)
 
 void led_green_on_time(uint32_t time)
 {
-	gpioWrite(PIN_LED_GREEN, 0);
+	led_green_on();
 	green_cont = time/SYSTICK_ISR_PERIOD_US;
 }
 
@@ -125,7 +148,7 @@ bool get_green_status()
 
 void led_red_on_time(uint32_t time)
 {
-	gpioWrite(PIN_LED_RED, 0);
+	led_red_on();
 	red_cont = time/SYSTICK_ISR_PERIOD_US;
 }
 

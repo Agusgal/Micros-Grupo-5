@@ -75,6 +75,8 @@ state ID_ENTRY[]=
 
 state ENCODER_ENTRY[]=
 {
+		{welcome_animation, RETURN_EV, ID_ENTRY},
+
 		{down_number, ENC_LEFT_EV, ENCODER_ENTRY},
 
 		{up_number, ENC_RIGHT_EV, ENCODER_ENTRY},
@@ -88,7 +90,6 @@ state ENCODER_ENTRY[]=
 		{bri_message, INCREASE_BRIGHTNESS_EV, BRIGHTNESS},
 
 		{pass, END_TABLE, ENCODER_ENTRY},
-
 };
 
 state CARD_ENTRY[]=
@@ -119,7 +120,7 @@ state PIN_ENTRY[]=
 
 		{msg_pin_short, PIN_SHORT_EV, PIN_ENTRY},
 
-		{pass, RETURN_EV, ID_ENTRY},
+		{welcome_animation, RETURN_EV, ID_ENTRY},
 
 		{bri_message, INCREASE_BRIGHTNESS_EV, BRIGHTNESS},
 

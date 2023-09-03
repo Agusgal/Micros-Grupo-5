@@ -43,6 +43,10 @@ void led1On ();
 void led2On ();
 void led3On ();
 
+void led1Off ();
+void led2Off ();
+void led3Off ();
+
 void led_blue_on();
 void led_green_on();
 void led_red_on();

@@ -73,6 +73,10 @@ void input_number(char *input_array, uint8_t *curr_pos, int array_size)
 		{
 			(*curr_pos)--;
 		}
+		else
+		{
+			push_Queue_Element(RETURN_EV);
+		}
 	}
 	else if ((input_array[*curr_pos] >= '0' && input_array[*curr_pos] <= '9') && (curr_pos != array_size - 1))
 	{
@@ -91,6 +95,10 @@ bool input_pin_number(char *input_array, uint8_t *curr_pos, int array_size)
 		if (!last)
 		{
 			(*curr_pos)--;
+		}
+		else
+		{
+			push_Queue_Element(RETURN_EV);
 		}
 		return false;
 	}

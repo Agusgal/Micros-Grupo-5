@@ -280,7 +280,7 @@ __ISR__ PORTB_IRQHandler(void)
 				counter_enable = false;
 				finish_timer_enable = true;
 				finish_counter = FINISH_TIMER_RESET_VALUE;
-				// Wait for data reading from app
+				// Wait for timer to restart
 			}
 			break;
 
