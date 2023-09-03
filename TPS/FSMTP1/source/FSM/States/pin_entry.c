@@ -48,6 +48,7 @@ void pin_accept_number(void)
 		if (pin_ok)
 		{
 			push_Queue_Element(PIN_OK_EV);
+			strike3 = 0;
 		}
 		else
 		{
@@ -59,6 +60,7 @@ void pin_accept_number(void)
 			}
 			else
 			{
+				reset_array(pin, &curr_pos, PIN_SIZE);
 				push_Queue_Element(PIN_FAIL_EV);
 			}
 		}
@@ -107,7 +109,6 @@ void msg_pin_short(void)
 void msg_fail_pin(void)
 {
 	writeMessage("Pin failed", true);
-	//led_red_on_time(5000000U);
 }
 
 void msg_pin_3_times(void)
