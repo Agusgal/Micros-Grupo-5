@@ -47,7 +47,7 @@ static uint8_t new_bit_position = 0;
 
 // For timer
 #define TIME_CONSTANT		100000	// 0.1 segs
-#define	TIMER_RESET_VALUE	50 		// 5 segs
+#define	TIMER_RESET_VALUE	10 		// 5 segs
 #define	FINISH_TIMER_RESET_VALUE 10 // 1 segs
 
 static uint32_t counter = 0;
