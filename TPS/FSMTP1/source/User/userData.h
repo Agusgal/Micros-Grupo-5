@@ -19,5 +19,13 @@ bool check_card_id (uint8_t *id);
 bool check_pin(char *pin);
 
 
+void init_data_base(void);
+
+typedef struct User
+{
+	char *id;
+	char *pin;
+	uint8_t card_id[19];
+}User;
 
 #endif /* USERDATA_H_ */

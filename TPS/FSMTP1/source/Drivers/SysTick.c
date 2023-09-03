@@ -11,11 +11,14 @@
 #include "SysTick.h"
 #include "hardware.h"
 #include "Drivers/Display.h"
+#include "gpio.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
+#define TEST_PIN_2      10
+#define TEST_PORT_2     PC
 
 typedef enum
 {
@@ -30,6 +33,7 @@ typedef enum
 
 } PORTMux_t;
 
+/*
 typedef enum
 {
 	PORT_eDisabled				= 0x00,
@@ -41,7 +45,7 @@ typedef enum
 	PORT_eInterruptFalling		= 0x0A,
 	PORT_eInterruptEither		= 0x0B,
 	PORT_eInterruptAsserted		= 0x0C,
-} PORTEvent_t;
+} PORTEvent_t;*/
 
 
 typedef struct SysTick_Callback_Element
@@ -78,6 +82,8 @@ void SysTick_Init ()
 	SysTick->LOAD = (__CORE_CLOCK__/ S_TO_US) * SYSTICK_ISR_PERIOD_US - 1; //12499999L; // <= 125 ms @ 100Mhz
 	SysTick->VAL  = 0x00;
 	SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
+
+	gpioMode(PORTNUM2PIN(TEST_PORT_2, TEST_PIN_2), OUTPUT);
 }
 
 /**
@@ -108,6 +114,10 @@ bool SysTick_Reg_Callback (void (*funCallback)(void), uint32_t period)
  ******************************************************************************/
 __ISR__ SysTick_Handler(void)
 {
+
+	//test pin high
+	gpioWrite(PORTNUM2PIN(TEST_PORT_2, TEST_PIN_2), HIGH);
+
 	// Iterate through all the callbacks
 	for (uint32_t i = 0; i < num_Callbacks; i++)
 	{
@@ -118,6 +128,9 @@ __ISR__ SysTick_Handler(void)
 			systick_Callback_Array[i].counter = systick_Callback_Array[i].num_Cycles;	  //Counter re-establishment.
 		}
 	}
+
+	//Test pin low
+	gpioWrite(PORTNUM2PIN(TEST_PORT_2, TEST_PIN_2), LOW);
 }
 
 

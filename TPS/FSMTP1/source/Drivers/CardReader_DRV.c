@@ -32,6 +32,10 @@
 #define SEQUENCE_MASK	((uint8_t)0b00011111)
 #define NEW_BIT_POSITION	5
 
+#define TEST_PIN_1      11
+#define TEST_PORT_1     PC
+
+
 enum cardState
 {
 	IDLE,
@@ -93,6 +97,9 @@ void cardReader_Init(void)
 	gpioMode(PORTNUM2PIN(PORT_ENABLE, PIN_ENABLE), INPUT);
 
 	SysTick_Reg_Callback(cardReader_PISR, TIME_CONSTANT);
+
+	//Test Pin
+	gpioMode(PORTNUM2PIN(TEST_PORT_1, TEST_PIN_1), OUTPUT);
 
 
 }
@@ -210,6 +217,9 @@ bool getCard_ID(uint8_t *data_buffer, uint8_t number_of_characters, uint8_t *ID_
  ******************************************************************************/
 __ISR__ PORTB_IRQHandler(void)
 {
+	//test pin high
+	gpioWrite(PORTNUM2PIN(TEST_PORT_1, TEST_PIN_1), HIGH);
+
 	// Clear interrupt flag
 	gpio_clear_interrupt_flag(PORTNUM2PIN(PORT_CLOCK, PIN_CLOCK));
 
@@ -288,6 +298,9 @@ __ISR__ PORTB_IRQHandler(void)
 			break;
 		}
 	}
+
+	//Test pin low
+	gpioWrite(PORTNUM2PIN(TEST_PORT_1, TEST_PIN_1), LOW);
 
 }
 
