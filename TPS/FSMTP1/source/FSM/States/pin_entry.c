@@ -25,6 +25,8 @@
 static int8_t pin[PIN_SIZE];
 static uint8_t curr_pos = 0;
 
+static int strike3 = 0;
+
 static void write_hidden(void);
 
 
@@ -33,7 +35,6 @@ void pin_accept_number(void)
 	bool is_last = input_pin_number(pin, &curr_pos, PIN_SIZE);
 
 	write_hidden();
-	//writeMessage(pin,false);
 	for(int i = 0; i < curr_pos - 3; i++)
 	{
 		ScrollRightOnce();
@@ -50,7 +51,16 @@ void pin_accept_number(void)
 		}
 		else
 		{
-			push_Queue_Element(PIN_FAIL_EV);
+			strike3++;
+			if (strike3 == 3)
+			{
+				push_Queue_Element(PIN_3_TIMES_EV);
+				strike3 = 0;
+			}
+			else
+			{
+				push_Queue_Element(PIN_FAIL_EV);
+			}
 		}
 	}
 	else if (is_last && curr_pos < 3)
@@ -97,8 +107,17 @@ void msg_pin_short(void)
 void msg_fail_pin(void)
 {
 	writeMessage("Pin failed", true);
+	//led_red_on_time(5000000U);
+}
+
+void msg_pin_3_times(void)
+{
+	writeMessage("Pin failed 3 tines", true);
 	led_red_on_time(5000000U);
 }
+
+
+
 void msg_ok_pin(void)
 {
 	writeMessage("Pin ok", true);

@@ -98,7 +98,7 @@ state CARD_ENTRY[]=
 
 		{init_pin, ID_OK_CARD_EV, PIN_ENTRY},
 
-		{msg_error_card, RETURN_EV, ID_ENTRY},
+		{msg_error_card, RETURN_EV, RED_LED_ON},
 
 		{bri_message, INCREASE_BRIGHTNESS_EV, BRIGHTNESS},
 
@@ -114,7 +114,9 @@ state PIN_ENTRY[]=
 
 		{pin_accept_number, ENC_PRESSED_EV, PIN_ENTRY},
 
-		{msg_fail_pin, PIN_FAIL_EV, RED_LED_ON},
+		{msg_fail_pin, PIN_FAIL_EV, PIN_ENTRY},
+
+		{msg_pin_3_times, PIN_3_TIMES_EV, RED_LED_ON},
 
 		{msg_ok_pin, PIN_OK_EV, GREEN_LED_ON},
 
@@ -134,11 +136,7 @@ state RED_LED_ON[]=
 
 		{pass, NONE_EV, RED_LED_ON},
 
-		{pass, END_TABLE, RED_LED_ON},
-
-		//{five_sec_red, FIVE_SEC_LAPSE_EV, ID_ENTRY},
-
-		//{one_min_red, MIN_LAPSE_EV, WRONG_ID}
+		{pass, END_TABLE, RED_LED_ON}
 
 };
 
@@ -150,10 +148,7 @@ state GREEN_LED_ON[]=
 
 };
 
-//state WRONG_ID[]=
-//{
-		//{five_sec_green, END_TABLE, ID_ENTRY},
-//};
+
 
 
 

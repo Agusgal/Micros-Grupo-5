@@ -9,6 +9,7 @@ void msg_pin_short(void);
 void msg_fail_pin(void);
 void msg_ok_pin(void);
 
+void msg_pin_3_times(void);
 
 void msg_fail_encoder(void);
 

@@ -76,5 +76,6 @@ void msg_ok_card()
 void msg_error_card()
 {
 	writeMessage("Card reading failed", true);
+	led_red_on_time(5000000U);
 }
 

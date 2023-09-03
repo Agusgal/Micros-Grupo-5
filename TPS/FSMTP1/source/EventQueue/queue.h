@@ -44,6 +44,7 @@ typedef enum {
 			PIN_FAIL_EV,
 			PIN_OK_EV,
 			PIN_SHORT_EV,
+			PIN_3_TIMES_EV,
 
 			FIVE_SEC_LAPSE_EV,
 			MIN_LAPSE_EV

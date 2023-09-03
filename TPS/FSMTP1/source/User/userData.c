@@ -26,7 +26,7 @@ bool check_encoder_id(char *id)
 	bool found_id = false;
 	for (int i = 0; i < MAX_USER_COUNT; i++)
 	{
-		if (!strcmp(id, user_array[i].card_id))
+		if (!strcmp(id, user_array[i].id))
 		{
 			found_id =  true;
 			selected_user = i;

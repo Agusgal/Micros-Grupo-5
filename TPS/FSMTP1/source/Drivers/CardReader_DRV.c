@@ -233,7 +233,7 @@ __ISR__ PORTB_IRQHandler(void)
 		cardState = IDLE;
 		number_of_characters = 0;
 		new_bit_position = 0;
-		data_ready = CARD_FAIL;
+		data_ready = CARD_IDLE;
 		counter_enable = false;
 		finish_timer_enable = false;
 	}
