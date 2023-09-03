@@ -11,5 +11,7 @@
 
 void incr_bri(void);
 void decr_bri(void);
+void bri_message(void);
+
 
 #endif /* _BRIGHTNESS_H_ */

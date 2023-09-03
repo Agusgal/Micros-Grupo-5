@@ -31,7 +31,11 @@
 static int green_cont;
 static bool green_turned_off = false;
 
+static int red_cont;
+static bool red_turned_off = false;
+
 static void green_led_timer_pisr(void);
+static void red_led_timer_pisr(void);
 
 /*******************************************************************************
  *******************************************************************************
@@ -58,6 +62,7 @@ void BoardLeds_Init(void)
 	gpioWrite(PIN_LED_BLUE,1);
 
 	SysTick_Reg_Callback(green_led_timer_pisr, SYSTICK_ISR_PERIOD_US);
+	SysTick_Reg_Callback(red_led_timer_pisr, SYSTICK_ISR_PERIOD_US);
 
 }
 
@@ -118,6 +123,24 @@ bool get_green_status()
 	}
 }
 
+void led_red_on_time(uint32_t time)
+{
+	gpioWrite(PIN_LED_RED, 0);
+	red_cont = time/SYSTICK_ISR_PERIOD_US;
+}
+
+bool get_red_status(void)
+{
+	if (red_turned_off)
+	{
+		red_turned_off = false;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
 /*******************************************************************************
  *******************************************************************************
@@ -139,5 +162,17 @@ static void green_led_timer_pisr()
 	}
 }
 
+static void red_led_timer_pisr()
+{
+	if (red_cont)
+	{
+		red_cont--;
+		if (!red_cont)
+		{
+			gpioWrite(PIN_LED_RED, 1);
+			red_turned_off = true;
+		}
+	}
+}
 /*******************************************************************************
  ******************************************************************************/

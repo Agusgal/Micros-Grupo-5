@@ -150,6 +150,10 @@ void fill_queue(void)
 	{
 		push_Queue_Element(FIVE_SEC_LAPSE_EV);
 	}
+	else if (get_red_status())
+	{
+		push_Queue_Element(FIVE_SEC_LAPSE_EV);
+	}
 }
 
 

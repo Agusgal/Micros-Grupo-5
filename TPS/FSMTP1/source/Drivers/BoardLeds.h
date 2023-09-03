@@ -52,6 +52,9 @@ void led_toggle(ledID ledId);
 void led_green_on_time(uint32_t time);
 bool get_green_status(void);
 
+void led_red_on_time(uint32_t time);
+bool get_red_status(void);
+
 /*******************************************************************************
  ******************************************************************************/
 

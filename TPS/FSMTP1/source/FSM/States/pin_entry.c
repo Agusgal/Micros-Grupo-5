@@ -97,6 +97,7 @@ void msg_pin_short(void)
 void msg_fail_pin(void)
 {
 	writeMessage("Pin failed", true);
+	led_red_on_time(5000000U);
 }
 void msg_ok_pin(void)
 {
@@ -114,6 +115,7 @@ void init_pin()
 void msg_fail_encoder(void)
 {
 	writeMessage("ID not found", true);
+	led_red_on_time(5000000U);
 }
 
 void msg_ok_encoder(void)

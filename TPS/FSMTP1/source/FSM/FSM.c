@@ -33,6 +33,7 @@
  ******************************************************************************/
 
 static void pass(void);
+
 //static state *brightness_previous_state;
 
 /*******************************************************************************
@@ -44,9 +45,12 @@ static void pass(void);
 state BRIGHTNESS[]=
 {
 		{pass, ENC_PRESSED_EV, BRIGHTNESS},
+
 		{incr_bri, ENC_RIGHT_EV, BRIGHTNESS},
+
 		{decr_bri, ENC_LEFT_EV, BRIGHTNESS},
-		{pass, END_TABLE, BRIGHTNESS},
+
+		{pass, END_TABLE, BRIGHTNESS}
 };
 
 state ID_ENTRY[]=
@@ -63,7 +67,9 @@ state ID_ENTRY[]=
 
 		{init_failed_cardswipe, CARD_MIDSWIPE_EV, CARD_ENTRY},
 
-		{pass, INCREASE_BRIGHTNESS_EV, BRIGHTNESS},
+		{bri_message, INCREASE_BRIGHTNESS_EV, BRIGHTNESS},
+
+		{pass, END_TABLE, ENCODER_ENTRY}
 };
 
 
@@ -79,7 +85,7 @@ state ENCODER_ENTRY[]=
 
 		{msg_ok_encoder, ID_OK_ENC_EV, PIN_ENTRY},
 
-		{pass, INCREASE_BRIGHTNESS_EV, BRIGHTNESS},
+		{bri_message, INCREASE_BRIGHTNESS_EV, BRIGHTNESS},
 
 		{pass, END_TABLE, ENCODER_ENTRY},
 
@@ -92,6 +98,8 @@ state CARD_ENTRY[]=
 		{init_pin, ID_OK_CARD_EV, PIN_ENTRY},
 
 		{msg_error_card, RETURN_EV, ID_ENTRY},
+
+		{bri_message, INCREASE_BRIGHTNESS_EV, BRIGHTNESS},
 
 		{pass, END_TABLE, CARD_ENTRY},
 
@@ -113,12 +121,16 @@ state PIN_ENTRY[]=
 
 		{pass, RETURN_EV, ID_ENTRY},
 
+		{bri_message, INCREASE_BRIGHTNESS_EV, BRIGHTNESS},
+
 		{pass, END_TABLE, PIN_ENTRY},
 
 };
 
 state RED_LED_ON[]=
 {
+		{welcome_animation, FIVE_SEC_LAPSE_EV, ID_ENTRY},
+
 		{pass, NONE_EV, RED_LED_ON},
 
 		{pass, END_TABLE, RED_LED_ON},
@@ -133,12 +145,14 @@ state GREEN_LED_ON[]=
 {
 		{welcome_animation, FIVE_SEC_LAPSE_EV, ID_ENTRY},
 
+		{pass, END_TABLE, RED_LED_ON},
+
 };
 
-state WRONG_ID[]=
-{
+//state WRONG_ID[]=
+//{
 		//{five_sec_green, END_TABLE, ID_ENTRY},
-};
+//};
 
 
 

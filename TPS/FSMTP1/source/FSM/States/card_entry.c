@@ -65,6 +65,7 @@ static void initialize_id_array(void)
 void msg_fail_card()
 {
 	writeMessage("Incorrect card ID", true);
+	led_red_on_time(5000000U);
 }
 
 void msg_ok_card()

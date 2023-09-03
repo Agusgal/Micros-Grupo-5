@@ -19,3 +19,8 @@ void decr_bri(void)
 {
 	decBrightness();
 }
+
+void bri_message(void)
+{
+	writeMessage("0000", false);
+}
