@@ -166,13 +166,13 @@ state RED_LED_ON[]=
 
 state GREEN_LED_ON[]=
 {
-		{five_sec_green, FIVE_SEC_LAPSE_EV, ID_ENTRY},
+		//{five_sec_green, FIVE_SEC_LAPSE_EV, ID_ENTRY},
 
 };
 
 state WRONG_ID[]=
 {
-		{five_sec_green, END_TABLE, ID_ENTRY},
+		//{five_sec_green, END_TABLE, ID_ENTRY},
 
 };
 
