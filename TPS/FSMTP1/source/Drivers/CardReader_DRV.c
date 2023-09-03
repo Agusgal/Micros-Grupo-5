@@ -112,11 +112,16 @@ uint8_t getCardReader_Status(void)
 void getCardReader_Data(uint8_t *data_buffer)
 {
 	uint8_t i;
-	cardState = IDLE;
 	for(i = 0; i < NUMBER_OF_CHARACTERS; i++)
 	{
 		data_buffer[i] = data[i];
 	}
+	tempData = 0;
+	cardState = IDLE;
+	number_of_characters = 0;
+	new_bit_position = 0;
+	data_ready = CARD_IDLE;
+	counter_enable = false;
 }
 
 /**
@@ -221,8 +226,9 @@ __ISR__ PORTB_IRQHandler(void)
 		number_of_characters = 0;
 		new_bit_position = 0;
 		data_ready = CARD_FAIL;
+		counter_enable = false;
 	}
-	//else
+	else
 	{
 		switch(cardState)
 		{
@@ -272,7 +278,6 @@ __ISR__ PORTB_IRQHandler(void)
 			{
 				data[number_of_characters] = tempData;
 				data_ready = CARD_SUCCESS;
-				counter = 0;
 				counter_enable = false;
 				// Wait for data reading from app
 			}
@@ -301,6 +306,7 @@ static void cardReader_PISR(void)
 			number_of_characters = 0;
 			new_bit_position = 0;
 			data_ready = CARD_FAIL;
+			counter_enable = false;
 		}
 	}
 
