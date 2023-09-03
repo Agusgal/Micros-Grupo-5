@@ -19,18 +19,21 @@
 
 #include "pin_entry.h"
 
-#define PIN_SIZE 4
+#define PIN_SIZE 6
 
 //Variables to keep track of user PIN input
 static int8_t pin[PIN_SIZE];
 static uint8_t curr_pos = 0;
+
+static void write_hidden(void);
 
 
 void pin_accept_number(void)
 {
 	bool is_last = input_pin_number(pin, &curr_pos, PIN_SIZE);
 
-	writeMessage(pin,false);
+	write_hidden();
+	//writeMessage(pin,false);
 	for(int i = 0; i < curr_pos - 3; i++)
 	{
 		ScrollRightOnce();
@@ -54,22 +57,6 @@ void pin_accept_number(void)
 	{
 		push_Queue_Element(PIN_SHORT_EV);
 	}
-
-	//if every number was written the we check if the id is valid
-	/*if (curr_pos > 3)
-	{
-		pin[ID_SIZE - 1] = '\0';
-		bool id_ok = check_encoder_id(id);
-
-		if (id_ok)
-		{
-			push_Queue_Element(ID_OK_ENC_EV);
-		}
-		else
-		{
-			push_Queue_Element(ID_FAIL_ENC_EV);
-		}
-	}*/
 }
 
 void pin_down_number(void)
@@ -77,12 +64,13 @@ void pin_down_number(void)
 	decrease_pin_number(pin, curr_pos);
 
 	//update display
-	writeMessage(pin,false);
+	write_hidden();
+	//writeMessage(pin,false);
 	for(int i = 0; i < curr_pos - 3; i++)
 	{
 		ScrollRightOnce();
 	}
-	writeMessage(pin, false);
+	//writeMessage(pin, false);
 }
 
 void pin_up_number(void)
@@ -91,12 +79,13 @@ void pin_up_number(void)
 	increase_pin_number(pin, curr_pos);
 
 	//update display
-	writeMessage(pin,false);
+	write_hidden();
+	//writeMessage(pin,false);
 	for(int i = 0; i < curr_pos - 3; i++)
 	{
 		ScrollRightOnce();
 	}
-	writeMessage(pin, false);
+	//writeMessage(pin, false);
 }
 
 
@@ -119,3 +108,36 @@ void init_pin()
 	writeMessage("Correct card ID", true);
 	reset_array(pin, &curr_pos, PIN_SIZE);
 }
+
+
+void msg_fail_encoder(void)
+{
+	writeMessage("ID not found", true);
+}
+
+void msg_ok_encoder(void)
+{
+	writeMessage("ID found", true);
+	reset_array(pin, &curr_pos, PIN_SIZE);
+}
+
+
+static void write_hidden()
+{
+	int8_t pin_copy[PIN_SIZE];
+
+	for (int i = 0; i < PIN_SIZE; i++)
+	{
+		if (i != curr_pos)
+		{
+			pin_copy[i] = '-';
+		}
+		else
+		{
+			pin_copy[i] = pin[i];
+		}
+	}
+
+	writeMessage(pin_copy, false);
+}
+

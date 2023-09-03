@@ -9,6 +9,11 @@ void msg_pin_short(void);
 void msg_fail_pin(void);
 void msg_ok_pin(void);
 
+
+void msg_fail_encoder(void);
+
+void msg_ok_encoder(void);
+
 void init_pin(void);
 
 #endif /* PIN_ENTRY_H_ */

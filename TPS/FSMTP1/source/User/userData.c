@@ -8,9 +8,9 @@
 #include "userData.h"
 #include <string.h>
 
-uint8_t user_card_id1[19] = {4,5,4,0,7,5,0,0,7,1,5,8,0,0,8,7,99,99,99};
+uint8_t user_card_id1[19] = {4,5,0,9,7,9,0,2,1,5,3,3,0,0,5,5,99,99,99};
 char *user_id1 = "11111111";
-char *user_pin1 = "1111";
+char *user_pin1 = "11111";
 
 bool check_encoder_id(char *id)
 {

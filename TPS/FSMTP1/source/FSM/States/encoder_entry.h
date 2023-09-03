@@ -25,7 +25,7 @@ void init_id(void);
 void up_number(void);
 void down_number(void);
 void accept_number(void);
-void msg_fail_encoder(void);
-void msg_ok_encoder(void);
+//void msg_fail_encoder(void);
+//void msg_ok_encoder(void);
 
 #endif /* ENCODER_ENTRY_H */

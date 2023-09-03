@@ -94,13 +94,13 @@ bool input_pin_number(char *input_array, uint8_t *curr_pos, int array_size)
 		}
 		return false;
 	}
-	else if ((input_array[*curr_pos] >= '0' && input_array[*curr_pos] <= '9') && (curr_pos != array_size - 1))
+	else if ((input_array[*curr_pos] >= '0' && input_array[*curr_pos] <= '9') && ((*curr_pos) != array_size - 1))
 	{
 		(*curr_pos)++;
 		//input_array[*curr_pos] = EMPTY_CHAR;
 		return false;
 	}
-	else if (input_array[*curr_pos] == INPUT_PIN)
+	else if (input_array[*curr_pos] == INPUT_PIN || (*curr_pos) == 4)
 	{
 		return true;
 	}

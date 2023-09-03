@@ -81,7 +81,7 @@ void accept_number(void)
 
 }
 
-
+/*
 void msg_fail_encoder(void)
 {
 	writeMessage("ID not found", true);
@@ -90,7 +90,7 @@ void msg_fail_encoder(void)
 void msg_ok_encoder(void)
 {
 	writeMessage("ID found", true);
-}
+}*/
 
 
 void init_id()
