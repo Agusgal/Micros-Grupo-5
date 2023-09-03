@@ -101,6 +101,7 @@ void msg_fail_pin(void)
 void msg_ok_pin(void)
 {
 	writeMessage("Pin ok", true);
+	led_green_on_time(5000000U);
 }
 
 void init_pin()

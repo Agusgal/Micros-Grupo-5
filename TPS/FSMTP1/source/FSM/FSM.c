@@ -15,7 +15,7 @@
 #include "States/encoder_entry.h"
 #include "States/card_entry.h"
 #include "States/pin_entry.h"
-
+#include "States/open.h"
 
 
 #include <stdio.h>
@@ -166,14 +166,13 @@ state RED_LED_ON[]=
 
 state GREEN_LED_ON[]=
 {
-		//{five_sec_green, FIVE_SEC_LAPSE_EV, ID_ENTRY},
+		{welcome_animation, FIVE_SEC_LAPSE_EV, ID_ENTRY},
 
 };
 
 state WRONG_ID[]=
 {
 		//{five_sec_green, END_TABLE, ID_ENTRY},
-
 };
 
 

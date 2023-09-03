@@ -42,10 +42,16 @@ void BoardLeds_Init(void);
 void led1On ();
 void led2On ();
 void led3On ();
+
 void led_blue_on();
 void led_green_on();
 void led_red_on();
+
 void led_toggle(ledID ledId);
+
+void led_green_on_time(uint32_t time);
+bool get_green_status(void);
+
 /*******************************************************************************
  ******************************************************************************/
 

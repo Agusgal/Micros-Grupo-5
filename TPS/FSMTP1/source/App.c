@@ -154,6 +154,11 @@ void fill_queue(void)
 		push_Queue_Element(CARD_MIDSWIPE_EV);
 	}
 
+	//check for timer events (leds)
+	if (get_green_status())
+	{
+		push_Queue_Element(FIVE_SEC_LAPSE_EV);
+	}
 
 
 	//etcetcetcect....

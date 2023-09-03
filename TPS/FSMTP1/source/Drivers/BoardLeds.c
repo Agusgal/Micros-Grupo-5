@@ -28,6 +28,10 @@
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
+static int green_cont;
+static bool green_turned_off = false;
+
+static void green_led_timer_pisr(void);
 
 /*******************************************************************************
  *******************************************************************************
@@ -53,6 +57,7 @@ void BoardLeds_Init(void)
 	gpioWrite(PIN_LED_GREEN,1);
 	gpioWrite(PIN_LED_BLUE,1);
 
+	SysTick_Reg_Callback(green_led_timer_pisr, SYSTICK_ISR_PERIOD_US);
 
 }
 
@@ -93,6 +98,27 @@ void led_toggle(ledID ledId)
 	gpioToggle(ledId);
 }
 
+
+void led_green_on_time(uint32_t time)
+{
+	gpioWrite(PIN_LED_GREEN, 0);
+	green_cont = time/SYSTICK_ISR_PERIOD_US;
+}
+
+bool get_green_status()
+{
+	if (green_turned_off)
+	{
+		green_turned_off = false;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
 /*******************************************************************************
  *******************************************************************************
                         LOCAL FUNCTION DEFINITIONS
@@ -100,6 +126,18 @@ void led_toggle(ledID ledId)
  ******************************************************************************/
 
 
+static void green_led_timer_pisr()
+{
+	if (green_cont)
+	{
+		green_cont--;
+		if (!green_cont)
+		{
+			gpioWrite(PIN_LED_GREEN, 1);
+			green_turned_off = true;
+		}
+	}
+}
 
 /*******************************************************************************
  ******************************************************************************/
