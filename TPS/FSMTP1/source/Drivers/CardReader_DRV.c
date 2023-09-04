@@ -236,6 +236,7 @@ __ISR__ PORTB_IRQHandler(void)
 		data_ready = CARD_IDLE;
 		counter_enable = false;
 		finish_timer_enable = false;
+		counter = 0;
 	}
 	else
 	{
