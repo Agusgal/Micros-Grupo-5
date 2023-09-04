@@ -18,5 +18,6 @@
 
 void welcome_animation()
 {
+	ledOff();
 	writeMessage("Insert ID", true);
 }

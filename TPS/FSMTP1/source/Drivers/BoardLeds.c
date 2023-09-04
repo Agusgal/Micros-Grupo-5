@@ -84,23 +84,12 @@ void led3On()
 	gpioWrite(PIN_ST_1,1);
 }
 
-void led1Off()
+void ledOff()
 {
 	gpioWrite(PIN_ST_0,0);
-	gpioWrite(PIN_ST_1,1);
-}
-
-void led2Off()
-{
-	gpioWrite(PIN_ST_0,1);
 	gpioWrite(PIN_ST_1,0);
 }
 
-void led3Off()
-{
-	gpioWrite(PIN_ST_0,1);
-	gpioWrite(PIN_ST_1,1);
-}
 
 
 
