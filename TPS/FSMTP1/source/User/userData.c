@@ -66,6 +66,11 @@ bool check_card_id (uint8_t *id)
 
 bool check_pin(char *pin)
 {
+	if (user_array[selected_user].pin[4] == '$')
+	{
+		user_array[selected_user].pin[4] = '\0';
+	}
+
 	if (!strcmp(pin, user_array[selected_user].pin))
 	{
 		return true;

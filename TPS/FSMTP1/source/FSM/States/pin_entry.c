@@ -42,7 +42,8 @@ void pin_accept_number(void)
 
 	if (is_last && curr_pos >= 3)
 	{
-		pin[curr_pos] = '\0';
+
+		pin[PIN_SIZE - 1] = '\0';
 		bool pin_ok = check_pin(pin);
 
 		if (pin_ok)
