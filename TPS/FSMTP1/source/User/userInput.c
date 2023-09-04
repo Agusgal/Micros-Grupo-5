@@ -87,7 +87,7 @@ void input_number(char *input_array, uint8_t *curr_pos, int array_size)
 }
 
 
-bool input_pin_number(char *input_array, uint8_t *curr_pos, int array_size)
+bool input_pin_number(char *input_array, uint8_t *curr_pos, int array_size, int * strike3)
 {
 	if(input_array[*curr_pos] == BACKSPACE_L || input_array[*curr_pos] == BACKSPACE_R)
 	{
@@ -99,6 +99,7 @@ bool input_pin_number(char *input_array, uint8_t *curr_pos, int array_size)
 		else
 		{
 			push_Queue_Element(RETURN_EV);
+			*strike3 = 0;
 		}
 		return false;
 	}

@@ -32,7 +32,7 @@ static void write_hidden(void);
 
 void pin_accept_number(void)
 {
-	bool is_last = input_pin_number(pin, &curr_pos, PIN_SIZE);
+	bool is_last = input_pin_number(pin, &curr_pos, PIN_SIZE, &strike3);
 
 	write_hidden();
 	for(int i = 0; i < curr_pos - 3; i++)

@@ -35,7 +35,7 @@ void input_number(char *input_array, uint8_t *curr_pos, int array_size);
 
 
 //Pin services
-bool input_pin_number(char *input_array, uint8_t *curr_pos, int array_size);
+bool input_pin_number(char *input_array, uint8_t *curr_pos, int array_size, int * strike3);
 
 void increase_pin_number(char *input_array, uint8_t curr_pos);
 
