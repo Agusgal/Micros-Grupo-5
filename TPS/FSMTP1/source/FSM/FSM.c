@@ -1,7 +1,7 @@
 /***************************************************************************//**
-  @file     App.c
-  @brief    Application functions
-  @author   Nicolás Magliola
+  @file     FSM.c
+  @brief    fsm functions.
+  @author   Grupo 5
  ******************************************************************************/
 
 /*******************************************************************************
@@ -19,11 +19,11 @@
 #include "States/brightness.h"
 
 
-
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
+//TODO: borrar esto, que hacen estos defines aca xd????? se rompera el programa si los borro?
 #define IDLE 0
 #define RISING_FLANK 2
 
@@ -34,12 +34,9 @@
 
 static void pass(void);
 
-//static state *brightness_previous_state;
 
 /*******************************************************************************
- *******************************************************************************
-                        GLOBAL FUNCTION DEFINITIONS
- *******************************************************************************
+ * FSM TABLE
  ******************************************************************************/
 
 state BRIGHTNESS[]=
@@ -149,17 +146,20 @@ state GREEN_LED_ON[]=
 };
 
 
-
-
+/*******************************************************************************
+ *******************************************************************************
+                        GLOBAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
 
 
 /**
- * @brief
- * @param
- * @param
+ * @brief determines next state and executes transition functions based on current event, current state and fsm table.
+ * @param p_state: pointer to current state inside the fsm state table.
+ * @param curr_event: latest event, it came from the event queue.
+ * @return pointer to the next state following the logic of the state table.
  */
-
-state* fsm_dispatcher (state* p_state, Event_Type curr_event)
+state* fsm_dispatcher(state* p_state, Event_Type curr_event)
 {
 	bool flag = 1;
 
@@ -187,17 +187,24 @@ state* fsm_dispatcher (state* p_state, Event_Type curr_event)
 }
 
 
+/**
+ * @brief returns initial state of the fsm, gets called at the beginning of the program.
+ * @return pointer to the initial state of the fsm.
+ */
 state* get_initial_state()
 {
 	return ID_ENTRY;
 }
 
+
+/**
+ * @brief function executed at the beginning of the fsm.
+ * @return nothing.
+ */
 void start_fsm()
 {
 	welcome_animation();
 }
-
-
 
 
 /*******************************************************************************
@@ -207,7 +214,10 @@ void start_fsm()
  ******************************************************************************/
 
 
-
+/**
+ * @brief dummy function.
+ * @return nothing.
+ */
 static void pass(void)
 {
 

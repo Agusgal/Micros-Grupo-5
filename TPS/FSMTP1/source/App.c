@@ -1,16 +1,12 @@
 /***************************************************************************//**
   @file     App.c
   @brief    Application functions
-  @author   Nicolás Magliola
+  @author   Grupo 5
  ******************************************************************************/
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-
-#include <stdio.h>
-
-
 
 #include "MK64F12.h"
 #include "hardware.h"
@@ -33,13 +29,22 @@
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
-void idle(void);
-void SysTick_Init (void);
 
-//Function that fills the event queue with different events, gets called continously by app_run
+//TODO: que hace esto aca?????
+void SysTick_Init(void);
+
+/**
+ * @brief captures events generated within the drivers and inside states and fills the eventqueue. Gets called continously.
+ * @return nothing.
+ */
 void fill_queue(void);
 
+/*******************************************************************************
+ * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
+ ******************************************************************************/
 
+//TODO: habra una mejor manera de manejar esto?
+//this variable saves the current state of the FSM
 static state *current_state;
 
 
@@ -75,7 +80,6 @@ void App_Init (void)
     hw_DisableInterrupts();
     SysTick_Init();
     hw_EnableInterrupts();
-    //writeMessage("8888",false);
 }
 
 
@@ -101,11 +105,11 @@ void App_Run (void)
  *******************************************************************************
  ******************************************************************************/
 
-void idle(void)
-{
 
-}
-
+/**
+ * @brief captures events generated within the drivers and inside states and fills the eventqueue. Gets called continously.
+ * @return nothing.
+ */
 void fill_queue(void)
 {
 	uint8_t card_var = getCardReader_Status();
