@@ -8,12 +8,15 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
+
 #include "queue.h"
 
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
+
+
 #define	MAX_NUMBER_OF_EVENTS	15
 
 static Event_Type queue [MAX_NUMBER_OF_EVENTS];
