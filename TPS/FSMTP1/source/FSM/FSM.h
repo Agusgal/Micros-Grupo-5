@@ -64,7 +64,7 @@ extern state GREEN_LED_ON[];
  * @param curr_event: latest event, it came from the event queue.
  * @return pointer to the next state following the logic of the state table.
  */
-state* fsm_dispatcher (state* p_state, Event_Type curr_event);
+state* fsm_dispatcher(state* p_state, Event_Type curr_event);
 
 
 /**

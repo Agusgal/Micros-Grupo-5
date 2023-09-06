@@ -10,10 +10,6 @@
 
 #define MAX_USER_COUNT	3
 
-uint8_t user_card_id1[19] = {4,5,0,9,7,9,0,2,1,5,3,3,0,0,5,5,99,99,99};
-char *user_id1 = "11111111";
-char *user_pin1 = "11111";
-
 
 static User user_array[MAX_USER_COUNT] = {{"11111111", "11111", {4, 5, 0, 9, 7, 9, 0, 2, 1, 5, 3, 3, 0, 0, 5, 5, 99, 99, 99}},
 		                                 {"12345678" , "1234" , {4, 5, 1, 7, 6, 6, 0, 1, 3, 0, 7, 5, 9, 0, 8, 6, 99, 99, 99}},
@@ -63,7 +59,7 @@ bool check_card_id (uint8_t *id)
 	return found_card_id;
 }
 
-
+//todo modificar para que no sea necesario hacer esto
 bool check_pin(char *pin)
 {
 	if (pin[4] == '$')
