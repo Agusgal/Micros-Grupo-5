@@ -60,6 +60,18 @@ void App_Init (void)
 	queue_Init();
 
 
+	//Init UART Drivers
+
+
+	//Init SPI Drivers
+
+
+	//Init I2C Drivers
+
+
+	//Init CAN drivers
+
+
 	//Init fsm
 	current_state = get_initial_state();
 	start_fsm();
