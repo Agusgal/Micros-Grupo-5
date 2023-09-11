@@ -12,9 +12,11 @@
 #include <stdbool.h>
 
 
+//Todo: mejorar modulo de user input para que sea adaptable a distintos tamnaños de inputs y brindar mejor servicios.
 
 //order: 0 1 2 3 4 5 6 7 8 9 BACKSPACE
 
+//Todo: borrar uno de los backspaces
 #define EMPTY_CHAR  '-'
 #define BACKSPACE_R '*'
 #define BACKSPACE_L '*'
@@ -24,6 +26,7 @@
 
 void reset_array(char *input_array, uint8_t *curr_pos, int array_size);
 
+//todo: unificar pin y id services
 
 //ID services
 void decrease_number(char *input_array, char curr_pos);

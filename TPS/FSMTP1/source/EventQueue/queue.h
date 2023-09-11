@@ -21,10 +21,9 @@
  ******************************************************************************/
 
 // Queue Status
-
 #define	OVERFLOW	-1
-// Events
 
+// Events
 typedef enum {
 			NONE_EV,
 			ENC_LEFT_EV,
@@ -58,11 +57,6 @@ typedef enum {
 
 typedef uint8_t pin_t;
 
-//typedef struct Event
-//{
-	//uint8_t ID;
-//} Event_Type;
-
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
@@ -71,10 +65,13 @@ typedef uint8_t pin_t;
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
+
+
 /**
  * @brief Initializes the circular queue
  */
 void queue_Init (void);
+
 
 /**
  * @brief Pushes an event to the queue
@@ -83,11 +80,13 @@ void queue_Init (void);
  */
 int8_t push_Queue_Element(Event_Type event);
 
+
 /**
  * @brief Pulls the earliest event from the queue
  * @return Event_Type variable with the current event if no OVERFLOW is detected.
  */
 Event_Type pull_Queue_Element(void);
+
 
 /**
  * @brief Gets the status of the queue

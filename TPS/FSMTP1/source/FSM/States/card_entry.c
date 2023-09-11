@@ -5,7 +5,9 @@
  *      Author: Agustin Galdeman
  */
 
+//TODO id entry no deberia estar aca?
 #include "id_entry.h"
+
 #include "Drivers/CardReader_DRV.h"
 #include "Drivers/BoardLeds.h"
 #include "EventQueue/queue.h"

@@ -2,7 +2,7 @@
  * userData.c
  *
  *  Created on: 1 sep. 2023
- *      Author: agus
+ *      Author: Grupo 5
  */
 
 #include "userData.h"
