@@ -116,7 +116,9 @@ unsigned char uart_data;
 			__FOREVER__
 			{
 
-
+				UART_Send_Data('A');
+				UART_Send_Data('B');
+				UART_Send_Data('C');
 				if(UART_Get_Status()){
 					uart_data=UART_Get_Data();
 					UART_Send_Data(uart_data+1);
