@@ -5,6 +5,8 @@
  *      Author: Agustin Galdeman
  */
 
+//dejado por si acaso
+/*
 #include "id_entry.h"
 
 #include "Drivers/Display.h"
@@ -21,3 +23,4 @@ void welcome_animation()
 	ledOff();
 	writeMessage("Insert ID", true);
 }
+*/
