@@ -45,12 +45,8 @@ struct state
  ******************************************************************************/
 
 
-extern state ID_ENTRY[];
-extern state ENCODER_ENTRY[];
-extern state CARD_ENTRY[];
-extern state PIN_ENTRY[];
-extern state RED_LED_ON[];
-extern state GREEN_LED_ON[];
+//formato: extern state stateName[];
+
 
 
 /*******************************************************************************

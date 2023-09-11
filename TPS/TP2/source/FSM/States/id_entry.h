@@ -5,11 +5,16 @@
  *      Author: Agustin Galdeman
  */
 
-#ifndef ID_ENTRY_H_
-#define ID_ENTRY_H_
+//comentado por las dudas
 
 
-#include <stdint.h>
+
+
+//#ifndef ID_ENTRY_H_
+//#define ID_ENTRY_H_
+
+
+//#include <stdint.h>
 
 
 /*******************************************************************************
@@ -20,6 +25,8 @@
  */
 
 
-void welcome_animation(void);
+//void welcome_animation(void);
 
-#endif /* ID_ENTRY_H_ */
+
+//#endif /* ID_ENTRY_H_ */
+

@@ -11,12 +11,10 @@
 #include "MK64F12.h"
 #include "hardware.h"
 
-#include "Drivers/Display.h"
-#include "Drivers/Encoder.h"
+
 #include "Drivers/board.h"
 #include "Drivers/gpio.h"
-#include "Drivers/BoardLeds.h"
-#include "Drivers/CardReader_DRV.h"
+
 
 #include "EventQueue/queue.h"
 #include "FSM/FSM.h"
@@ -61,17 +59,6 @@ void App_Init (void)
 	//Init Queue
 	queue_Init();
 
-	//Init display
-	Display_Init();
-
-	//Init Leds
-	BoardLeds_Init();
-
-	//Init card_reader
-	cardReader_Init();
-
-	//Init Encoder
-	Encoder_Init();
 
 	//Init fsm
 	current_state = get_initial_state();
@@ -112,52 +99,16 @@ void App_Run (void)
  */
 void fill_queue(void)
 {
-	uint8_t card_var = getCardReader_Status();
+	//Check for UART events...
 
+	//Check for SPI events...
 
-	//check for encoder turn events
-	int move_enc = getEncoder_State();
+	//Check for CAN events...
 
-	if (move_enc == 1) //move right
-	{
-		push_Queue_Element(ENC_RIGHT_EV);
-	}
-	else if (move_enc == 2)
-	{
-		push_Queue_Element(ENC_LEFT_EV);
-	}
+	//Check for I2C events...
 
-	//Check for Encoder press events
-	int encoder_state = getEncoderSwitch_State();
+	//Check for timer events...
 
-	if (encoder_state == RELEASED)
-	{
-		push_Queue_Element(ENC_PRESSED_EV);
-	}
-	else if(encoder_state == FIVE_SEC_PRESS)
-	{
-		push_Queue_Element(INCREASE_BRIGHTNESS_EV);
-	}
-
-	//Check for Card Events
-	if (!card_var)
-	{
-		push_Queue_Element(CARD_SWIPE_EV);
-	}
-	else if (card_var == CARD_FAIL)
-	{
-		push_Queue_Element(CARD_MIDSWIPE_EV);
-	}
-
-	//Check for timer events (leds)
-	if (get_green_status())
-	{
-		push_Queue_Element(FIVE_SEC_LAPSE_EV);
-	}
-	else if (get_red_status())
-	{
-		push_Queue_Element(FIVE_SEC_LAPSE_EV);
-	}
 }
 
 
