@@ -66,27 +66,27 @@ void UART_Init (void)
 
 		//UART0 Set UART Speed
 
-		UART_SetBaudRate(UART1, UART_HAL_DEFAULT_BAUDRATE);
+		UART_SetBaudRate(UART0, UART_HAL_DEFAULT_BAUDRATE);
 
 		//Configure UART0 TX and RX PINS
 
-		PORTC->PCR[UART1_TX_PIN]=0x0; //Clear all bits
-		PORTC->PCR[UART1_TX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
-		PORTC->PCR[UART1_TX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
+		PORTC->PCR[UART0_TX_PIN]=0x0; //Clear all bits
+		PORTC->PCR[UART0_TX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
+		PORTC->PCR[UART0_TX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
 //----------------------------------------------------------------------------------
-		PORTC->PCR[UART1_RX_PIN]=0x0; //Clear all bits
-		PORTC->PCR[UART1_RX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
-		PORTC->PCR[UART1_RX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
+		PORTC->PCR[UART0_RX_PIN]=0x0; //Clear all bits
+		PORTC->PCR[UART0_RX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
+		PORTC->PCR[UART0_RX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
 
 
 	//UART0 Baudrate Setup
 
-		UART_SetBaudRate (UART1, 9600);
+		UART_SetBaudRate (UART0, 9600);
 
 	//Enable UART0 Xmiter and Rcvr
 
 		//UART0->C2=UART_C2_TE_MASK | UART_C2_RE_MASK;
-		UART1->C2=UART_C2_TE_MASK | UART_C2_RE_MASK | UART_C2_RIE_MASK;
+		UART0->C2=UART_C2_TE_MASK | UART_C2_RE_MASK | UART_C2_RIE_MASK;
 
 
 
@@ -113,15 +113,15 @@ void UART_SetBaudRate (UART_Type *uart, uint32_t baudrate)
 }
 
 
-__ISR__ UART1_RX_TX_IRQHandler (void)
+__ISR__ UART0_RX_TX_IRQHandler (void)
 {
 	unsigned char tmp;
 
-	tmp=UART1->S1;			// Dummy read to clear status register
+	tmp=UART0->S1;			// Dummy read to clear status register
 
 	rx_flag=true;
 
-	rx_data=UART1->D;
+	rx_data=UART0->D;
 
 }
 
@@ -139,9 +139,9 @@ unsigned char UART_Get_Data(void)
 
 void UART_Send_Data(unsigned char tx_data)
 {
-	while(((UART1->S1)& UART_S1_TDRE_MASK) ==0);
+	while(((UART0->S1)& UART_S1_TDRE_MASK) ==0);
 
-				UART1->D = tx_data;
+				UART0->D = tx_data;
 }
 
 

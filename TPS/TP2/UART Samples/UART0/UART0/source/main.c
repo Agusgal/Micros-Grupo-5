@@ -18,9 +18,9 @@ unsigned char uart_data;
 
  	 	 	hw_Init ();
 			UART_Init();
-			UART_Send_Data('A');
-			UART_Send_Data('B');
-			UART_Send_Data('C');
+
+			UART_SendMsg("La concha de tu madre");
+
 
 			// Enable interrupts
 			hw_EnableInterrupts();

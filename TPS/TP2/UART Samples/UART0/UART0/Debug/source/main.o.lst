@@ -14,16 +14,24 @@
   14              		.text
   15              	.Ltext0:
   16              		.cfi_sections	.debug_frame
-  17              		.section	.text.main,"ax",%progbits
-  18              		.align	1
-  19              		.global	main
-  20              		.syntax unified
-  21              		.thumb
-  22              		.thumb_func
-  23              		.fpu fpv4-sp-d16
-  25              	main:
-  26              	.LFB123:
-  27              		.file 1 "../source/main.c"
+  17              		.section	.rodata
+  18              		.align	2
+  19              	.LC0:
+  20 0000 4C612063 		.ascii	"La concha de tu madre\000"
+  20      6F6E6368 
+  20      61206465 
+  20      20747520 
+  20      6D616472 
+  21              		.section	.text.main,"ax",%progbits
+  22              		.align	1
+  23              		.global	main
+  24              		.syntax unified
+  25              		.thumb
+  26              		.thumb_func
+  27              		.fpu fpv4-sp-d16
+  29              	main:
+  30              	.LFB123:
+  31              		.file 1 "../source/main.c"
    1:../source/main.c **** /*
    2:../source/main.c ****  * main.c
    3:../source/main.c ****  *
@@ -38,76 +46,76 @@
   12:../source/main.c **** 
   13:../source/main.c **** int main (void)
   14:../source/main.c **** {
-  28              		.loc 1 14 0
-  29              		.cfi_startproc
-  30              		@ args = 0, pretend = 0, frame = 8
-  31              		@ frame_needed = 1, uses_anonymous_args = 0
-  32 0000 80B5     		push	{r7, lr}
-  33              		.cfi_def_cfa_offset 8
-  34              		.cfi_offset 7, -8
-  35              		.cfi_offset 14, -4
-  36 0002 82B0     		sub	sp, sp, #8
-  37              		.cfi_def_cfa_offset 16
-  38 0004 00AF     		add	r7, sp, #0
-  39              		.cfi_def_cfa_register 7
+  32              		.loc 1 14 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 8
+  35              		@ frame_needed = 1, uses_anonymous_args = 0
+  36 0000 80B5     		push	{r7, lr}
+  37              		.cfi_def_cfa_offset 8
+  38              		.cfi_offset 7, -8
+  39              		.cfi_offset 14, -4
+  40 0002 82B0     		sub	sp, sp, #8
+  41              		.cfi_def_cfa_offset 16
+  42 0004 00AF     		add	r7, sp, #0
+  43              		.cfi_def_cfa_register 7
   15:../source/main.c **** 
   16:../source/main.c **** 
   17:../source/main.c **** unsigned char uart_data;
   18:../source/main.c **** 
   19:../source/main.c ****  	 	 	hw_Init ();
-  40              		.loc 1 19 0
-  41 0006 FFF7FEFF 		bl	hw_Init
+  44              		.loc 1 19 0
+  45 0006 FFF7FEFF 		bl	hw_Init
   20:../source/main.c **** 			UART_Init();
-  42              		.loc 1 20 0
-  43 000a FFF7FEFF 		bl	UART_Init
-  21:../source/main.c **** 			UART_Send_Data('A');
-  44              		.loc 1 21 0
-  45 000e 4120     		movs	r0, #65
-  46 0010 FFF7FEFF 		bl	UART_Send_Data
-  22:../source/main.c **** 			UART_Send_Data('B');
-  47              		.loc 1 22 0
-  48 0014 4220     		movs	r0, #66
-  49 0016 FFF7FEFF 		bl	UART_Send_Data
-  23:../source/main.c **** 			UART_Send_Data('C');
-  50              		.loc 1 23 0
-  51 001a 4320     		movs	r0, #67
-  52 001c FFF7FEFF 		bl	UART_Send_Data
+  46              		.loc 1 20 0
+  47 000a FFF7FEFF 		bl	UART_Init
+  21:../source/main.c **** 
+  22:../source/main.c **** 			UART_SendMsg("La concha de tu madre");
+  48              		.loc 1 22 0
+  49 000e 0848     		ldr	r0, .L3
+  50 0010 FFF7FEFF 		bl	UART_SendMsg
+  23:../source/main.c **** 
   24:../source/main.c **** 
   25:../source/main.c **** 			// Enable interrupts
   26:../source/main.c **** 			hw_EnableInterrupts();
-  53              		.loc 1 26 0
-  54 0020 FFF7FEFF 		bl	hw_EnableInterrupts
-  55              	.L2:
+  51              		.loc 1 26 0
+  52 0014 FFF7FEFF 		bl	hw_EnableInterrupts
+  53              	.L2:
   27:../source/main.c **** 
   28:../source/main.c **** 			__FOREVER__
   29:../source/main.c **** 			{
   30:../source/main.c **** 					uart_data=UART_Recieve_Data();
-  56              		.loc 1 30 0 discriminator 1
-  57 0024 FFF7FEFF 		bl	UART_Recieve_Data
-  58 0028 0346     		mov	r3, r0
-  59 002a FB71     		strb	r3, [r7, #7]
+  54              		.loc 1 30 0 discriminator 1
+  55 0018 FFF7FEFF 		bl	UART_Recieve_Data
+  56 001c 0346     		mov	r3, r0
+  57 001e FB71     		strb	r3, [r7, #7]
   31:../source/main.c **** 					UART_Send_Data(uart_data+1);
-  60              		.loc 1 31 0 discriminator 1
-  61 002c FB79     		ldrb	r3, [r7, #7]
-  62 002e 0133     		adds	r3, r3, #1
-  63 0030 DBB2     		uxtb	r3, r3
-  64 0032 1846     		mov	r0, r3
-  65 0034 FFF7FEFF 		bl	UART_Send_Data
+  58              		.loc 1 31 0 discriminator 1
+  59 0020 FB79     		ldrb	r3, [r7, #7]
+  60 0022 0133     		adds	r3, r3, #1
+  61 0024 DBB2     		uxtb	r3, r3
+  62 0026 1846     		mov	r0, r3
+  63 0028 FFF7FEFF 		bl	UART_Send_Data
   30:../source/main.c **** 					UART_Send_Data(uart_data+1);
-  66              		.loc 1 30 0 discriminator 1
-  67 0038 F4E7     		b	.L2
-  68              		.cfi_endproc
-  69              	.LFE123:
-  71              		.text
-  72              	.Letext0:
-  73              		.file 2 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\sys\\libconfig-arm.h"
-  74              		.file 3 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\stdint.h"
-  75              		.file 4 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
-  76              		.file 5 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
+  64              		.loc 1 30 0 discriminator 1
+  65 002c F4E7     		b	.L2
+  66              	.L4:
+  67 002e 00BF     		.align	2
+  68              	.L3:
+  69 0030 00000000 		.word	.LC0
+  70              		.cfi_endproc
+  71              	.LFE123:
+  73              		.text
+  74              	.Letext0:
+  75              		.file 2 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\sys\\libconfig-arm.h"
+  76              		.file 3 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\stdint.h"
+  77              		.file 4 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
+  78              		.file 5 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\lucia\AppData\Local\Temp\ccKLziBa.s:18     .text.main:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccKLziBa.s:25     .text.main:00000000 main
+C:\Users\lucia\AppData\Local\Temp\ccly9dMY.s:18     .rodata:00000000 $d
+C:\Users\lucia\AppData\Local\Temp\ccly9dMY.s:22     .text.main:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccly9dMY.s:29     .text.main:00000000 main
+C:\Users\lucia\AppData\Local\Temp\ccly9dMY.s:69     .text.main:00000030 $d
                            .group:00000000 wm4.0.33db8b643112917ec54934b4f2c2f387
                            .group:00000000 wm4.redlib_version.h.16.f905717e4b3a91dcbdbb631865150df4
                            .group:00000000 wm4.libconfigarm.h.18.1ad1d24f96d0dc8c4cf52dc19b0aa2c7
@@ -126,6 +134,7 @@ C:\Users\lucia\AppData\Local\Temp\ccKLziBa.s:25     .text.main:00000000 main
 UNDEFINED SYMBOLS
 hw_Init
 UART_Init
-UART_Send_Data
+UART_SendMsg
 hw_EnableInterrupts
 UART_Recieve_Data
+UART_Send_Data

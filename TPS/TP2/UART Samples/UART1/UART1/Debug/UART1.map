@@ -71,7 +71,7 @@ Discarded input sections
  .text          0x00000000        0x0 ./startup/startup_mk64f12.o
  .data          0x00000000        0x0 ./startup/startup_mk64f12.o
  .bss           0x00000000        0x0 ./startup/startup_mk64f12.o
- .text.UART1_RX_TX_IRQHandler
+ .text.UART0_RX_TX_IRQHandler
                 0x00000000        0x8 ./startup/startup_mk64f12.o
  .text.PORTA_IRQHandler
                 0x00000000        0x8 ./startup/startup_mk64f12.o
@@ -607,12 +607,12 @@ END GROUP
  .text.UART0_LON_IRQHandler
                 0x00000500        0x8 ./startup/startup_mk64f12.o
                 0x00000500                UART0_LON_IRQHandler
- .text.UART0_RX_TX_IRQHandler
-                0x00000508        0x8 ./startup/startup_mk64f12.o
-                0x00000508                UART0_RX_TX_IRQHandler
  .text.UART0_ERR_IRQHandler
+                0x00000508        0x8 ./startup/startup_mk64f12.o
+                0x00000508                UART0_ERR_IRQHandler
+ .text.UART1_RX_TX_IRQHandler
                 0x00000510        0x8 ./startup/startup_mk64f12.o
-                0x00000510                UART0_ERR_IRQHandler
+                0x00000510                UART1_RX_TX_IRQHandler
  .text.UART1_ERR_IRQHandler
                 0x00000518        0x8 ./startup/startup_mk64f12.o
                 0x00000518                UART1_ERR_IRQHandler
@@ -774,9 +774,9 @@ END GROUP
  .text.UART_SetBaudRate
                 0x000007fc       0xb8 ./source/UART.o
                 0x000007fc                UART_SetBaudRate
- .text.UART1_RX_TX_IRQHandler
+ .text.UART0_RX_TX_IRQHandler
                 0x000008b4       0x3c ./source/UART.o
-                0x000008b4                UART1_RX_TX_IRQHandler
+                0x000008b4                UART0_RX_TX_IRQHandler
  .text.UART_Get_Status
                 0x000008f0       0x18 ./source/UART.o
                 0x000008f0                UART_Get_Status

@@ -114,6 +114,20 @@ void UART_Send_Data(unsigned char tx_data)
 				UART0->D = tx_data;
 }
 
+
+void UART_SendMsg(char* msg)
+{
+	uint32_t i = 0;
+	while (msg[i]  != '\0')
+	{
+		UART_Send_Data(msg[i]);
+		i++;
+	}
+	UART_Send_Data('\n');
+	UART_Send_Data('\r');
+}
+
+
 unsigned char UART_Recieve_Data(void)
 {
 	while(((UART0->S1)& UART_S1_RDRF_MASK) ==0);

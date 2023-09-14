@@ -1864,7 +1864,7 @@
   66:../source/UART.c **** 
   67:../source/UART.c **** 		//UART0 Set UART Speed
   68:../source/UART.c **** 
-  69:../source/UART.c **** 		UART_SetBaudRate(UART1, UART_HAL_DEFAULT_BAUDRATE);
+  69:../source/UART.c **** 		UART_SetBaudRate(UART0, UART_HAL_DEFAULT_BAUDRATE);
  177              		.loc 2 69 0
  178 00b8 4FF41651 		mov	r1, #9600
  179 00bc 1448     		ldr	r0, .L5+4
@@ -1872,48 +1872,48 @@
   70:../source/UART.c **** 
   71:../source/UART.c **** 		//Configure UART0 TX and RX PINS
   72:../source/UART.c **** 
-  73:../source/UART.c **** 		PORTC->PCR[UART1_TX_PIN]=0x0; //Clear all bits
+  73:../source/UART.c **** 		PORTC->PCR[UART0_TX_PIN]=0x0; //Clear all bits
  181              		.loc 2 73 0
  182 00c2 144B     		ldr	r3, .L5+8
  183 00c4 0022     		movs	r2, #0
- 184 00c6 1A61     		str	r2, [r3, #16]
-  74:../source/UART.c **** 		PORTC->PCR[UART1_TX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
+ 184 00c6 5A64     		str	r2, [r3, #68]
+  74:../source/UART.c **** 		PORTC->PCR[UART0_TX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
  185              		.loc 2 74 0
  186 00c8 124B     		ldr	r3, .L5+8
- 187 00ca 1B69     		ldr	r3, [r3, #16]
+ 187 00ca 5B6C     		ldr	r3, [r3, #68]
  188 00cc 114A     		ldr	r2, .L5+8
  189 00ce 43F44073 		orr	r3, r3, #768
- 190 00d2 1361     		str	r3, [r2, #16]
-  75:../source/UART.c **** 		PORTC->PCR[UART1_TX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
+ 190 00d2 5364     		str	r3, [r2, #68]
+  75:../source/UART.c **** 		PORTC->PCR[UART0_TX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
  191              		.loc 2 75 0
  192 00d4 0F4B     		ldr	r3, .L5+8
  193 00d6 0F4A     		ldr	r2, .L5+8
- 194 00d8 1B69     		ldr	r3, [r3, #16]
- 195 00da 1361     		str	r3, [r2, #16]
+ 194 00d8 5B6C     		ldr	r3, [r3, #68]
+ 195 00da 5364     		str	r3, [r2, #68]
   76:../source/UART.c **** //----------------------------------------------------------------------------------
-  77:../source/UART.c **** 		PORTC->PCR[UART1_RX_PIN]=0x0; //Clear all bits
+  77:../source/UART.c **** 		PORTC->PCR[UART0_RX_PIN]=0x0; //Clear all bits
  196              		.loc 2 77 0
  197 00dc 0D4B     		ldr	r3, .L5+8
  198 00de 0022     		movs	r2, #0
- 199 00e0 DA60     		str	r2, [r3, #12]
-  78:../source/UART.c **** 		PORTC->PCR[UART1_RX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
+ 199 00e0 1A64     		str	r2, [r3, #64]
+  78:../source/UART.c **** 		PORTC->PCR[UART0_RX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
  200              		.loc 2 78 0
  201 00e2 0C4B     		ldr	r3, .L5+8
- 202 00e4 DB68     		ldr	r3, [r3, #12]
+ 202 00e4 1B6C     		ldr	r3, [r3, #64]
  203 00e6 0B4A     		ldr	r2, .L5+8
  204 00e8 43F44073 		orr	r3, r3, #768
- 205 00ec D360     		str	r3, [r2, #12]
-  79:../source/UART.c **** 		PORTC->PCR[UART1_RX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
+ 205 00ec 1364     		str	r3, [r2, #64]
+  79:../source/UART.c **** 		PORTC->PCR[UART0_RX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
  206              		.loc 2 79 0
  207 00ee 094B     		ldr	r3, .L5+8
  208 00f0 084A     		ldr	r2, .L5+8
- 209 00f2 DB68     		ldr	r3, [r3, #12]
- 210 00f4 D360     		str	r3, [r2, #12]
+ 209 00f2 1B6C     		ldr	r3, [r3, #64]
+ 210 00f4 1364     		str	r3, [r2, #64]
   80:../source/UART.c **** 
   81:../source/UART.c **** 
   82:../source/UART.c **** 	//UART0 Baudrate Setup
   83:../source/UART.c **** 
-  84:../source/UART.c **** 		UART_SetBaudRate (UART1, 9600);
+  84:../source/UART.c **** 		UART_SetBaudRate (UART0, 9600);
  211              		.loc 2 84 0
  212 00f6 4FF41651 		mov	r1, #9600
  213 00fa 0548     		ldr	r0, .L5+4
@@ -1922,7 +1922,7 @@
   86:../source/UART.c **** 	//Enable UART0 Xmiter and Rcvr
   87:../source/UART.c **** 
   88:../source/UART.c **** 		//UART0->C2=UART_C2_TE_MASK | UART_C2_RE_MASK;
-  89:../source/UART.c **** 		UART1->C2=UART_C2_TE_MASK | UART_C2_RE_MASK | UART_C2_RIE_MASK;
+  89:../source/UART.c **** 		UART0->C2=UART_C2_TE_MASK | UART_C2_RE_MASK | UART_C2_RIE_MASK;
  215              		.loc 2 89 0
  216 0100 034B     		ldr	r3, .L5+4
  217 0102 2C22     		movs	r2, #44
@@ -1939,7 +1939,7 @@
  223 010a 00BF     		.align	2
  224              	.L5:
  225 010c 00700440 		.word	1074032640
- 226 0110 00B00640 		.word	1074180096
+ 226 0110 00A00640 		.word	1074176000
  227 0114 00B00440 		.word	1074049024
  228              		.cfi_endproc
  229              	.LFE123:
@@ -2093,18 +2093,18 @@
  358 00b4 80F0FA02 		.word	50000000
  359              		.cfi_endproc
  360              	.LFE124:
- 362              		.section	.text.UART1_RX_TX_IRQHandler,"ax",%progbits
+ 362              		.section	.text.UART0_RX_TX_IRQHandler,"ax",%progbits
  363              		.align	1
- 364              		.global	UART1_RX_TX_IRQHandler
+ 364              		.global	UART0_RX_TX_IRQHandler
  365              		.syntax unified
  366              		.thumb
  367              		.thumb_func
  368              		.fpu fpv4-sp-d16
- 370              	UART1_RX_TX_IRQHandler:
+ 370              	UART0_RX_TX_IRQHandler:
  371              	.LFB125:
  114:../source/UART.c **** 
  115:../source/UART.c **** 
- 116:../source/UART.c **** __ISR__ UART1_RX_TX_IRQHandler (void)
+ 116:../source/UART.c **** __ISR__ UART0_RX_TX_IRQHandler (void)
  117:../source/UART.c **** {
  372              		.loc 2 117 0
  373              		.cfi_startproc
@@ -2126,7 +2126,7 @@
  389              		.cfi_def_cfa_register 7
  118:../source/UART.c **** 	unsigned char tmp;
  119:../source/UART.c **** 
- 120:../source/UART.c **** 	tmp=UART1->S1;			// Dummy read to clear status register
+ 120:../source/UART.c **** 	tmp=UART0->S1;			// Dummy read to clear status register
  390              		.loc 2 120 0
  391 000e 084B     		ldr	r3, .L18
  392 0010 1B79     		ldrb	r3, [r3, #4]
@@ -2138,7 +2138,7 @@
  396 0016 0122     		movs	r2, #1
  397 0018 1A70     		strb	r2, [r3]
  123:../source/UART.c **** 
- 124:../source/UART.c **** 	rx_data=UART1->D;
+ 124:../source/UART.c **** 	rx_data=UART0->D;
  398              		.loc 2 124 0
  399 001a 054B     		ldr	r3, .L18
  400 001c DB79     		ldrb	r3, [r3, #7]
@@ -2163,7 +2163,7 @@
  417              	.L19:
  418              		.align	2
  419              	.L18:
- 420 0030 00B00640 		.word	1074180096
+ 420 0030 00A00640 		.word	1074176000
  421 0034 00000000 		.word	rx_flag
  422 0038 00000000 		.word	rx_data
  423              		.cfi_endproc
@@ -2285,7 +2285,7 @@
  530              		.cfi_def_cfa_register 7
  531 0006 0346     		mov	r3, r0
  532 0008 FB71     		strb	r3, [r7, #7]
- 142:../source/UART.c **** 	while(((UART1->S1)& UART_S1_TDRE_MASK) ==0);
+ 142:../source/UART.c **** 	while(((UART0->S1)& UART_S1_TDRE_MASK) ==0);
  533              		.loc 2 142 0
  534 000a 00BF     		nop
  535              	.L29:
@@ -2297,7 +2297,7 @@
  541 0014 002B     		cmp	r3, #0
  542 0016 F9DA     		bge	.L29
  143:../source/UART.c **** 
- 144:../source/UART.c **** 				UART1->D = tx_data;
+ 144:../source/UART.c **** 				UART0->D = tx_data;
  543              		.loc 2 144 0 is_stmt 1
  544 0018 044A     		ldr	r2, .L30
  545 001a FB79     		ldrb	r3, [r7, #7]
@@ -2317,7 +2317,7 @@
  558              	.L31:
  559 002a 00BF     		.align	2
  560              	.L30:
- 561 002c 00B00640 		.word	1074180096
+ 561 002c 00A00640 		.word	1074176000
  562              		.cfi_endproc
  563              	.LFE128:
  565              		.text
@@ -2328,31 +2328,31 @@
  570              		.file 6 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
 DEFINED SYMBOLS
                             *ABS*:00000000 UART.c
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:18     .text.NVIC_EnableIRQ:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:24     .text.NVIC_EnableIRQ:00000000 NVIC_EnableIRQ
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:64     .text.NVIC_EnableIRQ:00000030 $d
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:71     .bss.rx_flag:00000000 rx_flag
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:72     .bss.rx_flag:00000000 $d
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:76     .bss.rx_data:00000000 rx_data
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:77     .bss.rx_data:00000000 $d
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:79     .text.UART_Init:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:86     .text.UART_Init:00000000 UART_Init
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:239    .text.UART_SetBaudRate:00000000 UART_SetBaudRate
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:225    .text.UART_Init:0000010c $d
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:232    .text.UART_SetBaudRate:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:355    .text.UART_SetBaudRate:000000a8 $d
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:363    .text.UART1_RX_TX_IRQHandler:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:370    .text.UART1_RX_TX_IRQHandler:00000000 UART1_RX_TX_IRQHandler
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:420    .text.UART1_RX_TX_IRQHandler:00000030 $d
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:427    .text.UART_Get_Status:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:434    .text.UART_Get_Status:00000000 UART_Get_Status
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:461    .text.UART_Get_Status:00000014 $d
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:466    .text.UART_Get_Data:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:473    .text.UART_Get_Data:00000000 UART_Get_Data
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:504    .text.UART_Get_Data:00000018 $d
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:510    .text.UART_Send_Data:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:517    .text.UART_Send_Data:00000000 UART_Send_Data
-C:\Users\lucia\AppData\Local\Temp\ccTz4eoA.s:561    .text.UART_Send_Data:0000002c $d
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:18     .text.NVIC_EnableIRQ:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:24     .text.NVIC_EnableIRQ:00000000 NVIC_EnableIRQ
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:64     .text.NVIC_EnableIRQ:00000030 $d
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:71     .bss.rx_flag:00000000 rx_flag
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:72     .bss.rx_flag:00000000 $d
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:76     .bss.rx_data:00000000 rx_data
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:77     .bss.rx_data:00000000 $d
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:79     .text.UART_Init:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:86     .text.UART_Init:00000000 UART_Init
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:239    .text.UART_SetBaudRate:00000000 UART_SetBaudRate
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:225    .text.UART_Init:0000010c $d
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:232    .text.UART_SetBaudRate:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:355    .text.UART_SetBaudRate:000000a8 $d
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:363    .text.UART0_RX_TX_IRQHandler:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:370    .text.UART0_RX_TX_IRQHandler:00000000 UART0_RX_TX_IRQHandler
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:420    .text.UART0_RX_TX_IRQHandler:00000030 $d
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:427    .text.UART_Get_Status:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:434    .text.UART_Get_Status:00000000 UART_Get_Status
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:461    .text.UART_Get_Status:00000014 $d
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:466    .text.UART_Get_Data:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:473    .text.UART_Get_Data:00000000 UART_Get_Data
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:504    .text.UART_Get_Data:00000018 $d
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:510    .text.UART_Send_Data:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:517    .text.UART_Send_Data:00000000 UART_Send_Data
+C:\Users\lucia\AppData\Local\Temp\ccvV8mvo.s:561    .text.UART_Send_Data:0000002c $d
                            .group:00000000 wm4.0.33db8b643112917ec54934b4f2c2f387
                            .group:00000000 wm4.redlib_version.h.16.f905717e4b3a91dcbdbb631865150df4
                            .group:00000000 wm4.libconfigarm.h.18.1ad1d24f96d0dc8c4cf52dc19b0aa2c7

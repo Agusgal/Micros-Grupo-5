@@ -2153,84 +2153,164 @@
  414 002c 00A00640 		.word	1074176000
  415              		.cfi_endproc
  416              	.LFE125:
- 418              		.section	.text.UART_Recieve_Data,"ax",%progbits
+ 418              		.section	.text.UART_SendMsg,"ax",%progbits
  419              		.align	1
- 420              		.global	UART_Recieve_Data
+ 420              		.global	UART_SendMsg
  421              		.syntax unified
  422              		.thumb
  423              		.thumb_func
  424              		.fpu fpv4-sp-d16
- 426              	UART_Recieve_Data:
+ 426              	UART_SendMsg:
  427              	.LFB126:
  116:../source/UART.c **** 
- 117:../source/UART.c **** unsigned char UART_Recieve_Data(void)
- 118:../source/UART.c **** {
- 428              		.loc 2 118 0
+ 117:../source/UART.c **** 
+ 118:../source/UART.c **** void UART_SendMsg(char* msg)
+ 119:../source/UART.c **** {
+ 428              		.loc 2 119 0
  429              		.cfi_startproc
- 430              		@ args = 0, pretend = 0, frame = 0
+ 430              		@ args = 0, pretend = 0, frame = 16
  431              		@ frame_needed = 1, uses_anonymous_args = 0
- 432              		@ link register save eliminated.
- 433 0000 80B4     		push	{r7}
- 434              		.cfi_def_cfa_offset 4
- 435              		.cfi_offset 7, -4
- 436 0002 00AF     		add	r7, sp, #0
- 437              		.cfi_def_cfa_register 7
- 119:../source/UART.c **** 	while(((UART0->S1)& UART_S1_RDRF_MASK) ==0);
- 438              		.loc 2 119 0
- 439 0004 00BF     		nop
- 440              	.L22:
- 441              		.loc 2 119 0 is_stmt 0 discriminator 1
- 442 0006 074B     		ldr	r3, .L24
- 443 0008 1B79     		ldrb	r3, [r3, #4]
- 444 000a DBB2     		uxtb	r3, r3
- 445 000c 03F02003 		and	r3, r3, #32
- 446 0010 002B     		cmp	r3, #0
- 447 0012 F8D0     		beq	.L22
- 120:../source/UART.c **** 
- 121:../source/UART.c **** 			return(UART0->D);
- 448              		.loc 2 121 0 is_stmt 1
- 449 0014 034B     		ldr	r3, .L24
- 450 0016 DB79     		ldrb	r3, [r3, #7]
- 451 0018 DBB2     		uxtb	r3, r3
- 122:../source/UART.c **** }
- 452              		.loc 2 122 0
- 453 001a 1846     		mov	r0, r3
- 454 001c BD46     		mov	sp, r7
- 455              		.cfi_def_cfa_register 13
- 456              		@ sp needed
- 457 001e 5DF8047B 		ldr	r7, [sp], #4
- 458              		.cfi_restore 7
- 459              		.cfi_def_cfa_offset 0
- 460 0022 7047     		bx	lr
- 461              	.L25:
- 462              		.align	2
- 463              	.L24:
- 464 0024 00A00640 		.word	1074176000
- 465              		.cfi_endproc
- 466              	.LFE126:
- 468              		.text
- 469              	.Letext0:
- 470              		.file 3 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\sys\\libconfig-arm.h"
- 471              		.file 4 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\stdint.h"
- 472              		.file 5 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
- 473              		.file 6 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
+ 432 0000 80B5     		push	{r7, lr}
+ 433              		.cfi_def_cfa_offset 8
+ 434              		.cfi_offset 7, -8
+ 435              		.cfi_offset 14, -4
+ 436 0002 84B0     		sub	sp, sp, #16
+ 437              		.cfi_def_cfa_offset 24
+ 438 0004 00AF     		add	r7, sp, #0
+ 439              		.cfi_def_cfa_register 7
+ 440 0006 7860     		str	r0, [r7, #4]
+ 120:../source/UART.c **** 	uint32_t i = 0;
+ 441              		.loc 2 120 0
+ 442 0008 0023     		movs	r3, #0
+ 443 000a FB60     		str	r3, [r7, #12]
+ 121:../source/UART.c **** 	while (msg[i]  != '\0')
+ 444              		.loc 2 121 0
+ 445 000c 09E0     		b	.L22
+ 446              	.L23:
+ 122:../source/UART.c **** 	{
+ 123:../source/UART.c **** 		UART_Send_Data(msg[i]);
+ 447              		.loc 2 123 0
+ 448 000e 7A68     		ldr	r2, [r7, #4]
+ 449 0010 FB68     		ldr	r3, [r7, #12]
+ 450 0012 1344     		add	r3, r3, r2
+ 451 0014 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 452 0016 1846     		mov	r0, r3
+ 453 0018 FFF7FEFF 		bl	UART_Send_Data
+ 124:../source/UART.c **** 		i++;
+ 454              		.loc 2 124 0
+ 455 001c FB68     		ldr	r3, [r7, #12]
+ 456 001e 0133     		adds	r3, r3, #1
+ 457 0020 FB60     		str	r3, [r7, #12]
+ 458              	.L22:
+ 121:../source/UART.c **** 	while (msg[i]  != '\0')
+ 459              		.loc 2 121 0
+ 460 0022 7A68     		ldr	r2, [r7, #4]
+ 461 0024 FB68     		ldr	r3, [r7, #12]
+ 462 0026 1344     		add	r3, r3, r2
+ 463 0028 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 464 002a 002B     		cmp	r3, #0
+ 465 002c EFD1     		bne	.L23
+ 125:../source/UART.c **** 	}
+ 126:../source/UART.c **** 	UART_Send_Data('\n');
+ 466              		.loc 2 126 0
+ 467 002e 0A20     		movs	r0, #10
+ 468 0030 FFF7FEFF 		bl	UART_Send_Data
+ 127:../source/UART.c **** 	UART_Send_Data('\r');
+ 469              		.loc 2 127 0
+ 470 0034 0D20     		movs	r0, #13
+ 471 0036 FFF7FEFF 		bl	UART_Send_Data
+ 128:../source/UART.c **** }
+ 472              		.loc 2 128 0
+ 473 003a 00BF     		nop
+ 474 003c 1037     		adds	r7, r7, #16
+ 475              		.cfi_def_cfa_offset 8
+ 476 003e BD46     		mov	sp, r7
+ 477              		.cfi_def_cfa_register 13
+ 478              		@ sp needed
+ 479 0040 80BD     		pop	{r7, pc}
+ 480              		.cfi_endproc
+ 481              	.LFE126:
+ 483              		.section	.text.UART_Recieve_Data,"ax",%progbits
+ 484              		.align	1
+ 485              		.global	UART_Recieve_Data
+ 486              		.syntax unified
+ 487              		.thumb
+ 488              		.thumb_func
+ 489              		.fpu fpv4-sp-d16
+ 491              	UART_Recieve_Data:
+ 492              	.LFB127:
+ 129:../source/UART.c **** 
+ 130:../source/UART.c **** 
+ 131:../source/UART.c **** unsigned char UART_Recieve_Data(void)
+ 132:../source/UART.c **** {
+ 493              		.loc 2 132 0
+ 494              		.cfi_startproc
+ 495              		@ args = 0, pretend = 0, frame = 0
+ 496              		@ frame_needed = 1, uses_anonymous_args = 0
+ 497              		@ link register save eliminated.
+ 498 0000 80B4     		push	{r7}
+ 499              		.cfi_def_cfa_offset 4
+ 500              		.cfi_offset 7, -4
+ 501 0002 00AF     		add	r7, sp, #0
+ 502              		.cfi_def_cfa_register 7
+ 133:../source/UART.c **** 	while(((UART0->S1)& UART_S1_RDRF_MASK) ==0);
+ 503              		.loc 2 133 0
+ 504 0004 00BF     		nop
+ 505              	.L25:
+ 506              		.loc 2 133 0 is_stmt 0 discriminator 1
+ 507 0006 074B     		ldr	r3, .L27
+ 508 0008 1B79     		ldrb	r3, [r3, #4]
+ 509 000a DBB2     		uxtb	r3, r3
+ 510 000c 03F02003 		and	r3, r3, #32
+ 511 0010 002B     		cmp	r3, #0
+ 512 0012 F8D0     		beq	.L25
+ 134:../source/UART.c **** 
+ 135:../source/UART.c **** 			return(UART0->D);
+ 513              		.loc 2 135 0 is_stmt 1
+ 514 0014 034B     		ldr	r3, .L27
+ 515 0016 DB79     		ldrb	r3, [r3, #7]
+ 516 0018 DBB2     		uxtb	r3, r3
+ 136:../source/UART.c **** }
+ 517              		.loc 2 136 0
+ 518 001a 1846     		mov	r0, r3
+ 519 001c BD46     		mov	sp, r7
+ 520              		.cfi_def_cfa_register 13
+ 521              		@ sp needed
+ 522 001e 5DF8047B 		ldr	r7, [sp], #4
+ 523              		.cfi_restore 7
+ 524              		.cfi_def_cfa_offset 0
+ 525 0022 7047     		bx	lr
+ 526              	.L28:
+ 527              		.align	2
+ 528              	.L27:
+ 529 0024 00A00640 		.word	1074176000
+ 530              		.cfi_endproc
+ 531              	.LFE127:
+ 533              		.text
+ 534              	.Letext0:
+ 535              		.file 3 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\sys\\libconfig-arm.h"
+ 536              		.file 4 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\stdint.h"
+ 537              		.file 5 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
+ 538              		.file 6 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
 DEFINED SYMBOLS
                             *ABS*:00000000 UART.c
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:18     .text.NVIC_EnableIRQ:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:24     .text.NVIC_EnableIRQ:00000000 NVIC_EnableIRQ
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:64     .text.NVIC_EnableIRQ:00000030 $d
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:69     .text.UART_Init:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:76     .text.UART_Init:00000000 UART_Init
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:239    .text.UART_SetBaudRate:00000000 UART_SetBaudRate
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:225    .text.UART_Init:00000124 $d
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:232    .text.UART_SetBaudRate:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:355    .text.UART_SetBaudRate:000000a8 $d
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:363    .text.UART_Send_Data:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:370    .text.UART_Send_Data:00000000 UART_Send_Data
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:414    .text.UART_Send_Data:0000002c $d
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:419    .text.UART_Recieve_Data:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:426    .text.UART_Recieve_Data:00000000 UART_Recieve_Data
-C:\Users\lucia\AppData\Local\Temp\ccUESsGs.s:464    .text.UART_Recieve_Data:00000024 $d
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:18     .text.NVIC_EnableIRQ:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:24     .text.NVIC_EnableIRQ:00000000 NVIC_EnableIRQ
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:64     .text.NVIC_EnableIRQ:00000030 $d
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:69     .text.UART_Init:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:76     .text.UART_Init:00000000 UART_Init
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:239    .text.UART_SetBaudRate:00000000 UART_SetBaudRate
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:225    .text.UART_Init:00000124 $d
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:232    .text.UART_SetBaudRate:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:355    .text.UART_SetBaudRate:000000a8 $d
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:363    .text.UART_Send_Data:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:370    .text.UART_Send_Data:00000000 UART_Send_Data
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:414    .text.UART_Send_Data:0000002c $d
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:419    .text.UART_SendMsg:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:426    .text.UART_SendMsg:00000000 UART_SendMsg
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:484    .text.UART_Recieve_Data:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:491    .text.UART_Recieve_Data:00000000 UART_Recieve_Data
+C:\Users\lucia\AppData\Local\Temp\ccRQL44b.s:529    .text.UART_Recieve_Data:00000024 $d
                            .group:00000000 wm4.0.33db8b643112917ec54934b4f2c2f387
                            .group:00000000 wm4.redlib_version.h.16.f905717e4b3a91dcbdbb631865150df4
                            .group:00000000 wm4.libconfigarm.h.18.1ad1d24f96d0dc8c4cf52dc19b0aa2c7
