@@ -5,12 +5,33 @@
 
 #define UART_HAL_DEFAULT_BAUDRATE 9600
 
+#define ISR_TDRE(x) (((x) & UART_S1_TDRE_MASK) != 0x0)
+#define ISR_RDRF(x) (((x) & UART_S1_RDRF_MASK) != 0x0)
+
+
 #define UART0_TX_PIN 	17   //PTB17
 #define UART0_RX_PIN 	16   //PTB16
 
 
+#define	BUFFER_SIZE	15
+#define NONE_EV  0 //TODO
+#define TOTAL_UARTS 5
+#define OVERFLOW -1
+
+
+typedef struct uart_queue{
+	uint8_t *pin;
+	uint8_t *pout;
+	uint8_t queue[BUFFER_SIZE];
+	uint8_t num_Of_Words;
+}uart_queue_t;
+
+uart_queue_t uart_queues[2*TOTAL_UARTS]; //doubles the value for input and output buffers
+
 static unsigned char rx_flag=false;
 static unsigned char rx_data;
+
+
 
 typedef enum
 {
@@ -38,7 +59,32 @@ typedef enum
 	PORT_eInterruptAsserted		= 0x0C,
 } PORTEvent_t;
 
+/**
+ * @brief Initializes the circular queue
+ */
+static void queue_Init (uint8_t id);
 
+
+/**
+ * @brief Pushes an event to the queue
+ * @param event The element to add to the queue
+ * @return Number of pending events. Returns value OVERFLOW if the maximun number of events is reached
+ */
+static int8_t push_Queue_Element(uint8_t id, uint8_t event);
+
+
+/**
+ * @brief Pulls the earliest event from the queue
+ * @return Event_Type variable with the current event if no OVERFLOW is detected.
+ */
+static uint8_t pull_Queue_Element(uint8_t id);
+
+
+/**
+ * @brief Gets the status of the queue
+ * @return Returns the number of pending events in the queue
+ */
+static uint8_t get_Queue_Status(uint8_t id);
 
 void UART_Init (void)
 {
@@ -110,15 +156,28 @@ void UART_SetBaudRate (UART_Type *uart, uint32_t baudrate)
 }
 
 
-__ISR__ UART0_RX_TX_IRQHandler (void)
+__ISR__ UART0_RX_TX_IRQHandler (UART_Type* uart_p, uint8_t id)
 {
 	unsigned char tmp;
+	uint8_t tx_data;
+	tmp = UART0->S1;// Dummy read to clear status register
 
-	tmp=UART0->S1;			// Dummy read to clear status register
+	if(ISR_TDRE(tmp)) //checks if state is available
+	{
+		if (get_Queue_Status(id))
+		{
+			tx_data =  pull_Queue_Element(id);
+			uart_p->D = tx_data;
+		}
 
-	rx_flag=true;
+	}
 
-	rx_data=UART0->D;
+	if(ISR_RDRF(tmp))
+	{
+		rx_flag=true;
+
+		rx_data=UART0->D;
+	}
 
 }
 
@@ -128,17 +187,11 @@ unsigned char UART_Get_Status(void)
 	return(rx_flag);
 }
 
+
 unsigned char UART_Get_Data(void)
 {
 	rx_flag=false;
 	return(rx_data);
-}
-
-void UART_Send_Data(unsigned char tx_data)
-{
-	while(((UART0->S1)& UART_S1_TDRE_MASK) ==0);
-
-				UART0->D = tx_data;
 }
 
 
@@ -153,6 +206,82 @@ void UART_SendMsg(char* msg)
 	}
 	UART_Send_Data('\n');
 	UART_Send_Data('\r');
+}
+
+
+
+
+
+/**
+ * @brief Initializes the circular queue
+ */
+static void queue_Init (uint8_t id)
+{
+	uart_queues[id].pin=uart_queues[id].queue;
+	uart_queues[id].pout=uart_queues[id].pin;
+	uart_queues[id].num_Of_Words=0;
+
+}
+
+/**
+ * @brief Pushes an event to the queue
+ * @param event The element to add to the queue
+ * @return Number of pending events. Returns value OVERFLOW if the maximun number of events is reached
+ */
+static int8_t push_Queue_Element(uint8_t id, uint8_t event)
+{
+	// Check for EventQueue Overflow
+	if (uart_queues[id].num_Of_Words > BUFFER_SIZE-1)
+	{
+		return OVERFLOW;
+	}
+
+	*(uart_queues[id].pin)++ = event;
+	uart_queues[id].num_Of_Words++;
+
+	// Return pointer to the beginning if necessary
+	if (uart_queues[id].pin == BUFFER_SIZE + uart_queues[id].queue)
+	{
+		uart_queues[id].pin = uart_queues[id].queue;
+	}
+
+	return uart_queues[id].num_Of_Words;
+
+}
+
+/**
+ * @brief Pulls the earliest event from the queue
+ * @return Event_Type variable with the current event if no OVERFLOW is detected.
+ */
+static uint8_t pull_Queue_Element(uint8_t id)
+{
+	uint8_t event = *(uart_queues[id].pout);
+
+	if (uart_queues[id].num_Of_Words == 0)
+	{
+		return NONE_EV;
+	}
+
+	uart_queues[id].num_Of_Words--;
+	uart_queues[id].pout++;
+
+	if (uart_queues[id].pout == BUFFER_SIZE + uart_queues[id].queue)
+	{
+		uart_queues[id].pout = uart_queues[id].queue;
+	}
+
+	return event;
+
+}
+
+
+/**
+ * @brief Gets the status of the queue
+ * @return Returns the number of pending events in the queue
+ */
+static uint8_t get_Queue_Status(uint8_t id)
+{
+	return uart_queues[id].num_Of_Words;
 }
 
 
