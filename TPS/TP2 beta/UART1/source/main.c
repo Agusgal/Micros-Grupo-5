@@ -1,14 +1,19 @@
 /*
  * main.c
  *
- * Simple UART test program
- *
+ *  Created on: May 1, 2015
+ *      Author: Juan Pablo VEGA - Laboratorio de Microprocesadores
  */
 
 #include "hardware.h"
 #include "UART.h"
 
 #define __FOREVER__ 	for(;;)
+
+#define PIN_RED_LED 		22     	//PTB22
+#define PIN_BLUE_LED 		21     	//PTB21
+#define PIN_GREEN_LED 		26 	   	//PTE26
+#define PIN_PUSH_BUTTON  	4 		//PTA4
 
 typedef enum
 {
@@ -43,14 +48,14 @@ void delayLoop (uint32_t veces);
 
 int main (void)
 {
-	 uint32_t temp;
-	 uint32_t pin;
-	 uint32_t data;
+ uint32_t temp;
+ uint32_t pin;
+ uint32_t data;
 
 unsigned char uart_data;
 
- 	 	 	hw_Init ();
- 	 		//Enable clocking for port B
+ 	 	 	 hw_Init ();
+			//Enable clocking for port B
 
 			SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;
 			SIM->SCGC5 |= SIM_SCGC5_PORTA_MASK;
@@ -61,10 +66,11 @@ unsigned char uart_data;
 
 			//Configure port control register pin 22 PORTB
 
-			PORTB->PCR[22]=0x0; //Clear all bits
+		/*	PORTB->PCR[22]=0x0; //Clear all bits
 			PORTB->PCR[22]|=PORT_PCR_MUX(PORT_mGPIO); 		//Set MUX to GPIO
 			PORTB->PCR[22]|=PORT_PCR_DSE(1);          		//Drive strength enable
 			PORTB->PCR[22]|=PORT_PCR_IRQC(PORT_eDisabled);  //Disable interrupts
+		*/
 
 
 
@@ -78,8 +84,6 @@ unsigned char uart_data;
 
 
 /////////// Input Pin 4
-
-
 			PORTA->PCR[4]=0x0; //Clear
 			PORTA->PCR[4]|=PORT_PCR_MUX(PORT_mGPIO); 		       //Set MUX to GPIO
 			PORTA->PCR[4]|=PORT_PCR_PE(1);          		       //Pull UP/Down  Enable
@@ -89,23 +93,32 @@ unsigned char uart_data;
 
 			//////////
 
+			PTB->PSOR = (1<<21)|(1<<22);
+
+			// Configure GPIO registers
+
+			// Configurar como salida pin 22 y pin 21 PTB
+			PTB->PDDR |= (1<<21)|(1<<22);
+			// Configurar como entrada pin 4 PTA
+			PTA->PDDR |= (0<<4);
+
 			SysTick_Init();
 
- 	 	 	UART_Init();
 
-			//UART_SendMsg("La concha de tu madre");
-
-
+			UART_Init();
+			UART_Send_Data('A');
+			UART_Send_Data('B');
+			UART_Send_Data('C');
+			UART_SendMsg("Hola como estas");
 			// Enable interrupts
 			hw_EnableInterrupts();
 
 			__FOREVER__
 			{
 
-				UART_Send_Data('A');
-				UART_Send_Data('B');
-				UART_Send_Data('C');
+
 				if(UART_Get_Status()){
+					UART_SendMsg("Chau");
 					uart_data=UART_Get_Data();
 					UART_Send_Data(uart_data+1);
 				}
@@ -116,6 +129,7 @@ unsigned char uart_data;
 
 
 }
+
 
 __ISR__  PORTA_IRQHandler(void)
 {
