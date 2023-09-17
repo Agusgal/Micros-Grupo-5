@@ -9,9 +9,6 @@
 #define UART0_RX_PIN 	16   //PTB16
 
 
-#define UART1_TX_PIN 	4   //PTC4
-#define UART1_RX_PIN 	3  //PTC3
-
 static unsigned char rx_flag=false;
 static unsigned char rx_data;
 
@@ -70,13 +67,13 @@ void UART_Init (void)
 
 		//Configure UART0 TX and RX PINS
 
-		PORTC->PCR[UART0_TX_PIN]=0x0; //Clear all bits
-		PORTC->PCR[UART0_TX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
-		PORTC->PCR[UART0_TX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
+		PORTB->PCR[UART0_TX_PIN]=0x0; //Clear all bits
+		PORTB->PCR[UART0_TX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
+		PORTB->PCR[UART0_TX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
 //----------------------------------------------------------------------------------
-		PORTC->PCR[UART0_RX_PIN]=0x0; //Clear all bits
-		PORTC->PCR[UART0_RX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
-		PORTC->PCR[UART0_RX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
+		PORTB->PCR[UART0_RX_PIN]=0x0; //Clear all bits
+		PORTB->PCR[UART0_RX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
+		PORTB->PCR[UART0_RX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
 
 
 	//UART0 Baudrate Setup
@@ -144,7 +141,8 @@ void UART_Send_Data(unsigned char tx_data)
 				UART0->D = tx_data;
 }
 
-/*
+
+
 void UART_SendMsg(char* msg)
 {
 	uint32_t i = 0;
@@ -156,7 +154,5 @@ void UART_SendMsg(char* msg)
 	UART_Send_Data('\n');
 	UART_Send_Data('\r');
 }
-
-*/
 
 
