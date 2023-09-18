@@ -13,22 +13,22 @@
 #define UART0_RX_PIN 	16   //PTB16
 
 
-#define	BUFFER_SIZE	15
-#define NONE_EV  0 //TODO
-#define TOTAL_UARTS 5
-#define OVERFLOW -1
+#define	BUFFER_SIZE	 15
+#define NONE_EV       0 //TODO
+#define TOTAL_UARTS   5
+#define OVERFLOW     -1
 
 
-typedef struct uart_queue{
+typedef struct uart_buffer{
 	uint8_t *pin;
 	uint8_t *pout;
-	uint8_t queue[BUFFER_SIZE];
+	uint8_t buffer[BUFFER_SIZE];
 	uint8_t num_Of_Words;
-}uart_queue_t;
+}uart_buffer_t;
 
-uart_queue_t uart_queues[2*TOTAL_UARTS]; //doubles the value for input and output buffers
+uart_buffer_t uart_buffers[2 * TOTAL_UARTS]; //doubles the value for input and output buffers
 
-static unsigned char rx_flag=false;
+static unsigned char rx_flag = false;
 static unsigned char rx_data;
 
 
@@ -217,10 +217,9 @@ void UART_SendMsg(char* msg)
  */
 static void queue_Init (uint8_t id)
 {
-	uart_queues[id].pin=uart_queues[id].queue;
-	uart_queues[id].pout=uart_queues[id].pin;
-	uart_queues[id].num_Of_Words=0;
-
+	uart_buffers[id].pin = uart_buffers[id].queue;
+	uart_buffers[id].pout = uart_buffers[id].pin;
+	uart_buffers[id].num_Of_Words = 0;
 }
 
 /**
@@ -231,21 +230,21 @@ static void queue_Init (uint8_t id)
 static int8_t push_Queue_Element(uint8_t id, uint8_t event)
 {
 	// Check for EventQueue Overflow
-	if (uart_queues[id].num_Of_Words > BUFFER_SIZE-1)
+	if (uart_buffers[id].num_Of_Words > BUFFER_SIZE-1)
 	{
 		return OVERFLOW;
 	}
 
-	*(uart_queues[id].pin)++ = event;
-	uart_queues[id].num_Of_Words++;
+	*(uart_buffers[id].pin)++ = event;
+	uart_buffers[id].num_Of_Words++;
 
 	// Return pointer to the beginning if necessary
-	if (uart_queues[id].pin == BUFFER_SIZE + uart_queues[id].queue)
+	if (uart_buffers[id].pin == BUFFER_SIZE + uart_buffers[id].queue)
 	{
-		uart_queues[id].pin = uart_queues[id].queue;
+		uart_buffers[id].pin = uart_buffers[id].queue;
 	}
 
-	return uart_queues[id].num_Of_Words;
+	return uart_buffers[id].num_Of_Words;
 
 }
 
@@ -255,19 +254,19 @@ static int8_t push_Queue_Element(uint8_t id, uint8_t event)
  */
 static uint8_t pull_Queue_Element(uint8_t id)
 {
-	uint8_t event = *(uart_queues[id].pout);
+	uint8_t event = *(uart_buffers[id].pout);
 
-	if (uart_queues[id].num_Of_Words == 0)
+	if (uart_buffers[id].num_Of_Words == 0)
 	{
 		return NONE_EV;
 	}
 
-	uart_queues[id].num_Of_Words--;
-	uart_queues[id].pout++;
+	uart_buffers[id].num_Of_Words--;
+	uart_buffers[id].pout++;
 
-	if (uart_queues[id].pout == BUFFER_SIZE + uart_queues[id].queue)
+	if (uart_buffers[id].pout == BUFFER_SIZE + uart_buffers[id].queue)
 	{
-		uart_queues[id].pout = uart_queues[id].queue;
+		uart_buffers[id].pout = uart_buffers[id].queue;
 	}
 
 	return event;
@@ -281,7 +280,7 @@ static uint8_t pull_Queue_Element(uint8_t id)
  */
 static uint8_t get_Queue_Status(uint8_t id)
 {
-	return uart_queues[id].num_Of_Words;
+	return uart_buffers[id].num_Of_Words;
 }
 
 
