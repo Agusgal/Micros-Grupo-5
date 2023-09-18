@@ -31,7 +31,9 @@
  ******************************************************************************/
 
 typedef void (* pfunc) (void);
-typedef enum {I2C_0, I2C_1, I2C_2}I2C_ChannelType;
+
+//TODO: ver si se puede hacer de otra manera esto
+typedef enum {I2C0_M, I2C1_M, I2C2_M} I2C_Modules;
 
 
 typedef enum
@@ -84,12 +86,13 @@ typedef struct
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
+
 /**
  * @brief Initialize i2c driver
  * @param id i2c's number
  * @param config i2c's configuration (baudrate, parity, etc.)
 */
-void i2cInit (uint8_t channel); //, uint8_t baud_rate, uint32_t systemClock
+void i2cInit (I2C_Modules module);
 
 
 /**
