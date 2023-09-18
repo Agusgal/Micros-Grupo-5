@@ -13,7 +13,7 @@
 #define UART0_RX_PIN 	16   //PTB16
 
 
-#define	BUFFER_SIZE	 15
+#define	BUFFER_SIZE	 20
 #define NONE_EV       0 //TODO
 #define TOTAL_UARTS   5
 #define OVERFLOW     -1
@@ -125,12 +125,19 @@ void UART_Init (void)
 	//UART0 Baudrate Setup
 
 		UART_SetBaudRate (UART0, 9600);
+		UART_SetBaudRate (UART1, 9600);
 
 	//Enable UART0 Xmiter and Rcvr
 
 		//UART0->C2=UART_C2_TE_MASK | UART_C2_RE_MASK;
-		UART0->C2=UART_C2_TE_MASK | UART_C2_RE_MASK | UART_C2_RIE_MASK;
+		UART0->C2=UART_C2_TE_MASK|UART_C2_TIE_MASK| UART_C2_RE_MASK | UART_C2_RIE_MASK;
 
+		queue_Init(0);
+		queue_Init(1);
+		queue_Init(2);
+		queue_Init(3);
+		queue_Init(4);
+		queue_Init(5);
 
 
 
@@ -156,11 +163,11 @@ void UART_SetBaudRate (UART_Type *uart, uint32_t baudrate)
 }
 
 
-__ISR__ UART0_RX_TX_IRQHandler (UART_Type* uart_p, uint8_t id)
+void UART_rx_tx_irq_handler (UART_Type* uart_p, uint8_t id)
 {
 	unsigned char tmp;
 	uint8_t tx_data;
-	tmp = UART0->S1;// Dummy read to clear status register
+	tmp = uart_p -> S1;// Dummy read to clear status register
 
 	if(ISR_TDRE(tmp)) //checks if state is available
 	{
@@ -176,7 +183,7 @@ __ISR__ UART0_RX_TX_IRQHandler (UART_Type* uart_p, uint8_t id)
 	{
 		rx_flag=true;
 
-		rx_data=UART0->D;
+		rx_data= uart_p ->D;
 	}
 
 }
@@ -196,16 +203,17 @@ unsigned char UART_Get_Data(void)
 
 
 
-void UART_SendMsg(char* msg)
+void UART_SendMsg(char* msg, uint8_t id)
 {
 	uint32_t i = 0;
 	while (msg[i]  != '\0')
 	{
-		UART_Send_Data(msg[i]);
+		push_Queue_Element(id, msg[i]);
 		i++;
 	}
-	UART_Send_Data('\n');
-	UART_Send_Data('\r');
+	UART0->D =  pull_Queue_Element(id);
+	//UART_Send_Data('\n');
+	//UART_Send_Data('\r');
 }
 
 
@@ -217,7 +225,7 @@ void UART_SendMsg(char* msg)
  */
 static void queue_Init (uint8_t id)
 {
-	uart_buffers[id].pin = uart_buffers[id].queue;
+	uart_buffers[id].pin = uart_buffers[id].buffer;
 	uart_buffers[id].pout = uart_buffers[id].pin;
 	uart_buffers[id].num_Of_Words = 0;
 }
@@ -239,9 +247,9 @@ static int8_t push_Queue_Element(uint8_t id, uint8_t event)
 	uart_buffers[id].num_Of_Words++;
 
 	// Return pointer to the beginning if necessary
-	if (uart_buffers[id].pin == BUFFER_SIZE + uart_buffers[id].queue)
+	if (uart_buffers[id].pin == BUFFER_SIZE + uart_buffers[id].buffer)
 	{
-		uart_buffers[id].pin = uart_buffers[id].queue;
+		uart_buffers[id].pin = uart_buffers[id].buffer;
 	}
 
 	return uart_buffers[id].num_Of_Words;
@@ -264,9 +272,9 @@ static uint8_t pull_Queue_Element(uint8_t id)
 	uart_buffers[id].num_Of_Words--;
 	uart_buffers[id].pout++;
 
-	if (uart_buffers[id].pout == BUFFER_SIZE + uart_buffers[id].queue)
+	if (uart_buffers[id].pout == BUFFER_SIZE + uart_buffers[id].buffer)
 	{
-		uart_buffers[id].pout = uart_buffers[id].queue;
+		uart_buffers[id].pout = uart_buffers[id].buffer;
 	}
 
 	return event;
@@ -283,4 +291,30 @@ static uint8_t get_Queue_Status(uint8_t id)
 	return uart_buffers[id].num_Of_Words;
 }
 
+
+
+__ISR__ UART0_RX_TX_IRQHandler (void)
+{
+    UART_rx_tx_irq_handler(UART0, 0);
+}
+
+__ISR__ UART1_RX_TX_IRQHandler (void)
+{
+    UART_rx_tx_irq_handler(UART1, 1);
+}
+
+__ISR__ UART2_RX_TX_IRQHandler (void)
+{
+    UART_rx_tx_irq_handler(UART2, 2);
+}
+
+__ISR__ UART3_RX_TX_IRQHandler (void)
+{
+    UART_rx_tx_irq_handler(UART3, 3);
+}
+
+__ISR__ UART4_RX_TX_IRQHandler (void)
+{
+    UART_rx_tx_irq_handler(UART4, 4);
+}
 
