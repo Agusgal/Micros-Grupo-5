@@ -106,10 +106,8 @@ unsigned char uart_data;
 
 
 			UART_Init();
-			UART_Send_Data('A');
-			UART_Send_Data('B');
-			UART_Send_Data('C');
-			UART_SendMsg("Hola como estas");
+
+			UART_SendMsg("Hola como estas",0);
 			// Enable interrupts
 			hw_EnableInterrupts();
 
@@ -117,11 +115,11 @@ unsigned char uart_data;
 			{
 
 
-				if(UART_Get_Status()){
-					UART_SendMsg("Chau");
-					uart_data=UART_Get_Data();
-					UART_Send_Data(uart_data+1);
-				}
+				//if(UART_Get_Status()){
+					//UART_SendMsg("Chau",0);
+					//uart_data=UART_Get_Data();
+					//UART_Send_Data(uart_data+1);
+				//}
 
 			}
 
