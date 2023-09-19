@@ -48,100 +48,12 @@ void delayLoop (uint32_t veces);
 
 int main (void)
 {
- uint32_t temp;
- uint32_t pin;
- uint32_t data;
-
-unsigned char uart_data;
-
- 	 	 	 hw_Init ();
-			//Enable clocking for port B
-
-			SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;
-			SIM->SCGC5 |= SIM_SCGC5_PORTA_MASK;
-
-			PORTA->PCR[4] |= PORT_PCR_ISF_MASK;  //Clear mask
-			NVIC_EnableIRQ(PORTA_IRQn);
-
-
-			//Configure port control register pin 22 PORTB
-
-		/*	PORTB->PCR[22]=0x0; //Clear all bits
-			PORTB->PCR[22]|=PORT_PCR_MUX(PORT_mGPIO); 		//Set MUX to GPIO
-			PORTB->PCR[22]|=PORT_PCR_DSE(1);          		//Drive strength enable
-			PORTB->PCR[22]|=PORT_PCR_IRQC(PORT_eDisabled);  //Disable interrupts
-		*/
-
-
-
-/////////// Multiple Pins at once on PORT B
-
-			temp =PORT_GPCHR_GPWE((1<<(21-16))|(1<<(22-16))); // Which Pins
-			// Now set pin properties
-			temp|=PORT_GPCHR_GPWD(PORT_PCR_MUX(PORT_mGPIO));  //Set MUX to GPIO
-			temp|=PORT_GPCHR_GPWD(PORT_PCR_DSE(1));			  //Drive strength enable
-			PORTB->GPCHR=temp;
-
-
-/////////// Input Pin 4
-			PORTA->PCR[4]=0x0; //Clear
-			PORTA->PCR[4]|=PORT_PCR_MUX(PORT_mGPIO); 		       //Set MUX to GPIO
-			PORTA->PCR[4]|=PORT_PCR_PE(1);          		       //Pull UP/Down  Enable
-			PORTA->PCR[4]|=PORT_PCR_PS(1);          		       //Pull UP
-			//PORTA->PCR[4]|=PORT_PCR_IRQC(PORT_eInterruptFalling);  //Enable Falling edge interrupts
-			PORTA->PCR[4]|=PORT_PCR_IRQC(PORT_eInterruptRising);  //Enable Rising edge interrupts
-
-			//////////
-
-			PTB->PSOR = (1<<21)|(1<<22);
-
-			// Configure GPIO registers
-
-			// Configurar como salida pin 22 y pin 21 PTB
-			PTB->PDDR |= (1<<21)|(1<<22);
-			// Configurar como entrada pin 4 PTA
-			PTA->PDDR |= (0<<4);
-
-			SysTick_Init();
-
-
-			UART_Init();
-			UART_Send_Data('A');
-			UART_Send_Data('B');
-			UART_Send_Data('C');
-			UART_SendMsg("Hola como estas");
-			// Enable interrupts
-			hw_EnableInterrupts();
-
-			__FOREVER__
-			{
-
-
-				if(UART_Get_Status()){
-					UART_SendMsg("Chau");
-					uart_data=UART_Get_Data();
-					UART_Send_Data(uart_data+1);
-				}
-
-			}
-
-
-
 
 }
 
 
 __ISR__  PORTA_IRQHandler(void)
 {
-
-	// Clear port IRQ flag
-
-
-		PORTA->PCR[4] |= PORT_PCR_ISF_MASK;
-
-		PTB->PCOR = (1<<21)|(1<<22);
-
-
 
 }
 
