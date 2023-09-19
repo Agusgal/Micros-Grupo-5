@@ -115,11 +115,12 @@ unsigned char uart_data;
 			{
 
 
-				//if(UART_Get_Status()){
-					//UART_SendMsg("Chau",0);
-					//uart_data=UART_Get_Data();
-					//UART_Send_Data(uart_data+1);
-				//}
+				if(UART_Get_Status(0)){
+				//UART_SendMsg("Chau",0);
+				uart_data=UART_Get_Data(0);
+				//UART_SendMsg("chau",0);
+				UART_SendChar(uart_data + 1, 0);
+				}
 
 			}
 

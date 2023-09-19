@@ -5,10 +5,11 @@
 
 void UART_Init (void);
 void UART_SetBaudRate (UART_Type *uart, uint32_t baudrate);
-unsigned char UART_Get_Status(void);
-unsigned char UART_Get_Data(void);
+unsigned char UART_Get_Status(uint8_t id);
+unsigned char UART_Get_Data(uint8_t id);
 void UART_Send_Data(unsigned char txdata);
 void UART_SendMsg(char* msg, uint8_t id);
+void UART_SendChar(char msg, uint8_t id);
 
 
 

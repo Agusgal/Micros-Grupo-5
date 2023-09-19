@@ -14,8 +14,8 @@
 
 
 #define	BUFFER_SIZE	 20
-#define NONE_EV       0 //TODO
-#define TOTAL_UARTS   5
+#define NONE_EV      24
+#define TOTAL_UARTS   6
 #define OVERFLOW     -1
 
 
@@ -130,14 +130,13 @@ void UART_Init (void)
 	//Enable UART0 Xmiter and Rcvr
 
 		//UART0->C2=UART_C2_TE_MASK | UART_C2_RE_MASK;
-		UART0->C2=UART_C2_TE_MASK|UART_C2_TIE_MASK| UART_C2_RE_MASK | UART_C2_RIE_MASK;
+		UART0->C2=UART_C2_TE_MASK| UART_C2_RE_MASK | UART_C2_RIE_MASK;
 
-		queue_Init(0);
-		queue_Init(1);
-		queue_Init(2);
-		queue_Init(3);
-		queue_Init(4);
-		queue_Init(5);
+		for (int i = 0; i<12 ; i++) //initializes transmitter and receiver queues for all uarts
+		{
+			queue_Init(i);
+		}
+
 
 
 
@@ -176,31 +175,39 @@ void UART_rx_tx_irq_handler (UART_Type* uart_p, uint8_t id)
 			tx_data =  pull_Queue_Element(id);
 			uart_p->D = tx_data;
 		}
+		else
+		{
+			UART0->C2 &= ~UART_C2_TIE_MASK;
+		}
 
 	}
 
 	if(ISR_RDRF(tmp))
 	{
-		rx_flag=true;
-
-		rx_data= uart_p ->D;
+		push_Queue_Element(id + TOTAL_UARTS, uart_p ->D); //positions itself in the receiver queue
 	}
 
 }
 
 
-unsigned char UART_Get_Status(void)
+unsigned char UART_Get_Status(uint8_t id)
 {
-	return(rx_flag);
+	return(get_Queue_Status(id + TOTAL_UARTS));
 }
 
 
-unsigned char UART_Get_Data(void)
+unsigned char UART_Get_Data(uint8_t id)
 {
-	rx_flag=false;
-	return(rx_data);
+	return(pull_Queue_Element(id + TOTAL_UARTS));
 }
 
+
+void UART_SendChar(char msg, uint8_t id)
+{
+		push_Queue_Element(id, msg);
+
+		UART0->C2 |= UART_C2_TIE_MASK;
+}
 
 
 void UART_SendMsg(char* msg, uint8_t id)
@@ -211,9 +218,13 @@ void UART_SendMsg(char* msg, uint8_t id)
 		push_Queue_Element(id, msg[i]);
 		i++;
 	}
-	UART0->D =  pull_Queue_Element(id);
+
+	push_Queue_Element(id,  '\n');
+	push_Queue_Element(id,  '\r');
 	//UART_Send_Data('\n');
 	//UART_Send_Data('\r');
+
+	UART0->C2 |= UART_C2_TIE_MASK;
 }
 
 
