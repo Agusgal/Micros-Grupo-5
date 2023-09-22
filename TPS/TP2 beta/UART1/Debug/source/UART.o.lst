@@ -1717,97 +1717,128 @@
   93              	UART_Init:
   94              	.LFB123:
   95              		.file 2 "../source/UART.c"
-   1:../source/UART.c **** 
-   2:../source/UART.c **** #include "hardware.h"
-   3:../source/UART.c **** #include "UART.h"
-   4:../source/UART.c **** 
-   5:../source/UART.c **** 
-   6:../source/UART.c **** #define UART_HAL_DEFAULT_BAUDRATE 9600
+   1:../source/UART.c **** /***************************************************************************//**
+   2:../source/UART.c ****   @file     UART.c
+   3:../source/UART.c **** 
+   4:../source/UART.c ****   @brief    UART driver
+   5:../source/UART.c ****   @author   Grupo 5
+   6:../source/UART.c ****  ******************************************************************************/
    7:../source/UART.c **** 
-   8:../source/UART.c **** #define ISR_TDRE(x) (((x) & UART_S1_TDRE_MASK) != 0x0)
-   9:../source/UART.c **** #define ISR_RDRF(x) (((x) & UART_S1_RDRF_MASK) != 0x0)
-  10:../source/UART.c **** 
-  11:../source/UART.c **** 
-  12:../source/UART.c **** #define UART0_TX_PIN 	17   //PTB17
-  13:../source/UART.c **** #define UART0_RX_PIN 	16   //PTB16
+   8:../source/UART.c **** /*******************************************************************************
+   9:../source/UART.c ****  * INCLUDE HEADER FILES
+  10:../source/UART.c ****  ******************************************************************************/
+  11:../source/UART.c **** #include "hardware.h"
+  12:../source/UART.c **** #include "UART.h"
+  13:../source/UART.c **** 
   14:../source/UART.c **** 
   15:../source/UART.c **** 
-  16:../source/UART.c **** #define	BUFFER_SIZE	 20
-  17:../source/UART.c **** #define NONE_EV      24
-  18:../source/UART.c **** #define TOTAL_UARTS   6
-  19:../source/UART.c **** #define OVERFLOW     -1
+  16:../source/UART.c **** /*******************************************************************************
+  17:../source/UART.c ****  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
+  18:../source/UART.c ****  ******************************************************************************/
+  19:../source/UART.c **** #define UART_HAL_DEFAULT_BAUDRATE 9600
   20:../source/UART.c **** 
-  21:../source/UART.c **** 
-  22:../source/UART.c **** typedef struct uart_buffer{
-  23:../source/UART.c **** 	uint8_t *pin;
-  24:../source/UART.c **** 	uint8_t *pout;
-  25:../source/UART.c **** 	uint8_t buffer[BUFFER_SIZE];
-  26:../source/UART.c **** 	uint8_t num_Of_Words;
-  27:../source/UART.c **** }uart_buffer_t;
+  21:../source/UART.c **** #define ISR_TDRE(x) (((x) & UART_S1_TDRE_MASK) != 0x0)
+  22:../source/UART.c **** #define ISR_RDRF(x) (((x) & UART_S1_RDRF_MASK) != 0x0)
+  23:../source/UART.c **** 
+  24:../source/UART.c **** 
+  25:../source/UART.c **** #define UART0_TX_PIN 	17   //PTB17
+  26:../source/UART.c **** #define UART0_RX_PIN 	16   //PTB16
+  27:../source/UART.c **** 
   28:../source/UART.c **** 
-  29:../source/UART.c **** uart_buffer_t uart_buffers[2 * TOTAL_UARTS]; //doubles the value for input and output buffers
-  30:../source/UART.c **** 
-  31:../source/UART.c **** static unsigned char rx_flag = false;
-  32:../source/UART.c **** static unsigned char rx_data;
+  29:../source/UART.c **** #define	BUFFER_SIZE	 20
+  30:../source/UART.c **** #define NONE_EV      24
+  31:../source/UART.c **** #define TOTAL_UARTS   6
+  32:../source/UART.c **** #define OVERFLOW     -1
   33:../source/UART.c **** 
   34:../source/UART.c **** 
-  35:../source/UART.c **** 
-  36:../source/UART.c **** typedef enum
-  37:../source/UART.c **** {
-  38:../source/UART.c **** 	PORT_mAnalog,
-  39:../source/UART.c **** 	PORT_mGPIO,
-  40:../source/UART.c **** 	PORT_mAlt2,
-  41:../source/UART.c **** 	PORT_mAlt3,
-  42:../source/UART.c **** 	PORT_mAlt4,
-  43:../source/UART.c **** 	PORT_mAlt5,
-  44:../source/UART.c **** 	PORT_mAlt6,
-  45:../source/UART.c **** 	PORT_mAlt7,
+  35:../source/UART.c **** typedef struct uart_buffer{
+  36:../source/UART.c **** 	uint8_t *pin;
+  37:../source/UART.c **** 	uint8_t *pout;
+  38:../source/UART.c **** 	uint8_t buffer[BUFFER_SIZE];
+  39:../source/UART.c **** 	uint8_t num_Of_Words;
+  40:../source/UART.c **** }uart_buffer_t;
+  41:../source/UART.c **** 
+  42:../source/UART.c **** uart_buffer_t uart_buffers[2 * TOTAL_UARTS]; //doubles the value for input and output buffers
+  43:../source/UART.c **** 
+  44:../source/UART.c **** static unsigned char rx_flag = false;
+  45:../source/UART.c **** static unsigned char rx_data;
   46:../source/UART.c **** 
-  47:../source/UART.c **** } PORTMux_t;
+  47:../source/UART.c **** 
   48:../source/UART.c **** 
   49:../source/UART.c **** typedef enum
   50:../source/UART.c **** {
-  51:../source/UART.c **** 	PORT_eDisabled				= 0x00,
-  52:../source/UART.c **** 	PORT_eDMARising				= 0x01,
-  53:../source/UART.c **** 	PORT_eDMAFalling			= 0x02,
-  54:../source/UART.c **** 	PORT_eDMAEither				= 0x03,
-  55:../source/UART.c **** 	PORT_eInterruptDisasserted	= 0x08,
-  56:../source/UART.c **** 	PORT_eInterruptRising		= 0x09,
-  57:../source/UART.c **** 	PORT_eInterruptFalling		= 0x0A,
-  58:../source/UART.c **** 	PORT_eInterruptEither		= 0x0B,
-  59:../source/UART.c **** 	PORT_eInterruptAsserted		= 0x0C,
-  60:../source/UART.c **** } PORTEvent_t;
+  51:../source/UART.c **** 	PORT_mAnalog,
+  52:../source/UART.c **** 	PORT_mGPIO,
+  53:../source/UART.c **** 	PORT_mAlt2,
+  54:../source/UART.c **** 	PORT_mAlt3,
+  55:../source/UART.c **** 	PORT_mAlt4,
+  56:../source/UART.c **** 	PORT_mAlt5,
+  57:../source/UART.c **** 	PORT_mAlt6,
+  58:../source/UART.c **** 	PORT_mAlt7,
+  59:../source/UART.c **** 
+  60:../source/UART.c **** } PORTMux_t;
   61:../source/UART.c **** 
-  62:../source/UART.c **** /**
-  63:../source/UART.c ****  * @brief Initializes the circular queue
-  64:../source/UART.c ****  */
-  65:../source/UART.c **** static void queue_Init (uint8_t id);
-  66:../source/UART.c **** 
-  67:../source/UART.c **** 
-  68:../source/UART.c **** /**
-  69:../source/UART.c ****  * @brief Pushes an event to the queue
-  70:../source/UART.c ****  * @param event The element to add to the queue
-  71:../source/UART.c ****  * @return Number of pending events. Returns value OVERFLOW if the maximun number of events is reac
-  72:../source/UART.c ****  */
-  73:../source/UART.c **** static int8_t push_Queue_Element(uint8_t id, uint8_t event);
+  62:../source/UART.c **** typedef enum
+  63:../source/UART.c **** {
+  64:../source/UART.c **** 	PORT_eDisabled				= 0x00,
+  65:../source/UART.c **** 	PORT_eDMARising				= 0x01,
+  66:../source/UART.c **** 	PORT_eDMAFalling			= 0x02,
+  67:../source/UART.c **** 	PORT_eDMAEither				= 0x03,
+  68:../source/UART.c **** 	PORT_eInterruptDisasserted	= 0x08,
+  69:../source/UART.c **** 	PORT_eInterruptRising		= 0x09,
+  70:../source/UART.c **** 	PORT_eInterruptFalling		= 0x0A,
+  71:../source/UART.c **** 	PORT_eInterruptEither		= 0x0B,
+  72:../source/UART.c **** 	PORT_eInterruptAsserted		= 0x0C,
+  73:../source/UART.c **** } PORTEvent_t;
   74:../source/UART.c **** 
-  75:../source/UART.c **** 
-  76:../source/UART.c **** /**
-  77:../source/UART.c ****  * @brief Pulls the earliest event from the queue
-  78:../source/UART.c ****  * @return Event_Type variable with the current event if no OVERFLOW is detected.
-  79:../source/UART.c ****  */
-  80:../source/UART.c **** static uint8_t pull_Queue_Element(uint8_t id);
-  81:../source/UART.c **** 
+  75:../source/UART.c **** /*******************************************************************************
+  76:../source/UART.c ****  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
+  77:../source/UART.c **** *******************************************************************************/
+  78:../source/UART.c **** /**
+  79:../source/UART.c ****  * @brief Initializes the circular queue
+  80:../source/UART.c ****  */
+  81:../source/UART.c **** static void queue_Init (uint8_t id);
   82:../source/UART.c **** 
-  83:../source/UART.c **** /**
-  84:../source/UART.c ****  * @brief Gets the status of the queue
-  85:../source/UART.c ****  * @return Returns the number of pending events in the queue
-  86:../source/UART.c ****  */
-  87:../source/UART.c **** static uint8_t get_Queue_Status(uint8_t id);
-  88:../source/UART.c **** 
-  89:../source/UART.c **** void UART_Init (void)
-  90:../source/UART.c **** {
-  96              		.loc 2 90 0
+  83:../source/UART.c **** 
+  84:../source/UART.c **** /**
+  85:../source/UART.c ****  * @brief Pushes an event to the queue
+  86:../source/UART.c ****  * @param event The element to add to the queue
+  87:../source/UART.c ****  * @return Number of pending events. Returns value OVERFLOW if the maximun number of events is reac
+  88:../source/UART.c ****  */
+  89:../source/UART.c **** static int8_t push_Queue_Element(uint8_t id, uint8_t event);
+  90:../source/UART.c **** 
+  91:../source/UART.c **** 
+  92:../source/UART.c **** /**
+  93:../source/UART.c ****  * @brief Pulls the earliest event from the queue
+  94:../source/UART.c ****  * @return Event_Type variable with the current event if no OVERFLOW is detected.
+  95:../source/UART.c ****  */
+  96:../source/UART.c **** static uint8_t pull_Queue_Element(uint8_t id);
+  97:../source/UART.c **** 
+  98:../source/UART.c **** 
+  99:../source/UART.c **** /**
+ 100:../source/UART.c ****  * @brief Gets the status of the queue
+ 101:../source/UART.c ****  * @return Returns the number of pending events in the queue
+ 102:../source/UART.c ****  */
+ 103:../source/UART.c **** static uint8_t get_Queue_Status(uint8_t id);
+ 104:../source/UART.c **** 
+ 105:../source/UART.c **** 
+ 106:../source/UART.c **** 
+ 107:../source/UART.c **** /*******************************************************************************
+ 108:../source/UART.c ****  *******************************************************************************
+ 109:../source/UART.c ****                         GLOBAL FUNCTION DEFINITIONS
+ 110:../source/UART.c ****  *******************************************************************************
+ 111:../source/UART.c ****  ******************************************************************************/
+ 112:../source/UART.c **** 
+ 113:../source/UART.c **** 
+ 114:../source/UART.c **** /**
+ 115:../source/UART.c ****  * @brief
+ 116:../source/UART.c ****  * @param
+ 117:../source/UART.c ****  * @return
+ 118:../source/UART.c ****  */
+ 119:../source/UART.c **** 
+ 120:../source/UART.c **** void UART_Init (void)
+ 121:../source/UART.c **** {
+  96              		.loc 2 121 0
   97              		.cfi_startproc
   98              		@ args = 0, pretend = 0, frame = 8
   99              		@ frame_needed = 1, uses_anonymous_args = 0
@@ -1819,13 +1850,13 @@
  105              		.cfi_def_cfa_offset 16
  106 0004 00AF     		add	r7, sp, #0
  107              		.cfi_def_cfa_register 7
-  91:../source/UART.c **** 
-  92:../source/UART.c **** // Note: 5.6 Clock Gating page 192
-  93:../source/UART.c **** // Any bus access to a peripheral that has its clock disabled generates an error termination.
-  94:../source/UART.c **** 
-  95:../source/UART.c **** 
-  96:../source/UART.c **** 	    SIM->SCGC4 |= SIM_SCGC4_UART0_MASK;
- 108              		.loc 2 96 0
+ 122:../source/UART.c **** 
+ 123:../source/UART.c **** // Note: 5.6 Clock Gating page 192
+ 124:../source/UART.c **** // Any bus access to a peripheral that has its clock disabled generates an error termination.
+ 125:../source/UART.c **** 
+ 126:../source/UART.c **** 
+ 127:../source/UART.c **** 	    SIM->SCGC4 |= SIM_SCGC4_UART0_MASK;
+ 108              		.loc 2 127 0
  109 0006 4C4B     		ldr	r3, .L7
  110 0008 03F58153 		add	r3, r3, #4128
  111 000c 1433     		adds	r3, r3, #20
@@ -1835,8 +1866,8 @@
  115 0016 01F58153 		add	r3, r1, #4128
  116 001a 1433     		adds	r3, r3, #20
  117 001c 1A60     		str	r2, [r3]
-  97:../source/UART.c **** 		SIM->SCGC4 |= SIM_SCGC4_UART1_MASK;
- 118              		.loc 2 97 0
+ 128:../source/UART.c **** 		SIM->SCGC4 |= SIM_SCGC4_UART1_MASK;
+ 118              		.loc 2 128 0
  119 001e 464B     		ldr	r3, .L7
  120 0020 03F58153 		add	r3, r3, #4128
  121 0024 1433     		adds	r3, r3, #20
@@ -1846,8 +1877,8 @@
  125 002e 01F58153 		add	r3, r1, #4128
  126 0032 1433     		adds	r3, r3, #20
  127 0034 1A60     		str	r2, [r3]
-  98:../source/UART.c **** 		SIM->SCGC4 |= SIM_SCGC4_UART2_MASK;
- 128              		.loc 2 98 0
+ 129:../source/UART.c **** 		SIM->SCGC4 |= SIM_SCGC4_UART2_MASK;
+ 128              		.loc 2 129 0
  129 0036 404B     		ldr	r3, .L7
  130 0038 03F58153 		add	r3, r3, #4128
  131 003c 1433     		adds	r3, r3, #20
@@ -1857,8 +1888,8 @@
  135 0046 01F58153 		add	r3, r1, #4128
  136 004a 1433     		adds	r3, r3, #20
  137 004c 1A60     		str	r2, [r3]
-  99:../source/UART.c **** 		SIM->SCGC4 |= SIM_SCGC4_UART3_MASK;
- 138              		.loc 2 99 0
+ 130:../source/UART.c **** 		SIM->SCGC4 |= SIM_SCGC4_UART3_MASK;
+ 138              		.loc 2 130 0
  139 004e 3A4B     		ldr	r3, .L7
  140 0050 03F58153 		add	r3, r3, #4128
  141 0054 1433     		adds	r3, r3, #20
@@ -1868,8 +1899,8 @@
  145 005e 01F58153 		add	r3, r1, #4128
  146 0062 1433     		adds	r3, r3, #20
  147 0064 1A60     		str	r2, [r3]
- 100:../source/UART.c **** 		SIM->SCGC1 |= SIM_SCGC1_UART4_MASK;
- 148              		.loc 2 100 0
+ 131:../source/UART.c **** 		SIM->SCGC1 |= SIM_SCGC1_UART4_MASK;
+ 148              		.loc 2 131 0
  149 0066 344B     		ldr	r3, .L7
  150 0068 03F58153 		add	r3, r3, #4128
  151 006c 0833     		adds	r3, r3, #8
@@ -1879,8 +1910,8 @@
  155 0076 01F58153 		add	r3, r1, #4128
  156 007a 0833     		adds	r3, r3, #8
  157 007c 1A60     		str	r2, [r3]
- 101:../source/UART.c **** 		SIM->SCGC1 |= SIM_SCGC1_UART5_MASK;
- 158              		.loc 2 101 0
+ 132:../source/UART.c **** 		SIM->SCGC1 |= SIM_SCGC1_UART5_MASK;
+ 158              		.loc 2 132 0
  159 007e 2E4B     		ldr	r3, .L7
  160 0080 03F58153 		add	r3, r3, #4128
  161 0084 0833     		adds	r3, r3, #8
@@ -1890,136 +1921,136 @@
  165 008e 01F58153 		add	r3, r1, #4128
  166 0092 0833     		adds	r3, r3, #8
  167 0094 1A60     		str	r2, [r3]
- 102:../source/UART.c **** 
- 103:../source/UART.c **** 		NVIC_EnableIRQ(UART0_RX_TX_IRQn);
- 168              		.loc 2 103 0
+ 133:../source/UART.c **** 
+ 134:../source/UART.c **** 		NVIC_EnableIRQ(UART0_RX_TX_IRQn);
+ 168              		.loc 2 134 0
  169 0096 1F20     		movs	r0, #31
  170 0098 FFF7FEFF 		bl	NVIC_EnableIRQ
- 104:../source/UART.c **** 		NVIC_EnableIRQ(UART1_RX_TX_IRQn);
- 171              		.loc 2 104 0
+ 135:../source/UART.c **** 		NVIC_EnableIRQ(UART1_RX_TX_IRQn);
+ 171              		.loc 2 135 0
  172 009c 2120     		movs	r0, #33
  173 009e FFF7FEFF 		bl	NVIC_EnableIRQ
- 105:../source/UART.c **** 		NVIC_EnableIRQ(UART2_RX_TX_IRQn);
- 174              		.loc 2 105 0
+ 136:../source/UART.c **** 		NVIC_EnableIRQ(UART2_RX_TX_IRQn);
+ 174              		.loc 2 136 0
  175 00a2 2320     		movs	r0, #35
  176 00a4 FFF7FEFF 		bl	NVIC_EnableIRQ
- 106:../source/UART.c **** 		NVIC_EnableIRQ(UART3_RX_TX_IRQn);
- 177              		.loc 2 106 0
+ 137:../source/UART.c **** 		NVIC_EnableIRQ(UART3_RX_TX_IRQn);
+ 177              		.loc 2 137 0
  178 00a8 2520     		movs	r0, #37
  179 00aa FFF7FEFF 		bl	NVIC_EnableIRQ
- 107:../source/UART.c **** 		NVIC_EnableIRQ(UART4_RX_TX_IRQn);
- 180              		.loc 2 107 0
+ 138:../source/UART.c **** 		NVIC_EnableIRQ(UART4_RX_TX_IRQn);
+ 180              		.loc 2 138 0
  181 00ae 4220     		movs	r0, #66
  182 00b0 FFF7FEFF 		bl	NVIC_EnableIRQ
- 108:../source/UART.c **** 		NVIC_EnableIRQ(UART5_RX_TX_IRQn);
- 183              		.loc 2 108 0
+ 139:../source/UART.c **** 		NVIC_EnableIRQ(UART5_RX_TX_IRQn);
+ 183              		.loc 2 139 0
  184 00b4 4420     		movs	r0, #68
  185 00b6 FFF7FEFF 		bl	NVIC_EnableIRQ
- 109:../source/UART.c **** 
- 110:../source/UART.c **** 		//UART0 Set UART Speed
- 111:../source/UART.c **** 
- 112:../source/UART.c **** 		UART_SetBaudRate(UART0, UART_HAL_DEFAULT_BAUDRATE);
- 186              		.loc 2 112 0
+ 140:../source/UART.c **** 
+ 141:../source/UART.c **** 		//UART0 Set UART Speed
+ 142:../source/UART.c **** 
+ 143:../source/UART.c **** 		UART_SetBaudRate(UART0, UART_HAL_DEFAULT_BAUDRATE);
+ 186              		.loc 2 143 0
  187 00ba 4FF41651 		mov	r1, #9600
  188 00be 1F48     		ldr	r0, .L7+4
  189 00c0 FFF7FEFF 		bl	UART_SetBaudRate
- 113:../source/UART.c **** 
- 114:../source/UART.c **** 		//Configure UART0 TX and RX PINS
- 115:../source/UART.c **** 
- 116:../source/UART.c **** 		PORTB->PCR[UART0_TX_PIN]=0x0; //Clear all bits
- 190              		.loc 2 116 0
+ 144:../source/UART.c **** 
+ 145:../source/UART.c **** 		//Configure UART0 TX and RX PINS
+ 146:../source/UART.c **** 
+ 147:../source/UART.c **** 		PORTB->PCR[UART0_TX_PIN]=0x0; //Clear all bits
+ 190              		.loc 2 147 0
  191 00c4 1E4B     		ldr	r3, .L7+8
  192 00c6 0022     		movs	r2, #0
  193 00c8 5A64     		str	r2, [r3, #68]
- 117:../source/UART.c **** 		PORTB->PCR[UART0_TX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
- 194              		.loc 2 117 0
+ 148:../source/UART.c **** 		PORTB->PCR[UART0_TX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
+ 194              		.loc 2 148 0
  195 00ca 1D4B     		ldr	r3, .L7+8
  196 00cc 5B6C     		ldr	r3, [r3, #68]
  197 00ce 1C4A     		ldr	r2, .L7+8
  198 00d0 43F44073 		orr	r3, r3, #768
  199 00d4 5364     		str	r3, [r2, #68]
- 118:../source/UART.c **** 		PORTB->PCR[UART0_TX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
- 200              		.loc 2 118 0
+ 149:../source/UART.c **** 		PORTB->PCR[UART0_TX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
+ 200              		.loc 2 149 0
  201 00d6 1A4B     		ldr	r3, .L7+8
  202 00d8 194A     		ldr	r2, .L7+8
  203 00da 5B6C     		ldr	r3, [r3, #68]
  204 00dc 5364     		str	r3, [r2, #68]
- 119:../source/UART.c **** //----------------------------------------------------------------------------------
- 120:../source/UART.c **** 		PORTB->PCR[UART0_RX_PIN]=0x0; //Clear all bits
- 205              		.loc 2 120 0
+ 150:../source/UART.c **** //----------------------------------------------------------------------------------
+ 151:../source/UART.c **** 		PORTB->PCR[UART0_RX_PIN]=0x0; //Clear all bits
+ 205              		.loc 2 151 0
  206 00de 184B     		ldr	r3, .L7+8
  207 00e0 0022     		movs	r2, #0
  208 00e2 1A64     		str	r2, [r3, #64]
- 121:../source/UART.c **** 		PORTB->PCR[UART0_RX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
- 209              		.loc 2 121 0
+ 152:../source/UART.c **** 		PORTB->PCR[UART0_RX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
+ 209              		.loc 2 152 0
  210 00e4 164B     		ldr	r3, .L7+8
  211 00e6 1B6C     		ldr	r3, [r3, #64]
  212 00e8 154A     		ldr	r2, .L7+8
  213 00ea 43F44073 		orr	r3, r3, #768
  214 00ee 1364     		str	r3, [r2, #64]
- 122:../source/UART.c **** 		PORTB->PCR[UART0_RX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
- 215              		.loc 2 122 0
+ 153:../source/UART.c **** 		PORTB->PCR[UART0_RX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
+ 215              		.loc 2 153 0
  216 00f0 134B     		ldr	r3, .L7+8
  217 00f2 134A     		ldr	r2, .L7+8
  218 00f4 1B6C     		ldr	r3, [r3, #64]
  219 00f6 1364     		str	r3, [r2, #64]
- 123:../source/UART.c **** 
- 124:../source/UART.c **** 
- 125:../source/UART.c **** 	//UART0 Baudrate Setup
- 126:../source/UART.c **** 
- 127:../source/UART.c **** 		UART_SetBaudRate (UART0, 9600);
- 220              		.loc 2 127 0
+ 154:../source/UART.c **** 
+ 155:../source/UART.c **** 
+ 156:../source/UART.c **** 	//UART0 Baudrate Setup
+ 157:../source/UART.c **** 
+ 158:../source/UART.c **** 		UART_SetBaudRate (UART0, 9600);
+ 220              		.loc 2 158 0
  221 00f8 4FF41651 		mov	r1, #9600
  222 00fc 0F48     		ldr	r0, .L7+4
  223 00fe FFF7FEFF 		bl	UART_SetBaudRate
- 128:../source/UART.c **** 		UART_SetBaudRate (UART1, 9600);
- 224              		.loc 2 128 0
+ 159:../source/UART.c **** 		UART_SetBaudRate (UART1, 9600);
+ 224              		.loc 2 159 0
  225 0102 4FF41651 		mov	r1, #9600
  226 0106 0F48     		ldr	r0, .L7+12
  227 0108 FFF7FEFF 		bl	UART_SetBaudRate
- 129:../source/UART.c **** 
- 130:../source/UART.c **** 	//Enable UART0 Xmiter and Rcvr
- 131:../source/UART.c **** 
- 132:../source/UART.c **** 		//UART0->C2=UART_C2_TE_MASK | UART_C2_RE_MASK;
- 133:../source/UART.c **** 		UART0->C2=UART_C2_TE_MASK| UART_C2_RE_MASK | UART_C2_RIE_MASK;
- 228              		.loc 2 133 0
+ 160:../source/UART.c **** 
+ 161:../source/UART.c **** 	//Enable UART0 Xmiter and Rcvr
+ 162:../source/UART.c **** 
+ 163:../source/UART.c **** 		//UART0->C2=UART_C2_TE_MASK | UART_C2_RE_MASK;
+ 164:../source/UART.c **** 		UART0->C2=UART_C2_TE_MASK| UART_C2_RE_MASK | UART_C2_RIE_MASK;
+ 228              		.loc 2 164 0
  229 010c 0B4B     		ldr	r3, .L7+4
  230 010e 2C22     		movs	r2, #44
  231 0110 DA70     		strb	r2, [r3, #3]
  232              	.LBB2:
- 134:../source/UART.c **** 
- 135:../source/UART.c **** 		for (int i = 0; i<12 ; i++) //initializes transmitter and receiver queues for all uarts
- 233              		.loc 2 135 0
+ 165:../source/UART.c **** 
+ 166:../source/UART.c **** 		for (int i = 0; i<12 ; i++) //initializes transmitter and receiver queues for all uarts
+ 233              		.loc 2 166 0
  234 0112 0023     		movs	r3, #0
  235 0114 7B60     		str	r3, [r7, #4]
  236 0116 07E0     		b	.L5
  237              	.L6:
- 136:../source/UART.c **** 		{
- 137:../source/UART.c **** 			queue_Init(i);
- 238              		.loc 2 137 0 discriminator 3
+ 167:../source/UART.c **** 		{
+ 168:../source/UART.c **** 			queue_Init(i);
+ 238              		.loc 2 168 0 discriminator 3
  239 0118 7B68     		ldr	r3, [r7, #4]
  240 011a DBB2     		uxtb	r3, r3
  241 011c 1846     		mov	r0, r3
  242 011e FFF7FEFF 		bl	queue_Init
- 135:../source/UART.c **** 		{
- 243              		.loc 2 135 0 discriminator 3
+ 166:../source/UART.c **** 		{
+ 243              		.loc 2 166 0 discriminator 3
  244 0122 7B68     		ldr	r3, [r7, #4]
  245 0124 0133     		adds	r3, r3, #1
  246 0126 7B60     		str	r3, [r7, #4]
  247              	.L5:
- 135:../source/UART.c **** 		{
- 248              		.loc 2 135 0 is_stmt 0 discriminator 1
+ 166:../source/UART.c **** 		{
+ 248              		.loc 2 166 0 is_stmt 0 discriminator 1
  249 0128 7B68     		ldr	r3, [r7, #4]
  250 012a 0B2B     		cmp	r3, #11
  251 012c F4DD     		ble	.L6
  252              	.LBE2:
- 138:../source/UART.c **** 		}
- 139:../source/UART.c **** 
- 140:../source/UART.c **** 
- 141:../source/UART.c **** 
- 142:../source/UART.c **** 
- 143:../source/UART.c **** }
- 253              		.loc 2 143 0 is_stmt 1
+ 169:../source/UART.c **** 		}
+ 170:../source/UART.c **** 
+ 171:../source/UART.c **** 
+ 172:../source/UART.c **** 
+ 173:../source/UART.c **** 
+ 174:../source/UART.c **** }
+ 253              		.loc 2 174 0 is_stmt 1
  254 012e 00BF     		nop
  255 0130 0837     		adds	r7, r7, #8
  256              		.cfi_def_cfa_offset 8
@@ -2045,11 +2076,16 @@
  277              		.fpu fpv4-sp-d16
  279              	UART_SetBaudRate:
  280              	.LFB124:
- 144:../source/UART.c **** 
- 145:../source/UART.c **** 
- 146:../source/UART.c **** void UART_SetBaudRate (UART_Type *uart, uint32_t baudrate)
- 147:../source/UART.c **** {
- 281              		.loc 2 147 0
+ 175:../source/UART.c **** 
+ 176:../source/UART.c **** /**
+ 177:../source/UART.c ****  * @brief
+ 178:../source/UART.c ****  * @param
+ 179:../source/UART.c ****  * @return
+ 180:../source/UART.c ****  */
+ 181:../source/UART.c **** 
+ 182:../source/UART.c **** void UART_SetBaudRate (UART_Type *uart, uint32_t baudrate)
+ 183:../source/UART.c **** {
+ 281              		.loc 2 183 0
  282              		.cfi_startproc
  283              		@ args = 0, pretend = 0, frame = 16
  284              		@ frame_needed = 1, uses_anonymous_args = 0
@@ -2063,66 +2099,66 @@
  292              		.cfi_def_cfa_register 7
  293 0006 7860     		str	r0, [r7, #4]
  294 0008 3960     		str	r1, [r7]
- 148:../source/UART.c **** 	uint16_t sbr, brfa;
- 149:../source/UART.c **** 	uint32_t clock;
- 150:../source/UART.c **** 
- 151:../source/UART.c **** 	clock = ((uart == UART0) || (uart == UART1))?(__CORE_CLOCK__):(__CORE_CLOCK__ >> 1);
- 295              		.loc 2 151 0
+ 184:../source/UART.c **** 	uint16_t sbr, brfa;
+ 185:../source/UART.c **** 	uint32_t clock;
+ 186:../source/UART.c **** 
+ 187:../source/UART.c **** 	clock = ((uart == UART0) || (uart == UART1))?(__CORE_CLOCK__):(__CORE_CLOCK__ >> 1);
+ 295              		.loc 2 187 0
  296 000a 7B68     		ldr	r3, [r7, #4]
  297 000c 264A     		ldr	r2, .L17
  298 000e 9342     		cmp	r3, r2
  299 0010 03D0     		beq	.L10
- 300              		.loc 2 151 0 is_stmt 0 discriminator 2
+ 300              		.loc 2 187 0 is_stmt 0 discriminator 2
  301 0012 7B68     		ldr	r3, [r7, #4]
  302 0014 254A     		ldr	r2, .L17+4
  303 0016 9342     		cmp	r3, r2
  304 0018 01D1     		bne	.L11
  305              	.L10:
- 306              		.loc 2 151 0 discriminator 3
+ 306              		.loc 2 187 0 discriminator 3
  307 001a 254B     		ldr	r3, .L17+8
  308 001c 00E0     		b	.L12
  309              	.L11:
- 310              		.loc 2 151 0 discriminator 4
+ 310              		.loc 2 187 0 discriminator 4
  311 001e 254B     		ldr	r3, .L17+12
  312              	.L12:
- 313              		.loc 2 151 0 discriminator 6
+ 313              		.loc 2 187 0 discriminator 6
  314 0020 FB60     		str	r3, [r7, #12]
- 152:../source/UART.c **** 
- 153:../source/UART.c **** 	baudrate = ((baudrate == 0)?(UART_HAL_DEFAULT_BAUDRATE):
- 315              		.loc 2 153 0 is_stmt 1 discriminator 6
+ 188:../source/UART.c **** 
+ 189:../source/UART.c **** 	baudrate = ((baudrate == 0)?(UART_HAL_DEFAULT_BAUDRATE):
+ 315              		.loc 2 189 0 is_stmt 1 discriminator 6
  316 0022 3B68     		ldr	r3, [r7]
  317 0024 002B     		cmp	r3, #0
  318 0026 08D0     		beq	.L13
- 154:../source/UART.c **** 			((baudrate > 0x1FFF)?(UART_HAL_DEFAULT_BAUDRATE):(baudrate)));
- 319              		.loc 2 154 0
+ 190:../source/UART.c **** 			((baudrate > 0x1FFF)?(UART_HAL_DEFAULT_BAUDRATE):(baudrate)));
+ 319              		.loc 2 190 0
  320 0028 3B68     		ldr	r3, [r7]
  321 002a B3F5005F 		cmp	r3, #8192
  322 002e 01D2     		bcs	.L14
- 323              		.loc 2 154 0 is_stmt 0 discriminator 1
+ 323              		.loc 2 190 0 is_stmt 0 discriminator 1
  324 0030 3B68     		ldr	r3, [r7]
  325 0032 04E0     		b	.L16
  326              	.L14:
- 327              		.loc 2 154 0 discriminator 2
+ 327              		.loc 2 190 0 discriminator 2
  328 0034 4FF41653 		mov	r3, #9600
  329 0038 01E0     		b	.L16
  330              	.L13:
- 153:../source/UART.c **** 			((baudrate > 0x1FFF)?(UART_HAL_DEFAULT_BAUDRATE):(baudrate)));
- 331              		.loc 2 153 0 is_stmt 1 discriminator 1
+ 189:../source/UART.c **** 			((baudrate > 0x1FFF)?(UART_HAL_DEFAULT_BAUDRATE):(baudrate)));
+ 331              		.loc 2 189 0 is_stmt 1 discriminator 1
  332 003a 4FF41653 		mov	r3, #9600
  333              	.L16:
- 153:../source/UART.c **** 			((baudrate > 0x1FFF)?(UART_HAL_DEFAULT_BAUDRATE):(baudrate)));
- 334              		.loc 2 153 0 is_stmt 0 discriminator 3
+ 189:../source/UART.c **** 			((baudrate > 0x1FFF)?(UART_HAL_DEFAULT_BAUDRATE):(baudrate)));
+ 334              		.loc 2 189 0 is_stmt 0 discriminator 3
  335 003e 3B60     		str	r3, [r7]
- 155:../source/UART.c **** 
- 156:../source/UART.c **** 	sbr = clock / (baudrate << 4);               // sbr = clock/(Baudrate x 16)
- 336              		.loc 2 156 0 is_stmt 1 discriminator 3
+ 191:../source/UART.c **** 
+ 192:../source/UART.c **** 	sbr = clock / (baudrate << 4);               // sbr = clock/(Baudrate x 16)
+ 336              		.loc 2 192 0 is_stmt 1 discriminator 3
  337 0040 3B68     		ldr	r3, [r7]
  338 0042 1B01     		lsls	r3, r3, #4
  339 0044 FA68     		ldr	r2, [r7, #12]
  340 0046 B2FBF3F3 		udiv	r3, r2, r3
  341 004a 7B81     		strh	r3, [r7, #10]	@ movhi
- 157:../source/UART.c **** 	brfa = (clock << 1) / baudrate - (sbr << 5); // brfa = 2*Clock/baudrate - 32*sbr
- 342              		.loc 2 157 0 discriminator 3
+ 193:../source/UART.c **** 	brfa = (clock << 1) / baudrate - (sbr << 5); // brfa = 2*Clock/baudrate - 32*sbr
+ 342              		.loc 2 193 0 discriminator 3
  343 004c FB68     		ldr	r3, [r7, #12]
  344 004e 5A00     		lsls	r2, r3, #1
  345 0050 3B68     		ldr	r3, [r7]
@@ -2133,9 +2169,9 @@
  350 005c 9BB2     		uxth	r3, r3
  351 005e D31A     		subs	r3, r2, r3
  352 0060 3B81     		strh	r3, [r7, #8]	@ movhi
- 158:../source/UART.c **** 
- 159:../source/UART.c **** 	uart->BDH = UART_BDH_SBR(sbr >> 8);
- 353              		.loc 2 159 0 discriminator 3
+ 194:../source/UART.c **** 
+ 195:../source/UART.c **** 	uart->BDH = UART_BDH_SBR(sbr >> 8);
+ 353              		.loc 2 195 0 discriminator 3
  354 0062 7B89     		ldrh	r3, [r7, #10]
  355 0064 1B0A     		lsrs	r3, r3, #8
  356 0066 9BB2     		uxth	r3, r3
@@ -2144,14 +2180,14 @@
  359 006e DAB2     		uxtb	r2, r3
  360 0070 7B68     		ldr	r3, [r7, #4]
  361 0072 1A70     		strb	r2, [r3]
- 160:../source/UART.c **** 	uart->BDL = UART_BDL_SBR(sbr);
- 362              		.loc 2 160 0 discriminator 3
+ 196:../source/UART.c **** 	uart->BDL = UART_BDL_SBR(sbr);
+ 362              		.loc 2 196 0 discriminator 3
  363 0074 7B89     		ldrh	r3, [r7, #10]	@ movhi
  364 0076 DAB2     		uxtb	r2, r3
  365 0078 7B68     		ldr	r3, [r7, #4]
  366 007a 5A70     		strb	r2, [r3, #1]
- 161:../source/UART.c **** 	uart->C4 = (uart->C4 & ~UART_C4_BRFA_MASK) | UART_C4_BRFA(brfa);
- 367              		.loc 2 161 0 discriminator 3
+ 197:../source/UART.c **** 	uart->C4 = (uart->C4 & ~UART_C4_BRFA_MASK) | UART_C4_BRFA(brfa);
+ 367              		.loc 2 197 0 discriminator 3
  368 007c 7B68     		ldr	r3, [r7, #4]
  369 007e 9B7A     		ldrb	r3, [r3, #10]
  370 0080 DBB2     		uxtb	r3, r3
@@ -2165,8 +2201,8 @@
  378 0094 DAB2     		uxtb	r2, r3
  379 0096 7B68     		ldr	r3, [r7, #4]
  380 0098 9A72     		strb	r2, [r3, #10]
- 162:../source/UART.c **** }
- 381              		.loc 2 162 0 discriminator 3
+ 198:../source/UART.c **** }
+ 381              		.loc 2 198 0 discriminator 3
  382 009a 00BF     		nop
  383 009c 1437     		adds	r7, r7, #20
  384              		.cfi_def_cfa_offset 4
@@ -2195,11 +2231,16 @@
  408              		.fpu fpv4-sp-d16
  410              	UART_rx_tx_irq_handler:
  411              	.LFB125:
- 163:../source/UART.c **** 
- 164:../source/UART.c **** 
- 165:../source/UART.c **** void UART_rx_tx_irq_handler (UART_Type* uart_p, uint8_t id)
- 166:../source/UART.c **** {
- 412              		.loc 2 166 0
+ 199:../source/UART.c **** 
+ 200:../source/UART.c **** /**
+ 201:../source/UART.c ****  * @brief
+ 202:../source/UART.c ****  * @param
+ 203:../source/UART.c ****  * @return
+ 204:../source/UART.c ****  */
+ 205:../source/UART.c **** 
+ 206:../source/UART.c **** void UART_rx_tx_irq_handler (UART_Type* uart_p, uint8_t id)
+ 207:../source/UART.c **** {
+ 412              		.loc 2 207 0
  413              		.cfi_startproc
  414              		@ args = 0, pretend = 0, frame = 16
  415              		@ frame_needed = 1, uses_anonymous_args = 0
@@ -2214,48 +2255,48 @@
  424 0006 7860     		str	r0, [r7, #4]
  425 0008 0B46     		mov	r3, r1
  426 000a FB70     		strb	r3, [r7, #3]
- 167:../source/UART.c **** 	unsigned char tmp;
- 168:../source/UART.c **** 	uint8_t tx_data;
- 169:../source/UART.c **** 	tmp = uart_p -> S1;// Dummy read to clear status register
- 427              		.loc 2 169 0
+ 208:../source/UART.c **** 	unsigned char tmp;
+ 209:../source/UART.c **** 	uint8_t tx_data;
+ 210:../source/UART.c **** 	tmp = uart_p -> S1;// Dummy read to clear status register
+ 427              		.loc 2 210 0
  428 000c 7B68     		ldr	r3, [r7, #4]
  429 000e 1B79     		ldrb	r3, [r3, #4]
  430 0010 FB73     		strb	r3, [r7, #15]
- 170:../source/UART.c **** 
- 171:../source/UART.c **** 	if(ISR_TDRE(tmp)) //checks if state is available
- 431              		.loc 2 171 0
+ 211:../source/UART.c **** 
+ 212:../source/UART.c **** 	if(ISR_TDRE(tmp)) //checks if state is available
+ 431              		.loc 2 212 0
  432 0012 97F90F30 		ldrsb	r3, [r7, #15]
  433 0016 002B     		cmp	r3, #0
  434 0018 18DA     		bge	.L20
- 172:../source/UART.c **** 	{
- 173:../source/UART.c **** 		if (get_Queue_Status(id))
- 435              		.loc 2 173 0
+ 213:../source/UART.c **** 	{
+ 214:../source/UART.c **** 		if (get_Queue_Status(id))
+ 435              		.loc 2 214 0
  436 001a FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
  437 001c 1846     		mov	r0, r3
  438 001e FFF7FEFF 		bl	get_Queue_Status
  439 0022 0346     		mov	r3, r0
  440 0024 002B     		cmp	r3, #0
  441 0026 09D0     		beq	.L21
- 174:../source/UART.c **** 		{
- 175:../source/UART.c **** 			tx_data =  pull_Queue_Element(id);
- 442              		.loc 2 175 0
+ 215:../source/UART.c **** 		{
+ 216:../source/UART.c **** 			tx_data =  pull_Queue_Element(id);
+ 442              		.loc 2 216 0
  443 0028 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
  444 002a 1846     		mov	r0, r3
  445 002c FFF7FEFF 		bl	pull_Queue_Element
  446 0030 0346     		mov	r3, r0
  447 0032 BB73     		strb	r3, [r7, #14]
- 176:../source/UART.c **** 			uart_p->D = tx_data;
- 448              		.loc 2 176 0
+ 217:../source/UART.c **** 			uart_p->D = tx_data;
+ 448              		.loc 2 217 0
  449 0034 7B68     		ldr	r3, [r7, #4]
  450 0036 BA7B     		ldrb	r2, [r7, #14]
  451 0038 DA71     		strb	r2, [r3, #7]
  452 003a 07E0     		b	.L20
  453              	.L21:
- 177:../source/UART.c **** 		}
- 178:../source/UART.c **** 		else
- 179:../source/UART.c **** 		{
- 180:../source/UART.c **** 			UART0->C2 &= ~UART_C2_TIE_MASK;
- 454              		.loc 2 180 0
+ 218:../source/UART.c **** 		}
+ 219:../source/UART.c **** 		else
+ 220:../source/UART.c **** 		{
+ 221:../source/UART.c **** 			UART0->C2 &= ~UART_C2_TIE_MASK;
+ 454              		.loc 2 221 0
  455 003c 0D4B     		ldr	r3, .L24
  456 003e DB78     		ldrb	r3, [r3, #3]
  457 0040 DBB2     		uxtb	r3, r3
@@ -2264,19 +2305,19 @@
  460 0048 DBB2     		uxtb	r3, r3
  461 004a D370     		strb	r3, [r2, #3]
  462              	.L20:
- 181:../source/UART.c **** 		}
- 182:../source/UART.c **** 
- 183:../source/UART.c **** 	}
- 184:../source/UART.c **** 
- 185:../source/UART.c **** 	if(ISR_RDRF(tmp))
- 463              		.loc 2 185 0
+ 222:../source/UART.c **** 		}
+ 223:../source/UART.c **** 
+ 224:../source/UART.c **** 	}
+ 225:../source/UART.c **** 
+ 226:../source/UART.c **** 	if(ISR_RDRF(tmp))
+ 463              		.loc 2 226 0
  464 004c FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
  465 004e 03F02003 		and	r3, r3, #32
  466 0052 002B     		cmp	r3, #0
  467 0054 09D0     		beq	.L23
- 186:../source/UART.c **** 	{
- 187:../source/UART.c **** 		push_Queue_Element(id + TOTAL_UARTS, uart_p ->D); //positions itself in the receiver queue
- 468              		.loc 2 187 0
+ 227:../source/UART.c **** 	{
+ 228:../source/UART.c **** 		push_Queue_Element(id + TOTAL_UARTS, uart_p ->D); //positions itself in the receiver queue
+ 468              		.loc 2 228 0
  469 0056 FB78     		ldrb	r3, [r7, #3]
  470 0058 0633     		adds	r3, r3, #6
  471 005a DAB2     		uxtb	r2, r3
@@ -2287,10 +2328,10 @@
  476 0064 1046     		mov	r0, r2
  477 0066 FFF7FEFF 		bl	push_Queue_Element
  478              	.L23:
- 188:../source/UART.c **** 	}
- 189:../source/UART.c **** 
- 190:../source/UART.c **** }
- 479              		.loc 2 190 0
+ 229:../source/UART.c **** 	}
+ 230:../source/UART.c **** 
+ 231:../source/UART.c **** }
+ 479              		.loc 2 231 0
  480 006a 00BF     		nop
  481 006c 1037     		adds	r7, r7, #16
  482              		.cfi_def_cfa_offset 8
@@ -2313,11 +2354,16 @@
  500              		.fpu fpv4-sp-d16
  502              	UART_Get_Status:
  503              	.LFB126:
- 191:../source/UART.c **** 
- 192:../source/UART.c **** 
- 193:../source/UART.c **** unsigned char UART_Get_Status(uint8_t id)
- 194:../source/UART.c **** {
- 504              		.loc 2 194 0
+ 232:../source/UART.c **** 
+ 233:../source/UART.c **** /**
+ 234:../source/UART.c ****  * @brief
+ 235:../source/UART.c ****  * @param
+ 236:../source/UART.c ****  * @return
+ 237:../source/UART.c ****  */
+ 238:../source/UART.c **** 
+ 239:../source/UART.c **** unsigned char UART_Get_Status(uint8_t id)
+ 240:../source/UART.c **** {
+ 504              		.loc 2 240 0
  505              		.cfi_startproc
  506              		@ args = 0, pretend = 0, frame = 8
  507              		@ frame_needed = 1, uses_anonymous_args = 0
@@ -2331,16 +2377,16 @@
  515              		.cfi_def_cfa_register 7
  516 0006 0346     		mov	r3, r0
  517 0008 FB71     		strb	r3, [r7, #7]
- 195:../source/UART.c **** 	return(get_Queue_Status(id + TOTAL_UARTS));
- 518              		.loc 2 195 0
+ 241:../source/UART.c **** 	return(get_Queue_Status(id + TOTAL_UARTS));
+ 518              		.loc 2 241 0
  519 000a FB79     		ldrb	r3, [r7, #7]
  520 000c 0633     		adds	r3, r3, #6
  521 000e DBB2     		uxtb	r3, r3
  522 0010 1846     		mov	r0, r3
  523 0012 FFF7FEFF 		bl	get_Queue_Status
  524 0016 0346     		mov	r3, r0
- 196:../source/UART.c **** }
- 525              		.loc 2 196 0
+ 242:../source/UART.c **** }
+ 525              		.loc 2 242 0
  526 0018 1846     		mov	r0, r3
  527 001a 0837     		adds	r7, r7, #8
  528              		.cfi_def_cfa_offset 8
@@ -2359,11 +2405,16 @@
  542              		.fpu fpv4-sp-d16
  544              	UART_Get_Data:
  545              	.LFB127:
- 197:../source/UART.c **** 
- 198:../source/UART.c **** 
- 199:../source/UART.c **** unsigned char UART_Get_Data(uint8_t id)
- 200:../source/UART.c **** {
- 546              		.loc 2 200 0
+ 243:../source/UART.c **** 
+ 244:../source/UART.c **** /**
+ 245:../source/UART.c ****  * @brief
+ 246:../source/UART.c ****  * @param
+ 247:../source/UART.c ****  * @return
+ 248:../source/UART.c ****  */
+ 249:../source/UART.c **** 
+ 250:../source/UART.c **** unsigned char UART_Get_Data(uint8_t id)
+ 251:../source/UART.c **** {
+ 546              		.loc 2 251 0
  547              		.cfi_startproc
  548              		@ args = 0, pretend = 0, frame = 8
  549              		@ frame_needed = 1, uses_anonymous_args = 0
@@ -2377,16 +2428,16 @@
  557              		.cfi_def_cfa_register 7
  558 0006 0346     		mov	r3, r0
  559 0008 FB71     		strb	r3, [r7, #7]
- 201:../source/UART.c **** 	return(pull_Queue_Element(id + TOTAL_UARTS));
- 560              		.loc 2 201 0
+ 252:../source/UART.c **** 	return(pull_Queue_Element(id + TOTAL_UARTS));
+ 560              		.loc 2 252 0
  561 000a FB79     		ldrb	r3, [r7, #7]
  562 000c 0633     		adds	r3, r3, #6
  563 000e DBB2     		uxtb	r3, r3
  564 0010 1846     		mov	r0, r3
  565 0012 FFF7FEFF 		bl	pull_Queue_Element
  566 0016 0346     		mov	r3, r0
- 202:../source/UART.c **** }
- 567              		.loc 2 202 0
+ 253:../source/UART.c **** }
+ 567              		.loc 2 253 0
  568 0018 1846     		mov	r0, r3
  569 001a 0837     		adds	r7, r7, #8
  570              		.cfi_def_cfa_offset 8
@@ -2405,11 +2456,16 @@
  584              		.fpu fpv4-sp-d16
  586              	UART_SendChar:
  587              	.LFB128:
- 203:../source/UART.c **** 
- 204:../source/UART.c **** 
- 205:../source/UART.c **** void UART_SendChar(char msg, uint8_t id)
- 206:../source/UART.c **** {
- 588              		.loc 2 206 0
+ 254:../source/UART.c **** 
+ 255:../source/UART.c **** /**
+ 256:../source/UART.c ****  * @brief
+ 257:../source/UART.c ****  * @param
+ 258:../source/UART.c ****  * @return
+ 259:../source/UART.c ****  */
+ 260:../source/UART.c **** 
+ 261:../source/UART.c **** void UART_SendChar(char msg, uint8_t id)
+ 262:../source/UART.c **** {
+ 588              		.loc 2 262 0
  589              		.cfi_startproc
  590              		@ args = 0, pretend = 0, frame = 8
  591              		@ frame_needed = 1, uses_anonymous_args = 0
@@ -2426,16 +2482,16 @@
  602 000a FB71     		strb	r3, [r7, #7]
  603 000c 1346     		mov	r3, r2
  604 000e BB71     		strb	r3, [r7, #6]
- 207:../source/UART.c **** 		push_Queue_Element(id, msg);
- 605              		.loc 2 207 0
+ 263:../source/UART.c **** 		push_Queue_Element(id, msg);
+ 605              		.loc 2 263 0
  606 0010 FA79     		ldrb	r2, [r7, #7]	@ zero_extendqisi2
  607 0012 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
  608 0014 1146     		mov	r1, r2
  609 0016 1846     		mov	r0, r3
  610 0018 FFF7FEFF 		bl	push_Queue_Element
- 208:../source/UART.c **** 
- 209:../source/UART.c **** 		UART0->C2 |= UART_C2_TIE_MASK;
- 611              		.loc 2 209 0
+ 264:../source/UART.c **** 
+ 265:../source/UART.c **** 		UART0->C2 |= UART_C2_TIE_MASK;
+ 611              		.loc 2 265 0
  612 001c 054B     		ldr	r3, .L31
  613 001e DB78     		ldrb	r3, [r3, #3]
  614 0020 DBB2     		uxtb	r3, r3
@@ -2443,8 +2499,8 @@
  616 0024 63F07F03 		orn	r3, r3, #127
  617 0028 DBB2     		uxtb	r3, r3
  618 002a D370     		strb	r3, [r2, #3]
- 210:../source/UART.c **** }
- 619              		.loc 2 210 0
+ 266:../source/UART.c **** }
+ 619              		.loc 2 266 0
  620 002c 00BF     		nop
  621 002e 0837     		adds	r7, r7, #8
  622              		.cfi_def_cfa_offset 8
@@ -2467,11 +2523,16 @@
  640              		.fpu fpv4-sp-d16
  642              	UART_SendMsg:
  643              	.LFB129:
- 211:../source/UART.c **** 
- 212:../source/UART.c **** 
- 213:../source/UART.c **** void UART_SendMsg(char* msg, uint8_t id)
- 214:../source/UART.c **** {
- 644              		.loc 2 214 0
+ 267:../source/UART.c **** 
+ 268:../source/UART.c **** /**
+ 269:../source/UART.c ****  * @brief
+ 270:../source/UART.c ****  * @param
+ 271:../source/UART.c ****  * @return
+ 272:../source/UART.c ****  */
+ 273:../source/UART.c **** 
+ 274:../source/UART.c **** void UART_SendMsg(char* msg, uint8_t id)
+ 275:../source/UART.c **** {
+ 644              		.loc 2 275 0
  645              		.cfi_startproc
  646              		@ args = 0, pretend = 0, frame = 16
  647              		@ frame_needed = 1, uses_anonymous_args = 0
@@ -2486,17 +2547,17 @@
  656 0006 7860     		str	r0, [r7, #4]
  657 0008 0B46     		mov	r3, r1
  658 000a FB70     		strb	r3, [r7, #3]
- 215:../source/UART.c **** 	uint32_t i = 0;
- 659              		.loc 2 215 0
+ 276:../source/UART.c **** 	uint32_t i = 0;
+ 659              		.loc 2 276 0
  660 000c 0023     		movs	r3, #0
  661 000e FB60     		str	r3, [r7, #12]
- 216:../source/UART.c **** 	while (msg[i]  != '\0')
- 662              		.loc 2 216 0
+ 277:../source/UART.c **** 	while (msg[i]  != '\0')
+ 662              		.loc 2 277 0
  663 0010 0BE0     		b	.L34
  664              	.L35:
- 217:../source/UART.c **** 	{
- 218:../source/UART.c **** 		push_Queue_Element(id, msg[i]);
- 665              		.loc 2 218 0
+ 278:../source/UART.c **** 	{
+ 279:../source/UART.c **** 		push_Queue_Element(id, msg[i]);
+ 665              		.loc 2 279 0
  666 0012 7A68     		ldr	r2, [r7, #4]
  667 0014 FB68     		ldr	r3, [r7, #12]
  668 0016 1344     		add	r3, r3, r2
@@ -2505,39 +2566,39 @@
  671 001c 1146     		mov	r1, r2
  672 001e 1846     		mov	r0, r3
  673 0020 FFF7FEFF 		bl	push_Queue_Element
- 219:../source/UART.c **** 		i++;
- 674              		.loc 2 219 0
+ 280:../source/UART.c **** 		i++;
+ 674              		.loc 2 280 0
  675 0024 FB68     		ldr	r3, [r7, #12]
  676 0026 0133     		adds	r3, r3, #1
  677 0028 FB60     		str	r3, [r7, #12]
  678              	.L34:
- 216:../source/UART.c **** 	while (msg[i]  != '\0')
- 679              		.loc 2 216 0
+ 277:../source/UART.c **** 	while (msg[i]  != '\0')
+ 679              		.loc 2 277 0
  680 002a 7A68     		ldr	r2, [r7, #4]
  681 002c FB68     		ldr	r3, [r7, #12]
  682 002e 1344     		add	r3, r3, r2
  683 0030 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
  684 0032 002B     		cmp	r3, #0
  685 0034 EDD1     		bne	.L35
- 220:../source/UART.c **** 	}
- 221:../source/UART.c **** 
- 222:../source/UART.c **** 	push_Queue_Element(id,  '\n');
- 686              		.loc 2 222 0
+ 281:../source/UART.c **** 	}
+ 282:../source/UART.c **** 
+ 283:../source/UART.c **** 	push_Queue_Element(id,  '\n');
+ 686              		.loc 2 283 0
  687 0036 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
  688 0038 0A21     		movs	r1, #10
  689 003a 1846     		mov	r0, r3
  690 003c FFF7FEFF 		bl	push_Queue_Element
- 223:../source/UART.c **** 	push_Queue_Element(id,  '\r');
- 691              		.loc 2 223 0
+ 284:../source/UART.c **** 	push_Queue_Element(id,  '\r');
+ 691              		.loc 2 284 0
  692 0040 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
  693 0042 0D21     		movs	r1, #13
  694 0044 1846     		mov	r0, r3
  695 0046 FFF7FEFF 		bl	push_Queue_Element
- 224:../source/UART.c **** 	//UART_Send_Data('\n');
- 225:../source/UART.c **** 	//UART_Send_Data('\r');
- 226:../source/UART.c **** 
- 227:../source/UART.c **** 	UART0->C2 |= UART_C2_TIE_MASK;
- 696              		.loc 2 227 0
+ 285:../source/UART.c **** 	//UART_Send_Data('\n');
+ 286:../source/UART.c **** 	//UART_Send_Data('\r');
+ 287:../source/UART.c **** 
+ 288:../source/UART.c **** 	UART0->C2 |= UART_C2_TIE_MASK;
+ 696              		.loc 2 288 0
  697 004a 064B     		ldr	r3, .L36
  698 004c DB78     		ldrb	r3, [r3, #3]
  699 004e DBB2     		uxtb	r3, r3
@@ -2545,8 +2606,8 @@
  701 0052 63F07F03 		orn	r3, r3, #127
  702 0056 DBB2     		uxtb	r3, r3
  703 0058 D370     		strb	r3, [r2, #3]
- 228:../source/UART.c **** }
- 704              		.loc 2 228 0
+ 289:../source/UART.c **** }
+ 704              		.loc 2 289 0
  705 005a 00BF     		nop
  706 005c 1037     		adds	r7, r7, #16
  707              		.cfi_def_cfa_offset 8
@@ -2568,17 +2629,23 @@
  724              		.fpu fpv4-sp-d16
  726              	queue_Init:
  727              	.LFB130:
- 229:../source/UART.c **** 
- 230:../source/UART.c **** 
- 231:../source/UART.c **** 
- 232:../source/UART.c **** 
- 233:../source/UART.c **** 
- 234:../source/UART.c **** /**
- 235:../source/UART.c ****  * @brief Initializes the circular queue
- 236:../source/UART.c ****  */
- 237:../source/UART.c **** static void queue_Init (uint8_t id)
- 238:../source/UART.c **** {
- 728              		.loc 2 238 0
+ 290:../source/UART.c **** 
+ 291:../source/UART.c **** 
+ 292:../source/UART.c **** 
+ 293:../source/UART.c **** 
+ 294:../source/UART.c **** /*******************************************************************************
+ 295:../source/UART.c ****  *******************************************************************************
+ 296:../source/UART.c ****                         LOCAL FUNCTION DEFINITIONS
+ 297:../source/UART.c ****  *******************************************************************************
+ 298:../source/UART.c ****  ******************************************************************************/
+ 299:../source/UART.c **** 
+ 300:../source/UART.c **** 
+ 301:../source/UART.c **** /**
+ 302:../source/UART.c ****  * @brief Initializes the circular queue
+ 303:../source/UART.c ****  */
+ 304:../source/UART.c **** static void queue_Init (uint8_t id)
+ 305:../source/UART.c **** {
+ 728              		.loc 2 305 0
  729              		.cfi_startproc
  730              		@ args = 0, pretend = 0, frame = 8
  731              		@ frame_needed = 1, uses_anonymous_args = 0
@@ -2592,8 +2659,8 @@
  739              		.cfi_def_cfa_register 7
  740 0006 0346     		mov	r3, r0
  741 0008 FB71     		strb	r3, [r7, #7]
- 239:../source/UART.c **** 	uart_buffers[id].pin = uart_buffers[id].buffer;
- 742              		.loc 2 239 0
+ 306:../source/UART.c **** 	uart_buffers[id].pin = uart_buffers[id].buffer;
+ 742              		.loc 2 306 0
  743 000a FA79     		ldrb	r2, [r7, #7]	@ zero_extendqisi2
  744 000c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  745 000e 5201     		lsls	r2, r2, #5
@@ -2604,8 +2671,8 @@
  750 0018 5B01     		lsls	r3, r3, #5
  751 001a 0B44     		add	r3, r3, r1
  752 001c 1A60     		str	r2, [r3]
- 240:../source/UART.c **** 	uart_buffers[id].pout = uart_buffers[id].pin;
- 753              		.loc 2 240 0
+ 307:../source/UART.c **** 	uart_buffers[id].pout = uart_buffers[id].pin;
+ 753              		.loc 2 307 0
  754 001e FA79     		ldrb	r2, [r7, #7]	@ zero_extendqisi2
  755 0020 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  756 0022 0B49     		ldr	r1, .L39
@@ -2617,8 +2684,8 @@
  762 002e 0B44     		add	r3, r3, r1
  763 0030 0433     		adds	r3, r3, #4
  764 0032 1A60     		str	r2, [r3]
- 241:../source/UART.c **** 	uart_buffers[id].num_Of_Words = 0;
- 765              		.loc 2 241 0
+ 308:../source/UART.c **** 	uart_buffers[id].num_Of_Words = 0;
+ 765              		.loc 2 308 0
  766 0034 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  767 0036 064A     		ldr	r2, .L39
  768 0038 5B01     		lsls	r3, r3, #5
@@ -2626,8 +2693,8 @@
  770 003c 1C33     		adds	r3, r3, #28
  771 003e 0022     		movs	r2, #0
  772 0040 1A70     		strb	r2, [r3]
- 242:../source/UART.c **** }
- 773              		.loc 2 242 0
+ 309:../source/UART.c **** }
+ 773              		.loc 2 309 0
  774 0042 00BF     		nop
  775 0044 0C37     		adds	r7, r7, #12
  776              		.cfi_def_cfa_offset 4
@@ -2652,15 +2719,15 @@
  796              		.fpu fpv4-sp-d16
  798              	push_Queue_Element:
  799              	.LFB131:
- 243:../source/UART.c **** 
- 244:../source/UART.c **** /**
- 245:../source/UART.c ****  * @brief Pushes an event to the queue
- 246:../source/UART.c ****  * @param event The element to add to the queue
- 247:../source/UART.c ****  * @return Number of pending events. Returns value OVERFLOW if the maximun number of events is reac
- 248:../source/UART.c ****  */
- 249:../source/UART.c **** static int8_t push_Queue_Element(uint8_t id, uint8_t event)
- 250:../source/UART.c **** {
- 800              		.loc 2 250 0
+ 310:../source/UART.c **** 
+ 311:../source/UART.c **** /**
+ 312:../source/UART.c ****  * @brief Pushes an event to the queue
+ 313:../source/UART.c ****  * @param event The element to add to the queue
+ 314:../source/UART.c ****  * @return Number of pending events. Returns value OVERFLOW if the maximun number of events is reac
+ 315:../source/UART.c ****  */
+ 316:../source/UART.c **** static int8_t push_Queue_Element(uint8_t id, uint8_t event)
+ 317:../source/UART.c **** {
+ 800              		.loc 2 317 0
  801              		.cfi_startproc
  802              		@ args = 0, pretend = 0, frame = 8
  803              		@ frame_needed = 1, uses_anonymous_args = 0
@@ -2677,9 +2744,9 @@
  814 000a FB71     		strb	r3, [r7, #7]
  815 000c 1346     		mov	r3, r2
  816 000e BB71     		strb	r3, [r7, #6]
- 251:../source/UART.c **** 	// Check for EventQueue Overflow
- 252:../source/UART.c **** 	if (uart_buffers[id].num_Of_Words > BUFFER_SIZE-1)
- 817              		.loc 2 252 0
+ 318:../source/UART.c **** 	// Check for EventQueue Overflow
+ 319:../source/UART.c **** 	if (uart_buffers[id].num_Of_Words > BUFFER_SIZE-1)
+ 817              		.loc 2 319 0
  818 0010 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  819 0012 244A     		ldr	r2, .L45
  820 0014 5B01     		lsls	r3, r3, #5
@@ -2688,16 +2755,16 @@
  823 001a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
  824 001c 132B     		cmp	r3, #19
  825 001e 02D9     		bls	.L42
- 253:../source/UART.c **** 	{
- 254:../source/UART.c **** 		return OVERFLOW;
- 826              		.loc 2 254 0
+ 320:../source/UART.c **** 	{
+ 321:../source/UART.c **** 		return OVERFLOW;
+ 826              		.loc 2 321 0
  827 0020 4FF0FF33 		mov	r3, #-1
  828 0024 37E0     		b	.L43
  829              	.L42:
- 255:../source/UART.c **** 	}
- 256:../source/UART.c **** 
- 257:../source/UART.c **** 	*(uart_buffers[id].pin)++ = event;
- 830              		.loc 2 257 0
+ 322:../source/UART.c **** 	}
+ 323:../source/UART.c **** 
+ 324:../source/UART.c **** 	*(uart_buffers[id].pin)++ = event;
+ 830              		.loc 2 324 0
  831 0026 FA79     		ldrb	r2, [r7, #7]	@ zero_extendqisi2
  832 0028 1E49     		ldr	r1, .L45
  833 002a 5301     		lsls	r3, r2, #5
@@ -2710,8 +2777,8 @@
  840 0038 1160     		str	r1, [r2]
  841 003a BA79     		ldrb	r2, [r7, #6]
  842 003c 1A70     		strb	r2, [r3]
- 258:../source/UART.c **** 	uart_buffers[id].num_Of_Words++;
- 843              		.loc 2 258 0
+ 325:../source/UART.c **** 	uart_buffers[id].num_Of_Words++;
+ 843              		.loc 2 325 0
  844 003e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  845 0040 1849     		ldr	r1, .L45
  846 0042 5A01     		lsls	r2, r3, #5
@@ -2726,10 +2793,10 @@
  855 0054 1C33     		adds	r3, r3, #28
  856 0056 0A46     		mov	r2, r1
  857 0058 1A70     		strb	r2, [r3]
- 259:../source/UART.c **** 
- 260:../source/UART.c **** 	// Return pointer to the beginning if necessary
- 261:../source/UART.c **** 	if (uart_buffers[id].pin == BUFFER_SIZE + uart_buffers[id].buffer)
- 858              		.loc 2 261 0
+ 326:../source/UART.c **** 
+ 327:../source/UART.c **** 	// Return pointer to the beginning if necessary
+ 328:../source/UART.c **** 	if (uart_buffers[id].pin == BUFFER_SIZE + uart_buffers[id].buffer)
+ 858              		.loc 2 328 0
  859 005a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  860 005c 114A     		ldr	r2, .L45
  861 005e 5B01     		lsls	r3, r3, #5
@@ -2743,9 +2810,9 @@
  869 006e 1433     		adds	r3, r3, #20
  870 0070 9A42     		cmp	r2, r3
  871 0072 09D1     		bne	.L44
- 262:../source/UART.c **** 	{
- 263:../source/UART.c **** 		uart_buffers[id].pin = uart_buffers[id].buffer;
- 872              		.loc 2 263 0
+ 329:../source/UART.c **** 	{
+ 330:../source/UART.c **** 		uart_buffers[id].pin = uart_buffers[id].buffer;
+ 872              		.loc 2 330 0
  873 0074 FA79     		ldrb	r2, [r7, #7]	@ zero_extendqisi2
  874 0076 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  875 0078 5201     		lsls	r2, r2, #5
@@ -2757,10 +2824,10 @@
  881 0084 0B44     		add	r3, r3, r1
  882 0086 1A60     		str	r2, [r3]
  883              	.L44:
- 264:../source/UART.c **** 	}
- 265:../source/UART.c **** 
- 266:../source/UART.c **** 	return uart_buffers[id].num_Of_Words;
- 884              		.loc 2 266 0
+ 331:../source/UART.c **** 	}
+ 332:../source/UART.c **** 
+ 333:../source/UART.c **** 	return uart_buffers[id].num_Of_Words;
+ 884              		.loc 2 333 0
  885 0088 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  886 008a 064A     		ldr	r2, .L45
  887 008c 5B01     		lsls	r3, r3, #5
@@ -2769,9 +2836,9 @@
  890 0092 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
  891 0094 5BB2     		sxtb	r3, r3
  892              	.L43:
- 267:../source/UART.c **** 
- 268:../source/UART.c **** }
- 893              		.loc 2 268 0
+ 334:../source/UART.c **** 
+ 335:../source/UART.c **** }
+ 893              		.loc 2 335 0
  894 0096 1846     		mov	r0, r3
  895 0098 0C37     		adds	r7, r7, #12
  896              		.cfi_def_cfa_offset 4
@@ -2796,14 +2863,14 @@
  916              		.fpu fpv4-sp-d16
  918              	pull_Queue_Element:
  919              	.LFB132:
- 269:../source/UART.c **** 
- 270:../source/UART.c **** /**
- 271:../source/UART.c ****  * @brief Pulls the earliest event from the queue
- 272:../source/UART.c ****  * @return Event_Type variable with the current event if no OVERFLOW is detected.
- 273:../source/UART.c ****  */
- 274:../source/UART.c **** static uint8_t pull_Queue_Element(uint8_t id)
- 275:../source/UART.c **** {
- 920              		.loc 2 275 0
+ 336:../source/UART.c **** 
+ 337:../source/UART.c **** /**
+ 338:../source/UART.c ****  * @brief Pulls the earliest event from the queue
+ 339:../source/UART.c ****  * @return Event_Type variable with the current event if no OVERFLOW is detected.
+ 340:../source/UART.c ****  */
+ 341:../source/UART.c **** static uint8_t pull_Queue_Element(uint8_t id)
+ 342:../source/UART.c **** {
+ 920              		.loc 2 342 0
  921              		.cfi_startproc
  922              		@ args = 0, pretend = 0, frame = 16
  923              		@ frame_needed = 1, uses_anonymous_args = 0
@@ -2817,8 +2884,8 @@
  931              		.cfi_def_cfa_register 7
  932 0006 0346     		mov	r3, r0
  933 0008 FB71     		strb	r3, [r7, #7]
- 276:../source/UART.c **** 	uint8_t event = *(uart_buffers[id].pout);
- 934              		.loc 2 276 0
+ 343:../source/UART.c **** 	uint8_t event = *(uart_buffers[id].pout);
+ 934              		.loc 2 343 0
  935 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  936 000c 254A     		ldr	r2, .L51
  937 000e 5B01     		lsls	r3, r3, #5
@@ -2827,9 +2894,9 @@
  940 0014 1B68     		ldr	r3, [r3]
  941 0016 1B78     		ldrb	r3, [r3]
  942 0018 FB73     		strb	r3, [r7, #15]
- 277:../source/UART.c **** 
- 278:../source/UART.c **** 	if (uart_buffers[id].num_Of_Words == 0)
- 943              		.loc 2 278 0
+ 344:../source/UART.c **** 
+ 345:../source/UART.c **** 	if (uart_buffers[id].num_Of_Words == 0)
+ 943              		.loc 2 345 0
  944 001a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  945 001c 214A     		ldr	r2, .L51
  946 001e 5B01     		lsls	r3, r3, #5
@@ -2838,16 +2905,16 @@
  949 0024 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
  950 0026 002B     		cmp	r3, #0
  951 0028 01D1     		bne	.L48
- 279:../source/UART.c **** 	{
- 280:../source/UART.c **** 		return NONE_EV;
- 952              		.loc 2 280 0
+ 346:../source/UART.c **** 	{
+ 347:../source/UART.c **** 		return NONE_EV;
+ 952              		.loc 2 347 0
  953 002a 1823     		movs	r3, #24
  954 002c 33E0     		b	.L49
  955              	.L48:
- 281:../source/UART.c **** 	}
- 282:../source/UART.c **** 
- 283:../source/UART.c **** 	uart_buffers[id].num_Of_Words--;
- 956              		.loc 2 283 0
+ 348:../source/UART.c **** 	}
+ 349:../source/UART.c **** 
+ 350:../source/UART.c **** 	uart_buffers[id].num_Of_Words--;
+ 956              		.loc 2 350 0
  957 002e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  958 0030 1C49     		ldr	r1, .L51
  959 0032 5A01     		lsls	r2, r3, #5
@@ -2862,8 +2929,8 @@
  968 0044 1C33     		adds	r3, r3, #28
  969 0046 0A46     		mov	r2, r1
  970 0048 1A70     		strb	r2, [r3]
- 284:../source/UART.c **** 	uart_buffers[id].pout++;
- 971              		.loc 2 284 0
+ 351:../source/UART.c **** 	uart_buffers[id].pout++;
+ 971              		.loc 2 351 0
  972 004a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  973 004c 1549     		ldr	r1, .L51
  974 004e 5A01     		lsls	r2, r3, #5
@@ -2876,9 +2943,9 @@
  981 005c 0B44     		add	r3, r3, r1
  982 005e 0433     		adds	r3, r3, #4
  983 0060 1A60     		str	r2, [r3]
- 285:../source/UART.c **** 
- 286:../source/UART.c **** 	if (uart_buffers[id].pout == BUFFER_SIZE + uart_buffers[id].buffer)
- 984              		.loc 2 286 0
+ 352:../source/UART.c **** 
+ 353:../source/UART.c **** 	if (uart_buffers[id].pout == BUFFER_SIZE + uart_buffers[id].buffer)
+ 984              		.loc 2 353 0
  985 0062 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  986 0064 0F4A     		ldr	r2, .L51
  987 0066 5B01     		lsls	r3, r3, #5
@@ -2893,9 +2960,9 @@
  996 0078 1433     		adds	r3, r3, #20
  997 007a 9A42     		cmp	r2, r3
  998 007c 0AD1     		bne	.L50
- 287:../source/UART.c **** 	{
- 288:../source/UART.c **** 		uart_buffers[id].pout = uart_buffers[id].buffer;
- 999              		.loc 2 288 0
+ 354:../source/UART.c **** 	{
+ 355:../source/UART.c **** 		uart_buffers[id].pout = uart_buffers[id].buffer;
+ 999              		.loc 2 355 0
  1000 007e FA79     		ldrb	r2, [r7, #7]	@ zero_extendqisi2
  1001 0080 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  1002 0082 5201     		lsls	r2, r2, #5
@@ -2908,15 +2975,15 @@
  1009 0090 0433     		adds	r3, r3, #4
  1010 0092 1A60     		str	r2, [r3]
  1011              	.L50:
- 289:../source/UART.c **** 	}
- 290:../source/UART.c **** 
- 291:../source/UART.c **** 	return event;
- 1012              		.loc 2 291 0
+ 356:../source/UART.c **** 	}
+ 357:../source/UART.c **** 
+ 358:../source/UART.c **** 	return event;
+ 1012              		.loc 2 358 0
  1013 0094 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
  1014              	.L49:
- 292:../source/UART.c **** 
- 293:../source/UART.c **** }
- 1015              		.loc 2 293 0
+ 359:../source/UART.c **** 
+ 360:../source/UART.c **** }
+ 1015              		.loc 2 360 0
  1016 0096 1846     		mov	r0, r3
  1017 0098 1437     		adds	r7, r7, #20
  1018              		.cfi_def_cfa_offset 4
@@ -2941,15 +3008,15 @@
  1038              		.fpu fpv4-sp-d16
  1040              	get_Queue_Status:
  1041              	.LFB133:
- 294:../source/UART.c **** 
- 295:../source/UART.c **** 
- 296:../source/UART.c **** /**
- 297:../source/UART.c ****  * @brief Gets the status of the queue
- 298:../source/UART.c ****  * @return Returns the number of pending events in the queue
- 299:../source/UART.c ****  */
- 300:../source/UART.c **** static uint8_t get_Queue_Status(uint8_t id)
- 301:../source/UART.c **** {
- 1042              		.loc 2 301 0
+ 361:../source/UART.c **** 
+ 362:../source/UART.c **** 
+ 363:../source/UART.c **** /**
+ 364:../source/UART.c ****  * @brief Gets the status of the queue
+ 365:../source/UART.c ****  * @return Returns the number of pending events in the queue
+ 366:../source/UART.c ****  */
+ 367:../source/UART.c **** static uint8_t get_Queue_Status(uint8_t id)
+ 368:../source/UART.c **** {
+ 1042              		.loc 2 368 0
  1043              		.cfi_startproc
  1044              		@ args = 0, pretend = 0, frame = 8
  1045              		@ frame_needed = 1, uses_anonymous_args = 0
@@ -2963,16 +3030,16 @@
  1053              		.cfi_def_cfa_register 7
  1054 0006 0346     		mov	r3, r0
  1055 0008 FB71     		strb	r3, [r7, #7]
- 302:../source/UART.c **** 	return uart_buffers[id].num_Of_Words;
- 1056              		.loc 2 302 0
+ 369:../source/UART.c **** 	return uart_buffers[id].num_Of_Words;
+ 1056              		.loc 2 369 0
  1057 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
  1058 000c 054A     		ldr	r2, .L55
  1059 000e 5B01     		lsls	r3, r3, #5
  1060 0010 1344     		add	r3, r3, r2
  1061 0012 1C33     		adds	r3, r3, #28
  1062 0014 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
- 303:../source/UART.c **** }
- 1063              		.loc 2 303 0
+ 370:../source/UART.c **** }
+ 1063              		.loc 2 370 0
  1064 0016 1846     		mov	r0, r3
  1065 0018 0C37     		adds	r7, r7, #12
  1066              		.cfi_def_cfa_offset 4
@@ -2998,12 +3065,12 @@
  1087              		.fpu fpv4-sp-d16
  1089              	UART0_RX_TX_IRQHandler:
  1090              	.LFB134:
- 304:../source/UART.c **** 
- 305:../source/UART.c **** 
- 306:../source/UART.c **** 
- 307:../source/UART.c **** __ISR__ UART0_RX_TX_IRQHandler (void)
- 308:../source/UART.c **** {
- 1091              		.loc 2 308 0
+ 371:../source/UART.c **** 
+ 372:../source/UART.c **** 
+ 373:../source/UART.c **** 
+ 374:../source/UART.c **** __ISR__ UART0_RX_TX_IRQHandler (void)
+ 375:../source/UART.c **** {
+ 1091              		.loc 2 375 0
  1092              		.cfi_startproc
  1093              		@ Stack Align: May be called with mis-aligned SP.
  1094              		@ args = 0, pretend = 0, frame = 0
@@ -3020,13 +3087,13 @@
  1105              		.cfi_offset 14, -4
  1106 000a 00AF     		add	r7, sp, #0
  1107              		.cfi_def_cfa_register 7
- 309:../source/UART.c ****     UART_rx_tx_irq_handler(UART0, 0);
- 1108              		.loc 2 309 0
+ 376:../source/UART.c ****     UART_rx_tx_irq_handler(UART0, 0);
+ 1108              		.loc 2 376 0
  1109 000c 0021     		movs	r1, #0
  1110 000e 0448     		ldr	r0, .L58
  1111 0010 FFF7FEFF 		bl	UART_rx_tx_irq_handler
- 310:../source/UART.c **** }
- 1112              		.loc 2 310 0
+ 377:../source/UART.c **** }
+ 1112              		.loc 2 377 0
  1113 0014 00BF     		nop
  1114 0016 BD46     		mov	sp, r7
  1115              		.cfi_def_cfa_register 13
@@ -3054,10 +3121,10 @@
  1138              		.fpu fpv4-sp-d16
  1140              	UART1_RX_TX_IRQHandler:
  1141              	.LFB135:
- 311:../source/UART.c **** 
- 312:../source/UART.c **** __ISR__ UART1_RX_TX_IRQHandler (void)
- 313:../source/UART.c **** {
- 1142              		.loc 2 313 0
+ 378:../source/UART.c **** 
+ 379:../source/UART.c **** __ISR__ UART1_RX_TX_IRQHandler (void)
+ 380:../source/UART.c **** {
+ 1142              		.loc 2 380 0
  1143              		.cfi_startproc
  1144              		@ Stack Align: May be called with mis-aligned SP.
  1145              		@ args = 0, pretend = 0, frame = 0
@@ -3074,13 +3141,13 @@
  1156              		.cfi_offset 14, -4
  1157 000a 00AF     		add	r7, sp, #0
  1158              		.cfi_def_cfa_register 7
- 314:../source/UART.c ****     UART_rx_tx_irq_handler(UART1, 1);
- 1159              		.loc 2 314 0
+ 381:../source/UART.c ****     UART_rx_tx_irq_handler(UART1, 1);
+ 1159              		.loc 2 381 0
  1160 000c 0121     		movs	r1, #1
  1161 000e 0448     		ldr	r0, .L61
  1162 0010 FFF7FEFF 		bl	UART_rx_tx_irq_handler
- 315:../source/UART.c **** }
- 1163              		.loc 2 315 0
+ 382:../source/UART.c **** }
+ 1163              		.loc 2 382 0
  1164 0014 00BF     		nop
  1165 0016 BD46     		mov	sp, r7
  1166              		.cfi_def_cfa_register 13
@@ -3108,10 +3175,10 @@
  1189              		.fpu fpv4-sp-d16
  1191              	UART2_RX_TX_IRQHandler:
  1192              	.LFB136:
- 316:../source/UART.c **** 
- 317:../source/UART.c **** __ISR__ UART2_RX_TX_IRQHandler (void)
- 318:../source/UART.c **** {
- 1193              		.loc 2 318 0
+ 383:../source/UART.c **** 
+ 384:../source/UART.c **** __ISR__ UART2_RX_TX_IRQHandler (void)
+ 385:../source/UART.c **** {
+ 1193              		.loc 2 385 0
  1194              		.cfi_startproc
  1195              		@ Stack Align: May be called with mis-aligned SP.
  1196              		@ args = 0, pretend = 0, frame = 0
@@ -3128,13 +3195,13 @@
  1207              		.cfi_offset 14, -4
  1208 000a 00AF     		add	r7, sp, #0
  1209              		.cfi_def_cfa_register 7
- 319:../source/UART.c ****     UART_rx_tx_irq_handler(UART2, 2);
- 1210              		.loc 2 319 0
+ 386:../source/UART.c ****     UART_rx_tx_irq_handler(UART2, 2);
+ 1210              		.loc 2 386 0
  1211 000c 0221     		movs	r1, #2
  1212 000e 0448     		ldr	r0, .L64
  1213 0010 FFF7FEFF 		bl	UART_rx_tx_irq_handler
- 320:../source/UART.c **** }
- 1214              		.loc 2 320 0
+ 387:../source/UART.c **** }
+ 1214              		.loc 2 387 0
  1215 0014 00BF     		nop
  1216 0016 BD46     		mov	sp, r7
  1217              		.cfi_def_cfa_register 13
@@ -3162,10 +3229,10 @@
  1240              		.fpu fpv4-sp-d16
  1242              	UART3_RX_TX_IRQHandler:
  1243              	.LFB137:
- 321:../source/UART.c **** 
- 322:../source/UART.c **** __ISR__ UART3_RX_TX_IRQHandler (void)
- 323:../source/UART.c **** {
- 1244              		.loc 2 323 0
+ 388:../source/UART.c **** 
+ 389:../source/UART.c **** __ISR__ UART3_RX_TX_IRQHandler (void)
+ 390:../source/UART.c **** {
+ 1244              		.loc 2 390 0
  1245              		.cfi_startproc
  1246              		@ Stack Align: May be called with mis-aligned SP.
  1247              		@ args = 0, pretend = 0, frame = 0
@@ -3182,13 +3249,13 @@
  1258              		.cfi_offset 14, -4
  1259 000a 00AF     		add	r7, sp, #0
  1260              		.cfi_def_cfa_register 7
- 324:../source/UART.c ****     UART_rx_tx_irq_handler(UART3, 3);
- 1261              		.loc 2 324 0
+ 391:../source/UART.c ****     UART_rx_tx_irq_handler(UART3, 3);
+ 1261              		.loc 2 391 0
  1262 000c 0321     		movs	r1, #3
  1263 000e 0448     		ldr	r0, .L67
  1264 0010 FFF7FEFF 		bl	UART_rx_tx_irq_handler
- 325:../source/UART.c **** }
- 1265              		.loc 2 325 0
+ 392:../source/UART.c **** }
+ 1265              		.loc 2 392 0
  1266 0014 00BF     		nop
  1267 0016 BD46     		mov	sp, r7
  1268              		.cfi_def_cfa_register 13
@@ -3216,10 +3283,10 @@
  1291              		.fpu fpv4-sp-d16
  1293              	UART4_RX_TX_IRQHandler:
  1294              	.LFB138:
- 326:../source/UART.c **** 
- 327:../source/UART.c **** __ISR__ UART4_RX_TX_IRQHandler (void)
- 328:../source/UART.c **** {
- 1295              		.loc 2 328 0
+ 393:../source/UART.c **** 
+ 394:../source/UART.c **** __ISR__ UART4_RX_TX_IRQHandler (void)
+ 395:../source/UART.c **** {
+ 1295              		.loc 2 395 0
  1296              		.cfi_startproc
  1297              		@ Stack Align: May be called with mis-aligned SP.
  1298              		@ args = 0, pretend = 0, frame = 0
@@ -3236,13 +3303,13 @@
  1309              		.cfi_offset 14, -4
  1310 000a 00AF     		add	r7, sp, #0
  1311              		.cfi_def_cfa_register 7
- 329:../source/UART.c ****     UART_rx_tx_irq_handler(UART4, 4);
- 1312              		.loc 2 329 0
+ 396:../source/UART.c ****     UART_rx_tx_irq_handler(UART4, 4);
+ 1312              		.loc 2 396 0
  1313 000c 0421     		movs	r1, #4
  1314 000e 0448     		ldr	r0, .L70
  1315 0010 FFF7FEFF 		bl	UART_rx_tx_irq_handler
- 330:../source/UART.c **** }
- 1316              		.loc 2 330 0
+ 397:../source/UART.c **** }
+ 1316              		.loc 2 397 0
  1317 0014 00BF     		nop
  1318 0016 BD46     		mov	sp, r7
  1319              		.cfi_def_cfa_register 13
@@ -3269,61 +3336,61 @@
  1341              		.file 6 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
 DEFINED SYMBOLS
                             *ABS*:00000000 UART.c
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:18     .text.NVIC_EnableIRQ:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:24     .text.NVIC_EnableIRQ:00000000 NVIC_EnableIRQ
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:64     .text.NVIC_EnableIRQ:00000030 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:73     .bss.uart_buffers:00000000 uart_buffers
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:70     .bss.uart_buffers:00000000 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:78     .bss.rx_flag:00000000 rx_flag
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:79     .bss.rx_flag:00000000 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:83     .bss.rx_data:00000000 rx_data
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:84     .bss.rx_data:00000000 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:86     .text.UART_Init:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:93     .text.UART_Init:00000000 UART_Init
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:279    .text.UART_SetBaudRate:00000000 UART_SetBaudRate
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:726    .text.queue_Init:00000000 queue_Init
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:264    .text.UART_Init:00000138 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:272    .text.UART_SetBaudRate:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:395    .text.UART_SetBaudRate:000000a8 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:403    .text.UART_rx_tx_irq_handler:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:410    .text.UART_rx_tx_irq_handler:00000000 UART_rx_tx_irq_handler
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1040   .text.get_Queue_Status:00000000 get_Queue_Status
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:918    .text.pull_Queue_Element:00000000 pull_Queue_Element
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:798    .text.push_Queue_Element:00000000 push_Queue_Element
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:490    .text.UART_rx_tx_irq_handler:00000074 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:495    .text.UART_Get_Status:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:502    .text.UART_Get_Status:00000000 UART_Get_Status
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:537    .text.UART_Get_Data:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:544    .text.UART_Get_Data:00000000 UART_Get_Data
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:579    .text.UART_SendChar:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:586    .text.UART_SendChar:00000000 UART_SendChar
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:630    .text.UART_SendChar:00000034 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:635    .text.UART_SendMsg:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:642    .text.UART_SendMsg:00000000 UART_SendMsg
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:715    .text.UART_SendMsg:00000064 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:720    .text.queue_Init:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:787    .text.queue_Init:00000050 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:792    .text.push_Queue_Element:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:907    .text.push_Queue_Element:000000a4 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:912    .text.pull_Queue_Element:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1029   .text.pull_Queue_Element:000000a4 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1034   .text.get_Queue_Status:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1077   .text.get_Queue_Status:00000024 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1082   .text.UART0_RX_TX_IRQHandler:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1089   .text.UART0_RX_TX_IRQHandler:00000000 UART0_RX_TX_IRQHandler
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1128   .text.UART0_RX_TX_IRQHandler:00000020 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1133   .text.UART1_RX_TX_IRQHandler:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1140   .text.UART1_RX_TX_IRQHandler:00000000 UART1_RX_TX_IRQHandler
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1179   .text.UART1_RX_TX_IRQHandler:00000020 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1184   .text.UART2_RX_TX_IRQHandler:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1191   .text.UART2_RX_TX_IRQHandler:00000000 UART2_RX_TX_IRQHandler
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1230   .text.UART2_RX_TX_IRQHandler:00000020 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1235   .text.UART3_RX_TX_IRQHandler:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1242   .text.UART3_RX_TX_IRQHandler:00000000 UART3_RX_TX_IRQHandler
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1281   .text.UART3_RX_TX_IRQHandler:00000020 $d
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1286   .text.UART4_RX_TX_IRQHandler:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1293   .text.UART4_RX_TX_IRQHandler:00000000 UART4_RX_TX_IRQHandler
-C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1332   .text.UART4_RX_TX_IRQHandler:00000020 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:18     .text.NVIC_EnableIRQ:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:24     .text.NVIC_EnableIRQ:00000000 NVIC_EnableIRQ
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:64     .text.NVIC_EnableIRQ:00000030 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:73     .bss.uart_buffers:00000000 uart_buffers
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:70     .bss.uart_buffers:00000000 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:78     .bss.rx_flag:00000000 rx_flag
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:79     .bss.rx_flag:00000000 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:83     .bss.rx_data:00000000 rx_data
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:84     .bss.rx_data:00000000 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:86     .text.UART_Init:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:93     .text.UART_Init:00000000 UART_Init
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:279    .text.UART_SetBaudRate:00000000 UART_SetBaudRate
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:726    .text.queue_Init:00000000 queue_Init
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:264    .text.UART_Init:00000138 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:272    .text.UART_SetBaudRate:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:395    .text.UART_SetBaudRate:000000a8 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:403    .text.UART_rx_tx_irq_handler:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:410    .text.UART_rx_tx_irq_handler:00000000 UART_rx_tx_irq_handler
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1040   .text.get_Queue_Status:00000000 get_Queue_Status
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:918    .text.pull_Queue_Element:00000000 pull_Queue_Element
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:798    .text.push_Queue_Element:00000000 push_Queue_Element
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:490    .text.UART_rx_tx_irq_handler:00000074 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:495    .text.UART_Get_Status:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:502    .text.UART_Get_Status:00000000 UART_Get_Status
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:537    .text.UART_Get_Data:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:544    .text.UART_Get_Data:00000000 UART_Get_Data
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:579    .text.UART_SendChar:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:586    .text.UART_SendChar:00000000 UART_SendChar
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:630    .text.UART_SendChar:00000034 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:635    .text.UART_SendMsg:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:642    .text.UART_SendMsg:00000000 UART_SendMsg
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:715    .text.UART_SendMsg:00000064 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:720    .text.queue_Init:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:787    .text.queue_Init:00000050 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:792    .text.push_Queue_Element:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:907    .text.push_Queue_Element:000000a4 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:912    .text.pull_Queue_Element:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1029   .text.pull_Queue_Element:000000a4 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1034   .text.get_Queue_Status:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1077   .text.get_Queue_Status:00000024 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1082   .text.UART0_RX_TX_IRQHandler:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1089   .text.UART0_RX_TX_IRQHandler:00000000 UART0_RX_TX_IRQHandler
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1128   .text.UART0_RX_TX_IRQHandler:00000020 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1133   .text.UART1_RX_TX_IRQHandler:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1140   .text.UART1_RX_TX_IRQHandler:00000000 UART1_RX_TX_IRQHandler
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1179   .text.UART1_RX_TX_IRQHandler:00000020 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1184   .text.UART2_RX_TX_IRQHandler:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1191   .text.UART2_RX_TX_IRQHandler:00000000 UART2_RX_TX_IRQHandler
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1230   .text.UART2_RX_TX_IRQHandler:00000020 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1235   .text.UART3_RX_TX_IRQHandler:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1242   .text.UART3_RX_TX_IRQHandler:00000000 UART3_RX_TX_IRQHandler
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1281   .text.UART3_RX_TX_IRQHandler:00000020 $d
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1286   .text.UART4_RX_TX_IRQHandler:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1293   .text.UART4_RX_TX_IRQHandler:00000000 UART4_RX_TX_IRQHandler
+C:\Users\lucia\AppData\Local\Temp\ccGSQvxo.s:1332   .text.UART4_RX_TX_IRQHandler:00000020 $d
                            .group:00000000 wm4.0.33db8b643112917ec54934b4f2c2f387
                            .group:00000000 wm4.redlib_version.h.16.f905717e4b3a91dcbdbb631865150df4
                            .group:00000000 wm4.libconfigarm.h.18.1ad1d24f96d0dc8c4cf52dc19b0aa2c7
@@ -3335,7 +3402,7 @@ C:\Users\lucia\AppData\Local\Temp\ccD9aa80.s:1332   .text.UART4_RX_TX_IRQHandler
                            .group:00000000 wm4.cmsis_gcc.h.36.39970cb43ce4b53c82644a1f9bc2eab9
                            .group:00000000 wm4.core_cm4.h.223.7b48c9958ef5573320c4765074c8b0ce
                            .group:00000000 wm4.system_MK64F12.h.109.c6d21568e03be21b21c922eb7345d6e3
-                           .group:00000000 wm4.MK64F12.h.475.cafa8e1e521f96f0b72de286863a6df7
+                           .group:00000000 wm4.MK64F12.h.475.0d927260271b4d8005bb15983309abd6
                            .group:00000000 wm4.MK64F12_features.h.92.512cea46d882153168efeec0bc3a9da7
                            .group:00000000 wm4.hardware.h.27.0531344360c1b4ef1fba1263e2a4c488
 

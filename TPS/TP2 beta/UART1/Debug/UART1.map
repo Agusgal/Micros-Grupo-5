@@ -83,6 +83,32 @@ Discarded input sections
                 0x00000000        0x8 ./startup/startup_mk64f12.o
  .text.UART4_RX_TX_IRQHandler
                 0x00000000        0x8 ./startup/startup_mk64f12.o
+ .group         0x00000000        0xc ./source/SPI.o
+ .group         0x00000000        0xc ./source/SPI.o
+ .group         0x00000000        0xc ./source/SPI.o
+ .group         0x00000000        0xc ./source/SPI.o
+ .group         0x00000000        0xc ./source/SPI.o
+ .group         0x00000000        0xc ./source/SPI.o
+ .group         0x00000000        0xc ./source/SPI.o
+ .group         0x00000000        0xc ./source/SPI.o
+ .group         0x00000000        0xc ./source/SPI.o
+ .group         0x00000000        0xc ./source/SPI.o
+ .group         0x00000000        0xc ./source/SPI.o
+ .group         0x00000000        0xc ./source/SPI.o
+ .group         0x00000000        0xc ./source/SPI.o
+ .group         0x00000000        0xc ./source/SPI.o
+ .text          0x00000000        0x0 ./source/SPI.o
+ .data          0x00000000        0x0 ./source/SPI.o
+ .bss           0x00000000        0x0 ./source/SPI.o
+ .text.NVIC_EnableIRQ
+                0x00000000       0x34 ./source/SPI.o
+ .bss.rx_flag   0x00000000        0x1 ./source/SPI.o
+ .bss.rx_data   0x00000000        0x1 ./source/SPI.o
+ .text.SPI_Init
+                0x00000000      0x118 ./source/SPI.o
+ .text.queue_Init
+                0x00000000       0x54 ./source/SPI.o
+ .debug_macro   0x00000000      0xa7e ./source/SPI.o
  .group         0x00000000        0xc ./source/UART.o
  .group         0x00000000        0xc ./source/UART.o
  .group         0x00000000        0xc ./source/UART.o
@@ -100,9 +126,52 @@ Discarded input sections
  .text          0x00000000        0x0 ./source/UART.o
  .data          0x00000000        0x0 ./source/UART.o
  .bss           0x00000000        0x0 ./source/UART.o
+ .bss.uart_buffers
+                0x00000000      0x180 ./source/UART.o
  .bss.rx_flag   0x00000000        0x1 ./source/UART.o
  .bss.rx_data   0x00000000        0x1 ./source/UART.o
+ .text.UART_SetBaudRate
+                0x00000000       0xb8 ./source/UART.o
+ .text.UART_rx_tx_irq_handler
+                0x00000000       0x78 ./source/UART.o
+ .text.UART_Get_Status
+                0x00000000       0x20 ./source/UART.o
+ .text.UART_Get_Data
+                0x00000000       0x20 ./source/UART.o
+ .text.UART_SendChar
+                0x00000000       0x38 ./source/UART.o
+ .text.UART_SendMsg
+                0x00000000       0x68 ./source/UART.o
+ .text.push_Queue_Element
+                0x00000000       0xa8 ./source/UART.o
+ .text.pull_Queue_Element
+                0x00000000       0xa8 ./source/UART.o
+ .text.get_Queue_Status
+                0x00000000       0x28 ./source/UART.o
+ .text.UART0_RX_TX_IRQHandler
+                0x00000000       0x24 ./source/UART.o
+ .text.UART1_RX_TX_IRQHandler
+                0x00000000       0x24 ./source/UART.o
+ .text.UART2_RX_TX_IRQHandler
+                0x00000000       0x24 ./source/UART.o
+ .text.UART3_RX_TX_IRQHandler
+                0x00000000       0x24 ./source/UART.o
+ .text.UART4_RX_TX_IRQHandler
+                0x00000000       0x24 ./source/UART.o
  .debug_macro   0x00000000      0xa7e ./source/UART.o
+ .debug_macro   0x00000000       0x10 ./source/UART.o
+ .debug_macro   0x00000000      0x12d ./source/UART.o
+ .debug_macro   0x00000000      0x5b2 ./source/UART.o
+ .debug_macro   0x00000000       0x22 ./source/UART.o
+ .debug_macro   0x00000000       0x10 ./source/UART.o
+ .debug_macro   0x00000000       0x5b ./source/UART.o
+ .debug_macro   0x00000000       0x3b ./source/UART.o
+ .debug_macro   0x00000000       0x50 ./source/UART.o
+ .debug_macro   0x00000000      0xd40 ./source/UART.o
+ .debug_macro   0x00000000       0x44 ./source/UART.o
+ .debug_macro   0x00000000     0xe07b ./source/UART.o
+ .debug_macro   0x00000000     0x13c7 ./source/UART.o
+ .debug_macro   0x00000000       0x16 ./source/UART.o
  .group         0x00000000        0xc ./source/hardware.o
  .group         0x00000000        0xc ./source/hardware.o
  .group         0x00000000        0xc ./source/hardware.o
@@ -361,6 +430,7 @@ FLEX_RAM         0x14000000         0x00001000         xrw
 Linker script and memory map
 
 LOAD ./startup/startup_mk64f12.o
+LOAD ./source/SPI.o
 LOAD ./source/UART.o
 LOAD ./source/hardware.o
 LOAD ./source/main.o
@@ -767,52 +837,52 @@ END GROUP
  .text.ENET_Error_IRQHandler
                 0x00000688        0x8 ./startup/startup_mk64f12.o
                 0x00000688                ENET_Error_IRQHandler
- .text.NVIC_EnableIRQ
-                0x00000690       0x34 ./source/UART.o
- .text.UART_Init
-                0x000006c4      0x148 ./source/UART.o
-                0x000006c4                UART_Init
  .text.UART_SetBaudRate
-                0x0000080c       0xb8 ./source/UART.o
-                0x0000080c                UART_SetBaudRate
+                0x00000690       0xb8 ./source/SPI.o
+                0x00000690                UART_SetBaudRate
  .text.UART_rx_tx_irq_handler
-                0x000008c4       0x78 ./source/UART.o
-                0x000008c4                UART_rx_tx_irq_handler
+                0x00000748       0x78 ./source/SPI.o
+                0x00000748                UART_rx_tx_irq_handler
  .text.UART_Get_Status
-                0x0000093c       0x20 ./source/UART.o
-                0x0000093c                UART_Get_Status
+                0x000007c0       0x20 ./source/SPI.o
+                0x000007c0                UART_Get_Status
  .text.UART_Get_Data
-                0x0000095c       0x20 ./source/UART.o
-                0x0000095c                UART_Get_Data
+                0x000007e0       0x20 ./source/SPI.o
+                0x000007e0                UART_Get_Data
  .text.UART_SendChar
-                0x0000097c       0x38 ./source/UART.o
-                0x0000097c                UART_SendChar
+                0x00000800       0x38 ./source/SPI.o
+                0x00000800                UART_SendChar
  .text.UART_SendMsg
-                0x000009b4       0x68 ./source/UART.o
-                0x000009b4                UART_SendMsg
- .text.queue_Init
-                0x00000a1c       0x54 ./source/UART.o
+                0x00000838       0x68 ./source/SPI.o
+                0x00000838                UART_SendMsg
  .text.push_Queue_Element
-                0x00000a70       0xa8 ./source/UART.o
+                0x000008a0       0xa8 ./source/SPI.o
  .text.pull_Queue_Element
-                0x00000b18       0xa8 ./source/UART.o
+                0x00000948       0xa8 ./source/SPI.o
  .text.get_Queue_Status
-                0x00000bc0       0x28 ./source/UART.o
+                0x000009f0       0x28 ./source/SPI.o
  .text.UART0_RX_TX_IRQHandler
-                0x00000be8       0x24 ./source/UART.o
-                0x00000be8                UART0_RX_TX_IRQHandler
+                0x00000a18       0x24 ./source/SPI.o
+                0x00000a18                UART0_RX_TX_IRQHandler
  .text.UART1_RX_TX_IRQHandler
-                0x00000c0c       0x24 ./source/UART.o
-                0x00000c0c                UART1_RX_TX_IRQHandler
+                0x00000a3c       0x24 ./source/SPI.o
+                0x00000a3c                UART1_RX_TX_IRQHandler
  .text.UART2_RX_TX_IRQHandler
-                0x00000c30       0x24 ./source/UART.o
-                0x00000c30                UART2_RX_TX_IRQHandler
+                0x00000a60       0x24 ./source/SPI.o
+                0x00000a60                UART2_RX_TX_IRQHandler
  .text.UART3_RX_TX_IRQHandler
-                0x00000c54       0x24 ./source/UART.o
-                0x00000c54                UART3_RX_TX_IRQHandler
+                0x00000a84       0x24 ./source/SPI.o
+                0x00000a84                UART3_RX_TX_IRQHandler
  .text.UART4_RX_TX_IRQHandler
-                0x00000c78       0x24 ./source/UART.o
-                0x00000c78                UART4_RX_TX_IRQHandler
+                0x00000aa8       0x24 ./source/SPI.o
+                0x00000aa8                UART4_RX_TX_IRQHandler
+ .text.NVIC_EnableIRQ
+                0x00000acc       0x34 ./source/UART.o
+ .text.UART_Init
+                0x00000b00      0x148 ./source/UART.o
+                0x00000b00                UART_Init
+ .text.queue_Init
+                0x00000c48       0x54 ./source/UART.o
  .text.hw_Init  0x00000c9c       0xf4 ./source/hardware.o
                 0x00000c9c                hw_Init
  .text.hw_EnableInterrupts
@@ -994,7 +1064,7 @@ END GROUP
                 0x20000008                _bss = .
  *(.bss*)
  .bss.uart_buffers
-                0x20000008      0x180 ./source/UART.o
+                0x20000008      0x180 ./source/SPI.o
                 0x20000008                uart_buffers
  .bss.__LDM_interruptDisableCount
                 0x20000188        0x4 ./source/hardware.o
@@ -1047,82 +1117,92 @@ END GROUP
                 0x00001548                _image_size = (_image_end - _image_start)
 OUTPUT(UART1.axf elf32-littlearm)
 
-.debug_info     0x00000000     0x2b57
+.debug_info     0x00000000     0x3840
  .debug_info    0x00000000      0x8b0 ./startup/startup_mk64f12.o
- .debug_info    0x000008b0      0xcd1 ./source/UART.o
- .debug_info    0x00001581      0x6aa ./source/hardware.o
- .debug_info    0x00001c2b      0x90d ./source/main.o
- .debug_info    0x00002538      0x61f ./CMSIS/system_MK64F12.o
+ .debug_info    0x000008b0      0xcdd ./source/SPI.o
+ .debug_info    0x0000158d      0xcdd ./source/UART.o
+ .debug_info    0x0000226a      0x6aa ./source/hardware.o
+ .debug_info    0x00002914      0x90d ./source/main.o
+ .debug_info    0x00003221      0x61f ./CMSIS/system_MK64F12.o
 
-.debug_abbrev   0x00000000      0x8a9
+.debug_abbrev   0x00000000      0xb97
  .debug_abbrev  0x00000000      0x15c ./startup/startup_mk64f12.o
- .debug_abbrev  0x0000015c      0x2d0 ./source/UART.o
- .debug_abbrev  0x0000042c      0x14d ./source/hardware.o
- .debug_abbrev  0x00000579      0x1f4 ./source/main.o
- .debug_abbrev  0x0000076d      0x13c ./CMSIS/system_MK64F12.o
+ .debug_abbrev  0x0000015c      0x2df ./source/SPI.o
+ .debug_abbrev  0x0000043b      0x2df ./source/UART.o
+ .debug_abbrev  0x0000071a      0x14d ./source/hardware.o
+ .debug_abbrev  0x00000867      0x1f4 ./source/main.o
+ .debug_abbrev  0x00000a5b      0x13c ./CMSIS/system_MK64F12.o
 
-.debug_aranges  0x00000000      0x478
+.debug_aranges  0x00000000      0x518
  .debug_aranges
                 0x00000000      0x330 ./startup/startup_mk64f12.o
  .debug_aranges
-                0x00000330       0xa0 ./source/UART.o
+                0x00000330       0xa0 ./source/SPI.o
  .debug_aranges
-                0x000003d0       0x30 ./source/hardware.o
+                0x000003d0       0xa0 ./source/UART.o
  .debug_aranges
-                0x00000400       0x50 ./source/main.o
+                0x00000470       0x30 ./source/hardware.o
  .debug_aranges
-                0x00000450       0x28 ./CMSIS/system_MK64F12.o
+                0x000004a0       0x50 ./source/main.o
+ .debug_aranges
+                0x000004f0       0x28 ./CMSIS/system_MK64F12.o
 
-.debug_ranges   0x00000000      0x428
+.debug_ranges   0x00000000      0x4b8
  .debug_ranges  0x00000000      0x320 ./startup/startup_mk64f12.o
- .debug_ranges  0x00000320       0x90 ./source/UART.o
- .debug_ranges  0x000003b0       0x20 ./source/hardware.o
- .debug_ranges  0x000003d0       0x40 ./source/main.o
- .debug_ranges  0x00000410       0x18 ./CMSIS/system_MK64F12.o
+ .debug_ranges  0x00000320       0x90 ./source/SPI.o
+ .debug_ranges  0x000003b0       0x90 ./source/UART.o
+ .debug_ranges  0x00000440       0x20 ./source/hardware.o
+ .debug_ranges  0x00000460       0x40 ./source/main.o
+ .debug_ranges  0x000004a0       0x18 ./CMSIS/system_MK64F12.o
 
-.debug_macro    0x00000000    0x117c8
+.debug_macro    0x00000000    0x118cf
  .debug_macro   0x00000000       0x29 ./startup/startup_mk64f12.o
  .debug_macro   0x00000029      0xa7e ./startup/startup_mk64f12.o
- .debug_macro   0x00000aa7       0xfb ./source/UART.o
- .debug_macro   0x00000ba2       0x10 ./source/UART.o
- .debug_macro   0x00000bb2      0x12d ./source/UART.o
- .debug_macro   0x00000cdf      0x5b2 ./source/UART.o
- .debug_macro   0x00001291       0x22 ./source/UART.o
- .debug_macro   0x000012b3       0x10 ./source/UART.o
- .debug_macro   0x000012c3       0x5b ./source/UART.o
- .debug_macro   0x0000131e       0x3b ./source/UART.o
- .debug_macro   0x00001359       0x50 ./source/UART.o
- .debug_macro   0x000013a9      0xd40 ./source/UART.o
- .debug_macro   0x000020e9       0x44 ./source/UART.o
- .debug_macro   0x0000212d     0xe07b ./source/UART.o
- .debug_macro   0x000101a8     0x13c7 ./source/UART.o
- .debug_macro   0x0001156f       0x16 ./source/UART.o
- .debug_macro   0x00011585       0xbb ./source/hardware.o
- .debug_macro   0x00011640       0xe9 ./source/main.o
- .debug_macro   0x00011729       0x9f ./CMSIS/system_MK64F12.o
+ .debug_macro   0x00000aa7      0x107 ./source/SPI.o
+ .debug_macro   0x00000bae       0x10 ./source/SPI.o
+ .debug_macro   0x00000bbe      0x12d ./source/SPI.o
+ .debug_macro   0x00000ceb      0x5b2 ./source/SPI.o
+ .debug_macro   0x0000129d       0x22 ./source/SPI.o
+ .debug_macro   0x000012bf       0x10 ./source/SPI.o
+ .debug_macro   0x000012cf       0x5b ./source/SPI.o
+ .debug_macro   0x0000132a       0x3b ./source/SPI.o
+ .debug_macro   0x00001365       0x50 ./source/SPI.o
+ .debug_macro   0x000013b5      0xd40 ./source/SPI.o
+ .debug_macro   0x000020f5       0x44 ./source/SPI.o
+ .debug_macro   0x00002139     0xe07b ./source/SPI.o
+ .debug_macro   0x000101b4     0x13c7 ./source/SPI.o
+ .debug_macro   0x0001157b       0x16 ./source/SPI.o
+ .debug_macro   0x00011591       0xfb ./source/UART.o
+ .debug_macro   0x0001168c       0xbb ./source/hardware.o
+ .debug_macro   0x00011747       0xe9 ./source/main.o
+ .debug_macro   0x00011830       0x9f ./CMSIS/system_MK64F12.o
 
-.debug_line     0x00000000     0x1219
+.debug_line     0x00000000     0x1613
  .debug_line    0x00000000      0x6d4 ./startup/startup_mk64f12.o
- .debug_line    0x000006d4      0x3fd ./source/UART.o
- .debug_line    0x00000ad1      0x278 ./source/hardware.o
- .debug_line    0x00000d49      0x2c4 ./source/main.o
- .debug_line    0x0000100d      0x20c ./CMSIS/system_MK64F12.o
+ .debug_line    0x000006d4      0x3fa ./source/SPI.o
+ .debug_line    0x00000ace      0x3fd ./source/UART.o
+ .debug_line    0x00000ecb      0x278 ./source/hardware.o
+ .debug_line    0x00001143      0x2c4 ./source/main.o
+ .debug_line    0x00001407      0x20c ./CMSIS/system_MK64F12.o
 
-.debug_str      0x00000000    0x78985
+.debug_str      0x00000000    0x789d0
  .debug_str     0x00000000     0x35c1 ./startup/startup_mk64f12.o
                                0x3619 (size before relaxing)
- .debug_str     0x000035c1    0x75120 ./source/UART.o
-                              0x77fe5 (size before relaxing)
- .debug_str     0x000786e1      0x16a ./source/hardware.o
-                              0x777b0 (size before relaxing)
- .debug_str     0x0007884b       0xeb ./source/main.o
-                              0x77de1 (size before relaxing)
- .debug_str     0x00078936       0x4f ./CMSIS/system_MK64F12.o
-                              0x776b1 (size before relaxing)
+ .debug_str     0x000035c1    0x75127 ./source/SPI.o
+                              0x77fec (size before relaxing)
+ .debug_str     0x000786e8       0x44 ./source/UART.o
+                              0x77fd5 (size before relaxing)
+ .debug_str     0x0007872c      0x16a ./source/hardware.o
+                              0x777a0 (size before relaxing)
+ .debug_str     0x00078896       0xeb ./source/main.o
+                              0x77dd1 (size before relaxing)
+ .debug_str     0x00078981       0x4f ./CMSIS/system_MK64F12.o
+                              0x776a1 (size before relaxing)
 
 .comment        0x00000000       0x7e
  .comment       0x00000000       0x7e ./startup/startup_mk64f12.o
                                  0x7f (size before relaxing)
+ .comment       0x0000007e       0x7f ./source/SPI.o
  .comment       0x0000007e       0x7f ./source/UART.o
  .comment       0x0000007e       0x7f ./source/hardware.o
  .comment       0x0000007e       0x7f ./source/main.o
@@ -1158,69 +1238,72 @@ OUTPUT(UART1.axf elf32-littlearm)
  .ARM.attributes
                 0x00000000       0x39 ./startup/startup_mk64f12.o
  .ARM.attributes
-                0x00000039       0x39 ./source/UART.o
+                0x00000039       0x39 ./source/SPI.o
  .ARM.attributes
-                0x00000072       0x39 ./source/hardware.o
+                0x00000072       0x39 ./source/UART.o
  .ARM.attributes
-                0x000000ab       0x39 ./source/main.o
+                0x000000ab       0x39 ./source/hardware.o
  .ARM.attributes
-                0x000000e4       0x39 ./CMSIS/system_MK64F12.o
+                0x000000e4       0x39 ./source/main.o
  .ARM.attributes
-                0x0000011d       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(_cr__main.o)
+                0x0000011d       0x39 ./CMSIS/system_MK64F12.o
  .ARM.attributes
-                0x00000156       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(initio.o)
+                0x00000156       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(_cr__main.o)
  .ARM.attributes
-                0x0000018f       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(setvbuf.o)
+                0x0000018f       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(initio.o)
  .ARM.attributes
-                0x000001c8       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_fdopen.o)
+                0x000001c8       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(setvbuf.o)
  .ARM.attributes
-                0x00000201       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(fclose.o)
+                0x00000201       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_fdopen.o)
  .ARM.attributes
-                0x0000023a       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(fflush.o)
+                0x0000023a       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(fclose.o)
  .ARM.attributes
-                0x00000273       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(fseek.o)
+                0x00000273       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(fflush.o)
  .ARM.attributes
-                0x000002ac       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(ftell.o)
+                0x000002ac       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(fseek.o)
  .ARM.attributes
-                0x000002e5       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(remove.o)
+                0x000002e5       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(ftell.o)
  .ARM.attributes
-                0x0000031e       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(strlen.o)
+                0x0000031e       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(remove.o)
  .ARM.attributes
-                0x00000357       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(memset.o)
+                0x00000357       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(strlen.o)
  .ARM.attributes
-                0x00000390       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_do_fflush.o)
+                0x00000390       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(memset.o)
  .ARM.attributes
-                0x000003c9       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_fflush.o)
+                0x000003c9       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_do_fflush.o)
  .ARM.attributes
-                0x00000402       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_writebuf.o)
+                0x00000402       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_fflush.o)
  .ARM.attributes
-                0x0000043b       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(alloc.o)
+                0x0000043b       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_writebuf.o)
  .ARM.attributes
-                0x00000474       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(errno.o)
+                0x00000474       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(alloc.o)
  .ARM.attributes
-                0x000004ad       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_deferredlazyseek.o)
+                0x000004ad       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(errno.o)
  .ARM.attributes
-                0x000004e6       0x25 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/thumb/v7e-m/fpv4-sp/hard\libcr_eabihelpers.a(memcpy.o)
+                0x000004e6       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_deferredlazyseek.o)
  .ARM.attributes
-                0x0000050b       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__ciob.o)
+                0x0000051f       0x25 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/thumb/v7e-m/fpv4-sp/hard\libcr_eabihelpers.a(memcpy.o)
  .ARM.attributes
-                0x00000544       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_close.o)
+                0x00000544       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__ciob.o)
  .ARM.attributes
-                0x0000057d       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_flen.o)
+                0x0000057d       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_close.o)
  .ARM.attributes
-                0x000005b6       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_istty.o)
+                0x000005b6       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_flen.o)
  .ARM.attributes
-                0x000005ef       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_remove.o)
+                0x000005ef       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_istty.o)
  .ARM.attributes
-                0x00000628       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_seek.o)
+                0x00000628       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_remove.o)
  .ARM.attributes
-                0x00000661       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_tmpnam.o)
+                0x00000661       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_seek.o)
  .ARM.attributes
-                0x0000069a       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_write.o)
+                0x0000069a       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_tmpnam.o)
+ .ARM.attributes
+                0x000006d3       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_write.o)
 
-.debug_frame    0x00000000      0xf50
+.debug_frame    0x00000000     0x1244
  .debug_frame   0x00000000      0xa60 ./startup/startup_mk64f12.o
- .debug_frame   0x00000a60      0x2f4 ./source/UART.o
- .debug_frame   0x00000d54       0x7c ./source/hardware.o
- .debug_frame   0x00000dd0      0x120 ./source/main.o
- .debug_frame   0x00000ef0       0x60 ./CMSIS/system_MK64F12.o
+ .debug_frame   0x00000a60      0x2f4 ./source/SPI.o
+ .debug_frame   0x00000d54      0x2f4 ./source/UART.o
+ .debug_frame   0x00001048       0x7c ./source/hardware.o
+ .debug_frame   0x000010c4      0x120 ./source/main.o
+ .debug_frame   0x000011e4       0x60 ./CMSIS/system_MK64F12.o

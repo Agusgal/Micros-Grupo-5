@@ -4,16 +4,19 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../source/SPI.c \
 ../source/UART.c \
 ../source/hardware.c \
 ../source/main.c 
 
 OBJS += \
+./source/SPI.o \
 ./source/UART.o \
 ./source/hardware.o \
 ./source/main.o 
 
 C_DEPS += \
+./source/SPI.d \
 ./source/UART.d \
 ./source/hardware.d \
 ./source/main.d 

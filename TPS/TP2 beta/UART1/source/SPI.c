@@ -1,7 +1,7 @@
 /***************************************************************************//**
-  @file     UART.c
+  @file     SPI.c
 
-  @brief    UART driver
+  @brief    SPI driver
   @author   Grupo 5
  ******************************************************************************/
 
@@ -9,7 +9,7 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 #include "hardware.h"
-#include "UART.h"
+#include "SPI.h"
 
 
 
@@ -22,9 +22,10 @@
 #define ISR_RDRF(x) (((x) & UART_S1_RDRF_MASK) != 0x0)
 
 
-#define UART0_TX_PIN 	17   //PTB17
-#define UART0_RX_PIN 	16   //PTB16
-
+#define SPI0_PCS_PIN	0 //PTD0
+#define SPI0_SCK_PIN	1 //PTD1
+#define SPI0_TX_PIN 	2 //PTD2
+#define SPI0_RX_PIN 	3 //PTD3
 
 #define	BUFFER_SIZE	 20
 #define NONE_EV      24
@@ -117,42 +118,43 @@ static uint8_t get_Queue_Status(uint8_t id);
  * @return
  */
 
-void UART_Init (void)
+void SPI_Init (void)
 {
 
 // Note: 5.6 Clock Gating page 192
 // Any bus access to a peripheral that has its clock disabled generates an error termination.
 
 
-	    SIM->SCGC4 |= SIM_SCGC4_UART0_MASK;
-		SIM->SCGC4 |= SIM_SCGC4_UART1_MASK;
-		SIM->SCGC4 |= SIM_SCGC4_UART2_MASK;
-		SIM->SCGC4 |= SIM_SCGC4_UART3_MASK;
-		SIM->SCGC1 |= SIM_SCGC1_UART4_MASK;
-		SIM->SCGC1 |= SIM_SCGC1_UART5_MASK;
+	    SIM->SCGC6 |= SIM_SCGC6_SPI0_MASK;
+	    SIM->SCGC6 |= SIM_SCGC6_SPI1_MASK;
+	    SIM->SCGC3 |= SIM_SCGC3_SPI2_MASK ;
 
-		NVIC_EnableIRQ(UART0_RX_TX_IRQn);
-		NVIC_EnableIRQ(UART1_RX_TX_IRQn);
-		NVIC_EnableIRQ(UART2_RX_TX_IRQn);
-		NVIC_EnableIRQ(UART3_RX_TX_IRQn);
-		NVIC_EnableIRQ(UART4_RX_TX_IRQn);
-		NVIC_EnableIRQ(UART5_RX_TX_IRQn);
+		NVIC_EnableIRQ(SPI0_IRQn);
+		NVIC_EnableIRQ(SPI1_IRQn);
+		NVIC_EnableIRQ(SPI2_IRQn);
 
 		//UART0 Set UART Speed
 
-		UART_SetBaudRate(UART0, UART_HAL_DEFAULT_BAUDRATE);
+	//	UART_SetBaudRate(UART0, UART_HAL_DEFAULT_BAUDRATE);
 
-		//Configure UART0 TX and RX PINS
+		//Configure SPI0 PINS
 
-		PORTB->PCR[UART0_TX_PIN]=0x0; //Clear all bits
-		PORTB->PCR[UART0_TX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
-		PORTB->PCR[UART0_TX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
+		PORTD->PCR[SPI0_TX_PIN]=0x0; //Clear all bits
+		PORTD->PCR[SPI0_TX_PIN]|=PORT_PCR_MUX(PORT_mAlt2); 	 //Set MUX to SPI0
+		PORTD->PCR[SPI0_TX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
 //----------------------------------------------------------------------------------
-		PORTB->PCR[UART0_RX_PIN]=0x0; //Clear all bits
-		PORTB->PCR[UART0_RX_PIN]|=PORT_PCR_MUX(PORT_mAlt3); 	 //Set MUX to UART0
-		PORTB->PCR[UART0_RX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
+		PORTD->PCR[SPI0_RX_PIN]=0x0; //Clear all bits
+		PORTD->PCR[SPI0_RX_PIN]|=PORT_PCR_MUX(PORT_mAlt2); 	 //Set MUX to SPI0
+		PORTD->PCR[SPI0_RX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
 
-
+//----------------------------------------------------------------------------------
+		PORTD->PCR[SPI0_PCS_PIN]=0x0; //Clear all bits
+		PORTD->PCR[SPI0_PCS_PIN]|=PORT_PCR_MUX(PORT_mAlt2); 	 //Set MUX to SPI0
+		PORTD->PCR[SPI0_PCS_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
+//----------------------------------------------------------------------------------
+		PORTD->PCR[SPI0_SCK_PIN]=0x0; //Clear all bits
+		PORTD->PCR[SPI0_SCK_PIN]|=PORT_PCR_MUX(PORT_mAlt2); 	 //Set MUX to SPI0
+		PORTD->PCR[SPI0_SCK_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
 	//UART0 Baudrate Setup
 
 		UART_SetBaudRate (UART0, 9600);
