@@ -157,14 +157,25 @@ void SPI_Init (void)
 		PORTD->PCR[SPI0_SCK_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
 	//UART0 Baudrate Setup
 
-		UART_SetBaudRate (UART0, 9600);
-		UART_SetBaudRate (UART1, 9600);
+		//UART_SetBaudRate (UART0, 9600);
+		//UART_SetBaudRate (UART1, 9600);
 
 	//Enable UART0 Xmiter and Rcvr
 
 		//UART0->C2=UART_C2_TE_MASK | UART_C2_RE_MASK;
-		UART0->C2=UART_C2_TE_MASK| UART_C2_RE_MASK | UART_C2_RIE_MASK;
+		//UART0->C2=UART_C2_TE_MASK| UART_C2_RE_MASK | UART_C2_RIE_MASK;
 
+		SPI0->MCR = 0x0;
+		SPI0->MCR = SPI_MCR_MSTR_MASK | SPI_MCR_CONT_SCKE_MASK | SPI_MCR_HALT_MASK;
+		SPI0->CTAR = 0x0;
+		SPI0->CTAR = SPI_CTAR_FMSZ_MASK | SPI_CTAR_CPHA_MASK | ; //TODO: SETEAR EL BAUDRATE
+
+
+
+
+
+
+		SPI0->MCR &= ~SPI_MCR_HALT_MASK;
 		for (int i = 0; i<12 ; i++) //initializes transmitter and receiver queues for all uarts
 		{
 			queue_Init(i);
