@@ -42,37 +42,25 @@ void SPI_Init (void);
  * @brief
  * @return
  */
-void UART_SetBaudRate (UART_Type *uart, uint32_t baudrate);
+uint8_t SPI_Get_Status(void);
 
 /**
  * @brief
  * @return
  */
-unsigned char UART_Get_Status(uint8_t id);
+uint8_t SPI_Get_Data(void);
 
 /**
  * @brief
  * @return
  */
-unsigned char UART_Get_Data(uint8_t id);
+void SPI_SendMsg(uint8_t* msg);
 
 /**
  * @brief
  * @return
  */
-void UART_Send_Data(unsigned char txdata);
-
-/**
- * @brief
- * @return
- */
-void UART_SendMsg(char* msg, uint8_t id);
-
-/**
- * @brief
- * @return
- */
-void UART_SendChar(char msg, uint8_t id);
+void SPI_SendByte(uint8_t byte);
 
 
 /*******************************************************************************

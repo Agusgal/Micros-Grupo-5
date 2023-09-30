@@ -2214,7 +2214,7 @@
  417              	.L18:
  418 0036 00BF     		.align	2
  419              	.L17:
- 420 0038 00000000 		.word	speed.6967
+ 420 0038 00000000 		.word	speed.6965
  421 003c 40F00F40 		.word	1074786368
  422              		.cfi_endproc
  423              	.LFE127:
@@ -2277,9 +2277,9 @@
  474 002c 1FBCBE00 		.word	12499999
  475              		.cfi_endproc
  476              	.LFE128:
- 478              		.section	.data.speed.6967,"aw",%progbits
+ 478              		.section	.data.speed.6965,"aw",%progbits
  479              		.align	2
- 482              	speed.6967:
+ 482              	speed.6965:
  483 0000 04000000 		.word	4
  484              		.text
  485              	.Letext0:
@@ -2289,28 +2289,28 @@
  489              		.file 6 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:18     .text.NVIC_EnableIRQ:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:24     .text.NVIC_EnableIRQ:00000000 NVIC_EnableIRQ
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:64     .text.NVIC_EnableIRQ:00000030 $d
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:69     .rodata:00000000 $d
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:73     .text.main:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:80     .text.main:00000000 main
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:433    .text.SysTick_Init:00000000 SysTick_Init
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:218    .text.main:000000f8 $d
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:228    .text.PORTA_IRQHandler:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:235    .text.PORTA_IRQHandler:00000000 PORTA_IRQHandler
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:277    .text.PORTA_IRQHandler:0000002c $d
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:283    .text.idle:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:290    .text.idle:00000000 idle
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:315    .text.delayLoop:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:322    .text.delayLoop:00000000 delayLoop
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:361    .text.SysTick_Handler:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:368    .text.SysTick_Handler:00000000 SysTick_Handler
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:420    .text.SysTick_Handler:00000038 $d
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:482    .data.speed.6967:00000000 speed.6967
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:426    .text.SysTick_Init:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:473    .text.SysTick_Init:00000028 $d
-C:\Users\lucia\AppData\Local\Temp\cc4yejAr.s:479    .data.speed.6967:00000000 $d
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:18     .text.NVIC_EnableIRQ:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:24     .text.NVIC_EnableIRQ:00000000 NVIC_EnableIRQ
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:64     .text.NVIC_EnableIRQ:00000030 $d
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:69     .rodata:00000000 $d
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:73     .text.main:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:80     .text.main:00000000 main
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:433    .text.SysTick_Init:00000000 SysTick_Init
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:218    .text.main:000000f8 $d
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:228    .text.PORTA_IRQHandler:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:235    .text.PORTA_IRQHandler:00000000 PORTA_IRQHandler
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:277    .text.PORTA_IRQHandler:0000002c $d
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:283    .text.idle:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:290    .text.idle:00000000 idle
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:315    .text.delayLoop:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:322    .text.delayLoop:00000000 delayLoop
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:361    .text.SysTick_Handler:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:368    .text.SysTick_Handler:00000000 SysTick_Handler
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:420    .text.SysTick_Handler:00000038 $d
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:482    .data.speed.6965:00000000 speed.6965
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:426    .text.SysTick_Init:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:473    .text.SysTick_Init:00000028 $d
+C:\Users\lucia\AppData\Local\Temp\ccRmVAyW.s:479    .data.speed.6965:00000000 $d
                            .group:00000000 wm4.0.33db8b643112917ec54934b4f2c2f387
                            .group:00000000 wm4.redlib_version.h.16.f905717e4b3a91dcbdbb631865150df4
                            .group:00000000 wm4.libconfigarm.h.18.1ad1d24f96d0dc8c4cf52dc19b0aa2c7

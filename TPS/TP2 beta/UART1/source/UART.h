@@ -56,11 +56,6 @@ unsigned char UART_Get_Status(uint8_t id);
  */
 unsigned char UART_Get_Data(uint8_t id);
 
-/**
- * @brief
- * @return
- */
-void UART_Send_Data(unsigned char txdata);
 
 /**
  * @brief

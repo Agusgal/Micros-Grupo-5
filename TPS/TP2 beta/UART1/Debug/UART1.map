@@ -105,7 +105,7 @@ Discarded input sections
  .bss.rx_flag   0x00000000        0x1 ./source/SPI.o
  .bss.rx_data   0x00000000        0x1 ./source/SPI.o
  .text.SPI_Init
-                0x00000000      0x118 ./source/SPI.o
+                0x00000000      0x124 ./source/SPI.o
  .text.queue_Init
                 0x00000000       0x54 ./source/SPI.o
  .debug_macro   0x00000000      0xa7e ./source/SPI.o
@@ -1117,21 +1117,21 @@ END GROUP
                 0x00001548                _image_size = (_image_end - _image_start)
 OUTPUT(UART1.axf elf32-littlearm)
 
-.debug_info     0x00000000     0x3840
+.debug_info     0x00000000     0x39b1
  .debug_info    0x00000000      0x8b0 ./startup/startup_mk64f12.o
- .debug_info    0x000008b0      0xcdd ./source/SPI.o
- .debug_info    0x0000158d      0xcdd ./source/UART.o
- .debug_info    0x0000226a      0x6aa ./source/hardware.o
- .debug_info    0x00002914      0x90d ./source/main.o
- .debug_info    0x00003221      0x61f ./CMSIS/system_MK64F12.o
+ .debug_info    0x000008b0      0xe4e ./source/SPI.o
+ .debug_info    0x000016fe      0xcdd ./source/UART.o
+ .debug_info    0x000023db      0x6aa ./source/hardware.o
+ .debug_info    0x00002a85      0x90d ./source/main.o
+ .debug_info    0x00003392      0x61f ./CMSIS/system_MK64F12.o
 
-.debug_abbrev   0x00000000      0xb97
+.debug_abbrev   0x00000000      0xbb3
  .debug_abbrev  0x00000000      0x15c ./startup/startup_mk64f12.o
- .debug_abbrev  0x0000015c      0x2df ./source/SPI.o
- .debug_abbrev  0x0000043b      0x2df ./source/UART.o
- .debug_abbrev  0x0000071a      0x14d ./source/hardware.o
- .debug_abbrev  0x00000867      0x1f4 ./source/main.o
- .debug_abbrev  0x00000a5b      0x13c ./CMSIS/system_MK64F12.o
+ .debug_abbrev  0x0000015c      0x2fb ./source/SPI.o
+ .debug_abbrev  0x00000457      0x2df ./source/UART.o
+ .debug_abbrev  0x00000736      0x14d ./source/hardware.o
+ .debug_abbrev  0x00000883      0x1f4 ./source/main.o
+ .debug_abbrev  0x00000a77      0x13c ./CMSIS/system_MK64F12.o
 
 .debug_aranges  0x00000000      0x518
  .debug_aranges
@@ -1177,26 +1177,26 @@ OUTPUT(UART1.axf elf32-littlearm)
  .debug_macro   0x00011747       0xe9 ./source/main.o
  .debug_macro   0x00011830       0x9f ./CMSIS/system_MK64F12.o
 
-.debug_line     0x00000000     0x1613
+.debug_line     0x00000000     0x1617
  .debug_line    0x00000000      0x6d4 ./startup/startup_mk64f12.o
- .debug_line    0x000006d4      0x3fa ./source/SPI.o
- .debug_line    0x00000ace      0x3fd ./source/UART.o
- .debug_line    0x00000ecb      0x278 ./source/hardware.o
- .debug_line    0x00001143      0x2c4 ./source/main.o
- .debug_line    0x00001407      0x20c ./CMSIS/system_MK64F12.o
+ .debug_line    0x000006d4      0x3fe ./source/SPI.o
+ .debug_line    0x00000ad2      0x3fd ./source/UART.o
+ .debug_line    0x00000ecf      0x278 ./source/hardware.o
+ .debug_line    0x00001147      0x2c4 ./source/main.o
+ .debug_line    0x0000140b      0x20c ./CMSIS/system_MK64F12.o
 
-.debug_str      0x00000000    0x789d0
+.debug_str      0x00000000    0x78a35
  .debug_str     0x00000000     0x35c1 ./startup/startup_mk64f12.o
                                0x3619 (size before relaxing)
- .debug_str     0x000035c1    0x75127 ./source/SPI.o
-                              0x77fec (size before relaxing)
- .debug_str     0x000786e8       0x44 ./source/UART.o
+ .debug_str     0x000035c1    0x7518c ./source/SPI.o
+                              0x78051 (size before relaxing)
+ .debug_str     0x0007874d       0x44 ./source/UART.o
                               0x77fd5 (size before relaxing)
- .debug_str     0x0007872c      0x16a ./source/hardware.o
+ .debug_str     0x00078791      0x16a ./source/hardware.o
                               0x777a0 (size before relaxing)
- .debug_str     0x00078896       0xeb ./source/main.o
+ .debug_str     0x000788fb       0xeb ./source/main.o
                               0x77dd1 (size before relaxing)
- .debug_str     0x00078981       0x4f ./CMSIS/system_MK64F12.o
+ .debug_str     0x000789e6       0x4f ./CMSIS/system_MK64F12.o
                               0x776a1 (size before relaxing)
 
 .comment        0x00000000       0x7e
