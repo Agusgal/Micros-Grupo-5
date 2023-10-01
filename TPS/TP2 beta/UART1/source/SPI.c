@@ -192,8 +192,8 @@ uint8_t SPI_Get_Data(void)
 
 void SPI_SendByte(uint8_t byte)
 {
-	buffer_element_t event = {byte,1};
-	push_Queue_Element(1,event);
+	buffer_element_t event = {byte, 1};
+	push_Queue_Element(1, event);
 }
 
 /**
@@ -212,7 +212,7 @@ void SPI_SendMsg(uint8_t* msg)
 		{
 			end_of_data = 1;
 		}
-		buffer_element_t event = {msg[i],end_of_data};
+		buffer_element_t event = {msg[i], end_of_data};
 		push_Queue_Element(1, event);
 		i++;
 	}
@@ -227,33 +227,45 @@ void SPI_SendMsg(uint8_t* msg)
                         LOCAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
+/**
+ * @brief Handles Spi interrupts
+ */
 __ISR__ SPI0_IRQHandler(void)
 {
-	unsigned char tmp;
-		uint8_t tx_data;
-		tmp = SPI0 -> SR;// Dummy read to clear status register
+	uint8_t tmp;
+	tmp = SPI0 -> SR;// Dummy read to clear status register
 
+	// Receive FIFO Drain Flag
+	if(SPI_SR_RFDF(tmp))
+	{
+		uint32_t rxdata = SPI0 -> POPR;
+		buffer_element_t data_in= {rxdata, 0};
+		push_Queue_Element(1, data_in); //positions itself in the receiver queue
+		// check if flag should be cleared (Maybe better to do at the end of all interrupts
+	}
 
-		if(ISR_RDRF(tmp))
+	// End of Queue Frag
+	if(SPI_SR_EOQF(tmp)) //checks if state is available
+	{
+
+	}
+
+	// Transfer FIFO Fill Flag (1 if not empty)
+	if(SPI_SR_TFFF(tmp))
+	{
+		if (get_Queue_Status(0))
 		{
-			push_Queue_Element(id + TOTAL_spiS, spi_p ->D); //positions itself in the receiver queue
+			buffer_element_t buffer_data_out = pull_Queue_Element(0);
+			uint32_t data_out = SPI_PUSHR_CONT_MASK;
+			if (buffer_data_out.end_of_data)
+			{
+				data_out |= SPI_PUSHR_EOQ_MASK;
+			}
+			data_out |= SPI_PUSHR_PCS(1);
+			data_out |= buffer_data_out.data;
+			SPI0 -> PUSHR = data_out;
 		}
-
-		if(SPI_SR_EOQF(tmp)) //checks if state is available
-		{
-
-		}
-
-		if(SPI_SR_TFFF(tmp))
-		{
-			pull_Queue_Element(0);
-			SPI0 -> PUSHR = SPI_PUSHR_CONT_MASK;
-
-
-
-
-			SPI_PUSHR_TXDATA() =
-		}
+	}
 }
 
 /**
