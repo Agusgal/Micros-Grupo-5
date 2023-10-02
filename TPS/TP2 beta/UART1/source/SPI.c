@@ -118,7 +118,9 @@ void SPI_Init (void)
 
 	    SIM->SCGC6 |= SIM_SCGC6_SPI0_MASK;
 	    SIM->SCGC6 |= SIM_SCGC6_SPI1_MASK;
-	    SIM->SCGC3 |= SIM_SCGC3_SPI2_MASK ;
+	    SIM->SCGC3 |= SIM_SCGC3_SPI2_MASK;
+
+	    SIM->SCGC5 |= SIM_SCGC5_PORTD_MASK;
 
 		NVIC_EnableIRQ(SPI0_IRQn);
 		NVIC_EnableIRQ(SPI1_IRQn);
@@ -213,7 +215,7 @@ void SPI_SendMsg(uint8_t* msg)
 			end_of_data = 1;
 		}
 		buffer_element_t event = {msg[i], end_of_data};
-		push_Queue_Element(1, event);
+		push_Queue_Element(0, event);
 		i++;
 	}
 

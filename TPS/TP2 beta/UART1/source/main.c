@@ -53,8 +53,8 @@ int main (void)
  uint32_t data;
 
 unsigned char uart_data;
-
- 	 	 	 hw_Init ();
+			hw_DisableInterrupts();
+ 	 	 	hw_Init ();
 			//Enable clocking for port B
 
 			SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;
@@ -108,11 +108,22 @@ unsigned char uart_data;
 			UART_Init();
 
 			UART_SendMsg("Hola como estas",0);
+
+
+
+			SPI_Init();
+			SPI_SendMsg("Hola");
+			SPI_SendByte(0x2);
+
 			// Enable interrupts
 			hw_EnableInterrupts();
 
 			__FOREVER__
 			{
+
+				SPI_Init();
+				SPI_SendMsg("Hola");
+				//SPI_SendByte(0x2);
 
 
 				if(UART_Get_Status(0)){
