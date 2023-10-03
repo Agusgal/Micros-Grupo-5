@@ -1790,22 +1790,22 @@
   59:../source/main.c **** 
   60:../source/main.c **** 			SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;
  102              		.loc 2 60 0
- 103 000e 414B     		ldr	r3, .L7
+ 103 000e 404B     		ldr	r3, .L7
  104 0010 03F58153 		add	r3, r3, #4128
  105 0014 1833     		adds	r3, r3, #24
  106 0016 1B68     		ldr	r3, [r3]
- 107 0018 3E49     		ldr	r1, .L7
+ 107 0018 3D49     		ldr	r1, .L7
  108 001a 43F48062 		orr	r2, r3, #1024
  109 001e 01F58153 		add	r3, r1, #4128
  110 0022 1833     		adds	r3, r3, #24
  111 0024 1A60     		str	r2, [r3]
   61:../source/main.c **** 			SIM->SCGC5 |= SIM_SCGC5_PORTA_MASK;
  112              		.loc 2 61 0
- 113 0026 3B4B     		ldr	r3, .L7
+ 113 0026 3A4B     		ldr	r3, .L7
  114 0028 03F58153 		add	r3, r3, #4128
  115 002c 1833     		adds	r3, r3, #24
  116 002e 1B68     		ldr	r3, [r3]
- 117 0030 3849     		ldr	r1, .L7
+ 117 0030 3749     		ldr	r1, .L7
  118 0032 43F40072 		orr	r2, r3, #512
  119 0036 01F58153 		add	r3, r1, #4128
  120 003a 1833     		adds	r3, r3, #24
@@ -1813,9 +1813,9 @@
   62:../source/main.c **** 
   63:../source/main.c **** 			PORTA->PCR[4] |= PORT_PCR_ISF_MASK;  //Clear mask
  122              		.loc 2 63 0
- 123 003e 364B     		ldr	r3, .L7+4
+ 123 003e 354B     		ldr	r3, .L7+4
  124 0040 1B69     		ldr	r3, [r3, #16]
- 125 0042 354A     		ldr	r2, .L7+4
+ 125 0042 344A     		ldr	r2, .L7+4
  126 0044 43F08073 		orr	r3, r3, #16777216
  127 0048 1361     		str	r3, [r2, #16]
   64:../source/main.c **** 			NVIC_EnableIRQ(PORTA_IRQn);
@@ -1853,7 +1853,7 @@
  141 0064 7B60     		str	r3, [r7, #4]
   83:../source/main.c **** 			PORTB->GPCHR=temp;
  142              		.loc 2 83 0
- 143 0066 2D4A     		ldr	r2, .L7+8
+ 143 0066 2C4A     		ldr	r2, .L7+8
  144 0068 7B68     		ldr	r3, [r7, #4]
  145 006a C2F88430 		str	r3, [r2, #132]
   84:../source/main.c **** 
@@ -1861,36 +1861,36 @@
   86:../source/main.c **** /////////// Input Pin 4
   87:../source/main.c **** 			PORTA->PCR[4]=0x0; //Clear
  146              		.loc 2 87 0
- 147 006e 2A4B     		ldr	r3, .L7+4
+ 147 006e 294B     		ldr	r3, .L7+4
  148 0070 0022     		movs	r2, #0
  149 0072 1A61     		str	r2, [r3, #16]
   88:../source/main.c **** 			PORTA->PCR[4]|=PORT_PCR_MUX(PORT_mGPIO); 		       //Set MUX to GPIO
  150              		.loc 2 88 0
- 151 0074 284B     		ldr	r3, .L7+4
+ 151 0074 274B     		ldr	r3, .L7+4
  152 0076 1B69     		ldr	r3, [r3, #16]
- 153 0078 274A     		ldr	r2, .L7+4
+ 153 0078 264A     		ldr	r2, .L7+4
  154 007a 43F48073 		orr	r3, r3, #256
  155 007e 1361     		str	r3, [r2, #16]
   89:../source/main.c **** 			PORTA->PCR[4]|=PORT_PCR_PE(1);          		       //Pull UP/Down  Enable
  156              		.loc 2 89 0
- 157 0080 254B     		ldr	r3, .L7+4
+ 157 0080 244B     		ldr	r3, .L7+4
  158 0082 1B69     		ldr	r3, [r3, #16]
- 159 0084 244A     		ldr	r2, .L7+4
+ 159 0084 234A     		ldr	r2, .L7+4
  160 0086 43F00203 		orr	r3, r3, #2
  161 008a 1361     		str	r3, [r2, #16]
   90:../source/main.c **** 			PORTA->PCR[4]|=PORT_PCR_PS(1);          		       //Pull UP
  162              		.loc 2 90 0
- 163 008c 224B     		ldr	r3, .L7+4
+ 163 008c 214B     		ldr	r3, .L7+4
  164 008e 1B69     		ldr	r3, [r3, #16]
- 165 0090 214A     		ldr	r2, .L7+4
+ 165 0090 204A     		ldr	r2, .L7+4
  166 0092 43F00103 		orr	r3, r3, #1
  167 0096 1361     		str	r3, [r2, #16]
   91:../source/main.c **** 			//PORTA->PCR[4]|=PORT_PCR_IRQC(PORT_eInterruptFalling);  //Enable Falling edge interrupts
   92:../source/main.c **** 			PORTA->PCR[4]|=PORT_PCR_IRQC(PORT_eInterruptRising);  //Enable Rising edge interrupts
  168              		.loc 2 92 0
- 169 0098 1F4B     		ldr	r3, .L7+4
+ 169 0098 1E4B     		ldr	r3, .L7+4
  170 009a 1B69     		ldr	r3, [r3, #16]
- 171 009c 1E4A     		ldr	r2, .L7+4
+ 171 009c 1D4A     		ldr	r2, .L7+4
  172 009e 43F41023 		orr	r3, r3, #589824
  173 00a2 1361     		str	r3, [r2, #16]
   93:../source/main.c **** 
@@ -1898,7 +1898,7 @@
   95:../source/main.c **** 
   96:../source/main.c **** 			PTB->PSOR = (1<<21)|(1<<22);
  174              		.loc 2 96 0
- 175 00a4 1E4B     		ldr	r3, .L7+12
+ 175 00a4 1D4B     		ldr	r3, .L7+12
  176 00a6 4FF4C002 		mov	r2, #6291456
  177 00aa 5A60     		str	r2, [r3, #4]
   97:../source/main.c **** 
@@ -1907,16 +1907,16 @@
  100:../source/main.c **** 			// Configurar como salida pin 22 y pin 21 PTB
  101:../source/main.c **** 			PTB->PDDR |= (1<<21)|(1<<22);
  178              		.loc 2 101 0
- 179 00ac 1C4B     		ldr	r3, .L7+12
+ 179 00ac 1B4B     		ldr	r3, .L7+12
  180 00ae 5B69     		ldr	r3, [r3, #20]
- 181 00b0 1B4A     		ldr	r2, .L7+12
+ 181 00b0 1A4A     		ldr	r2, .L7+12
  182 00b2 43F4C003 		orr	r3, r3, #6291456
  183 00b6 5361     		str	r3, [r2, #20]
  102:../source/main.c **** 			// Configurar como entrada pin 4 PTA
  103:../source/main.c **** 			PTA->PDDR |= (0<<4);
  184              		.loc 2 103 0
- 185 00b8 1A4B     		ldr	r3, .L7+16
- 186 00ba 1A4A     		ldr	r2, .L7+16
+ 185 00b8 194B     		ldr	r3, .L7+16
+ 186 00ba 194A     		ldr	r2, .L7+16
  187 00bc 5B69     		ldr	r3, [r3, #20]
  188 00be 5361     		str	r3, [r2, #20]
  104:../source/main.c **** 
@@ -1932,416 +1932,412 @@
  110:../source/main.c **** 			UART_SendMsg("Hola como estas",0);
  193              		.loc 2 110 0
  194 00c8 0021     		movs	r1, #0
- 195 00ca 1748     		ldr	r0, .L7+20
+ 195 00ca 1648     		ldr	r0, .L7+20
  196 00cc FFF7FEFF 		bl	UART_SendMsg
  111:../source/main.c **** 
- 112:../source/main.c **** 
+ 112:../source/main.c **** 			hw_EnableInterrupts();
+ 197              		.loc 2 112 0
+ 198 00d0 FFF7FEFF 		bl	hw_EnableInterrupts
  113:../source/main.c **** 
  114:../source/main.c **** 			SPI_Init();
- 197              		.loc 2 114 0
- 198 00d0 FFF7FEFF 		bl	SPI_Init
+ 199              		.loc 2 114 0
+ 200 00d4 FFF7FEFF 		bl	SPI_Init
  115:../source/main.c **** 			SPI_SendMsg("Hola");
- 199              		.loc 2 115 0
- 200 00d4 1548     		ldr	r0, .L7+24
- 201 00d6 FFF7FEFF 		bl	SPI_SendMsg
+ 201              		.loc 2 115 0
+ 202 00d8 1348     		ldr	r0, .L7+24
+ 203 00da FFF7FEFF 		bl	SPI_SendMsg
  116:../source/main.c **** 			SPI_SendByte(0x2);
- 202              		.loc 2 116 0
- 203 00da 0220     		movs	r0, #2
- 204 00dc FFF7FEFF 		bl	SPI_SendByte
+ 204              		.loc 2 116 0
+ 205 00de 0220     		movs	r0, #2
+ 206 00e0 FFF7FEFF 		bl	SPI_SendByte
+ 207              	.L6:
  117:../source/main.c **** 
  118:../source/main.c **** 			// Enable interrupts
- 119:../source/main.c **** 			hw_EnableInterrupts();
- 205              		.loc 2 119 0
- 206 00e0 FFF7FEFF 		bl	hw_EnableInterrupts
- 207              	.L6:
- 120:../source/main.c **** 
- 121:../source/main.c **** 			__FOREVER__
- 122:../source/main.c **** 			{
- 123:../source/main.c **** 
- 124:../source/main.c **** 				SPI_Init();
- 208              		.loc 2 124 0
- 209 00e4 FFF7FEFF 		bl	SPI_Init
- 125:../source/main.c **** 				SPI_SendMsg("Hola");
- 210              		.loc 2 125 0
- 211 00e8 1048     		ldr	r0, .L7+24
- 212 00ea FFF7FEFF 		bl	SPI_SendMsg
- 126:../source/main.c **** 				//SPI_SendByte(0x2);
- 127:../source/main.c **** 
- 128:../source/main.c **** 
- 129:../source/main.c **** 				if(UART_Get_Status(0)){
- 213              		.loc 2 129 0
- 214 00ee 0020     		movs	r0, #0
- 215 00f0 FFF7FEFF 		bl	UART_Get_Status
- 216 00f4 0346     		mov	r3, r0
- 217 00f6 002B     		cmp	r3, #0
- 218 00f8 F4D0     		beq	.L6
- 130:../source/main.c **** 				//UART_SendMsg("Chau",0);
- 131:../source/main.c **** 				uart_data=UART_Get_Data(0);
- 219              		.loc 2 131 0
- 220 00fa 0020     		movs	r0, #0
- 221 00fc FFF7FEFF 		bl	UART_Get_Data
- 222 0100 0346     		mov	r3, r0
- 223 0102 FB70     		strb	r3, [r7, #3]
- 132:../source/main.c **** 				//UART_SendMsg("chau",0);
- 133:../source/main.c **** 				UART_SendChar(uart_data + 1, 0);
- 224              		.loc 2 133 0
- 225 0104 FB78     		ldrb	r3, [r7, #3]
- 226 0106 0133     		adds	r3, r3, #1
- 227 0108 DBB2     		uxtb	r3, r3
- 228 010a 0021     		movs	r1, #0
- 229 010c 1846     		mov	r0, r3
- 230 010e FFF7FEFF 		bl	UART_SendChar
- 124:../source/main.c **** 				SPI_SendMsg("Hola");
- 231              		.loc 2 124 0
- 232 0112 E7E7     		b	.L6
- 233              	.L8:
- 234              		.align	2
- 235              	.L7:
- 236 0114 00700440 		.word	1074032640
- 237 0118 00900440 		.word	1074040832
- 238 011c 00A00440 		.word	1074044928
- 239 0120 40F00F40 		.word	1074786368
- 240 0124 00F00F40 		.word	1074786304
- 241 0128 00000000 		.word	.LC0
- 242 012c 10000000 		.word	.LC1
- 243              		.cfi_endproc
- 244              	.LFE123:
- 246              		.section	.text.PORTA_IRQHandler,"ax",%progbits
- 247              		.align	1
- 248              		.global	PORTA_IRQHandler
- 249              		.syntax unified
- 250              		.thumb
- 251              		.thumb_func
- 252              		.fpu fpv4-sp-d16
- 254              	PORTA_IRQHandler:
- 255              	.LFB124:
- 134:../source/main.c **** 				}
+ 119:../source/main.c **** 
+ 120:../source/main.c **** 			__FOREVER__
+ 121:../source/main.c **** 			{
+ 122:../source/main.c **** 
+ 123:../source/main.c **** 				SPI_SendMsg("Hola");
+ 208              		.loc 2 123 0
+ 209 00e4 1048     		ldr	r0, .L7+24
+ 210 00e6 FFF7FEFF 		bl	SPI_SendMsg
+ 124:../source/main.c **** 				//SPI_SendByte(0x2);
+ 125:../source/main.c **** 
+ 126:../source/main.c **** 
+ 127:../source/main.c **** 				if(UART_Get_Status(0)){
+ 211              		.loc 2 127 0
+ 212 00ea 0020     		movs	r0, #0
+ 213 00ec FFF7FEFF 		bl	UART_Get_Status
+ 214 00f0 0346     		mov	r3, r0
+ 215 00f2 002B     		cmp	r3, #0
+ 216 00f4 F6D0     		beq	.L6
+ 128:../source/main.c **** 				//UART_SendMsg("Chau",0);
+ 129:../source/main.c **** 				uart_data=UART_Get_Data(0);
+ 217              		.loc 2 129 0
+ 218 00f6 0020     		movs	r0, #0
+ 219 00f8 FFF7FEFF 		bl	UART_Get_Data
+ 220 00fc 0346     		mov	r3, r0
+ 221 00fe FB70     		strb	r3, [r7, #3]
+ 130:../source/main.c **** 				//UART_SendMsg("chau",0);
+ 131:../source/main.c **** 				UART_SendChar(uart_data + 1, 0);
+ 222              		.loc 2 131 0
+ 223 0100 FB78     		ldrb	r3, [r7, #3]
+ 224 0102 0133     		adds	r3, r3, #1
+ 225 0104 DBB2     		uxtb	r3, r3
+ 226 0106 0021     		movs	r1, #0
+ 227 0108 1846     		mov	r0, r3
+ 228 010a FFF7FEFF 		bl	UART_SendChar
+ 123:../source/main.c **** 				//SPI_SendByte(0x2);
+ 229              		.loc 2 123 0
+ 230 010e E9E7     		b	.L6
+ 231              	.L8:
+ 232              		.align	2
+ 233              	.L7:
+ 234 0110 00700440 		.word	1074032640
+ 235 0114 00900440 		.word	1074040832
+ 236 0118 00A00440 		.word	1074044928
+ 237 011c 40F00F40 		.word	1074786368
+ 238 0120 00F00F40 		.word	1074786304
+ 239 0124 00000000 		.word	.LC0
+ 240 0128 10000000 		.word	.LC1
+ 241              		.cfi_endproc
+ 242              	.LFE123:
+ 244              		.section	.text.PORTA_IRQHandler,"ax",%progbits
+ 245              		.align	1
+ 246              		.global	PORTA_IRQHandler
+ 247              		.syntax unified
+ 248              		.thumb
+ 249              		.thumb_func
+ 250              		.fpu fpv4-sp-d16
+ 252              	PORTA_IRQHandler:
+ 253              	.LFB124:
+ 132:../source/main.c **** 				}
+ 133:../source/main.c **** 
+ 134:../source/main.c **** 			}
  135:../source/main.c **** 
- 136:../source/main.c **** 			}
+ 136:../source/main.c **** 
  137:../source/main.c **** 
  138:../source/main.c **** 
- 139:../source/main.c **** 
+ 139:../source/main.c **** }
  140:../source/main.c **** 
- 141:../source/main.c **** }
- 142:../source/main.c **** 
- 143:../source/main.c **** 
- 144:../source/main.c **** __ISR__  PORTA_IRQHandler(void)
- 145:../source/main.c **** {
- 256              		.loc 2 145 0
- 257              		.cfi_startproc
- 258              		@ Stack Align: May be called with mis-aligned SP.
- 259              		@ args = 0, pretend = 0, frame = 0
- 260              		@ frame_needed = 1, uses_anonymous_args = 0
- 261              		@ link register save eliminated.
- 262 0000 6846     		mov	r0, sp
- 263              		.cfi_register 13, 0
- 264 0002 20F00701 		bic	r1, r0, #7
- 265 0006 8D46     		mov	sp, r1
- 266 0008 81B4     		push	{r0, r7}
- 267              		.cfi_def_cfa_offset 8
- 268              		.cfi_offset 13, -8
- 269              		.cfi_offset 7, -4
- 270 000a 00AF     		add	r7, sp, #0
- 271              		.cfi_def_cfa_register 7
+ 141:../source/main.c **** 
+ 142:../source/main.c **** __ISR__  PORTA_IRQHandler(void)
+ 143:../source/main.c **** {
+ 254              		.loc 2 143 0
+ 255              		.cfi_startproc
+ 256              		@ Stack Align: May be called with mis-aligned SP.
+ 257              		@ args = 0, pretend = 0, frame = 0
+ 258              		@ frame_needed = 1, uses_anonymous_args = 0
+ 259              		@ link register save eliminated.
+ 260 0000 6846     		mov	r0, sp
+ 261              		.cfi_register 13, 0
+ 262 0002 20F00701 		bic	r1, r0, #7
+ 263 0006 8D46     		mov	sp, r1
+ 264 0008 81B4     		push	{r0, r7}
+ 265              		.cfi_def_cfa_offset 8
+ 266              		.cfi_offset 13, -8
+ 267              		.cfi_offset 7, -4
+ 268 000a 00AF     		add	r7, sp, #0
+ 269              		.cfi_def_cfa_register 7
+ 144:../source/main.c **** 
+ 145:../source/main.c **** 	// Clear port IRQ flag
  146:../source/main.c **** 
- 147:../source/main.c **** 	// Clear port IRQ flag
- 148:../source/main.c **** 
+ 147:../source/main.c **** 
+ 148:../source/main.c **** 		PORTA->PCR[4] |= PORT_PCR_ISF_MASK;
+ 270              		.loc 2 148 0
+ 271 000c 074B     		ldr	r3, .L10
+ 272 000e 1B69     		ldr	r3, [r3, #16]
+ 273 0010 064A     		ldr	r2, .L10
+ 274 0012 43F08073 		orr	r3, r3, #16777216
+ 275 0016 1361     		str	r3, [r2, #16]
  149:../source/main.c **** 
- 150:../source/main.c **** 		PORTA->PCR[4] |= PORT_PCR_ISF_MASK;
- 272              		.loc 2 150 0
- 273 000c 074B     		ldr	r3, .L10
- 274 000e 1B69     		ldr	r3, [r3, #16]
- 275 0010 064A     		ldr	r2, .L10
- 276 0012 43F08073 		orr	r3, r3, #16777216
- 277 0016 1361     		str	r3, [r2, #16]
+ 150:../source/main.c **** 		PTB->PCOR = (1<<21)|(1<<22);
+ 276              		.loc 2 150 0
+ 277 0018 054B     		ldr	r3, .L10+4
+ 278 001a 4FF4C002 		mov	r2, #6291456
+ 279 001e 9A60     		str	r2, [r3, #8]
  151:../source/main.c **** 
- 152:../source/main.c **** 		PTB->PCOR = (1<<21)|(1<<22);
- 278              		.loc 2 152 0
- 279 0018 054B     		ldr	r3, .L10+4
- 280 001a 4FF4C002 		mov	r2, #6291456
- 281 001e 9A60     		str	r2, [r3, #8]
+ 152:../source/main.c **** 
  153:../source/main.c **** 
- 154:../source/main.c **** 
+ 154:../source/main.c **** }
+ 280              		.loc 2 154 0
+ 281 0020 00BF     		nop
+ 282 0022 BD46     		mov	sp, r7
+ 283              		.cfi_def_cfa_register 13
+ 284              		@ sp needed
+ 285 0024 81BC     		pop	{r0, r7}
+ 286              		.cfi_restore 7
+ 287              		.cfi_restore 0
+ 288              		.cfi_def_cfa_offset 0
+ 289 0026 8546     		mov	sp, r0
+ 290 0028 7047     		bx	lr
+ 291              	.L11:
+ 292 002a 00BF     		.align	2
+ 293              	.L10:
+ 294 002c 00900440 		.word	1074040832
+ 295 0030 40F00F40 		.word	1074786368
+ 296              		.cfi_endproc
+ 297              	.LFE124:
+ 299              		.section	.text.idle,"ax",%progbits
+ 300              		.align	1
+ 301              		.global	idle
+ 302              		.syntax unified
+ 303              		.thumb
+ 304              		.thumb_func
+ 305              		.fpu fpv4-sp-d16
+ 307              	idle:
+ 308              	.LFB125:
  155:../source/main.c **** 
- 156:../source/main.c **** }
- 282              		.loc 2 156 0
- 283 0020 00BF     		nop
- 284 0022 BD46     		mov	sp, r7
- 285              		.cfi_def_cfa_register 13
- 286              		@ sp needed
- 287 0024 81BC     		pop	{r0, r7}
- 288              		.cfi_restore 7
- 289              		.cfi_restore 0
- 290              		.cfi_def_cfa_offset 0
- 291 0026 8546     		mov	sp, r0
- 292 0028 7047     		bx	lr
- 293              	.L11:
- 294 002a 00BF     		.align	2
- 295              	.L10:
- 296 002c 00900440 		.word	1074040832
- 297 0030 40F00F40 		.word	1074786368
- 298              		.cfi_endproc
- 299              	.LFE124:
- 301              		.section	.text.idle,"ax",%progbits
- 302              		.align	1
- 303              		.global	idle
- 304              		.syntax unified
- 305              		.thumb
- 306              		.thumb_func
- 307              		.fpu fpv4-sp-d16
- 309              	idle:
- 310              	.LFB125:
- 157:../source/main.c **** 
- 158:../source/main.c **** 
- 159:../source/main.c **** void idle(void)
- 160:../source/main.c **** {
- 311              		.loc 2 160 0
- 312              		.cfi_startproc
- 313              		@ args = 0, pretend = 0, frame = 0
- 314              		@ frame_needed = 1, uses_anonymous_args = 0
- 315              		@ link register save eliminated.
- 316 0000 80B4     		push	{r7}
- 317              		.cfi_def_cfa_offset 4
- 318              		.cfi_offset 7, -4
- 319 0002 00AF     		add	r7, sp, #0
- 320              		.cfi_def_cfa_register 7
+ 156:../source/main.c **** 
+ 157:../source/main.c **** void idle(void)
+ 158:../source/main.c **** {
+ 309              		.loc 2 158 0
+ 310              		.cfi_startproc
+ 311              		@ args = 0, pretend = 0, frame = 0
+ 312              		@ frame_needed = 1, uses_anonymous_args = 0
+ 313              		@ link register save eliminated.
+ 314 0000 80B4     		push	{r7}
+ 315              		.cfi_def_cfa_offset 4
+ 316              		.cfi_offset 7, -4
+ 317 0002 00AF     		add	r7, sp, #0
+ 318              		.cfi_def_cfa_register 7
+ 159:../source/main.c **** 
+ 160:../source/main.c **** }
+ 319              		.loc 2 160 0
+ 320 0004 00BF     		nop
+ 321 0006 BD46     		mov	sp, r7
+ 322              		.cfi_def_cfa_register 13
+ 323              		@ sp needed
+ 324 0008 5DF8047B 		ldr	r7, [sp], #4
+ 325              		.cfi_restore 7
+ 326              		.cfi_def_cfa_offset 0
+ 327 000c 7047     		bx	lr
+ 328              		.cfi_endproc
+ 329              	.LFE125:
+ 331              		.section	.text.delayLoop,"ax",%progbits
+ 332              		.align	1
+ 333              		.global	delayLoop
+ 334              		.syntax unified
+ 335              		.thumb
+ 336              		.thumb_func
+ 337              		.fpu fpv4-sp-d16
+ 339              	delayLoop:
+ 340              	.LFB126:
  161:../source/main.c **** 
- 162:../source/main.c **** }
- 321              		.loc 2 162 0
- 322 0004 00BF     		nop
- 323 0006 BD46     		mov	sp, r7
- 324              		.cfi_def_cfa_register 13
- 325              		@ sp needed
- 326 0008 5DF8047B 		ldr	r7, [sp], #4
- 327              		.cfi_restore 7
- 328              		.cfi_def_cfa_offset 0
- 329 000c 7047     		bx	lr
- 330              		.cfi_endproc
- 331              	.LFE125:
- 333              		.section	.text.delayLoop,"ax",%progbits
- 334              		.align	1
- 335              		.global	delayLoop
- 336              		.syntax unified
- 337              		.thumb
- 338              		.thumb_func
- 339              		.fpu fpv4-sp-d16
- 341              	delayLoop:
- 342              	.LFB126:
- 163:../source/main.c **** 
- 164:../source/main.c **** 
- 165:../source/main.c **** void delayLoop (uint32_t veces)
- 166:../source/main.c **** {
- 343              		.loc 2 166 0
- 344              		.cfi_startproc
- 345              		@ args = 0, pretend = 0, frame = 8
- 346              		@ frame_needed = 1, uses_anonymous_args = 0
- 347              		@ link register save eliminated.
- 348 0000 80B4     		push	{r7}
- 349              		.cfi_def_cfa_offset 4
- 350              		.cfi_offset 7, -4
- 351 0002 83B0     		sub	sp, sp, #12
- 352              		.cfi_def_cfa_offset 16
- 353 0004 00AF     		add	r7, sp, #0
- 354              		.cfi_def_cfa_register 7
- 355 0006 7860     		str	r0, [r7, #4]
- 167:../source/main.c **** 	while (veces--);
- 356              		.loc 2 167 0
- 357 0008 00BF     		nop
- 358              	.L14:
- 359              		.loc 2 167 0 is_stmt 0 discriminator 1
- 360 000a 7B68     		ldr	r3, [r7, #4]
- 361 000c 5A1E     		subs	r2, r3, #1
- 362 000e 7A60     		str	r2, [r7, #4]
- 363 0010 002B     		cmp	r3, #0
- 364 0012 FAD1     		bne	.L14
- 168:../source/main.c **** }
- 365              		.loc 2 168 0 is_stmt 1
- 366 0014 00BF     		nop
- 367 0016 0C37     		adds	r7, r7, #12
- 368              		.cfi_def_cfa_offset 4
- 369 0018 BD46     		mov	sp, r7
- 370              		.cfi_def_cfa_register 13
- 371              		@ sp needed
- 372 001a 5DF8047B 		ldr	r7, [sp], #4
- 373              		.cfi_restore 7
- 374              		.cfi_def_cfa_offset 0
- 375 001e 7047     		bx	lr
- 376              		.cfi_endproc
- 377              	.LFE126:
- 379              		.section	.text.SysTick_Handler,"ax",%progbits
- 380              		.align	1
- 381              		.global	SysTick_Handler
- 382              		.syntax unified
- 383              		.thumb
- 384              		.thumb_func
- 385              		.fpu fpv4-sp-d16
- 387              	SysTick_Handler:
- 388              	.LFB127:
- 169:../source/main.c **** 
- 170:../source/main.c **** 
- 171:../source/main.c **** __ISR__  SysTick_Handler (void)
- 172:../source/main.c **** {
- 389              		.loc 2 172 0
- 390              		.cfi_startproc
- 391              		@ Stack Align: May be called with mis-aligned SP.
- 392              		@ args = 0, pretend = 0, frame = 0
- 393              		@ frame_needed = 1, uses_anonymous_args = 0
- 394              		@ link register save eliminated.
- 395 0000 6846     		mov	r0, sp
- 396              		.cfi_register 13, 0
- 397 0002 20F00701 		bic	r1, r0, #7
- 398 0006 8D46     		mov	sp, r1
- 399 0008 81B4     		push	{r0, r7}
- 400              		.cfi_def_cfa_offset 8
- 401              		.cfi_offset 13, -8
- 402              		.cfi_offset 7, -4
- 403 000a 00AF     		add	r7, sp, #0
- 404              		.cfi_def_cfa_register 7
- 173:../source/main.c **** 	static uint32_t speed=4;  // 0.5 seg @ tick =125ms
- 174:../source/main.c **** 
- 175:../source/main.c **** 	if (speed==0)
- 405              		.loc 2 175 0
- 406 000c 0A4B     		ldr	r3, .L17
- 407 000e 1B68     		ldr	r3, [r3]
- 408 0010 002B     		cmp	r3, #0
- 409 0012 06D1     		bne	.L16
- 176:../source/main.c **** 	{
- 177:../source/main.c **** 
- 178:../source/main.c **** 		PTB->PTOR = (1<<21)|(1<<22);
- 410              		.loc 2 178 0
- 411 0014 094B     		ldr	r3, .L17+4
- 412 0016 4FF4C002 		mov	r2, #6291456
- 413 001a DA60     		str	r2, [r3, #12]
- 179:../source/main.c **** 		speed=4;
- 414              		.loc 2 179 0
- 415 001c 064B     		ldr	r3, .L17
- 416 001e 0422     		movs	r2, #4
- 417 0020 1A60     		str	r2, [r3]
- 418              	.L16:
+ 162:../source/main.c **** 
+ 163:../source/main.c **** void delayLoop (uint32_t veces)
+ 164:../source/main.c **** {
+ 341              		.loc 2 164 0
+ 342              		.cfi_startproc
+ 343              		@ args = 0, pretend = 0, frame = 8
+ 344              		@ frame_needed = 1, uses_anonymous_args = 0
+ 345              		@ link register save eliminated.
+ 346 0000 80B4     		push	{r7}
+ 347              		.cfi_def_cfa_offset 4
+ 348              		.cfi_offset 7, -4
+ 349 0002 83B0     		sub	sp, sp, #12
+ 350              		.cfi_def_cfa_offset 16
+ 351 0004 00AF     		add	r7, sp, #0
+ 352              		.cfi_def_cfa_register 7
+ 353 0006 7860     		str	r0, [r7, #4]
+ 165:../source/main.c **** 	while (veces--);
+ 354              		.loc 2 165 0
+ 355 0008 00BF     		nop
+ 356              	.L14:
+ 357              		.loc 2 165 0 is_stmt 0 discriminator 1
+ 358 000a 7B68     		ldr	r3, [r7, #4]
+ 359 000c 5A1E     		subs	r2, r3, #1
+ 360 000e 7A60     		str	r2, [r7, #4]
+ 361 0010 002B     		cmp	r3, #0
+ 362 0012 FAD1     		bne	.L14
+ 166:../source/main.c **** }
+ 363              		.loc 2 166 0 is_stmt 1
+ 364 0014 00BF     		nop
+ 365 0016 0C37     		adds	r7, r7, #12
+ 366              		.cfi_def_cfa_offset 4
+ 367 0018 BD46     		mov	sp, r7
+ 368              		.cfi_def_cfa_register 13
+ 369              		@ sp needed
+ 370 001a 5DF8047B 		ldr	r7, [sp], #4
+ 371              		.cfi_restore 7
+ 372              		.cfi_def_cfa_offset 0
+ 373 001e 7047     		bx	lr
+ 374              		.cfi_endproc
+ 375              	.LFE126:
+ 377              		.section	.text.SysTick_Handler,"ax",%progbits
+ 378              		.align	1
+ 379              		.global	SysTick_Handler
+ 380              		.syntax unified
+ 381              		.thumb
+ 382              		.thumb_func
+ 383              		.fpu fpv4-sp-d16
+ 385              	SysTick_Handler:
+ 386              	.LFB127:
+ 167:../source/main.c **** 
+ 168:../source/main.c **** 
+ 169:../source/main.c **** __ISR__  SysTick_Handler (void)
+ 170:../source/main.c **** {
+ 387              		.loc 2 170 0
+ 388              		.cfi_startproc
+ 389              		@ Stack Align: May be called with mis-aligned SP.
+ 390              		@ args = 0, pretend = 0, frame = 0
+ 391              		@ frame_needed = 1, uses_anonymous_args = 0
+ 392              		@ link register save eliminated.
+ 393 0000 6846     		mov	r0, sp
+ 394              		.cfi_register 13, 0
+ 395 0002 20F00701 		bic	r1, r0, #7
+ 396 0006 8D46     		mov	sp, r1
+ 397 0008 81B4     		push	{r0, r7}
+ 398              		.cfi_def_cfa_offset 8
+ 399              		.cfi_offset 13, -8
+ 400              		.cfi_offset 7, -4
+ 401 000a 00AF     		add	r7, sp, #0
+ 402              		.cfi_def_cfa_register 7
+ 171:../source/main.c **** 	static uint32_t speed=4;  // 0.5 seg @ tick =125ms
+ 172:../source/main.c **** 
+ 173:../source/main.c **** 	if (speed==0)
+ 403              		.loc 2 173 0
+ 404 000c 0A4B     		ldr	r3, .L17
+ 405 000e 1B68     		ldr	r3, [r3]
+ 406 0010 002B     		cmp	r3, #0
+ 407 0012 06D1     		bne	.L16
+ 174:../source/main.c **** 	{
+ 175:../source/main.c **** 
+ 176:../source/main.c **** 		PTB->PTOR = (1<<21)|(1<<22);
+ 408              		.loc 2 176 0
+ 409 0014 094B     		ldr	r3, .L17+4
+ 410 0016 4FF4C002 		mov	r2, #6291456
+ 411 001a DA60     		str	r2, [r3, #12]
+ 177:../source/main.c **** 		speed=4;
+ 412              		.loc 2 177 0
+ 413 001c 064B     		ldr	r3, .L17
+ 414 001e 0422     		movs	r2, #4
+ 415 0020 1A60     		str	r2, [r3]
+ 416              	.L16:
+ 178:../source/main.c **** 
+ 179:../source/main.c **** 	}
  180:../source/main.c **** 
- 181:../source/main.c **** 	}
+ 181:../source/main.c **** 	speed--;
+ 417              		.loc 2 181 0
+ 418 0022 054B     		ldr	r3, .L17
+ 419 0024 1B68     		ldr	r3, [r3]
+ 420 0026 013B     		subs	r3, r3, #1
+ 421 0028 034A     		ldr	r2, .L17
+ 422 002a 1360     		str	r3, [r2]
  182:../source/main.c **** 
- 183:../source/main.c **** 	speed--;
- 419              		.loc 2 183 0
- 420 0022 054B     		ldr	r3, .L17
- 421 0024 1B68     		ldr	r3, [r3]
- 422 0026 013B     		subs	r3, r3, #1
- 423 0028 034A     		ldr	r2, .L17
- 424 002a 1360     		str	r3, [r2]
- 184:../source/main.c **** 
+ 183:../source/main.c **** 
+ 184:../source/main.c **** }
+ 423              		.loc 2 184 0
+ 424 002c 00BF     		nop
+ 425 002e BD46     		mov	sp, r7
+ 426              		.cfi_def_cfa_register 13
+ 427              		@ sp needed
+ 428 0030 81BC     		pop	{r0, r7}
+ 429              		.cfi_restore 7
+ 430              		.cfi_restore 0
+ 431              		.cfi_def_cfa_offset 0
+ 432 0032 8546     		mov	sp, r0
+ 433 0034 7047     		bx	lr
+ 434              	.L18:
+ 435 0036 00BF     		.align	2
+ 436              	.L17:
+ 437 0038 00000000 		.word	speed.6971
+ 438 003c 40F00F40 		.word	1074786368
+ 439              		.cfi_endproc
+ 440              	.LFE127:
+ 442              		.section	.text.SysTick_Init,"ax",%progbits
+ 443              		.align	1
+ 444              		.global	SysTick_Init
+ 445              		.syntax unified
+ 446              		.thumb
+ 447              		.thumb_func
+ 448              		.fpu fpv4-sp-d16
+ 450              	SysTick_Init:
+ 451              	.LFB128:
  185:../source/main.c **** 
- 186:../source/main.c **** }
- 425              		.loc 2 186 0
- 426 002c 00BF     		nop
- 427 002e BD46     		mov	sp, r7
- 428              		.cfi_def_cfa_register 13
- 429              		@ sp needed
- 430 0030 81BC     		pop	{r0, r7}
- 431              		.cfi_restore 7
- 432              		.cfi_restore 0
- 433              		.cfi_def_cfa_offset 0
- 434 0032 8546     		mov	sp, r0
- 435 0034 7047     		bx	lr
- 436              	.L18:
- 437 0036 00BF     		.align	2
- 438              	.L17:
- 439 0038 00000000 		.word	speed.6971
- 440 003c 40F00F40 		.word	1074786368
- 441              		.cfi_endproc
- 442              	.LFE127:
- 444              		.section	.text.SysTick_Init,"ax",%progbits
- 445              		.align	1
- 446              		.global	SysTick_Init
- 447              		.syntax unified
- 448              		.thumb
- 449              		.thumb_func
- 450              		.fpu fpv4-sp-d16
- 452              	SysTick_Init:
- 453              	.LFB128:
- 187:../source/main.c **** 
- 188:../source/main.c **** void SysTick_Init (void)
- 189:../source/main.c **** {
- 454              		.loc 2 189 0
- 455              		.cfi_startproc
- 456              		@ args = 0, pretend = 0, frame = 0
- 457              		@ frame_needed = 1, uses_anonymous_args = 0
- 458              		@ link register save eliminated.
- 459 0000 80B4     		push	{r7}
- 460              		.cfi_def_cfa_offset 4
- 461              		.cfi_offset 7, -4
- 462 0002 00AF     		add	r7, sp, #0
- 463              		.cfi_def_cfa_register 7
- 190:../source/main.c **** 	SysTick->CTRL = 0x00;
- 464              		.loc 2 190 0
- 465 0004 084B     		ldr	r3, .L20
- 466 0006 0022     		movs	r2, #0
- 467 0008 1A60     		str	r2, [r3]
- 191:../source/main.c **** 	SysTick->LOAD = 12500000L-1; //12499999L; // <= 125 ms @ 100Mhz
- 468              		.loc 2 191 0
- 469 000a 074B     		ldr	r3, .L20
- 470 000c 074A     		ldr	r2, .L20+4
- 471 000e 5A60     		str	r2, [r3, #4]
- 192:../source/main.c **** 	SysTick->VAL  = 0x00;
- 472              		.loc 2 192 0
- 473 0010 054B     		ldr	r3, .L20
- 474 0012 0022     		movs	r2, #0
- 475 0014 9A60     		str	r2, [r3, #8]
- 193:../source/main.c **** 	SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
- 476              		.loc 2 193 0
- 477 0016 044B     		ldr	r3, .L20
- 478 0018 0722     		movs	r2, #7
- 479 001a 1A60     		str	r2, [r3]
- 194:../source/main.c **** }
- 480              		.loc 2 194 0
- 481 001c 00BF     		nop
- 482 001e BD46     		mov	sp, r7
- 483              		.cfi_def_cfa_register 13
- 484              		@ sp needed
- 485 0020 5DF8047B 		ldr	r7, [sp], #4
- 486              		.cfi_restore 7
- 487              		.cfi_def_cfa_offset 0
- 488 0024 7047     		bx	lr
- 489              	.L21:
- 490 0026 00BF     		.align	2
- 491              	.L20:
- 492 0028 10E000E0 		.word	-536813552
- 493 002c 1FBCBE00 		.word	12499999
- 494              		.cfi_endproc
- 495              	.LFE128:
- 497              		.section	.data.speed.6971,"aw",%progbits
- 498              		.align	2
- 501              	speed.6971:
- 502 0000 04000000 		.word	4
- 503              		.text
- 504              	.Letext0:
- 505              		.file 3 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\sys\\libconfig-arm.h"
- 506              		.file 4 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\stdint.h"
- 507              		.file 5 "C:\\Bruno\\ITBA\\7mo cuatri\\Lab. de Microprocesadores\\Repo\\Micros-Grupo-5\\TPS\\TP2 be
- 508              		.file 6 "C:\\Bruno\\ITBA\\7mo cuatri\\Lab. de Microprocesadores\\Repo\\Micros-Grupo-5\\TPS\\TP2 be
+ 186:../source/main.c **** void SysTick_Init (void)
+ 187:../source/main.c **** {
+ 452              		.loc 2 187 0
+ 453              		.cfi_startproc
+ 454              		@ args = 0, pretend = 0, frame = 0
+ 455              		@ frame_needed = 1, uses_anonymous_args = 0
+ 456              		@ link register save eliminated.
+ 457 0000 80B4     		push	{r7}
+ 458              		.cfi_def_cfa_offset 4
+ 459              		.cfi_offset 7, -4
+ 460 0002 00AF     		add	r7, sp, #0
+ 461              		.cfi_def_cfa_register 7
+ 188:../source/main.c **** 	SysTick->CTRL = 0x00;
+ 462              		.loc 2 188 0
+ 463 0004 084B     		ldr	r3, .L20
+ 464 0006 0022     		movs	r2, #0
+ 465 0008 1A60     		str	r2, [r3]
+ 189:../source/main.c **** 	SysTick->LOAD = 12500000L-1; //12499999L; // <= 125 ms @ 100Mhz
+ 466              		.loc 2 189 0
+ 467 000a 074B     		ldr	r3, .L20
+ 468 000c 074A     		ldr	r2, .L20+4
+ 469 000e 5A60     		str	r2, [r3, #4]
+ 190:../source/main.c **** 	SysTick->VAL  = 0x00;
+ 470              		.loc 2 190 0
+ 471 0010 054B     		ldr	r3, .L20
+ 472 0012 0022     		movs	r2, #0
+ 473 0014 9A60     		str	r2, [r3, #8]
+ 191:../source/main.c **** 	SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
+ 474              		.loc 2 191 0
+ 475 0016 044B     		ldr	r3, .L20
+ 476 0018 0722     		movs	r2, #7
+ 477 001a 1A60     		str	r2, [r3]
+ 192:../source/main.c **** }
+ 478              		.loc 2 192 0
+ 479 001c 00BF     		nop
+ 480 001e BD46     		mov	sp, r7
+ 481              		.cfi_def_cfa_register 13
+ 482              		@ sp needed
+ 483 0020 5DF8047B 		ldr	r7, [sp], #4
+ 484              		.cfi_restore 7
+ 485              		.cfi_def_cfa_offset 0
+ 486 0024 7047     		bx	lr
+ 487              	.L21:
+ 488 0026 00BF     		.align	2
+ 489              	.L20:
+ 490 0028 10E000E0 		.word	-536813552
+ 491 002c 1FBCBE00 		.word	12499999
+ 492              		.cfi_endproc
+ 493              	.LFE128:
+ 495              		.section	.data.speed.6971,"aw",%progbits
+ 496              		.align	2
+ 499              	speed.6971:
+ 500 0000 04000000 		.word	4
+ 501              		.text
+ 502              	.Letext0:
+ 503              		.file 3 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\sys\\libconfig-arm.h"
+ 504              		.file 4 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\stdint.h"
+ 505              		.file 5 "C:\\Bruno\\ITBA\\7mo cuatri\\Lab. de Microprocesadores\\Repo\\Micros-Grupo-5\\TPS\\TP2 be
+ 506              		.file 6 "C:\\Bruno\\ITBA\\7mo cuatri\\Lab. de Microprocesadores\\Repo\\Micros-Grupo-5\\TPS\\TP2 be
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:18     .text.NVIC_EnableIRQ:00000000 $t
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:24     .text.NVIC_EnableIRQ:00000000 NVIC_EnableIRQ
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:64     .text.NVIC_EnableIRQ:00000030 $d
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:69     .rodata:00000000 $d
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:76     .text.main:00000000 $t
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:83     .text.main:00000000 main
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:452    .text.SysTick_Init:00000000 SysTick_Init
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:236    .text.main:00000114 $d
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:247    .text.PORTA_IRQHandler:00000000 $t
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:254    .text.PORTA_IRQHandler:00000000 PORTA_IRQHandler
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:296    .text.PORTA_IRQHandler:0000002c $d
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:302    .text.idle:00000000 $t
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:309    .text.idle:00000000 idle
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:334    .text.delayLoop:00000000 $t
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:341    .text.delayLoop:00000000 delayLoop
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:380    .text.SysTick_Handler:00000000 $t
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:387    .text.SysTick_Handler:00000000 SysTick_Handler
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:439    .text.SysTick_Handler:00000038 $d
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:501    .data.speed.6971:00000000 speed.6971
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:445    .text.SysTick_Init:00000000 $t
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:492    .text.SysTick_Init:00000028 $d
-C:\Users\bruno\AppData\Local\Temp\ccBePa0U.s:498    .data.speed.6971:00000000 $d
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:18     .text.NVIC_EnableIRQ:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:24     .text.NVIC_EnableIRQ:00000000 NVIC_EnableIRQ
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:64     .text.NVIC_EnableIRQ:00000030 $d
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:69     .rodata:00000000 $d
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:76     .text.main:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:83     .text.main:00000000 main
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:450    .text.SysTick_Init:00000000 SysTick_Init
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:234    .text.main:00000110 $d
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:245    .text.PORTA_IRQHandler:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:252    .text.PORTA_IRQHandler:00000000 PORTA_IRQHandler
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:294    .text.PORTA_IRQHandler:0000002c $d
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:300    .text.idle:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:307    .text.idle:00000000 idle
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:332    .text.delayLoop:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:339    .text.delayLoop:00000000 delayLoop
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:378    .text.SysTick_Handler:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:385    .text.SysTick_Handler:00000000 SysTick_Handler
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:437    .text.SysTick_Handler:00000038 $d
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:499    .data.speed.6971:00000000 speed.6971
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:443    .text.SysTick_Init:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:490    .text.SysTick_Init:00000028 $d
+C:\Users\bruno\AppData\Local\Temp\cc4C3UIR.s:496    .data.speed.6971:00000000 $d
                            .group:00000000 wm4.0.33db8b643112917ec54934b4f2c2f387
                            .group:00000000 wm4.redlib_version.h.16.f905717e4b3a91dcbdbb631865150df4
                            .group:00000000 wm4.libconfigarm.h.18.1ad1d24f96d0dc8c4cf52dc19b0aa2c7
@@ -2362,10 +2358,10 @@ hw_DisableInterrupts
 hw_Init
 UART_Init
 UART_SendMsg
+hw_EnableInterrupts
 SPI_Init
 SPI_SendMsg
 SPI_SendByte
-hw_EnableInterrupts
 UART_Get_Status
 UART_Get_Data
 UART_SendChar

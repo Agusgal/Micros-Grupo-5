@@ -109,19 +109,17 @@ unsigned char uart_data;
 
 			UART_SendMsg("Hola como estas",0);
 
-
+			hw_EnableInterrupts();
 
 			SPI_Init();
 			SPI_SendMsg("Hola");
 			SPI_SendByte(0x2);
 
 			// Enable interrupts
-			hw_EnableInterrupts();
 
 			__FOREVER__
 			{
 
-				SPI_Init();
 				SPI_SendMsg("Hola");
 				//SPI_SendByte(0x2);
 

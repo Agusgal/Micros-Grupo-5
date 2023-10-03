@@ -16,6 +16,10 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
+#define IS_RFDF(tmp)	((tmp) | SPI_SR_RFDF_MASK)
+#define IS_TFFF(tmp)	((tmp) | SPI_SR_TFFF_MASK)
+#define IS_EOQF(tmp)	((tmp) | SPI_SR_EOQF_MASK)
+
 #define SPI0_PCS_PIN	0 //PTD0
 #define SPI0_SCK_PIN	1 //PTD1
 #define SPI0_TX_PIN 	2 //PTD2
@@ -219,6 +223,25 @@ void SPI_SendMsg(uint8_t* msg)
 		i++;
 	}
 
+	uint32_t tmp;
+	tmp = SPI0 -> SR;// Dummy read to clear status register
+	// If the TX Fifo has
+	if(IS_TFFF(tmp))
+		{
+			if (get_Queue_Status(0))
+			{
+				buffer_element_t buffer_data_out = pull_Queue_Element(0);
+				uint32_t data_out = SPI_PUSHR_CONT_MASK;
+				if (buffer_data_out.end_of_data)
+				{
+					data_out |= SPI_PUSHR_EOQ_MASK;
+				}
+				data_out |= SPI_PUSHR_PCS(1);
+				data_out |= buffer_data_out.data;
+				SPI0 -> PUSHR = data_out;
+			}
+		}
+
 }
 
 
@@ -234,11 +257,11 @@ void SPI_SendMsg(uint8_t* msg)
  */
 __ISR__ SPI0_IRQHandler(void)
 {
-	uint8_t tmp;
+	uint32_t tmp;
 	tmp = SPI0 -> SR;// Dummy read to clear status register
 
 	// Receive FIFO Drain Flag
-	if(SPI_SR_RFDF(tmp))
+	if(IS_RFDF(tmp))
 	{
 		uint32_t rxdata = SPI0 -> POPR;
 		buffer_element_t data_in= {rxdata, 0};
@@ -247,13 +270,13 @@ __ISR__ SPI0_IRQHandler(void)
 	}
 
 	// End of Queue Frag
-	if(SPI_SR_EOQF(tmp)) //checks if state is available
+	if(IS_EOQF(tmp)) //checks if state is available
 	{
 
 	}
 
 	// Transfer FIFO Fill Flag (1 if not empty)
-	if(SPI_SR_TFFF(tmp))
+	if(IS_TFFF(tmp))
 	{
 		if (get_Queue_Status(0))
 		{
