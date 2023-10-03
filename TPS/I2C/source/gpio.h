@@ -66,6 +66,18 @@ typedef enum
 	PORT_eInterruptAsserted		= 0x0C,
 } PORTEvent_t;
 
+typedef enum
+{
+	PORT_mAnalog,
+	PORT_mGPIO,
+	PORT_mAlt2,
+	PORT_mAlt3,
+	PORT_mAlt4,
+	PORT_mAlt5,
+	PORT_mAlt6,
+	PORT_mAlt7,
+
+} PORTMux_t;
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE

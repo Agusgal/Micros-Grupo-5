@@ -4,16 +4,19 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../source/accel.c \
 ../source/hardware.c \
 ../source/i2c.c \
 ../source/main.c 
 
 C_DEPS += \
+./source/accel.d \
 ./source/hardware.d \
 ./source/i2c.d \
 ./source/main.d 
 
 OBJS += \
+./source/accel.o \
 ./source/hardware.o \
 ./source/i2c.o \
 ./source/main.o 
@@ -31,7 +34,7 @@ source/%.o: ../source/%.c source/subdir.mk
 clean: clean-source
 
 clean-source:
-	-$(RM) ./source/hardware.d ./source/hardware.o ./source/i2c.d ./source/i2c.o ./source/main.d ./source/main.o
+	-$(RM) ./source/accel.d ./source/accel.o ./source/hardware.d ./source/hardware.o ./source/i2c.d ./source/i2c.o ./source/main.d ./source/main.o
 
 .PHONY: clean-source
 

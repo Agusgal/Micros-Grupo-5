@@ -1,6 +1,1 @@
-../source/main.c:49:5:main	4	static
-../source/main.c:55:10:PORTA_IRQHandler	8	static
-../source/main.c:61:6:idle	4	static
-../source/main.c:67:6:delayLoop	16	static
-../source/main.c:73:10:SysTick_Handler	8	static
-../source/main.c:90:6:SysTick_Init	4	static
+../source/main.c:20:5:main	32	static
