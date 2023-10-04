@@ -161,7 +161,7 @@ void SPI_Init (void)
 		SPI0->SR = SPI_SR_TXRXS_MASK ;
 
 		SPI0->RSER = 0x0;
-		SPI0->RSER = SPI_RSER_EOQF_RE_MASK | SPI_RSER_TFFF_RE_SHIFT | SPI_RSER_RFDF_RE_MASK;
+		SPI0->RSER = SPI_RSER_EOQF_RE_MASK | SPI_RSER_RFDF_RE_MASK;
 
 
 		SPI0->MCR &= ~SPI_MCR_HALT_MASK;
@@ -226,24 +226,11 @@ void SPI_SendMsg(uint8_t* msg)
 		i++;
 	}
 
-	uint32_t tmp;
-	tmp = SPI0 -> SR;// Dummy read to clear status register
-	// If the TX Fifo has
-	if(IS_TFFF(tmp))
-		{
-			if (get_Queue_Status(0))
-			{
-				buffer_element_t buffer_data_out = pull_Queue_Element(0);
-				uint32_t data_out = SPI_PUSHR_CONT_MASK;
-				if (buffer_data_out.end_of_data)
-				{
-					data_out |= SPI_PUSHR_EOQ_MASK;
-				}
-				data_out |= SPI_PUSHR_PCS(1);
-				data_out |= buffer_data_out.data;
-				SPI0 -> PUSHR = data_out;
-			}
-		}
+	// Enable TFFF flag to start pushing data to the queue
+	SPI0->RSER |= SPI_RSER_TFFF_RE_MASK;
+
+	// Enable transfer
+	SPI0 -> SR |= SPI_SR_EOQF_MASK;
 
 }
 
@@ -293,7 +280,14 @@ __ISR__ SPI0_IRQHandler(void)
 			data_out |= buffer_data_out.data;
 			SPI0 -> PUSHR = data_out;
 		}
+		// If no element in the queue, disable TFFF interrupts
+		else
+		{	// write 1 to clear TFFF flag
+			SPI0->RSER &= ~SPI_RSER_TFFF_RE_SHIFT;
+		}
 	}
+
+	SPI0 -> SR |= SPI_SR_TFFF_MASK | SPI_SR_EOQF_MASK | SPI_SR_RFDF_MASK;
 }
 
 /**
@@ -377,7 +371,6 @@ static uint8_t get_Queue_Status(uint8_t id)
 
 /*******************************************************************************
  ******************************************************************************/
-
 
 
 
