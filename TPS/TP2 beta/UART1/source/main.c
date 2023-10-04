@@ -7,6 +7,7 @@
 
 #include "hardware.h"
 #include "UART.h"
+#include "SPI.h"
 
 #define __FOREVER__ 	for(;;)
 
@@ -109,27 +110,29 @@ unsigned char uart_data;
 
 			UART_SendMsg("Hola como estas",0);
 
-			hw_EnableInterrupts();
 
 			SPI_Init();
+
+			hw_EnableInterrupts();
+			//SPI_SendMsg("Hola");
+			//SPI_SendByte(0x2);
 			SPI_SendMsg("Hola");
-			SPI_SendByte(0x2);
 
 			// Enable interrupts
 
 			__FOREVER__
 			{
 
-				SPI_SendMsg("Hola");
+				//SPI_SendMsg("Hola");
 				//SPI_SendByte(0x2);
 
 
-				if(UART_Get_Status(0)){
+				//if(UART_Get_Status(0)){
 				//UART_SendMsg("Chau",0);
-				uart_data=UART_Get_Data(0);
+				//uart_data=UART_Get_Data(0);
 				//UART_SendMsg("chau",0);
-				UART_SendChar(uart_data + 1, 0);
-				}
+				//UART_SendChar(uart_data + 1, 0);
+				//b}
 
 			}
 
