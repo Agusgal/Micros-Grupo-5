@@ -17,225 +17,70 @@
   17              	.Ltext0:
   18              		.cfi_sections	.debug_frame
   19              		.file 1 "../source/main.c"
-  20              		.global	pausa
-  21              		.section	.data.pausa,"aw"
-  22              		.align	2
-  25              	pausa:
-  26 0000 01000000 		.word	1
-  27              		.global	pausa1
-  28              		.section	.data.pausa1,"aw"
-  29              		.align	2
-  32              	pausa1:
-  33 0000 01000000 		.word	1
-  34              		.global	pausa2
-  35              		.section	.data.pausa2,"aw"
-  36              		.align	2
-  39              	pausa2:
-  40 0000 01000000 		.word	1
-  41              		.global	pausa3
-  42              		.section	.data.pausa3,"aw"
-  43              		.align	2
-  46              	pausa3:
-  47 0000 01000000 		.word	1
-  48              		.global	pausa4
-  49              		.section	.data.pausa4,"aw"
-  50              		.align	2
-  53              	pausa4:
-  54 0000 01000000 		.word	1
-  55              		.section	.rodata
-  56              		.align	2
-  57              	.LC0:
-  58 0000 02010101 		.ascii	"\002\001\001\001\001\001\000"
-  58      010100
-  59 0007 00000000 		.space	13
-  59      00000000 
-  59      00000000 
-  59      00
-  60              		.section	.text.main,"ax",%progbits
-  61              		.align	1
-  62              		.global	main
-  63              		.syntax unified
-  64              		.thumb
-  65              		.thumb_func
-  67              	main:
-  68              	.LFB123:
-   1:../source/main.c **** /*
-   2:../source/main.c ****  * main.c
-   3:../source/main.c ****  *
-   4:../source/main.c ****  */
-   5:../source/main.c **** 
-   6:../source/main.c **** #include "i2c.h"
+  20              		.section	.text.main,"ax",%progbits
+  21              		.align	1
+  22              		.global	main
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	main:
+  28              	.LFB123:
+   1:../source/main.c **** /***************************************************************************//**
+   2:../source/main.c ****   @file     main.c
+   3:../source/main.c ****   @brief    FW main
+   4:../source/main.c ****   @author   Nicolás Magliola
+   5:../source/main.c ****  ******************************************************************************/
+   6:../source/main.c **** 
    7:../source/main.c **** #include "hardware.h"
-   8:../source/main.c **** #include <FXOS8700CQ.h>
-   9:../source/main.c **** #include "accel.h"
-  10:../source/main.c **** 
-  11:../source/main.c **** #define __FOREVER__ 	for(;;)
+   8:../source/main.c **** 
+   9:../source/main.c **** void App_Init (void);
+  10:../source/main.c **** void App_Run (void);
+  11:../source/main.c **** 
   12:../source/main.c **** 
-  13:../source/main.c **** volatile int pausa=1;
-  14:../source/main.c **** volatile int pausa1=1;
-  15:../source/main.c **** volatile int pausa2=1;
-  16:../source/main.c **** volatile int pausa3=1;
-  17:../source/main.c **** volatile int pausa4=1;
-  18:../source/main.c **** 
+  13:../source/main.c **** int main (void)
+  14:../source/main.c **** {
+  29              		.loc 1 14 1
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 1, uses_anonymous_args = 0
+  33 0000 80B5     		push	{r7, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 7, -8
+  36              		.cfi_offset 14, -4
+  37 0002 00AF     		add	r7, sp, #0
+  38              		.cfi_def_cfa_register 7
+  15:../source/main.c ****     hw_Init();
+  39              		.loc 1 15 5
+  40 0004 FFF7FEFF 		bl	hw_Init
+  16:../source/main.c ****     hw_DisableInterrupts();
+  41              		.loc 1 16 5
+  42 0008 FFF7FEFF 		bl	hw_DisableInterrupts
+  17:../source/main.c ****     App_Init(); /* Program-specific setup */
+  43              		.loc 1 17 5
+  44 000c FFF7FEFF 		bl	App_Init
+  18:../source/main.c ****     hw_EnableInterrupts();
+  45              		.loc 1 18 5
+  46 0010 FFF7FEFF 		bl	hw_EnableInterrupts
+  47              	.L2:
   19:../source/main.c **** 
-  20:../source/main.c **** int main (void)
-  21:../source/main.c **** {
-  69              		.loc 1 21 1
-  70              		.cfi_startproc
-  71              		@ args = 0, pretend = 0, frame = 24
-  72              		@ frame_needed = 1, uses_anonymous_args = 0
-  73 0000 80B5     		push	{r7, lr}
-  74              		.cfi_def_cfa_offset 8
-  75              		.cfi_offset 7, -8
-  76              		.cfi_offset 14, -4
-  77 0002 86B0     		sub	sp, sp, #24
-  78              		.cfi_def_cfa_offset 32
-  79 0004 00AF     		add	r7, sp, #0
-  80              		.cfi_def_cfa_register 7
-  22:../source/main.c **** 	uint8_t read_buffer[20]={2,1,1,1,1,1};
-  81              		.loc 1 22 10
-  82 0006 244A     		ldr	r2, .L8
-  83 0008 3B1D     		adds	r3, r7, #4
-  84 000a 92E80300 		ldm	r2, {r0, r1}
-  85 000e 1860     		str	r0, [r3]
-  86 0010 0433     		adds	r3, r3, #4
-  87 0012 1980     		strh	r1, [r3]	@ movhi
-  88 0014 0233     		adds	r3, r3, #2
-  89 0016 0A0C     		lsrs	r2, r1, #16
-  90 0018 1A70     		strb	r2, [r3]
-  91 001a 07F10B03 		add	r3, r7, #11
-  92 001e 0022     		movs	r2, #0
-  93 0020 1A60     		str	r2, [r3]	@ unaligned
-  94 0022 5A60     		str	r2, [r3, #4]	@ unaligned
-  95 0024 9A60     		str	r2, [r3, #8]	@ unaligned
-  96 0026 1A73     		strb	r2, [r3, #12]
-  23:../source/main.c **** 	uint8_t write_buffer[]={1};
-  97              		.loc 1 23 10
-  98 0028 0123     		movs	r3, #1
-  99 002a 3B70     		strb	r3, [r7]
-  24:../source/main.c **** 
-  25:../source/main.c **** 	I2C_InitModule(0);
- 100              		.loc 1 25 2
- 101 002c 0020     		movs	r0, #0
- 102 002e FFF7FEFF 		bl	I2C_InitModule
-  26:../source/main.c **** 	while(pausa);
- 103              		.loc 1 26 7
- 104 0032 00BF     		nop
- 105              	.L2:
- 106              		.loc 1 26 8 discriminator 1
- 107 0034 194B     		ldr	r3, .L8+4
- 108 0036 1B68     		ldr	r3, [r3]
- 109 0038 002B     		cmp	r3, #0
- 110 003a FBD1     		bne	.L2
-  27:../source/main.c **** 	I2C_Read_FX_Reg(M_CTRL_REG1,read_buffer);
- 111              		.loc 1 27 2
- 112 003c 3B1D     		adds	r3, r7, #4
- 113 003e 1946     		mov	r1, r3
- 114 0040 5B20     		movs	r0, #91
- 115 0042 FFF7FEFF 		bl	I2C_Read_FX_Reg
-  28:../source/main.c **** 
-  29:../source/main.c **** 	while(pausa1);
- 116              		.loc 1 29 7
- 117 0046 00BF     		nop
- 118              	.L3:
- 119              		.loc 1 29 8 discriminator 1
- 120 0048 154B     		ldr	r3, .L8+8
- 121 004a 1B68     		ldr	r3, [r3]
- 122 004c 002B     		cmp	r3, #0
- 123 004e FBD1     		bne	.L3
-  30:../source/main.c **** 	I2C_Read_FX_Reg(TEMP_REG,read_buffer);
- 124              		.loc 1 30 2
- 125 0050 3B1D     		adds	r3, r7, #4
- 126 0052 1946     		mov	r1, r3
- 127 0054 5120     		movs	r0, #81
- 128 0056 FFF7FEFF 		bl	I2C_Read_FX_Reg
-  31:../source/main.c **** 	while(pausa2);
- 129              		.loc 1 31 7
- 130 005a 00BF     		nop
- 131              	.L4:
- 132              		.loc 1 31 8 discriminator 1
- 133 005c 114B     		ldr	r3, .L8+12
- 134 005e 1B68     		ldr	r3, [r3]
- 135 0060 002B     		cmp	r3, #0
- 136 0062 FBD1     		bne	.L4
-  32:../source/main.c **** 	I2C_Write_FX_Reg(M_CTRL_REG1,write_buffer);
- 137              		.loc 1 32 2
- 138 0064 3B46     		mov	r3, r7
- 139 0066 1946     		mov	r1, r3
- 140 0068 5B20     		movs	r0, #91
- 141 006a FFF7FEFF 		bl	I2C_Write_FX_Reg
-  33:../source/main.c **** 	while(pausa3);
- 142              		.loc 1 33 7
- 143 006e 00BF     		nop
- 144              	.L5:
- 145              		.loc 1 33 8 discriminator 1
- 146 0070 0D4B     		ldr	r3, .L8+16
- 147 0072 1B68     		ldr	r3, [r3]
- 148 0074 002B     		cmp	r3, #0
- 149 0076 FBD1     		bne	.L5
-  34:../source/main.c **** 	I2C_Read_FX_Reg(TEMP_REG,write_buffer);
- 150              		.loc 1 34 2
- 151 0078 3B46     		mov	r3, r7
- 152 007a 1946     		mov	r1, r3
- 153 007c 5120     		movs	r0, #81
- 154 007e FFF7FEFF 		bl	I2C_Read_FX_Reg
-  35:../source/main.c **** 
-  36:../source/main.c **** 	while (pausa4);
- 155              		.loc 1 36 8
- 156 0082 00BF     		nop
- 157              	.L6:
- 158              		.loc 1 36 9 discriminator 1
- 159 0084 094B     		ldr	r3, .L8+20
- 160 0086 1B68     		ldr	r3, [r3]
- 161 0088 002B     		cmp	r3, #0
- 162 008a FBD1     		bne	.L6
- 163 008c 0023     		movs	r3, #0
-  37:../source/main.c **** }
- 164              		.loc 1 37 1
- 165 008e 1846     		mov	r0, r3
- 166 0090 1837     		adds	r7, r7, #24
- 167              		.cfi_def_cfa_offset 8
- 168 0092 BD46     		mov	sp, r7
- 169              		.cfi_def_cfa_register 13
- 170              		@ sp needed
- 171 0094 80BD     		pop	{r7, pc}
- 172              	.L9:
- 173 0096 00BF     		.align	2
- 174              	.L8:
- 175 0098 00000000 		.word	.LC0
- 176 009c 00000000 		.word	pausa
- 177 00a0 00000000 		.word	pausa1
- 178 00a4 00000000 		.word	pausa2
- 179 00a8 00000000 		.word	pausa3
- 180 00ac 00000000 		.word	pausa4
- 181              		.cfi_endproc
- 182              	.LFE123:
- 184              		.text
- 185              	.Letext0:
- 186              		.file 2 "/Applications/MCUXpressoIDE_11.8.0_1165/ide/plugins/com.nxp.mcuxpresso.tools.macosx_11.8.
- 187              		.file 3 "../source/i2c.h"
- 188              		.file 4 "../source/accel.h"
+  20:../source/main.c ****     __FOREVER__
+  21:../source/main.c ****         App_Run(); /* Program-specific loop  */
+  48              		.loc 1 21 9 discriminator 1
+  49 0014 FFF7FEFF 		bl	App_Run
+  50 0018 FCE7     		b	.L2
+  51              		.cfi_endproc
+  52              	.LFE123:
+  54              		.text
+  55              	.Letext0:
+  56              		.file 2 "/Users/juanpablo/Documents/Micros/MCUXpressoIDE/workspace/Micros-Grupo-5/TPS/I2C/SDK/star
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 main.c
-/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cc7LlO1g.s:25     .data.pausa:0000000000000000 pausa
-/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cc7LlO1g.s:22     .data.pausa:0000000000000000 $d
-/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cc7LlO1g.s:32     .data.pausa1:0000000000000000 pausa1
-/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cc7LlO1g.s:29     .data.pausa1:0000000000000000 $d
-/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cc7LlO1g.s:39     .data.pausa2:0000000000000000 pausa2
-/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cc7LlO1g.s:36     .data.pausa2:0000000000000000 $d
-/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cc7LlO1g.s:46     .data.pausa3:0000000000000000 pausa3
-/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cc7LlO1g.s:43     .data.pausa3:0000000000000000 $d
-/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cc7LlO1g.s:53     .data.pausa4:0000000000000000 pausa4
-/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cc7LlO1g.s:50     .data.pausa4:0000000000000000 $d
-/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cc7LlO1g.s:56     .rodata:0000000000000000 $d
-/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cc7LlO1g.s:61     .text.main:0000000000000000 $t
-/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cc7LlO1g.s:67     .text.main:0000000000000000 main
-/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cc7LlO1g.s:175    .text.main:0000000000000098 $d
+/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cco81qcG.s:21     .text.main:0000000000000000 $t
+/var/folders/mt/2789gh7n01n3x6vbqrlgzf9r0000gn/T//cco81qcG.s:27     .text.main:0000000000000000 main
                            .group:0000000000000000 wm4.0.23798b1d0196e1dacad68e887eef18fd
                            .group:0000000000000000 wm4.redlib_version.h.24.4f43d7bc124a54bfe120050dd03d6b37
                            .group:0000000000000000 wm4.libconfigarm.h.19.34723c94cbd19598192aa6b1e87fca41
                            .group:0000000000000000 wm4.stdint.h.31.58198de4ea930fb897655479091e17c7
-                           .group:0000000000000000 wm4.i2c.h.23.ba34943244594991ffebafee84b7cca7
                            .group:0000000000000000 wm4.stdbool.h.15.fddf1cb2402fd739d8e2516677869231
                            .group:0000000000000000 wm4.fsl_device_registers.h.32.f10b25a7fd7ad45b9a40904c33f28816
                            .group:0000000000000000 wm4.MK64F12.h.105.e884e5c80776532d2ec0f5c21e2ea7cb
@@ -246,9 +91,10 @@ DEFINED SYMBOLS
                            .group:0000000000000000 wm4.MK64F12.h.475.cafa8e1e521f96f0b72de286863a6df7
                            .group:0000000000000000 wm4.MK64F12_features.h.92.512cea46d882153168efeec0bc3a9da7
                            .group:0000000000000000 wm4.hardware.h.27.0531344360c1b4ef1fba1263e2a4c488
-                           .group:0000000000000000 wm4.FXOS8700CQ.h.10.e9b2be8a3b923610c300948aa46e3954
 
 UNDEFINED SYMBOLS
-I2C_InitModule
-I2C_Read_FX_Reg
-I2C_Write_FX_Reg
+hw_Init
+hw_DisableInterrupts
+App_Init
+hw_EnableInterrupts
+App_Run

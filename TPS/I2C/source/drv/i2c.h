@@ -14,7 +14,6 @@
 
 
 
-
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -67,6 +66,7 @@ typedef struct{
 	size_t RW_index;
 }I2C_Object_t;
 
+typedef enum {I2C_Not_Yet,I2C_Done,I2C_Do} I2C_Event_Status;
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE

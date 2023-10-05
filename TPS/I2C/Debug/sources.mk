@@ -14,7 +14,8 @@ OBJS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-CMSIS \
+SDK/CMSIS \
+SDK/startup \
 source \
-startup \
+source/drv \
 

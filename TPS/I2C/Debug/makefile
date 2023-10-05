@@ -8,9 +8,10 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include startup/subdir.mk
+-include source/drv/subdir.mk
 -include source/subdir.mk
--include CMSIS/subdir.mk
+-include SDK/startup/subdir.mk
+-include SDK/CMSIS/subdir.mk
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(strip $(C_DEPS)),)
 -include $(C_DEPS)

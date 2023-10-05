@@ -4,6 +4,7 @@
  ******************************************************************************/
 
 #include "i2c.h"
+#include "accel.h"
 #include "MK64F12.h"
 #include "board.h"
 #include "hardware.h"
@@ -79,7 +80,7 @@ typedef struct {
 
 static BaudRate_t SetBaudRate (uint32_t desiredBaudRate);
 
-
+void I2C_End();
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -224,6 +225,7 @@ I2C_Status_t I2C_IRQHandler(I2C_Module_t module)
 							{
 								I2C_OBJ_STATUS=I2C_Idle;
 								I2C_STOP_SIGNAL;
+								I2C_End();
 							}
 						}
 
@@ -267,6 +269,7 @@ I2C_Status_t I2C_IRQHandler(I2C_Module_t module)
 					I2C_CLEAR_NACK;
 					I2C_OBJ_RW_INDEX++;
 					I2C_OBJ_STATUS=I2C_Idle;
+					I2C_End();
 				}
 				else
 				{
@@ -283,6 +286,7 @@ I2C_Status_t I2C_IRQHandler(I2C_Module_t module)
 					I2C_OBJ_R_BUFFER[I2C_OBJ_RW_INDEX] = I2C_READ_DATA;	//Leo el último dato
 					I2C_OBJ_STATUS=I2C_Idle;
 					I2C_STOP_SIGNAL;		// Emito la señal de stop
+					I2C_End();
 				}
 				else	// Si no es el último, sigo leyendo
 				{
@@ -328,7 +332,10 @@ static BaudRate_t SetBaudRate(uint32_t desiredBaudRate)
   return setting;
 }
 
-
+void I2C_End()
+{
+	SetNextAccelEvent();
+}
 
 __ISR__ I2C0_IRQHandler(void)
 {
