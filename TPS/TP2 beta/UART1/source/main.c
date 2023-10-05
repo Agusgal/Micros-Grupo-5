@@ -49,95 +49,93 @@ void delayLoop (uint32_t veces);
 
 int main (void)
 {
- uint32_t temp;
- uint32_t pin;
- uint32_t data;
+	 uint32_t temp;
+	 uint32_t pin;
+	 uint32_t data;
 
-unsigned char uart_data;
-			hw_DisableInterrupts();
- 	 	 	hw_Init ();
-			//Enable clocking for port B
+	unsigned char uart_data;
+	hw_DisableInterrupts();
+	hw_Init ();
+	//Enable clocking for port B
 
-			SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;
-			SIM->SCGC5 |= SIM_SCGC5_PORTA_MASK;
+	SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;
+	SIM->SCGC5 |= SIM_SCGC5_PORTA_MASK;
 
-			PORTA->PCR[4] |= PORT_PCR_ISF_MASK;  //Clear mask
-			NVIC_EnableIRQ(PORTA_IRQn);
+	PORTA->PCR[4] |= PORT_PCR_ISF_MASK;  //Clear mask
+	NVIC_EnableIRQ(PORTA_IRQn);
 
 
-			//Configure port control register pin 22 PORTB
+	//Configure port control register pin 22 PORTB
 
-		/*	PORTB->PCR[22]=0x0; //Clear all bits
-			PORTB->PCR[22]|=PORT_PCR_MUX(PORT_mGPIO); 		//Set MUX to GPIO
-			PORTB->PCR[22]|=PORT_PCR_DSE(1);          		//Drive strength enable
-			PORTB->PCR[22]|=PORT_PCR_IRQC(PORT_eDisabled);  //Disable interrupts
-		*/
+/*	PORTB->PCR[22]=0x0; //Clear all bits
+	PORTB->PCR[22]|=PORT_PCR_MUX(PORT_mGPIO); 		//Set MUX to GPIO
+	PORTB->PCR[22]|=PORT_PCR_DSE(1);          		//Drive strength enable
+	PORTB->PCR[22]|=PORT_PCR_IRQC(PORT_eDisabled);  //Disable interrupts
+*/
 
 
 
 /////////// Multiple Pins at once on PORT B
 
-			temp =PORT_GPCHR_GPWE((1<<(21-16))|(1<<(22-16))); // Which Pins
-			// Now set pin properties
-			temp|=PORT_GPCHR_GPWD(PORT_PCR_MUX(PORT_mGPIO));  //Set MUX to GPIO
-			temp|=PORT_GPCHR_GPWD(PORT_PCR_DSE(1));			  //Drive strength enable
-			PORTB->GPCHR=temp;
+	temp =PORT_GPCHR_GPWE((1<<(21-16))|(1<<(22-16))); // Which Pins
+	// Now set pin properties
+	temp|=PORT_GPCHR_GPWD(PORT_PCR_MUX(PORT_mGPIO));  //Set MUX to GPIO
+	temp|=PORT_GPCHR_GPWD(PORT_PCR_DSE(1));			  //Drive strength enable
+	PORTB->GPCHR=temp;
 
 
 /////////// Input Pin 4
-			PORTA->PCR[4]=0x0; //Clear
-			PORTA->PCR[4]|=PORT_PCR_MUX(PORT_mGPIO); 		       //Set MUX to GPIO
-			PORTA->PCR[4]|=PORT_PCR_PE(1);          		       //Pull UP/Down  Enable
-			PORTA->PCR[4]|=PORT_PCR_PS(1);          		       //Pull UP
-			//PORTA->PCR[4]|=PORT_PCR_IRQC(PORT_eInterruptFalling);  //Enable Falling edge interrupts
-			PORTA->PCR[4]|=PORT_PCR_IRQC(PORT_eInterruptRising);  //Enable Rising edge interrupts
+	PORTA->PCR[4]=0x0; //Clear
+	PORTA->PCR[4]|=PORT_PCR_MUX(PORT_mGPIO); 		       //Set MUX to GPIO
+	PORTA->PCR[4]|=PORT_PCR_PE(1);          		       //Pull UP/Down  Enable
+	PORTA->PCR[4]|=PORT_PCR_PS(1);          		       //Pull UP
+	//PORTA->PCR[4]|=PORT_PCR_IRQC(PORT_eInterruptFalling);  //Enable Falling edge interrupts
+	PORTA->PCR[4]|=PORT_PCR_IRQC(PORT_eInterruptRising);  //Enable Rising edge interrupts
 
-			//////////
+	//////////
 
-			PTB->PSOR = (1<<21)|(1<<22);
+	PTB->PSOR = (1<<21)|(1<<22);
 
-			// Configure GPIO registers
+	// Configure GPIO registers
 
-			// Configurar como salida pin 22 y pin 21 PTB
-			PTB->PDDR |= (1<<21)|(1<<22);
-			// Configurar como entrada pin 4 PTA
-			PTA->PDDR |= (0<<4);
+	// Configurar como salida pin 22 y pin 21 PTB
+	PTB->PDDR |= (1<<21)|(1<<22);
+	// Configurar como entrada pin 4 PTA
+	PTA->PDDR |= (0<<4);
 
-			SysTick_Init();
-
-
-			UART_Init();
-
-			UART_SendMsg("Hola como estas",0);
+	SysTick_Init();
 
 
-			SPI_Init();
+	UART_Init();
 
-			hw_EnableInterrupts();
-			//SPI_SendMsg("Hola");
-			//SPI_SendByte(0x2);
-			SPI_SendMsg("Hola");
-
-			// Enable interrupts
-
-			__FOREVER__
-			{
-
-				//SPI_SendMsg("Hola");
-				//SPI_SendByte(0x2);
+	UART_SendMsg("Hola como estas",0);
 
 
-				//if(UART_Get_Status(0)){
-				//UART_SendMsg("Chau",0);
-				//uart_data=UART_Get_Data(0);
-				//UART_SendMsg("chau",0);
-				//UART_SendChar(uart_data + 1, 0);
-				//b}
+	SPI_Init();
 
-			}
+	hw_EnableInterrupts();
+	//SPI_SendMsg("Hola");
+	//SPI_SendByte(0x2);
+	SPI_SendMsg("Hola");
+	SPI_SendMsg("Messi");
+
+	// Enable interrupts
+
+	__FOREVER__
+	{
+
+		//SPI_SendMsg("Hola");
+		//SPI_SendByte(0x2);
 
 
+		//if(UART_Get_Status(0)){
+		//UART_SendMsg("Chau",0);
+		//uart_data=UART_Get_Data(0);
+		//UART_SendMsg("chau",0);
+		//UART_SendChar(uart_data + 1, 0);
+		//b}
 
+	}
 
 }
 

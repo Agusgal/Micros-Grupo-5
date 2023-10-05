@@ -16,9 +16,9 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define IS_RFDF(tmp)	((tmp) | SPI_SR_RFDF_MASK)
-#define IS_TFFF(tmp)	((tmp) | SPI_SR_TFFF_MASK)
-#define IS_EOQF(tmp)	((tmp) | SPI_SR_EOQF_MASK)
+#define IS_RFDF(tmp)	((tmp) & SPI_SR_RFDF_MASK)
+#define IS_TFFF(tmp)	((tmp) & SPI_SR_TFFF_MASK)
+#define IS_EOQF(tmp)	((tmp) & SPI_SR_EOQF_MASK)
 
 #define SPI0_PCS_PIN	0 //PTD0
 #define SPI0_SCK_PIN	1 //PTD1
@@ -118,13 +118,13 @@ void SPI_Init (void)
 
 // Note: 5.6 Clock Gating page 192
 // Any bus access to a peripheral that has its clock disabled generates an error termination.
-
+		SIM->SCGC5 |= SIM_SCGC5_PORTD_MASK;
 
 	    SIM->SCGC6 |= SIM_SCGC6_SPI0_MASK;
 	    SIM->SCGC6 |= SIM_SCGC6_SPI1_MASK;
 	    SIM->SCGC3 |= SIM_SCGC3_SPI2_MASK;
 
-	    SIM->SCGC5 |= SIM_SCGC5_PORTD_MASK;
+
 
 		NVIC_EnableIRQ(SPI0_IRQn);
 		NVIC_EnableIRQ(SPI1_IRQn);
@@ -152,7 +152,8 @@ void SPI_Init (void)
 	//Enable SPI0 Xmiter and Rcvr
 
 		SPI0->MCR = 0x0;
-		SPI0->MCR = SPI_MCR_MSTR_MASK | SPI_MCR_CONT_SCKE_MASK | SPI_MCR_HALT_MASK;
+		// Chip select is active Low for Can Controller
+		SPI0->MCR = SPI_MCR_MSTR_MASK | SPI_MCR_CONT_SCKE_MASK | SPI_MCR_HALT_MASK | SPI_MCR_PCSIS_MASK;
 
 		SPI0->CTAR[0] = 0x0;
 		SPI0->CTAR[0] = SPI_CTAR_FMSZ_MASK | SPI_CTAR_CPHA_MASK|SPI_CTAR_PBR_MASK|SPI_CTAR_BR(6);
@@ -160,10 +161,11 @@ void SPI_Init (void)
 		SPI0->SR = 0x0;
 		SPI0->SR = SPI_SR_TXRXS_MASK ;
 
+		// Only Read Drain Flag enable (TFFF is enabled everytime a new message is to be sent)
 		SPI0->RSER = 0x0;
-		SPI0->RSER = SPI_RSER_EOQF_RE_MASK | SPI_RSER_RFDF_RE_MASK;
+		SPI0->RSER = SPI_RSER_RFDF_RE_MASK;
 
-
+		// Enable transmissions
 		SPI0->MCR &= ~SPI_MCR_HALT_MASK;
 
 		queue_Init(0);
@@ -230,7 +232,7 @@ void SPI_SendMsg(uint8_t* msg)
 	SPI0->RSER |= SPI_RSER_TFFF_RE_MASK;
 
 	// Enable transfer
-	SPI0 -> SR |= SPI_SR_EOQF_MASK;
+	//SPI0 -> SR |= SPI_SR_EOQF_MASK;
 
 }
 
@@ -247,27 +249,13 @@ void SPI_SendMsg(uint8_t* msg)
  */
 __ISR__ SPI0_IRQHandler(void)
 {
-	uint32_t tmp;
-	tmp = SPI0 -> SR;// Dummy read to clear status register
-
-	// Receive FIFO Drain Flag
-	if(IS_RFDF(tmp))
-	{
-		uint32_t rxdata = SPI0 -> POPR;
-		buffer_element_t data_in= {rxdata, 0};
-		push_Queue_Element(1, data_in); //positions itself in the receiver queue
-		// check if flag should be cleared (Maybe better to do at the end of all interrupts
-	}
-
-	// End of Queue Frag
-	if(IS_EOQF(tmp)) //checks if state is available
-	{
-
-	}
+	uint32_t tmp, clearFlags = 0x0;
+	tmp = SPI0 -> SR;// Dummy read status register
 
 	// Transfer FIFO Fill Flag (1 if not empty)
 	if(IS_TFFF(tmp))
 	{
+		clearFlags |= SPI_SR_TFFF_MASK;
 		if (get_Queue_Status(0))
 		{
 			buffer_element_t buffer_data_out = pull_Queue_Element(0);
@@ -275,19 +263,34 @@ __ISR__ SPI0_IRQHandler(void)
 			if (buffer_data_out.end_of_data)
 			{
 				data_out |= SPI_PUSHR_EOQ_MASK;
+
+				// If last word, indicate that the chip select should not be held
+				data_out &= ~SPI_PUSHR_CONT_MASK;
 			}
+			// Select chip_select 0
 			data_out |= SPI_PUSHR_PCS(1);
-			data_out |= buffer_data_out.data;
+			data_out |= SPI_PUSHR_TXDATA(buffer_data_out.data);
 			SPI0 -> PUSHR = data_out;
 		}
 		// If no element in the queue, disable TFFF interrupts
 		else
-		{	// write 1 to clear TFFF flag
-			SPI0->RSER &= ~SPI_RSER_TFFF_RE_SHIFT;
+		{
+			// write 0 to disable TFFF interrupt
+			SPI0->RSER &= ~SPI_RSER_TFFF_RE_MASK;
 		}
 	}
 
-	SPI0 -> SR |= SPI_SR_TFFF_MASK | SPI_SR_EOQF_MASK | SPI_SR_RFDF_MASK;
+	// Receive FIFO Drain Flag
+	if(IS_RFDF(tmp))
+	{
+		clearFlags |= SPI_SR_RFDF_MASK;
+		uint32_t rxdata = SPI0 -> POPR;
+		buffer_element_t data_in= {rxdata, 0};
+		push_Queue_Element(1, data_in); //positions itself in the receiver queue
+		// check if flag should be cleared (Maybe better to do at the end of all interrupts
+	}
+
+	SPI0 -> SR |= clearFlags;	// this, in particular, erases the EOQ flag (to be taken into account)
 }
 
 /**
