@@ -153,10 +153,10 @@ void SPI_Init (void)
 
 		SPI0->MCR = 0x0;
 		// Chip select is active Low for Can Controller
-		SPI0->MCR = SPI_MCR_MSTR_MASK | SPI_MCR_CONT_SCKE_MASK | SPI_MCR_HALT_MASK | SPI_MCR_PCSIS_MASK;
+		SPI0->MCR = SPI_MCR_MSTR_MASK | SPI_MCR_PCSIS_MASK;
 
 		SPI0->CTAR[0] = 0x0;
-		SPI0->CTAR[0] = SPI_CTAR_FMSZ_MASK | SPI_CTAR_CPHA_MASK|SPI_CTAR_PBR_MASK|SPI_CTAR_BR(6);
+		SPI0->CTAR[0] = SPI_CTAR_FMSZ(7)  | SPI_CTAR_CPOL_MASK |SPI_CTAR_CPHA_MASK|SPI_CTAR_PBR_MASK|SPI_CTAR_BR(6);
 
 		SPI0->SR = 0x0;
 		SPI0->SR = SPI_SR_TXRXS_MASK ;
@@ -166,7 +166,7 @@ void SPI_Init (void)
 		SPI0->RSER = SPI_RSER_RFDF_RE_MASK;
 
 		// Enable transmissions
-		SPI0->MCR &= ~SPI_MCR_HALT_MASK;
+		//SPI0->MCR &= ~SPI_MCR_HALT_MASK;
 
 		queue_Init(0);
 		queue_Init(1);
@@ -251,6 +251,7 @@ __ISR__ SPI0_IRQHandler(void)
 {
 	uint32_t tmp, clearFlags = 0x0;
 	tmp = SPI0 -> SR;// Dummy read status register
+	//SPI0 -> SR = tmp; //clear all flags
 
 	// Transfer FIFO Fill Flag (1 if not empty)
 	if(IS_TFFF(tmp))
