@@ -30,6 +30,9 @@ enum { PA, PB, PC, PD, PE };
 #define PIN2PORT(p)         (((p)>>5) & 0x07)
 #define PIN2NUM(p)          ((p) & 0x1F)
 
+#define LED_GREEN_PIN	PORTNUM2PIN(PE,26)
+#define LED_RED_PIN		PORTNUM2PIN(PB,22)
+#define LED_BLUE_PIN	PORTNUM2PIN(PB,21)
 
 // Modes
 #ifndef INPUT

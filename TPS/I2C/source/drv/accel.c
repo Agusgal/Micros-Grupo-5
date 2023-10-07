@@ -7,11 +7,19 @@
 #include "accel.h"
 #include "FXOS8700CQ.h"
 #include <stdbool.h>
+#include "SysTick.h"
+#include <math.h>
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
 #define CALIBRATION_COUNT 100
+#define FXOS8700CQ_I2C_BAUD_RATE        100000U
+#define FXOS8700CQ_UPDATE_TICK_MS       50		//20 Hz
+//#define FXOS8700CQ_UPDATE_TICK          TIMER_MS2TICKS(FXOS8700CQ_UPDATE_TICK_MS)
+#define FXOS8700CQ_WRITE_BUFFER_SIZE    20
+#define FXOS8700CQ_READ_BUFFER_SIZE     20
+#define FXOS8700CQ_WHOAMI_VALUE         0xC7
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH LOCAL SCOPE
@@ -23,10 +31,18 @@ typedef struct {
 } Coord8_t;
 
 typedef struct {
-	uint16_t x;
-	uint16_t y;
-	uint16_t z;
+	int16_t x;
+	int16_t y;
+	int16_t z;
 } Coord16_t;
+
+typedef struct {
+	float x;
+	float y;
+	float z;
+} Coord_Float_t;
+
+
 
 typedef struct {
 	uint16_t x14;		// 14 bit data
@@ -48,23 +64,46 @@ typedef struct {
 	Coord8_t offset;
 } Mag_Out_t;
 
+typedef enum {
+  FX_Init,
+  FX_Running,
+  FX_Error
+} acc_status_t;
+
+
+
+// Accelerometer data structure
+typedef struct {
+
+  /* Status and control fields of the context */
+  bool                  alreadyInit;            // When the driver is already initialized
+  acc_status_t          status;                 // Global status of the accelerometer driver
+  uint8_t               counter;
+
+  Coord16_t	          	accelerometer;        // Vector acceleration
+  Coord16_t				magnetometer;		 //
+  Coord_Float_t	        accelerometer_f;     // Vector acceleration
+  Coord_Float_t			magnetometer_f;		 //
+  bool					updated;
+  Orient_t				orientation;
+
+  /* I2C message buffers */
+  uint8_t               writeBuffer[FXOS8700CQ_WRITE_BUFFER_SIZE];
+  uint8_t               readBuffer[FXOS8700CQ_READ_BUFFER_SIZE];
+} Accel_t;
+
 Acc_Out_t Acc_Data;
 Mag_Out_t Mag_Data;
 
-uint8_t EventIndex=0;
-bool noActiveEvent=true;
-typedef enum {FX_Initial,FX_Mag_Calib,FX_Acc_Calib,FX_Read} FX_Stage_t;
-FX_Stage_t FX_Stage=FX_Initial;
+static Accel_t 	Accel;
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
-void FX_Init();
-uint8_t FX_Acc_Calibration();
-uint8_t FX_Mag_Calibration();
-void I2C_Read_FX_Reg(uint8_t reg, uint8_t * read_buffer);
-void I2C_Write_FX_Reg(uint8_t reg,uint8_t * write_buffer);
-
+void FX_InitSequence(bool resetCounter);
+static void FX_RunningSequence(bool reset);
+static void FX_ReadReg(uint8_t reg);
+static void FX_WriteReg(uint8_t reg, uint8_t value);
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -77,227 +116,184 @@ void I2C_Write_FX_Reg(uint8_t reg,uint8_t * write_buffer);
  *******************************************************************************
  ******************************************************************************/
 
-void I2C_Read_FX_Reg(uint8_t reg, uint8_t * read_buffer)
+static void FX_ReadReg(uint8_t reg)
 {
-	switch (reg)
+  Accel.writeBuffer[0] = reg;
+  switch(reg)
+  {
+  	  case MOUT_X_MSB_REG:
+  	  case OUT_X_MSB_REG:
+  		I2C_InitObject(0, Accel.readBuffer,12,Accel.writeBuffer,1,0x1D);
+  		break;
+
+  	  default:
+  		I2C_InitObject(0, Accel.readBuffer,1,Accel.writeBuffer,1,0x1D);
+  		break;
+
+  }
+
+}
+
+static void FX_WriteReg(uint8_t reg, uint8_t value)
+{
+  Accel.writeBuffer[0] = reg;
+  Accel.writeBuffer[1] = value;
+  I2C_InitObject(0,NULL,0,Accel.writeBuffer,2,0x1D);
+}
+
+bool FX_I2C_Init()
+{
+	 if (!Accel.alreadyInit)
+	  {
+	    // Initialize the I2C driver
+	    I2C_InitModule(0);
+	    // Initialize and set the periodic service routine
+	    SysTick_Init();
+	    SysTick_Reg_Callback(FX_PISR,100 * MS_TO_US);
+
+	    // Raise the already initialized flag
+	    Accel.alreadyInit = true;
+	  }
+
+	  return Accel.alreadyInit;
+}
+
+void FX_InitSequence(bool resetCounter)
+{
+	if (resetCounter)
+		  Accel.counter = 0;
+
+	switch (Accel.counter++)
 	{
-		case OUT_X_MSB_REG:
-		case MOUT_X_MSB_REG:
-			I2C_InitObject(0,I2C_Write,read_buffer,1,NULL,0,0x1D,reg);
-			break;
-		default:
-			I2C_InitObject(0,I2C_Write,read_buffer,1,NULL,0,0x1D,reg);
-			break;
+	case 0: // Read WHO_AM_I register to check device presence
+	  FX_ReadReg(WHO_AM_I_REG);
+	  break;
+
+	case 1: // Check WHO_AM_I value read matches
+	  if (Accel.readBuffer[0] == 0xC7)
+	  {
+		// Set FXOS to standby mode
+		FX_WriteReg(CTRL_REG1, 0);			//FX_WriteReg(CTRL_REG1, 0);
+	  }
+	  else
+	  {
+		Accel.status = FX_Error;
+	  }
+	  break;
+
+	case 2:
+		FX_WriteReg(XYZ_DATA_CFG_REG, 0x00);		//+-2g resolution
+	  break;
+
+	case 3:
+		FX_WriteReg(M_CTRL_REG1, 0x9F);
+	  break;
+
+	case 4:
+		FX_WriteReg(M_CTRL_REG2, 0x20);
+	  break;
+
+	case 5:
+		FX_WriteReg(CTRL_REG3, 0x01);
+	  break;
+
+	case 6:
+		FX_WriteReg(CTRL_REG4, 0x01);
+	  break;
+
+	case 7:
+		FX_WriteReg(CTRL_REG5, 0x01);
+	  break;
+
+	case 8:
+		FX_WriteReg(PL_CFG_REG, 0x40);
+
+	case 9: // Set the accelerometer active
+		FX_WriteReg(CTRL_REG1, 0x35);
+	  break;
+
+	case 10: // Change to running state
+		Accel.status = FX_Running;
+		break;
+
+	default:
+	  break;
 	}
 }
 
-void I2C_Write_FX_Reg(uint8_t reg,uint8_t * write_buffer)
+void FX_RunningSequence(bool reset)
 {
-	I2C_InitObject(0,I2C_Write,NULL,0,write_buffer,
-						1,0x1D,reg);
-}
 
-void FX_Init()
-{
-	static uint8_t data[1];
+  if (reset)
+  {
+    Accel.counter = 0;
+  }
 
-	if (noActiveEvent)
-	{
-		noActiveEvent=false;
-		switch (EventIndex)
-		{
-			case 0:
-				I2C_Read_FX_Reg(WHO_AM_I_REG,data);
-				break;
-			case 1:
-				data[0]=0x0;
-				I2C_Write_FX_Reg(CTRL_REG1, data);  // write 0x00 to accelerometer control register 1 to place FXOS8700CQ into standby mode
-				break;
-			case 2:
-				data[0]=0x0;
-				I2C_Write_FX_Reg(XYZ_DATA_CFG_REG, data);  // +/-2g range with 0.244mg/LSB
-				break;
-			case 3:
-				data[0]=0x1F;
-				I2C_Write_FX_Reg(M_CTRL_REG1,data);  // Hybrid mode (accelerometer + magnetometer), max OSR
-				break;
-			case 4:
-				data[0]=0x02;
-				I2C_Write_FX_Reg(CTRL_REG2, data);  // High Resolution mode
-				break;
-			case 5:
-				data[0]=0x01;
-				I2C_Write_FX_Reg(CTRL_REG3, data);  // Open-drain, active low interrupt
-				break;
-			case 6:
-				data[0]=0x01;
-				I2C_Write_FX_Reg(CTRL_REG4, data);  // Enable DRDY interrupt
-				break;
-			case 7:
-				data[0]=0x01;
-				I2C_Write_FX_Reg(CTRL_REG5, data);  // DRDY interrupt routed to INT1 - PTC6
-				break;
-			case 8:
-				data[0]=0x35;
-				I2C_Write_FX_Reg(CTRL_REG1, data);  // ODR = 3.125Hz, Reduced noise, Active mode
-				break;
+  switch (Accel.counter++)
+  {
+  	case 0:
+  		FX_ReadReg(OUT_X_MSB_REG);
+    case 1:
 
-		}
-	}
-}
 
-uint8_t FX_Acc_Calibration()
-{
-	uint8_t Data [6] = {0};
-	if (noActiveEvent)
-		{
-			noActiveEvent=false;
-			switch (EventIndex)
-			{
-				case 0:
-					I2C_Write_FX_Reg(CTRL_REG1, 0x00);  // Standby mode
-					break;
-				case 1:
-					I2C_Read_FX_Reg(OUT_X_MSB_REG,Data);  // Read data output registers 0x01-0x06
-					break;
-				case 2:
-					Acc_Data.x8 = Data[0];
-					Acc_Data.y8 = Data[2];
-					Acc_Data.z8 = Data[4];
-					Acc_Data.x14 = ((int16_t)(Data[0] << 8 | Data[1])) >> 2;  // Compute 14-bit X-axis acceleration output value
-					Acc_Data.y14 = ((int16_t)(Data[2] << 8 | Data[3])) >> 2;  // Compute 14-bit Y-axis acceleration output value
-					Acc_Data.z14 = ((int16_t)(Data[4] << 8 | Data[5])) >> 2;  // Compute 14-bit Z-axis acceleration output value
+        Accel.accelerometer.x = ((int16_t)(Accel.readBuffer[0] << 8 | Accel.readBuffer[1])) >> 2;  // Compute 14-bit X-axis acceleration output value
+        Accel.accelerometer.y = ((int16_t)(Accel.readBuffer[2] << 8 | Accel.readBuffer[3])) >> 2;  // Compute 14-bit X-axis acceleration output value
+        Accel.accelerometer.z = ((int16_t)(Accel.readBuffer[4] << 8 | Accel.readBuffer[5])) >> 2;  // Compute 14-bit X-axis acceleration output value
 
-					Acc_Data.offset.x = Acc_Data.x14 / 8 * (-1);  // Compute X-axis offset correction value
-					Acc_Data.offset.y = Acc_Data.y14 / 8 * (-1);  // Compute Y-axis offset correction value
-					Acc_Data.offset.z = (Acc_Data.z14 - SENSITIVITY_2G) / 8 * (-1);  // Compute Z-axis offset correction value
+        // Accelerometer data converted to g
 
-					I2C_Write_FX_Reg(OFF_X_REG,&(Acc_Data.offset.x));
-					break;
-				case 3:
-					I2C_Write_FX_Reg(OFF_Y_REG,&(Acc_Data.offset.y));
-					break;
-				case 4:
-					I2C_Write_FX_Reg(OFF_Z_REG,&(Acc_Data.offset.z));
-					break;
-				case 5:
-					Data[0]= 0x35;
-					I2C_Write_FX_Reg(CTRL_REG1, Data);  // Active mode again
-					break;
-			}
-		}
-}
+    	 Accel.accelerometer_f.x = ((float) Accel.accelerometer.x) / (float) SENSITIVITY_2G;  // Compute X-axis output value in g's
+    	 Accel.accelerometer_f.y = (float) Accel.accelerometer.y / (float) SENSITIVITY_2G;  // Compute X-axis output value in g's
+    	 Accel.accelerometer_f.z = (float) Accel.accelerometer.z / (float) SENSITIVITY_2G;  // Compute X-axis output value in g's
 
-uint8_t FX_Mag_Calibration()
-{
-	uint8_t Data [6];
-	if (noActiveEvent)
-		{
-			noActiveEvent=false;
-			switch (EventIndex)
-			{
-				case 0:
-					I2C_Read_FX_Reg(MOUT_X_MSB_REG, Data);  // Read data output registers 0x33 - 0x38
-    Mag_Data.x14 = (int16_t)(Data[0] << 8 | Data[1]);  // Compute 16-bit X-axis magnetic output value
-    Mag_Data.y14 = (int16_t)(Data[2] << 8 | Data[3]);  // Compute 16-bit Y-axis magnetic output value
-    Mag_Data.z14 = (int16_t)(Data[4] << 8 | Data[5]);  // Compute 16-bit Z-axis magnetic output value
-			}
-		}
-    static Coord16_t min;
-    static Coord16_t max;
-    static int i=0;
-					// Esta llave no va acá, fue solo para poder compilar. Hay que hacer lo mismo que con accel.
-    if (i<=CALIBRATION_COUNT)
-    {
-		// Assign first sample to maximum and minimum values
-		 if (i == 0)
-		 {
-			 max.x = Mag_Data.x14;
-			 max.y = Mag_Data.y14;
-			 max.z = Mag_Data.z14;
-			 min.x = Mag_Data.x14;
-			 min.y = Mag_Data.y14;
-			 min.z = Mag_Data.z14;
-		 }
+		// 16-bit magnetometer data
+    	Accel.magnetometer.x = (int16_t)(Accel.readBuffer[3] << 8);
+    	Accel.magnetometer.y = (int16_t)(Accel.readBuffer[4] << 8);
+    	Accel.magnetometer.z = (int16_t)(Accel.readBuffer[5] << 8);
 
-		 // Check to see if current sample is the maximum or minimum X-axis value
-		 if (Mag_Data.x14 > max.x)
-			 max.x= Mag_Data.x14;
-		 if (Mag_Data.x14 < min.x)
-			 min.x = Mag_Data.x14;
+		// Magnetometer data converted to microteslas
+    	Accel.magnetometer.x = (int16_t)(Accel.readBuffer[6] << 8 | Accel.readBuffer[7]);  // Compute 16-bit X-axis magnetic output value
+    	Accel.magnetometer.y = (int16_t)(Accel.readBuffer[8] << 8 | Accel.readBuffer[9]);  // Compute 16-bit X-axis magnetic output value
+    	Accel.magnetometer.z = (int16_t)(Accel.readBuffer[10] << 8 | Accel.readBuffer[11]);  // Compute 16-bit X-axis magnetic output value
 
-		 // Check to see if current sample is the maximum or minimum Y-axis value
-		 if (Mag_Data.y14 > max.y)
-			 max.y = Mag_Data.y14;
-		 if (Mag_Data.y14 < min.y)
-			 min.y = Mag_Data.y14;
+    	Accel.magnetometer_f.x = (float)(Accel.magnetometer.x) / SENSITIVITY_MAG;  // Compute X-axis output magnetic value in uT
+    	Accel.magnetometer_f.y = (float)(Accel.magnetometer.y) / SENSITIVITY_MAG;  // Compute X-axis output magnetic value in uT
+    	Accel.magnetometer_f.z = (float)(Accel.magnetometer.z) / SENSITIVITY_MAG;  // Compute X-axis output magnetic value in uT
+    	float north =90+atan2(Accel.magnetometer_f.y, Accel.magnetometer_f.x) * 180 / 3.14159;
 
-		 // Check to see if current sample is the maximum or minimum Z-axis value
-		 if (Mag_Data.z14 > max.z)
-			 max.z = Mag_Data.z14;
-		 if (Mag_Data.z14 < min.z)
-			 min.z = Mag_Data.z14;
+    	if (north>=180)
+    		north-=360;
+    	Accel.orientation.norte=north;
+    	Accel.orientation.rolido=atan2(Accel.accelerometer_f.x, Accel.accelerometer_f.z) * 180 / 3.14159;
+    	Accel.orientation.cabeceo=atan2(Accel.accelerometer_f.y, Accel.accelerometer_f.z) * 180 / 3.14159;
 
-		 i++;
-	}
-    else
-    {
-    	Coord16_t avg;
-		avg.x = (max.x + min.x) / 2;
-		avg.y = (max.y + min.y) / 2;
-		avg.z = (max.z + min.z) / 2;
 
-		// Left-shift by one as magnetometer offset registers are 15-bit only, left justified
-		avg.x <<= 1;
-		avg.y <<= 1;
-		avg.z <<= 1;
-		uint8_t Data[]={0x0};
-		I2C_Write_FX_Reg(CTRL_REG1, Data);  // Standby mode to allow writing to the offset registers
+      break;
 
-		Data[0]=(uint8_t)(avg.x & 0xFF);
-		I2C_Write_FX_Reg(MOFF_X_LSB_REG,Data);
-
-		Data[0]=(uint8_t)((avg.x >> 8) & 0xFF);
-		I2C_Write_FX_Reg(MOFF_X_MSB_REG, Data);
-
-		Data[0]=(uint8_t)(avg.y & 0xFF);
-		I2C_Write_FX_Reg(MOFF_Y_LSB_REG, Data);
-
-		Data[0]=(uint8_t)((avg.y >> 8) & 0xFF);
-		I2C_Write_FX_Reg(MOFF_Y_MSB_REG, Data);
-
-		Data[0]=(uint8_t)(avg.z & 0xFF);
-		I2C_Write_FX_Reg(MOFF_Z_LSB_REG, Data);
-
-		Data[0]=(uint8_t)((avg.z >> 8) & 0xFF);
-		I2C_Write_FX_Reg(MOFF_Z_MSB_REG, Data);
-
-		Data[0]=0x35;
-		I2C_Write_FX_Reg(CTRL_REG1, Data);
-    }
+    default:
+      break;
+  }
 
 }
-
-void SetNextAccelEvent()
+void FX_PISR(void)
 {
-	noActiveEvent=true;
-	EventIndex++;
-	if (FX_Stage==FX_Initial)
-	{
-		if (EventIndex<11)
-			FX_Init();
-		else
-		{
-			EventIndex=0;
-			FX_Acc_Calibration();
-			FX_Stage=FX_Mag_Calib;
-		}
-	}
-
+  if (Accel.status == FX_Init)
+    FX_InitSequence(true);
+  else if (Accel.status == FX_Running)
+    FX_RunningSequence(true);
 }
 
-void Accel()
+void FX_I2C_Finished(void)
 {
-	FX_Init();
+  for(uint32_t i = 0 ; i < 1000 ; i++);
+
+  if (Accel.status == FX_Init)
+    FX_InitSequence(false);
+  else if (Accel.status == FX_Running)
+	  FX_RunningSequence(false);
 }
 
+Orient_t getAccelData()
+{
+	return Accel.orientation;
+}
