@@ -254,7 +254,6 @@ void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes)
 		}
 		buffer_element_t event = {bytes[i], end_of_data};
 		push_Queue_Element(0, event);
-		i++;
 	}
 
 	// Enable TFFF flag to start pushing data to the queue
@@ -287,7 +286,7 @@ __ISR__ SPI0_IRQHandler(void)
 			uint32_t data_out = SPI_PUSHR_CONT_MASK;
 			if (buffer_data_out.end_of_data)
 			{
-				data_out |= SPI_PUSHR_EOQ_MASK;
+				//data_out |= SPI_PUSHR_EOQ_MASK;
 
 				// If last word, indicate that the chip select should not be held
 				data_out &= ~SPI_PUSHR_CONT_MASK;

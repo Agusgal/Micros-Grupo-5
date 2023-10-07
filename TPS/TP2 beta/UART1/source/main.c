@@ -8,6 +8,7 @@
 #include "hardware.h"
 #include "UART.h"
 #include "SPI.h"
+#include "CAN_SPI.h"
 
 #define __FOREVER__ 	for(;;)
 
@@ -19,12 +20,14 @@ int main (void)
 	hw_Init ();
 	UART_Init();
 	SPI_Init();
-
-
+	//CAN_SPI_Init();
 
 	hw_EnableInterrupts();
+	SPI_SendData("a",1);
+	SPI_SendData("a",1);
 	SPI_SendMsg("Hola");
 	SPI_SendMsg("Messi");
+
 
 	// Enable interrupts
 
