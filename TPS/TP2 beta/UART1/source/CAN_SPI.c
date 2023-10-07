@@ -1,7 +1,7 @@
 /***************************************************************************//**
-  @file     SPI.c
+  @file     CAN_SPI.c
 
-  @brief    SPI driver
+  @brief    CAN_sPI driver
   @author   Grupo 5
  ******************************************************************************/
 
@@ -9,6 +9,7 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 #include "hardware.h"
+#include "CAN_SPI.h"
 #include "SPI.h"
 
 
@@ -107,69 +108,31 @@ static uint8_t get_Queue_Status(uint8_t id);
  ******************************************************************************/
 
 
+
 /**
  * @brief
  * @param
  * @return
  */
 
-void SPI_Init (void)
+void CAN_SPI_Init (void)
 {
-
-// Note: 5.6 Clock Gating page 192
-// Any bus access to a peripheral that has its clock disabled generates an error termination.
-		SIM->SCGC5 |= SIM_SCGC5_PORTD_MASK;
-
-	    SIM->SCGC6 |= SIM_SCGC6_SPI0_MASK;
-	    SIM->SCGC6 |= SIM_SCGC6_SPI1_MASK;
-	    SIM->SCGC3 |= SIM_SCGC3_SPI2_MASK;
+	// 1- SPI in mode 0,0
+	SPI_Init();
 
 
+	// 2- Reset mode
+	uint8_t data = 0b11000000;
+	SPI_SendData(&data, 1);
 
-		NVIC_EnableIRQ(SPI0_IRQn);
-		NVIC_EnableIRQ(SPI1_IRQn);
-		NVIC_EnableIRQ(SPI2_IRQn);
 
-		//Configure SPI0 PINS
 
-		PORTD->PCR[SPI0_TX_PIN]=0x0; //Clear all bits
-		PORTD->PCR[SPI0_TX_PIN]|=PORT_PCR_MUX(PORT_mAlt2); 	 //Set MUX to SPI0
-		PORTD->PCR[SPI0_TX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
-//----------------------------------------------------------------------------------
-		PORTD->PCR[SPI0_RX_PIN]=0x0; //Clear all bits
-		PORTD->PCR[SPI0_RX_PIN]|=PORT_PCR_MUX(PORT_mAlt2); 	 //Set MUX to SPI0
-		PORTD->PCR[SPI0_RX_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
 
-//----------------------------------------------------------------------------------
-		PORTD->PCR[SPI0_PCS_PIN]=0x0; //Clear all bits
-		PORTD->PCR[SPI0_PCS_PIN]|=PORT_PCR_MUX(PORT_mAlt2); 	 //Set MUX to SPI0
-		PORTD->PCR[SPI0_PCS_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
-//----------------------------------------------------------------------------------
-		PORTD->PCR[SPI0_SCK_PIN]=0x0; //Clear all bits
-		PORTD->PCR[SPI0_SCK_PIN]|=PORT_PCR_MUX(PORT_mAlt2); 	 //Set MUX to SPI0
-		PORTD->PCR[SPI0_SCK_PIN]|=PORT_PCR_IRQC(PORT_eDisabled); //Disable interrupts
 
-	//Enable SPI0 Xmiter and Rcvr
 
-		SPI0->MCR = 0x0;
-		// Chip select is active Low for Can Controller
-		SPI0->MCR = SPI_MCR_MSTR_MASK | SPI_MCR_PCSIS_MASK;
 
-		SPI0->CTAR[0] = 0x0;
-		SPI0->CTAR[0] = SPI_CTAR_FMSZ(7) | SPI_CTAR_PBR_MASK | SPI_CTAR_BR(6);
-
-		SPI0->SR = 0x0;
-		SPI0->SR = SPI_SR_TXRXS_MASK ;
-
-		// Only Read Drain Flag enable (TFFF is enabled everytime a new message is to be sent)
-		SPI0->RSER = 0x0;
-		SPI0->RSER = SPI_RSER_RFDF_RE_MASK;
-
-		// Enable transmissions
-		//SPI0->MCR &= ~SPI_MCR_HALT_MASK;
-
-		queue_Init(0);
-		queue_Init(1);
+	queue_Init(0);
+	queue_Init(1);
 }
 
 
@@ -179,7 +142,7 @@ void SPI_Init (void)
  * @return
  */
 
-uint8_t SPI_Get_Status(void)
+uint8_t CAN_SPI_Get_Status(void)
 {
 	return(get_Queue_Status(0));
 }
@@ -190,30 +153,30 @@ uint8_t SPI_Get_Status(void)
  * @return
  */
 
-uint8_t SPI_Get_Data(void)
+uint8_t CAN_SPI_Get_Data(void)
 {
 	return(pull_Queue_Element(0).data);
 }
 
 /**
- * @brief	Starts the Transmission of the only byte (8-bits word).
- * @param	byte	Data byte to transmit.
+ * @brief
+ * @param
+ * @return
  */
-void SPI_SendByte(uint8_t byte)
+
+void CAN_SPI_SendByte(uint8_t byte)
 {
 	buffer_element_t event = {byte, 1};
-	push_Queue_Element(0, event);
-
-	// Enable TFFF flag to start pushing data to the queue
-	SPI0->RSER |= SPI_RSER_TFFF_RE_MASK;
+	push_Queue_Element(1, event);
 }
 
 /**
- * @brief	Starts the Transmission of the string (8-bits words). The '\0' is not transmitted
- * @param	msg	Array of data (string)
+ * @brief
+ * @param
+ * @return
  */
 
-void SPI_SendMsg(uint8_t* msg)
+void CAN_SPI_SendMsg(uint8_t* msg)
 {
 	uint32_t i = 0;
 	while (msg[i]  != '\0')
@@ -236,31 +199,7 @@ void SPI_SendMsg(uint8_t* msg)
 
 }
 
-/**
- * @brief	Starts the Transmission of the data (8-bits words)
- * @param	bytes	Array of data (uint8_t*)
- * @param	num_of_bytes	Number of bytes of the array
- */
 
-void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes)
-{
-	uint32_t i = 0;
-	for(i = 0; i < num_of_bytes; i++)
-	{
-		uint8_t end_of_data = 0;
-		if(i == (num_of_bytes - 1))
-		{
-			end_of_data = 1;
-		}
-		buffer_element_t event = {bytes[i], end_of_data};
-		push_Queue_Element(0, event);
-		i++;
-	}
-
-	// Enable TFFF flag to start pushing data to the queue
-	SPI0->RSER |= SPI_RSER_TFFF_RE_MASK;
-
-}
 
 
 /*******************************************************************************
@@ -268,56 +207,6 @@ void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes)
                         LOCAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
-/**
- * @brief Handles Spi interrupts
- */
-__ISR__ SPI0_IRQHandler(void)
-{
-	uint32_t tmp, clearFlags = 0x0;
-	tmp = SPI0 -> SR;// Dummy read status register
-	//SPI0 -> SR = tmp; //clear all flags
-
-	// Transfer FIFO Fill Flag (1 if not empty)
-	if(IS_TFFF(tmp))
-	{
-		clearFlags |= SPI_SR_TFFF_MASK;
-		if (get_Queue_Status(0))
-		{
-			buffer_element_t buffer_data_out = pull_Queue_Element(0);
-			uint32_t data_out = SPI_PUSHR_CONT_MASK;
-			if (buffer_data_out.end_of_data)
-			{
-				data_out |= SPI_PUSHR_EOQ_MASK;
-
-				// If last word, indicate that the chip select should not be held
-				data_out &= ~SPI_PUSHR_CONT_MASK;
-			}
-			// Select chip_select 0
-			data_out |= SPI_PUSHR_PCS(1);
-			data_out |= SPI_PUSHR_TXDATA(buffer_data_out.data);
-			SPI0 -> PUSHR = data_out;
-		}
-		// If no element in the queue, disable TFFF interrupts
-		else
-		{
-			// write 0 to disable TFFF interrupt
-			SPI0->RSER &= ~SPI_RSER_TFFF_RE_MASK;
-		}
-	}
-
-	// Receive FIFO Drain Flag
-	if(IS_RFDF(tmp))
-	{
-		clearFlags |= SPI_SR_RFDF_MASK;
-		uint32_t rxdata = SPI0 -> POPR;
-		buffer_element_t data_in= {rxdata, 0};
-		push_Queue_Element(1, data_in); //positions itself in the receiver queue
-		// check if flag should be cleared (Maybe better to do at the end of all interrupts
-	}
-
-	SPI0 -> SR |= clearFlags;	// this, in particular, erases the EOQ flag (to be taken into account)
-}
-
 /**
  * @brief Initializes the circular queue
  */
@@ -399,8 +288,3 @@ static uint8_t get_Queue_Status(uint8_t id)
 
 /*******************************************************************************
  ******************************************************************************/
-
-
-
-
-

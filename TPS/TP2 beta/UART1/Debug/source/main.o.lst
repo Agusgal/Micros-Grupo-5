@@ -104,14 +104,14 @@
   73              	.Letext0:
   74              		.file 2 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\sys\\libconfig-arm.h"
   75              		.file 3 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\stdint.h"
-  76              		.file 4 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
-  77              		.file 5 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
+  76              		.file 4 "C:\\Bruno\\ITBA\\7mo cuatri\\Lab. de Microprocesadores\\Repo\\Micros-Grupo-5\\TPS\\TP2 be
+  77              		.file 5 "C:\\Bruno\\ITBA\\7mo cuatri\\Lab. de Microprocesadores\\Repo\\Micros-Grupo-5\\TPS\\TP2 be
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\lucia\AppData\Local\Temp\cc76zNgR.s:18     .rodata:00000000 $d
-C:\Users\lucia\AppData\Local\Temp\cc76zNgR.s:25     .text.main:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\cc76zNgR.s:32     .text.main:00000000 main
-C:\Users\lucia\AppData\Local\Temp\cc76zNgR.s:67     .text.main:00000028 $d
+C:\Users\bruno\AppData\Local\Temp\ccTeqsvO.s:18     .rodata:00000000 $d
+C:\Users\bruno\AppData\Local\Temp\ccTeqsvO.s:25     .text.main:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\ccTeqsvO.s:32     .text.main:00000000 main
+C:\Users\bruno\AppData\Local\Temp\ccTeqsvO.s:67     .text.main:00000028 $d
                            .group:00000000 wm4.0.33db8b643112917ec54934b4f2c2f387
                            .group:00000000 wm4.redlib_version.h.16.f905717e4b3a91dcbdbb631865150df4
                            .group:00000000 wm4.libconfigarm.h.18.1ad1d24f96d0dc8c4cf52dc19b0aa2c7

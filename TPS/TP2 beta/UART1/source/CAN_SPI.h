@@ -1,11 +1,11 @@
 /***************************************************************************//**
-  @file     SPI.h
-  @brief    SPI driver
+  @file     CAN_SPI.h
+  @brief    CAN_SPI driver
   @author   Grupo 5
  ******************************************************************************/
 
-#ifndef SPI_H_
-#define SPI_H_
+#ifndef CAN_SPI_H_
+#define CAN_SPI_H_
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
@@ -36,44 +36,34 @@
  * @brief
  * @return
  */
-void SPI_Init (void);
+void CAN_SPI_Init (void);
 
 /**
  * @brief
  * @return
  */
-uint8_t SPI_Get_Status(void);
+uint8_t CAN_SPI_Get_Status(void);
 
 /**
  * @brief
  * @return
  */
-uint8_t SPI_Get_Data(void);
+uint8_t CAN_SPI_Get_Data(void);
 
 /**
- * @brief	Starts the Transmission of the data (8-bits words)
- * @param	bytes	Array of data (uint8_t*)
- * @param	num_of_bytes	Number of bytes of the array
+ * @brief
+ * @return
  */
-
-void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes);
-
+void CAN_SPI_SendMsg(uint8_t* msg);
 
 /**
- * @brief	Starts the Transmission of the string (8-bits words). The '\0' is not transmitted
- * @param	msg	Array of data (string)
+ * @brief
+ * @return
  */
-
-void SPI_SendMsg(uint8_t* msg);
-
-/**
- * @brief	Starts the Transmission of the only byte (8-bits word).
- * @param	byte	Data byte to transmit.
- */
-void SPI_SendByte(uint8_t byte);
+void CAN_SPI_SendByte(uint8_t byte);
 
 
 /*******************************************************************************
  ******************************************************************************/
 
-#endif /* SPI_H_ */
+#endif /* CAN_SPI_H_ */
