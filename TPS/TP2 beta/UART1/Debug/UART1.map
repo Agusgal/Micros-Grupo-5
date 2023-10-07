@@ -140,8 +140,8 @@ Discarded input sections
  .debug_macro   0x00000000     0xe07b ./source/CAN_SPI.o
  .debug_macro   0x00000000     0x13c7 ./source/CAN_SPI.o
  .debug_macro   0x00000000       0x16 ./source/CAN_SPI.o
- .debug_line    0x00000000      0x31d ./source/CAN_SPI.o
- .debug_str     0x00000000    0x77881 ./source/CAN_SPI.o
+ .debug_line    0x00000000      0x322 ./source/CAN_SPI.o
+ .debug_str     0x00000000    0x77886 ./source/CAN_SPI.o
  .comment       0x00000000       0x7f ./source/CAN_SPI.o
  .debug_frame   0x00000000      0x174 ./source/CAN_SPI.o
  .ARM.attributes
@@ -1215,27 +1215,27 @@ OUTPUT(UART1.axf elf32-littlearm)
  .debug_macro   0x00000d58       0xdf ./source/main.o
  .debug_macro   0x00000e37       0x9f ./CMSIS/system_MK64F12.o
 
-.debug_line     0x00000000     0x1501
+.debug_line     0x00000000     0x1515
  .debug_line    0x00000000      0x6d4 ./startup/startup_mk64f12.o
- .debug_line    0x000006d4      0x372 ./source/SPI.o
- .debug_line    0x00000a46      0x3f9 ./source/UART.o
- .debug_line    0x00000e3f      0x273 ./source/hardware.o
- .debug_line    0x000010b2      0x243 ./source/main.o
- .debug_line    0x000012f5      0x20c ./CMSIS/system_MK64F12.o
+ .debug_line    0x000006d4      0x377 ./source/SPI.o
+ .debug_line    0x00000a4b      0x3fe ./source/UART.o
+ .debug_line    0x00000e49      0x278 ./source/hardware.o
+ .debug_line    0x000010c1      0x248 ./source/main.o
+ .debug_line    0x00001309      0x20c ./CMSIS/system_MK64F12.o
 
-.debug_str      0x00000000    0x78ab6
- .debug_str     0x00000000     0x35bc ./startup/startup_mk64f12.o
-                               0x3614 (size before relaxing)
- .debug_str     0x000035bc    0x750f8 ./source/SPI.o
-                              0x77f66 (size before relaxing)
- .debug_str     0x000786b4      0x21d ./source/UART.o
-                              0x77fd0 (size before relaxing)
- .debug_str     0x000788d1      0x16a ./source/hardware.o
-                              0x7779b (size before relaxing)
- .debug_str     0x00078a3b       0x2c ./source/main.o
-                              0x77596 (size before relaxing)
- .debug_str     0x00078a67       0x4f ./CMSIS/system_MK64F12.o
-                              0x7769c (size before relaxing)
+.debug_str      0x00000000    0x78abb
+ .debug_str     0x00000000     0x35c1 ./startup/startup_mk64f12.o
+                               0x3619 (size before relaxing)
+ .debug_str     0x000035c1    0x750f8 ./source/SPI.o
+                              0x77f6b (size before relaxing)
+ .debug_str     0x000786b9      0x21d ./source/UART.o
+                              0x77fd5 (size before relaxing)
+ .debug_str     0x000788d6      0x16a ./source/hardware.o
+                              0x777a0 (size before relaxing)
+ .debug_str     0x00078a40       0x2c ./source/main.o
+                              0x7759b (size before relaxing)
+ .debug_str     0x00078a6c       0x4f ./CMSIS/system_MK64F12.o
+                              0x776a1 (size before relaxing)
 
 .comment        0x00000000       0x7e
  .comment       0x00000000       0x7e ./startup/startup_mk64f12.o

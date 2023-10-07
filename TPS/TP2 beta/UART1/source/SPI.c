@@ -314,7 +314,7 @@ __ISR__ SPI0_IRQHandler(void)
 		// check if flag should be cleared (Maybe better to do at the end of all interrupts
 	}
 
-	SPI0 -> SR = clearFlags;	//
+	SPI0 -> SR = clearFlags;	// this, in particular, erases the EOQ flag (to be taken into account)
 }
 
 /**
