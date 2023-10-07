@@ -274,7 +274,7 @@ __ISR__ SPI0_IRQHandler(void)
 {
 	uint32_t tmp, clearFlags = 0x0;
 	tmp = SPI0 -> SR;// Dummy read status register
-	//SPI0 -> SR = tmp; //clear all flags
+	SPI0 -> SR = tmp; //clear all flags
 
 	// Transfer FIFO Fill Flag (1 if not empty)
 	if(IS_TFFF(tmp))
@@ -286,7 +286,7 @@ __ISR__ SPI0_IRQHandler(void)
 			uint32_t data_out = SPI_PUSHR_CONT_MASK;
 			if (buffer_data_out.end_of_data)
 			{
-				//data_out |= SPI_PUSHR_EOQ_MASK;
+				data_out |= SPI_PUSHR_EOQ_MASK;
 
 				// If last word, indicate that the chip select should not be held
 				data_out &= ~SPI_PUSHR_CONT_MASK;
@@ -314,7 +314,7 @@ __ISR__ SPI0_IRQHandler(void)
 		// check if flag should be cleared (Maybe better to do at the end of all interrupts
 	}
 
-	SPI0 -> SR |= clearFlags;	// this, in particular, erases the EOQ flag (to be taken into account)
+	//SPI0 -> SR |= clearFlags;	// this, in particular, erases the EOQ flag (to be taken into account)
 }
 
 /**
