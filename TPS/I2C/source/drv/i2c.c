@@ -52,7 +52,6 @@
 #define I2C_OBJ_W_BUFFER			(I2C_Objects[module].write_buffer)
 #define I2C_OBJ_W_BUFFER_D(x)		(I2C_Objects[module].write_buffer[(x)])
 #define I2C_OBJ_W_SIZE				(I2C_Objects[module].write_size)
-#define I2C_OBJ_SLAVE_REG			(I2C_Objects[module].slave_reg)
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH LOCAL SCOPE
@@ -161,7 +160,7 @@ I2C_Status_t I2C_InitObject(I2C_Module_t module, uint8_t * read_buffer, size_t r
 
 	// Initialize communication
 	// Como esta parte es común a tanto escritura como lectura (a excepción del bit de R/W), se colocó aquí
-
+	//gpioWrite(LED_RED_PIN,LOW);
 	I2C_CLEAR_NACK;
 	I2C_SET_TX_MODE;	// Set to transmit mode
 	I2C_START_SIGNAL;	// Start Signal (Setting Master Mode)
@@ -188,7 +187,7 @@ I2C_Status_t i2cTransactionState(I2C_Module_t module)
  *******************************************************************************
  ******************************************************************************/
 
-// TODO: ver el tema de las salidas cuando hay error o termina, una función tipo finish_com o parecido si hay falta (creeria que no)
+// TODO: ver el tema de las salidas cuando hay error o termina, una función tipo endcom() o parecido si hace falta (creeria que no)
 void I2C_IRQHandler(I2C_Module_t module)
 {
 	I2C_CLEAR_IRQ_FLAG;
@@ -211,10 +210,8 @@ void I2C_IRQHandler(I2C_Module_t module)
 			I2C_OBJ_STATUS = I2C_Error;
 			I2C_STOP_SIGNAL;
 			while(I2C_CHECK_BUS);
-			/*if (instance->onError)
-			{
-			  instance->onError();
-			}*/
+			gpioWrite(LED_RED_PIN,LOW);
+
 		  }
 		  else
 		  {
@@ -260,15 +257,7 @@ void I2C_IRQHandler(I2C_Module_t module)
 		  // is stopped and the status of the instance is changed
 		  I2C_OBJ_STATUS = I2C_Error;
 		  I2C_STOP_SIGNAL;
-		  bool bus_busy=1;
-		  while(bus_busy)
-		  {
-			  bus_busy=I2C_CHECK_BUS;
-		  }
-		  /*if (instance->onError)
-		  {
-			instance->onError();
-		  }*/
+		  gpioWrite(LED_RED_PIN,LOW);
 		}
 		else
 		{
@@ -289,11 +278,6 @@ void I2C_IRQHandler(I2C_Module_t module)
 		I2C_STOP_SIGNAL;
 		I2C_OBJ_R_BUFFER[I2C_OBJ_R_INDEX] = I2C_READ_DATA;
 		I2C_OBJ_R_INDEX++;
-		bool bus_busy=1;
-		while(bus_busy)
-		{
-			bus_busy=I2C_CHECK_BUS;
-		}
 		I2C_OBJ_STATUS = I2C_Done;
 		FX_I2C_Finished();
 	  }
