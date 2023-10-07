@@ -17,14 +17,27 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define IS_RFDF(tmp)	((tmp) & SPI_SR_RFDF_MASK)
-#define IS_TFFF(tmp)	((tmp) & SPI_SR_TFFF_MASK)
-#define IS_EOQF(tmp)	((tmp) & SPI_SR_EOQF_MASK)
+#define	WRITE_INSTRUCTION 	0b00000010
+#define	BIT_MODIFY_INSTRUCTION 	0b00000101
 
-#define SPI0_PCS_PIN	0 //PTD0
-#define SPI0_SCK_PIN	1 //PTD1
-#define SPI0_TX_PIN 	2 //PTD2
-#define SPI0_RX_PIN 	3 //PTD3
+#define	CNF1_ADDRESS	0b00101010
+#define	CNF2_ADDRESS	0b00101001
+#define	CNF3_ADDRESS	0b00101000
+
+#define RxM0SIDH		0b00100000
+#define RxM0SIDL		0b00100001
+
+#define RxF0SIDH		0b00000000
+#define RxF0SIDL		0b00000001
+
+#define	RxB0CTRL		0b01100000
+#define RxB1CTRL		0b01110000
+
+#define	CANINTE			0b00101011
+#define	CANINTF			0b00101100
+
+#define	CANCTRL			0b00001111
+
 
 #define	BUFFER_SIZE	 20
 #define OVERFLOW     -1
@@ -41,7 +54,7 @@ typedef struct spi_buffer{
 	uint8_t num_Of_Words;
 }spi_buffer_t;
 
-spi_buffer_t spi_buffers[2]; //doubles the value for input and output buffers. 1 is input, 0 is output.
+spi_buffer_t can_spi_buffers[2]; //doubles the value for input and output buffers. 1 is input, 0 is output.
 
 typedef enum
 {
@@ -122,13 +135,76 @@ void CAN_SPI_Init (void)
 
 
 	// 2- Reset mode
-	uint8_t data = 0b11000000;
-	SPI_SendData(&data, 1);
+	uint8_t data[10];
+	data[0] = 0b11000000;
+	SPI_SendData(data, 1);
+
+	// 3- Bit time configuration
+	data[0] = WRITE_INSTRUCTION;
+	data[1] = CNF1_ADDRESS;
+	data[2] = 0b00000011; // SJW = 1TQ; BRP = 4 (3+1)
+	SPI_SendData(data, 3);
+
+	data[0] = WRITE_INSTRUCTION;
+	data[1] = CNF2_ADDRESS;
+	data[2] = 0b10110001; // btl=1; sam=0; phseg = 7 (6+1); prseg = 2 (1+1)
+	SPI_SendData(data, 3);
+
+	data[0] = WRITE_INSTRUCTION;
+	data[1] = CNF3_ADDRESS;
+	data[2] = 0b10000101; // sof = 1; WAKFL = 0; PHSEG2 = 6 (5+1)
+	SPI_SendData(data, 3);
+
+	// 4- Filter configurations
+	data[0] = WRITE_INSTRUCTION;
+	data[1] = RxM0SIDH;
+	data[2] = 0b11111111;
+	SPI_SendData(data, 3);
+
+	data[0] = WRITE_INSTRUCTION;
+	data[1] = RxM0SIDL;
+	data[2] = 0b00000000;
+	SPI_SendData(data, 3);
+
+	data[0] = WRITE_INSTRUCTION;
+	data[1] = RxF0SIDH;
+	data[2] = 0b00100000;
+	SPI_SendData(data, 3);
+
+	data[0] = WRITE_INSTRUCTION;
+	data[1] = RxF0SIDL;
+	data[2] = 0b00000000;
+	SPI_SendData(data, 3);
+
+	// 5- Reception configurations
+	data[0] = WRITE_INSTRUCTION;
+	data[1] = RxB0CTRL;
+	data[2] = 0b00000100;//Roll-over enabled (RX0 TO RX1)
+	SPI_SendData(data, 3);
+
+	data[0] = WRITE_INSTRUCTION;
+	data[1] = RxB1CTRL;
+	data[2] = 0b00000000;
+	SPI_SendData(data, 3);
 
 
+	// 6- Erase flags and enable interrupts
+	data[0] = WRITE_INSTRUCTION;
+	data[1] = CANINTE;
+	data[2] = 0b00000011;
+	SPI_SendData(data, 3);
 
+	data[0] = WRITE_INSTRUCTION;
+	data[1] = CANINTF;
+	data[2] = 0b00000000;	// all flags in 0
+	SPI_SendData(data, 3);
 
-
+	// 7- Normal mode
+	data[0] = BIT_MODIFY_INSTRUCTION;
+	data[1] = CANCTRL;
+	data[2] = 0b11000000; // Mask
+	data[3] = 0b00000000;
+	SPI_SendData(data, 4);
 
 
 	queue_Init(0);
@@ -212,9 +288,9 @@ void CAN_SPI_SendMsg(uint8_t* msg)
  */
 static void queue_Init (uint8_t id)
 {
-	spi_buffers[id].pin = spi_buffers[id].buffer;
-	spi_buffers[id].pout = spi_buffers[id].pin;
-	spi_buffers[id].num_Of_Words = 0;
+	can_spi_buffers[id].pin = can_spi_buffers[id].buffer;
+	can_spi_buffers[id].pout = can_spi_buffers[id].pin;
+	can_spi_buffers[id].num_Of_Words = 0;
 }
 
 /**
@@ -225,21 +301,21 @@ static void queue_Init (uint8_t id)
 static int8_t push_Queue_Element(uint8_t id, buffer_element_t event)
 {
 	// Check for EventQueue Overflow
-	if (spi_buffers[id].num_Of_Words > BUFFER_SIZE-1)
+	if (can_spi_buffers[id].num_Of_Words > BUFFER_SIZE-1)
 	{
 		return OVERFLOW;
 	}
 
-	*(spi_buffers[id].pin)++ = event;
-	spi_buffers[id].num_Of_Words++;
+	*(can_spi_buffers[id].pin)++ = event;
+	can_spi_buffers[id].num_Of_Words++;
 
 	// Return pointer to the beginning if necessary
-	if (spi_buffers[id].pin == BUFFER_SIZE + spi_buffers[id].buffer)
+	if (can_spi_buffers[id].pin == BUFFER_SIZE + can_spi_buffers[id].buffer)
 	{
-		spi_buffers[id].pin = spi_buffers[id].buffer;
+		can_spi_buffers[id].pin = can_spi_buffers[id].buffer;
 	}
 
-	return spi_buffers[id].num_Of_Words;
+	return can_spi_buffers[id].num_Of_Words;
 
 }
 
@@ -251,20 +327,20 @@ static int8_t push_Queue_Element(uint8_t id, buffer_element_t event)
 
 static buffer_element_t pull_Queue_Element(uint8_t id)
 {
-	buffer_element_t event = *(spi_buffers[id].pout);
+	buffer_element_t event = *(can_spi_buffers[id].pout);
 
-	if (spi_buffers[id].num_Of_Words == 0)
+	if (can_spi_buffers[id].num_Of_Words == 0)
 	{
 		buffer_element_t event1 = {0,2};
 		return event1;
 	}
 
-	spi_buffers[id].num_Of_Words--;
-	spi_buffers[id].pout++;
+	can_spi_buffers[id].num_Of_Words--;
+	can_spi_buffers[id].pout++;
 
-	if (spi_buffers[id].pout == BUFFER_SIZE + spi_buffers[id].buffer)
+	if (can_spi_buffers[id].pout == BUFFER_SIZE + can_spi_buffers[id].buffer)
 	{
-		spi_buffers[id].pout = spi_buffers[id].buffer;
+		can_spi_buffers[id].pout = can_spi_buffers[id].buffer;
 	}
 
 	return event;
@@ -278,7 +354,7 @@ static buffer_element_t pull_Queue_Element(uint8_t id)
  */
 static uint8_t get_Queue_Status(uint8_t id)
 {
-	return spi_buffers[id].num_Of_Words;
+	return can_spi_buffers[id].num_Of_Words;
 }
 
 
