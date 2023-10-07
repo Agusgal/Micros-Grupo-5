@@ -52,6 +52,10 @@ void App_Run (void)
 		gpioWrite(LED_GREEN_PIN,LOW);
 	else
 		gpioWrite(LED_GREEN_PIN,HIGH);
+	if ((accel_data.norte<=7) & (accel_data.norte>=(-7)))
+		gpioWrite(LED_BLUE_PIN,LOW);
+	else
+		gpioWrite(LED_BLUE_PIN,HIGH);
 }
 
 /*******************************************************************************
