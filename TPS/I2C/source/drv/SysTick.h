@@ -1,93 +1,55 @@
-/*
- * i2c.h
- */
+/***************************************************************************//**
+  @file     SysTick.h
+  @brief    SysTick driver
+  @author   Nicol�s Magliola
+ ******************************************************************************/
 
-#ifndef I2C_H_
-#define I2C_H_
-
+#ifndef _SYSTICK_H_
+#define _SYSTICK_H_
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
+#include <stdbool.h>
 #include <stdint.h>
-
 
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-
-
-#define I2C_BUS_CLOCK	50000000U
-#define ADDRESS_CYCLE_BYTES 2
-#define NULL 	0
-
+#define TOTAL_NUM_CALLBACK_FUNCTIONS	15	// Total number of callback functions
+#define SYSTICK_ISR_PERIOD_US 10000U		// Period of SysTick in microseconds
+#define S_TO_US		1000000
+#define MS_TO_US	1000
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
-typedef void (* pfunc) (void);
-
-//TODO: ver si se puede hacer de otra manera esto
-typedef enum {I2C0_M, I2C1_M, I2C2_M, I2C_M_Count} I2C_Module_t;
-
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
-typedef enum{
-	I2C_Read,
-	I2C_Write,
-}I2C_Mode_t;
-
-
-typedef enum {
-  I2C_Idle,			// Idle
-  I2C_Busy,	// Currently transmitting or receiving
-  I2C_Done,		// Already finished communication
-  I2C_Error			// Some error occurred
-} I2C_Status_t;
-
-
-typedef uint8_t I2C_Address_t;
-
-typedef struct{
-	I2C_Status_t status;
-	I2C_Mode_t mode;
-	uint8_t * read_buffer;
-	size_t read_size;
-	uint8_t * write_buffer;
-	size_t write_size;
-	I2C_Address_t slave_address;
-	size_t R_index;
-	size_t W_index;
-}I2C_Object_t;
-
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
+/**
+ * @brief Initialize SysTic driver
+ * @return Initialization and registration succeed
+ */
+void SysTick_Init ();
 
 /**
- * @brief Initialize i2c driver
- * @param id i2c's number
- * @param config i2c's configuration (baudrate, parity, etc.)
-*/
-void I2C_InitModule (I2C_Module_t module);
-
-
-I2C_Status_t I2C_InitObject(I2C_Module_t module, uint8_t * read_buffer, size_t read_size, uint8_t * write_buffer,
-							size_t write_size, I2C_Address_t slave_address);
-
-
-I2C_Status_t i2cTransactionState(I2C_Module_t module);
-
-
+ * @brief Initialize SysTic driver
+ * @param funcallback Function to be call every SysTick
+ * @param period Period in which the function will be called in microseconds (us)
+ * @return Initialization and registration succeed
+ */
+bool SysTick_Reg_Callback (void (*funCallback)(void), uint32_t period);
 
 
 /*******************************************************************************
  ******************************************************************************/
 
-
-#endif /* I2C_H_ */
+#endif // _SYSTICK_H_

@@ -8,6 +8,7 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 #include <stdint.h>
+#include "gpio.h"
 #include <i2c.h>
 #include <accel.h>
 #include <FXOS8700CQ.h>
@@ -31,14 +32,26 @@
 /* Función que se llama 1 vez, al comienzo del programa */
 void App_Init (void)
 {
-	I2C_InitModule(0);
+	 gpioMode(LED_GREEN_PIN, OUTPUT);
+	 gpioMode(LED_RED_PIN, OUTPUT);
+	 gpioMode(LED_BLUE_PIN, OUTPUT);
+	 gpioWrite(LED_GREEN_PIN,HIGH);
+	 gpioWrite(LED_RED_PIN,HIGH);
+	 gpioWrite(LED_BLUE_PIN,HIGH);
 }
 
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-	static uint8_t read_buffer[20]={2,1,1,1,1,1};
-	Accel();
+
+
+	FX_I2C_Init();
+	static Orient_t accel_data;
+	accel_data=getAccelData();
+	if ((accel_data.rolido<=90) & (accel_data.rolido>=(-90)))
+		gpioWrite(LED_GREEN_PIN,LOW);
+	else
+		gpioWrite(LED_GREEN_PIN,HIGH);
 }
 
 /*******************************************************************************
