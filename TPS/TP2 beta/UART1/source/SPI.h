@@ -72,6 +72,11 @@ void SPI_SendMsg(uint8_t* msg);
  */
 void SPI_SendByte(uint8_t byte);
 
+/**
+ * @return	Transmission in process (0 No tranmission; 1 in process)
+ */
+uint8_t SPI_Transmission_In_Process();
+
 
 /*******************************************************************************
  ******************************************************************************/

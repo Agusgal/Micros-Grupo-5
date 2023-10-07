@@ -206,6 +206,9 @@ void SPI_SendByte(uint8_t byte)
 
 	// Enable TFFF flag to start pushing data to the queue
 	SPI0->RSER |= SPI_RSER_TFFF_RE_MASK;
+
+	// Enable transfer
+	SPI0 -> SR = SPI_SR_EOQF_MASK;
 }
 
 /**
@@ -232,7 +235,7 @@ void SPI_SendMsg(uint8_t* msg)
 	SPI0->RSER |= SPI_RSER_TFFF_RE_MASK;
 
 	// Enable transfer
-	//SPI0 -> SR |= SPI_SR_EOQF_MASK;
+	SPI0 -> SR = SPI_SR_EOQF_MASK;
 
 }
 
@@ -259,6 +262,20 @@ void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes)
 	// Enable TFFF flag to start pushing data to the queue
 	SPI0->RSER |= SPI_RSER_TFFF_RE_MASK;
 
+	// Enable transfer
+	SPI0 -> SR = SPI_SR_EOQF_MASK;
+
+}
+
+/**
+ * @return	Transmission in process (0 No tranmission; 1 in process)
+ */
+
+uint8_t SPI_Transmission_In_Process()
+{
+	uint32_t tmp;
+	tmp = SPI0 -> SR;
+	return !(tmp | SPI_SR_EOQF_MASK);	// if EOQF==1; transmission is completed
 }
 
 
