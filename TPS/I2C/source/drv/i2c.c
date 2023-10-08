@@ -13,6 +13,9 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
+// I2C Timings
+#define I2C_BUS_CLOCK		50000000U
+#define I2C_BAUD_RATE       100000U
 
 
 // I2C OnBoard Pinout
@@ -114,7 +117,7 @@ void I2C_InitModule (I2C_Module_t module)
 	I2C->S = I2C_S_IICIF_MASK;
 
 
-	BaudRate_t baudRate = SetBaudRate(20000);
+	BaudRate_t baudRate = SetBaudRate(I2C_BAUD_RATE);
 	I2C->F = I2C_F_MULT(baudRate.mul) | I2C_F_ICR(baudRate.icr); //  set the I2C baud rate
 
 	//Mux puertos en modo I2C
@@ -160,7 +163,7 @@ I2C_Status_t I2C_InitObject(I2C_Module_t module, uint8_t * read_buffer, size_t r
 
 	// Initialize communication
 	// Como esta parte es común a tanto escritura como lectura (a excepción del bit de R/W), se colocó aquí
-	//gpioWrite(LED_RED_PIN,LOW);
+	gpioWrite(I2C_TP_PIN,HIGH);
 	I2C_CLEAR_NACK;
 	I2C_SET_TX_MODE;	// Set to transmit mode
 	I2C_START_SIGNAL;	// Start Signal (Setting Master Mode)
@@ -169,16 +172,6 @@ I2C_Status_t I2C_InitObject(I2C_Module_t module, uint8_t * read_buffer, size_t r
 
 	return I2C_OBJ_STATUS;
 
-}
-
-I2C_Status_t i2cTransactionState(I2C_Module_t module)
-{
-  I2C_Status_t result = I2C_OBJ_STATUS;
-  if (result == I2C_Done || result == I2C_Error)
-  {
-	  I2C_OBJ_STATUS = I2C_Idle;
-  }
-  return result;
 }
 
 /*******************************************************************************
@@ -209,9 +202,6 @@ void I2C_IRQHandler(I2C_Module_t module)
 			  // Release the I2C bus.
 			I2C_OBJ_STATUS = I2C_Error;
 			I2C_STOP_SIGNAL;
-			while(I2C_CHECK_BUS);
-			gpioWrite(LED_RED_PIN,LOW);
-
 		  }
 		  else
 		  {
@@ -229,10 +219,7 @@ void I2C_IRQHandler(I2C_Module_t module)
 			}
 			else
 			{
-			  // Transmission finished and there are some bytes to be read,
-			  // so the master generates a repeated start to change the data direction
-			  // of the bus, without releasing it...
-
+			  // Ya se transmitieron todos los bytes necesarios, pero quedan bytes por leer.
 			I2C_REPEAT_START_SIGNAL;
 			I2C_WRITE_DATA(I2C_ADDRESS_MASK | 0x00000001);
 			I2C_OBJ_MODE=I2C_Read;
@@ -253,8 +240,7 @@ void I2C_IRQHandler(I2C_Module_t module)
 		// Verify if the slave answered with ACK
 		if (!I2C_GET_RX_ACK)
 		{
-		  // An error occurred and the slave didn't answer, so the transaction
-		  // is stopped and the status of the instance is changed
+		  // No recibe acknowledge
 		  I2C_OBJ_STATUS = I2C_Error;
 		  I2C_STOP_SIGNAL;
 		  gpioWrite(LED_RED_PIN,LOW);
@@ -283,8 +269,7 @@ void I2C_IRQHandler(I2C_Module_t module)
 	  }
 	  else if (I2C_OBJ_R_INDEX < (I2C_OBJ_R_SIZE - 1) )
 	  {
-		// If this is the 2nd to last byte, set the ACK to stop slave from
-		// continue sending data frames, and then read the current data
+		// Si es el anteultimo byte, seteo el NACK.
 		if (I2C_OBJ_R_INDEX == (I2C_OBJ_R_SIZE - 2) )
 		{
 		  I2C_SET_NACK;

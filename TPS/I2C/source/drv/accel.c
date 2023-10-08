@@ -9,26 +9,21 @@
 #include <stdbool.h>
 #include "SysTick.h"
 #include <math.h>
+#include "gpio.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-#define CALIBRATION_COUNT 100
-#define FXOS8700CQ_I2C_BAUD_RATE        100000U
 #define FXOS8700CQ_UPDATE_TICK_MS       50		//20 Hz
-//#define FXOS8700CQ_UPDATE_TICK          TIMER_MS2TICKS(FXOS8700CQ_UPDATE_TICK_MS)
-#define FXOS8700CQ_WRITE_BUFFER_SIZE    20
-#define FXOS8700CQ_READ_BUFFER_SIZE     20
-#define FXOS8700CQ_WHOAMI_VALUE         0xC7
-
+#define FX_PISR_PERIOD_MS       50		//20 Hz
+#define FX_WRITE_BUFFER_SIZE    20
+#define FX_READ_BUFFER_SIZE     20
+#define WHOAMI_VALUE         	0xC7
+#define NULL					0
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH LOCAL SCOPE
  ******************************************************************************/
-typedef struct {
-	uint8_t x;
-	uint8_t y;
-	uint8_t z;
-} Coord8_t;
+
 
 typedef struct {
 	int16_t x;
@@ -42,58 +37,30 @@ typedef struct {
 	float z;
 } Coord_Float_t;
 
-
-
-typedef struct {
-	uint16_t x14;		// 14 bit data
-	uint16_t y14;
-	uint16_t z14;
-	uint8_t x8;		// 8 bit data
-	uint8_t y8;
-	uint8_t z8;
-	Coord8_t offset;
-} Acc_Out_t;
-
-typedef struct {
-	uint16_t x14;		// 14 bit data
-	uint16_t y14;
-	uint16_t z14;
-	uint8_t x8;		// 8 bit data
-	uint8_t y8;
-	uint8_t z8;
-	Coord8_t offset;
-} Mag_Out_t;
-
 typedef enum {
   FX_Init,
   FX_Running,
   FX_Error
-} acc_status_t;
+} Acc_Status_t;
 
 
 
 // Accelerometer data structure
 typedef struct {
 
-  /* Status and control fields of the context */
-  bool                  alreadyInit;            // When the driver is already initialized
-  acc_status_t          status;                 // Global status of the accelerometer driver
-  uint8_t               counter;
+  bool                  alreadyInit;            // Driver inicializado
+  Acc_Status_t          status;                 // Estado del acelerometro
+  uint8_t               counter;				// Counter para FSM
 
   Coord16_t	          	accelerometer;        // Vector acceleration
   Coord16_t				magnetometer;		 //
-  Coord_Float_t	        accelerometer_f;     // Vector acceleration
-  Coord_Float_t			magnetometer_f;		 //
-  bool					updated;
   Orient_t				orientation;
 
   /* I2C message buffers */
-  uint8_t               writeBuffer[FXOS8700CQ_WRITE_BUFFER_SIZE];
-  uint8_t               readBuffer[FXOS8700CQ_READ_BUFFER_SIZE];
-} Accel_t;
+  uint8_t               writeBuffer[FX_WRITE_BUFFER_SIZE];
+  uint8_t               readBuffer[FX_READ_BUFFER_SIZE];
 
-Acc_Out_t Acc_Data;
-Mag_Out_t Mag_Data;
+} Accel_t;
 
 static Accel_t 	Accel;
 /*******************************************************************************
@@ -149,7 +116,7 @@ bool FX_I2C_Init()
 	    I2C_InitModule(0);
 	    // Initialize and set the periodic service routine
 	    SysTick_Init();
-	    SysTick_Reg_Callback(FX_PISR,100 * MS_TO_US);
+	    SysTick_Reg_Callback(FX_PISR,FX_PISR_PERIOD_MS * MS_TO_US);
 
 	    // Raise the already initialized flag
 	    Accel.alreadyInit = true;
@@ -221,10 +188,10 @@ void FX_InitSequence(bool resetCounter)
 	}
 }
 
-void FX_RunningSequence(bool reset)
+void FX_RunningSequence(bool resetCounter)
 {
 
-  if (reset)
+  if (resetCounter)
   {
     Accel.counter = 0;
   }
@@ -240,32 +207,18 @@ void FX_RunningSequence(bool reset)
         Accel.accelerometer.y = ((int16_t)(Accel.readBuffer[2] << 8 | Accel.readBuffer[3])) >> 2;  // Compute 14-bit X-axis acceleration output value
         Accel.accelerometer.z = ((int16_t)(Accel.readBuffer[4] << 8 | Accel.readBuffer[5])) >> 2;  // Compute 14-bit X-axis acceleration output value
 
-        // Accelerometer data converted to g
-
-    	 Accel.accelerometer_f.x = ((float) Accel.accelerometer.x) / (float) SENSITIVITY_2G;  // Compute X-axis output value in g's
-    	 Accel.accelerometer_f.y = (float) Accel.accelerometer.y / (float) SENSITIVITY_2G;  // Compute X-axis output value in g's
-    	 Accel.accelerometer_f.z = (float) Accel.accelerometer.z / (float) SENSITIVITY_2G;  // Compute X-axis output value in g's
-
-		// 16-bit magnetometer data
-    	Accel.magnetometer.x = (int16_t)(Accel.readBuffer[3] << 8);
-    	Accel.magnetometer.y = (int16_t)(Accel.readBuffer[4] << 8);
-    	Accel.magnetometer.z = (int16_t)(Accel.readBuffer[5] << 8);
-
 		// Magnetometer data converted to microteslas
     	Accel.magnetometer.x = (int16_t)(Accel.readBuffer[6] << 8 | Accel.readBuffer[7]);  // Compute 16-bit X-axis magnetic output value
     	Accel.magnetometer.y = (int16_t)(Accel.readBuffer[8] << 8 | Accel.readBuffer[9]);  // Compute 16-bit X-axis magnetic output value
     	Accel.magnetometer.z = (int16_t)(Accel.readBuffer[10] << 8 | Accel.readBuffer[11]);  // Compute 16-bit X-axis magnetic output value
 
-    	Accel.magnetometer_f.x = (float)(Accel.magnetometer.x) / SENSITIVITY_MAG;  // Compute X-axis output magnetic value in uT
-    	Accel.magnetometer_f.y = (float)(Accel.magnetometer.y) / SENSITIVITY_MAG;  // Compute X-axis output magnetic value in uT
-    	Accel.magnetometer_f.z = (float)(Accel.magnetometer.z) / SENSITIVITY_MAG;  // Compute X-axis output magnetic value in uT
-    	float north =90+atan2(Accel.magnetometer_f.y, Accel.magnetometer_f.x) * 180 / 3.14159;
+    	float north =90+atan2(Accel.magnetometer.y, Accel.magnetometer.x) * 180 / 3.14159;
 
     	if (north>=180)
     		north-=360;
     	Accel.orientation.norte=north;
-    	Accel.orientation.rolido=atan2(Accel.accelerometer_f.x, Accel.accelerometer_f.z) * 180 / 3.14159;
-    	Accel.orientation.cabeceo=atan2(Accel.accelerometer_f.y, Accel.accelerometer_f.z) * 180 / 3.14159;
+    	Accel.orientation.rolido=atan2(Accel.accelerometer.x, Accel.accelerometer.z) * 180 / 3.14159;
+    	Accel.orientation.cabeceo=atan2(Accel.accelerometer.y, Accel.accelerometer.z) * 180 / 3.14159;
 
 
       break;

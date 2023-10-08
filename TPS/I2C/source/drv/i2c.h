@@ -19,17 +19,11 @@
  ******************************************************************************/
 
 
-#define I2C_BUS_CLOCK	50000000U
-#define ADDRESS_CYCLE_BYTES 2
-#define NULL 	0
-
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
-typedef void (* pfunc) (void);
 
-//TODO: ver si se puede hacer de otra manera esto
 typedef enum {I2C0_M, I2C1_M, I2C2_M, I2C_M_Count} I2C_Module_t;
 
 /*******************************************************************************
