@@ -142,20 +142,28 @@ void CAN_SPI_Init (void)
 	while(SPI_Transmission_In_Process());
 
 
-
 	// 3- Bit time configuration
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = CNF1_ADDRESS;
 	data[2] = 0b00000011; // SJW = 1TQ; BRP = 4 (3+1)
-	while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3);
+	while(SPI_Transmission_In_Process());
+
+	data[0] = READ_INSTRUCTION;
+	data[1] = CNF1_ADDRESS;
+	data[2] = 0b00000011; // SJW = 1TQ; BRP = 4 (3+1)
+	SPI_SendData(data, 3);
+	while(SPI_Transmission_In_Process());
+
+	uint8_t aux [4];
+	SPI_Get_DataBytes(aux, 3);
 
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = CNF2_ADDRESS;
 	data[2] = 0b10110001; // btl=1; sam=0; phseg = 7 (6+1); prseg = 2 (1+1)
-	while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3);
+	while(SPI_Transmission_In_Process());
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = CNF3_ADDRESS;
@@ -236,7 +244,6 @@ void CAN_SPI_Init (void)
 		SPI_SendData(data, 3);
 		while(!SPI_Read_Status());
 
-		uint8_t aux [4];
 		SPI_Get_DataBytes(aux, 3);
 
 
