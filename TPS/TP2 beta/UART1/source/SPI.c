@@ -107,7 +107,7 @@ static uint8_t get_Queue_Status(uint8_t id);
  */
 static void SPI_timer(void);
 
-
+static void flush_Queue(uint8_t id);
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -200,7 +200,7 @@ uint8_t SPI_Get_Status(void)
 
 uint8_t SPI_Get_Data(void)
 {
-	return(pull_Queue_Element(0).data);
+	return(pull_Queue_Element(1).data);
 }
 
 /**
@@ -214,7 +214,7 @@ void SPI_Get_DataBytes(uint8_t *data, uint32_t num_of_bytes)
 	uint32_t i;
 	for(i = 0; i < num_of_bytes; i++)
 	{
-		data[i] = pull_Queue_Element(0).data;
+		data[i] = pull_Queue_Element(1).data;
 	}
 }
 
@@ -224,6 +224,9 @@ void SPI_Get_DataBytes(uint8_t *data, uint32_t num_of_bytes)
  */
 void SPI_SendByte(uint8_t byte)
 {
+	//SPI0->MCR |= SPI_MCR_CLR_RXF_MASK | SPI_MCR_CLR_TXF_MASK;
+	//flush_Queue(0);
+	//flush_Queue(1);
 	buffer_element_t event = {byte, 1};
 	push_Queue_Element(0, event);
 
@@ -238,6 +241,11 @@ void SPI_SendByte(uint8_t byte)
 
 void SPI_SendMsg(uint8_t* msg)
 {
+	// clear all queues
+	//SPI0->MCR |= SPI_MCR_CLR_RXF_MASK | SPI_MCR_CLR_TXF_MASK;
+	//flush_Queue(0);
+	//flush_Queue(1);
+
 	uint32_t i = 0;
 	while (msg[i]  != '\0')
 	{
@@ -267,6 +275,10 @@ void SPI_SendMsg(uint8_t* msg)
 
 void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes)
 {
+	// clear all queues
+	//SPI0->MCR |= SPI_MCR_CLR_RXF_MASK | SPI_MCR_CLR_TXF_MASK;
+	//flush_Queue(0);
+	//flush_Queue(1);
 	uint32_t i = 0;
 	for(i = 0; i < num_of_bytes; i++)
 	{
@@ -290,7 +302,16 @@ void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes)
 
 uint8_t SPI_Transmission_In_Process()
 {
-	return SPI0 -> SR & SPI_SR_TXCTR_MASK;	// if EOQF==1; transmission is completed
+	return (SPI0 -> SR & SPI_SR_TXCTR_MASK) && get_Queue_Status(0);	// if EOQF==1; transmission is completed
+}
+
+/**
+ * @return	Data_ready_to_read (0 Not ready; 1 ready)
+ */
+
+uint8_t SPI_Read_Status()
+{
+	return !(SPI0 -> SR & SPI_SR_RXCTR_MASK) && get_Queue_Status(1) && !SPI_Transmission_In_Process();	// if EOQF==1; transmission is completed
 }
 
 
@@ -311,7 +332,7 @@ __ISR__ SPI0_IRQHandler(void)
 	// Transfer FIFO Fill Flag (1 if not empty)
 	if(IS_TFFF(tmp))
 	{
-		SPI0 -> SR = SPI_SR_TFFF_MASK;
+		clearFlags = SPI_SR_TFFF_MASK;
 		if (get_Queue_Status(0))
 		{
 			buffer_element_t buffer_data_out = pull_Queue_Element(0);
@@ -339,12 +360,14 @@ __ISR__ SPI0_IRQHandler(void)
 	// Receive FIFO Drain Flag
 	if(IS_RFDF(tmp))
 	{
-		SPI0 -> SR = SPI_SR_RFDF_MASK;
+		clearFlags |= SPI_SR_RFDF_MASK;
 		uint32_t rxdata = SPI0 -> POPR;
 		buffer_element_t data_in= {rxdata, 0};
 		push_Queue_Element(1, data_in); //positions itself in the receiver queue
 		// check if flag should be cleared (Maybe better to do at the end of all interrupts
 	}
+
+	SPI0 -> SR = clearFlags;
 }
 
 /**
@@ -422,6 +445,20 @@ static uint8_t get_Queue_Status(uint8_t id)
 }
 
 
+/**
+ * @brief Pulls the earliest event from the queue
+ * @return Event_Type variable with the current event if no OVERFLOW is detected.
+ */
+
+
+static void flush_Queue(uint8_t id)
+{
+	uint32_t i;
+	for(i = 0; i < BUFFER_SIZE; i++)
+	{
+		pull_Queue_Element(id);
+	}
+}
 
 
 

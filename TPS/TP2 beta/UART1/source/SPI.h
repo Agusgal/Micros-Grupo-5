@@ -85,6 +85,11 @@ void SPI_SendByte(uint8_t byte);
  */
 uint8_t SPI_Transmission_In_Process();
 
+/**
+ * @return	Data_ready_to_read (0 Not ready; 1 ready)
+ */
+
+uint8_t SPI_Read_Status(void);
 
 /*******************************************************************************
  ******************************************************************************/
