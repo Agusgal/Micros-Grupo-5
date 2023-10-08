@@ -206,9 +206,6 @@ void SPI_SendByte(uint8_t byte)
 
 	// Enable TFFF flag to start pushing data to the queue
 	SPI0->RSER |= SPI_RSER_TFFF_RE_MASK;
-
-	// Enable transfer
-	SPI0 -> SR = SPI_SR_EOQF_MASK;
 }
 
 /**
@@ -235,7 +232,7 @@ void SPI_SendMsg(uint8_t* msg)
 	SPI0->RSER |= SPI_RSER_TFFF_RE_MASK;
 
 	// Enable transfer
-	SPI0 -> SR = SPI_SR_EOQF_MASK;
+	//SPI0 -> SR |= SPI_SR_EOQF_MASK;
 
 }
 
@@ -262,9 +259,6 @@ void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes)
 	// Enable TFFF flag to start pushing data to the queue
 	SPI0->RSER |= SPI_RSER_TFFF_RE_MASK;
 
-	// Enable transfer
-	SPI0 -> SR = SPI_SR_EOQF_MASK;
-
 }
 
 /**
@@ -273,9 +267,7 @@ void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes)
 
 uint8_t SPI_Transmission_In_Process()
 {
-	uint32_t tmp;
-	tmp = SPI0 -> SR;
-	return !(tmp | SPI_SR_EOQF_MASK);	// if EOQF==1; transmission is completed
+	return get_Queue_Status(0);	// if EOQF==1; transmission is completed
 }
 
 
@@ -303,7 +295,7 @@ __ISR__ SPI0_IRQHandler(void)
 			uint32_t data_out = SPI_PUSHR_CONT_MASK;
 			if (buffer_data_out.end_of_data)
 			{
-				data_out |= SPI_PUSHR_EOQ_MASK;
+				//data_out |= SPI_PUSHR_EOQ_MASK;
 
 				// If last word, indicate that the chip select should not be held
 				data_out &= ~SPI_PUSHR_CONT_MASK;
@@ -331,7 +323,7 @@ __ISR__ SPI0_IRQHandler(void)
 		// check if flag should be cleared (Maybe better to do at the end of all interrupts
 	}
 
-	SPI0 -> SR = clearFlags;	// this, in particular, erases the EOQ flag (to be taken into account)
+	SPI0 -> SR = clearFlags;
 }
 
 /**
