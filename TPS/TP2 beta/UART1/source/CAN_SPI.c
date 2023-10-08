@@ -17,8 +17,9 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define	WRITE_INSTRUCTION 	0b00000010
+#define	WRITE_INSTRUCTION 		0b00000010
 #define	BIT_MODIFY_INSTRUCTION 	0b00000101
+#define	READ_INSTRUCTION 		0b00000011
 
 #define	CNF1_ADDRESS	0b00101010
 #define	CNF2_ADDRESS	0b00101001
@@ -138,53 +139,67 @@ void CAN_SPI_Init (void)
 	uint8_t data[10];
 	data[0] = 0b11000000;
 	SPI_SendData(data, 1);
+	//while(SPI_Transmission_In_Process());
+
+
 
 	// 3- Bit time configuration
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = CNF1_ADDRESS;
 	data[2] = 0b00000011; // SJW = 1TQ; BRP = 4 (3+1)
+	//while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3);
+
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = CNF2_ADDRESS;
 	data[2] = 0b10110001; // btl=1; sam=0; phseg = 7 (6+1); prseg = 2 (1+1)
+	//while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3);
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = CNF3_ADDRESS;
 	data[2] = 0b10000101; // sof = 1; WAKFL = 0; PHSEG2 = 6 (5+1)
+	//while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3);
+
 
 	// 4- Filter configurations
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = RxM0SIDH;
 	data[2] = 0b11111111;
+	//while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3);
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = RxM0SIDL;
 	data[2] = 0b00000000;
+	//while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3);
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = RxF0SIDH;
 	data[2] = 0b00100000;
+	//while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3);
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = RxF0SIDL;
 	data[2] = 0b00000000;
+	//while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3);
 
 	// 5- Reception configurations
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = RxB0CTRL;
 	data[2] = 0b00000100;//Roll-over enabled (RX0 TO RX1)
+	//while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3);
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = RxB1CTRL;
 	data[2] = 0b00000000;
+	//while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3);
 
 
@@ -192,11 +207,13 @@ void CAN_SPI_Init (void)
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = CANINTE;
 	data[2] = 0b00000011;
+	//while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3);
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = CANINTF;
 	data[2] = 0b00000000;	// all flags in 0
+	//while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3);
 
 	// 7- Normal mode
@@ -204,11 +221,94 @@ void CAN_SPI_Init (void)
 	data[1] = CANCTRL;
 	data[2] = 0b11000000; // Mask
 	data[3] = 0b00000000;
+	//while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 4);
 
 
 	queue_Init(0);
 	queue_Init(1);
+
+	// 3- Bit time configuration
+		data[0] = READ_INSTRUCTION;
+		data[1] = CNF1_ADDRESS;
+		data[2] = 0b00000011; // SJW = 1TQ; BRP = 4 (3+1)
+		//while(SPI_Transmission_In_Process());
+		SPI_SendData(data, 3);
+		//while(SPI_Transmission_In_Process());
+
+
+		data[0] = READ_INSTRUCTION;
+		data[1] = CNF2_ADDRESS;
+		data[2] = 0b10110001; // btl=1; sam=0; phseg = 7 (6+1); prseg = 2 (1+1)
+		//while(SPI_Transmission_In_Process());
+		SPI_SendData(data, 3);
+
+		data[0] = READ_INSTRUCTION;
+		data[1] = CNF3_ADDRESS;
+		data[2] = 0b10000101; // sof = 1; WAKFL = 0; PHSEG2 = 6 (5+1)
+		//while(SPI_Transmission_In_Process());
+		SPI_SendData(data, 3);
+
+
+		// 4- Filter configurations
+		data[0] = READ_INSTRUCTION;
+		data[1] = RxM0SIDH;
+		data[2] = 0b11111111;
+		//while(SPI_Transmission_In_Process());
+		SPI_SendData(data, 3);
+
+		data[0] = READ_INSTRUCTION;
+		data[1] = RxM0SIDL;
+		data[2] = 0b00000000;
+		//while(SPI_Transmission_In_Process());
+		SPI_SendData(data, 3);
+
+		data[0] = READ_INSTRUCTION;
+		data[1] = RxF0SIDH;
+		data[2] = 0b00100000;
+		//while(SPI_Transmission_In_Process());
+		SPI_SendData(data, 3);
+
+		data[0] = READ_INSTRUCTION;
+		data[1] = RxF0SIDL;
+		data[2] = 0b00000000;
+		//while(SPI_Transmission_In_Process());
+		SPI_SendData(data, 3);
+
+		// 5- Reception configurations
+		data[0] = READ_INSTRUCTION;
+		data[1] = RxB0CTRL;
+		data[2] = 0b00000100;//Roll-over enabled (RX0 TO RX1)
+		//while(SPI_Transmission_In_Process());
+		SPI_SendData(data, 3);
+
+		data[0] = READ_INSTRUCTION;
+		data[1] = RxB1CTRL;
+		data[2] = 0b00000000;
+		//while(SPI_Transmission_In_Process());
+		SPI_SendData(data, 3);
+
+
+		// 6- Erase flags and enable interrupts
+		data[0] = READ_INSTRUCTION;
+		data[1] = CANINTE;
+		data[2] = 0b00000011;
+		//while(SPI_Transmission_In_Process());
+		SPI_SendData(data, 3);
+
+		data[0] = READ_INSTRUCTION;
+		data[1] = CANINTF;
+		data[2] = 0b00000000;	// all flags in 0
+		//while(SPI_Transmission_In_Process());
+		SPI_SendData(data, 3);
+
+		// 7- Normal mode
+		data[0] = READ_INSTRUCTION;
+		data[1] = CANCTRL;
+		data[2] = 0b11000000; // Mask
+		//while(SPI_Transmission_In_Process());
+		SPI_SendData(data, 3);
+
 }
 
 

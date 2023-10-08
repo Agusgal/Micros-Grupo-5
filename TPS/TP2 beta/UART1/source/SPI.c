@@ -25,7 +25,7 @@
 #define SPI0_TX_PIN 	2 //PTD2
 #define SPI0_RX_PIN 	3 //PTD3
 
-#define	BUFFER_SIZE	 20
+#define	BUFFER_SIZE	 50
 #define OVERFLOW     -1
 
 typedef struct buffer_element{
@@ -41,6 +41,9 @@ typedef struct spi_buffer{
 }spi_buffer_t;
 
 spi_buffer_t spi_buffers[2]; //doubles the value for input and output buffers. 1 is input, 0 is output.
+
+static uint32_t delay = 0;
+static uint8_t delay_flag = 0;
 
 typedef enum
 {
@@ -98,6 +101,11 @@ static buffer_element_t pull_Queue_Element(uint8_t id);
  */
 static uint8_t get_Queue_Status(uint8_t id);
 
+/**
+ * @brief
+ * @return
+ */
+static void SPI_timer(void);
 
 
 /*******************************************************************************
@@ -156,7 +164,7 @@ void SPI_Init (void)
 		SPI0->MCR = SPI_MCR_MSTR_MASK | SPI_MCR_PCSIS_MASK;
 
 		SPI0->CTAR[0] = 0x0;
-		SPI0->CTAR[0] = SPI_CTAR_FMSZ(7) | SPI_CTAR_PBR_MASK | SPI_CTAR_BR(6);
+		SPI0->CTAR[0] = SPI_CTAR_FMSZ(7) | SPI_CTAR_PBR_MASK | SPI_CTAR_BR(6) | SPI_CTAR_DT(0b00001000) | SPI_CTAR_CSSCK(0b00000111) | SPI_CTAR_ASC(0b00000111); //insert 10 usec in between transfers
 
 		SPI0->SR = 0x0;
 		SPI0->SR = SPI_SR_TXRXS_MASK ;
@@ -193,6 +201,21 @@ uint8_t SPI_Get_Status(void)
 uint8_t SPI_Get_Data(void)
 {
 	return(pull_Queue_Element(0).data);
+}
+
+/**
+ * @brief
+ * @param
+ * @return
+ */
+
+void SPI_Get_DataBytes(uint8_t *data, uint32_t num_of_bytes)
+{
+	uint32_t i;
+	for(i = 0; i < num_of_bytes; i++)
+	{
+		data[i] = pull_Queue_Element(0).data;
+	}
 }
 
 /**
@@ -267,7 +290,7 @@ void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes)
 
 uint8_t SPI_Transmission_In_Process()
 {
-	return get_Queue_Status(0);	// if EOQF==1; transmission is completed
+	return SPI0 -> SR & SPI_SR_TXCTR_MASK;	// if EOQF==1; transmission is completed
 }
 
 
@@ -288,7 +311,7 @@ __ISR__ SPI0_IRQHandler(void)
 	// Transfer FIFO Fill Flag (1 if not empty)
 	if(IS_TFFF(tmp))
 	{
-		clearFlags |= SPI_SR_TFFF_MASK;
+		SPI0 -> SR = SPI_SR_TFFF_MASK;
 		if (get_Queue_Status(0))
 		{
 			buffer_element_t buffer_data_out = pull_Queue_Element(0);
@@ -316,14 +339,12 @@ __ISR__ SPI0_IRQHandler(void)
 	// Receive FIFO Drain Flag
 	if(IS_RFDF(tmp))
 	{
-		clearFlags |= SPI_SR_RFDF_MASK;
+		SPI0 -> SR = SPI_SR_RFDF_MASK;
 		uint32_t rxdata = SPI0 -> POPR;
 		buffer_element_t data_in= {rxdata, 0};
 		push_Queue_Element(1, data_in); //positions itself in the receiver queue
 		// check if flag should be cleared (Maybe better to do at the end of all interrupts
 	}
-
-	SPI0 -> SR = clearFlags;
 }
 
 /**

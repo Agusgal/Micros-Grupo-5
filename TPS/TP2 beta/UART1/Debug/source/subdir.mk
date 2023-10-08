@@ -6,6 +6,7 @@
 C_SRCS += \
 ../source/CAN_SPI.c \
 ../source/SPI.c \
+../source/Systick.c \
 ../source/UART.c \
 ../source/hardware.c \
 ../source/main.c 
@@ -13,6 +14,7 @@ C_SRCS += \
 OBJS += \
 ./source/CAN_SPI.o \
 ./source/SPI.o \
+./source/Systick.o \
 ./source/UART.o \
 ./source/hardware.o \
 ./source/main.o 
@@ -20,6 +22,7 @@ OBJS += \
 C_DEPS += \
 ./source/CAN_SPI.d \
 ./source/SPI.d \
+./source/Systick.d \
 ./source/UART.d \
 ./source/hardware.d \
 ./source/main.d 

@@ -1,29 +1,30 @@
 /***************************************************************************//**
-  @file     SPI.h
-  @brief    SPI driver
+  @file     SysTick.h
+  @brief    SysTick driver
   @author   Grupo 5
  ******************************************************************************/
 
-#ifndef SPI_H_
-#define SPI_H_
+#ifndef _SYSTICK_H_
+#define _SYSTICK_H_
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-
-
+#define TOTAL_NUM_CALLBACK_FUNCTIONS	15	// Total number of callback functions
+#define SYSTICK_ISR_PERIOD_US 500U		// Period of SysTick in microseconds
+#define S_TO_US		1000000
+#define MS_TO_US	1000
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
@@ -32,61 +33,23 @@
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
-/**
- * @brief
- * @return
- */
-void SPI_Init (void);
 
 /**
- * @brief
- * @return
+ * @brief Initialize SysTic driver
+ * @return Initialization and registration succeed
  */
-uint8_t SPI_Get_Status(void);
+void SysTick_Init ();
 
 /**
- * @brief
- * @return
+ * @brief Initialize SysTic driver
+ * @param funcallback Function to be call every SysTick
+ * @param period Period in which the function will be called in microseconds (us)
+ * @return Initialization and registration succeed
  */
-uint8_t SPI_Get_Data(void);
-
-/**
- * @brief
- * @param
- * @return
- */
-
-void SPI_Get_DataBytes(uint8_t *data, uint32_t num_of_bytes);
-
-/**
- * @brief	Starts the Transmission of the data (8-bits words)
- * @param	bytes	Array of data (uint8_t*)
- * @param	num_of_bytes	Number of bytes of the array
- */
-
-void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes);
-
-
-/**
- * @brief	Starts the Transmission of the string (8-bits words). The '\0' is not transmitted
- * @param	msg	Array of data (string)
- */
-
-void SPI_SendMsg(uint8_t* msg);
-
-/**
- * @brief	Starts the Transmission of the only byte (8-bits word).
- * @param	byte	Data byte to transmit.
- */
-void SPI_SendByte(uint8_t byte);
-
-/**
- * @return	Transmission in process (0 No tranmission; 1 in process)
- */
-uint8_t SPI_Transmission_In_Process();
+bool SysTick_Reg_Callback (void (*funCallback)(void), uint32_t period);
 
 
 /*******************************************************************************
  ******************************************************************************/
 
-#endif /* SPI_H_ */
+#endif // _SYSTICK_H_

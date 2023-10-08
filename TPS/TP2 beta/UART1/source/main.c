@@ -19,13 +19,15 @@ int main (void)
 	hw_DisableInterrupts();
 	hw_Init ();
 	UART_Init();
-	SPI_Init();
-	//CAN_SPI_Init();
-
 	hw_EnableInterrupts();
+	CAN_SPI_Init();
+
+
+	while(SPI_Transmission_In_Process());
 	SPI_SendData("a",1);
-	SPI_SendData("a",1);
+	while(SPI_Transmission_In_Process());
 	SPI_SendMsg("Hola");
+	while(SPI_Transmission_In_Process());
 	SPI_SendMsg("Messi");
 
 
