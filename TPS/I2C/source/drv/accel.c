@@ -115,7 +115,6 @@ bool FX_I2C_Init()
 	    // Initialize the I2C driver
 	    I2C_InitModule(0);
 	    // Initialize and set the periodic service routine
-	    SysTick_Init();
 	    SysTick_Reg_Callback(FX_PISR,FX_PISR_PERIOD_MS * MS_TO_US);
 
 	    // Raise the already initialized flag

@@ -1,16 +1,22 @@
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+from collections import deque
 
 import pygame
 from pygame.locals import *
-
 from OpenGL.GL import *
 from OpenGL.GLU import *
-
+import random
+import sys
+import time
 from serial.tools import list_ports
 import serial
 import numpy as np
 import threading
 
+# JOYSTICK
+import pygame
+from pygame import locals
+
+contador = 0
 
 vertices = (
     (1, -1, -1),
@@ -110,14 +116,12 @@ def drawText(position, textString, color):
     glRasterPos3d(*position)
     glDrawPixels(textSurface.get_width(), textSurface.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, textData)
 
-
 def smallDrawText(position, textString, color):
     font = pygame.font.Font(None, 30)
     textSurface = font.render(textString, True, (color[0], color[1], color[2], 255), (0, 0, 0, 255))
     textData = pygame.image.tostring(textSurface, "RGBA", True)
     glRasterPos3d(*position)
     glDrawPixels(textSurface.get_width(), textSurface.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, textData)
-
 
 rolido = np.zeros(8)
 cabeceo = np.zeros(8)
@@ -145,16 +149,19 @@ codes = {
     "8": 7
 }
 
-
 def decodeInfo(text):
     try:
+
+        print(text[1])
         code = int(text[0])
-
+        print("Code: ", code)
         mode = text[1]
-
+        print("Mode: ", mode)
         signo = text[2]
+        print("Signo: ", signo)
 
         angulo = int(text[3]) * 100 + int(text[4]) * 10 + int(text[5])
+        print("Angulo: ", angulo)
 
         if signo == "-":
             angulo = -angulo
@@ -162,7 +169,6 @@ def decodeInfo(text):
         return code, mode, angulo
     except:
         print("¡Some problems receiving!")
-
         return None
 
 comunic = None
@@ -170,30 +176,30 @@ conectado = False
 queue = []
 iv = ""
 
-#Thread function to aquire data from ports
 def threadGetData():
     global comunic
     global conectado
     global showCabeceo, showRolido, showOrientacion, targetShowCabeceo, targetShowOrientacion, targetShowRolido
 
     while 1:
-        pygame.time.wait(10)
+        pygame.time.wait(500)
 
         if not conectado:
             try:
                 ports = serial.tools.list_ports.comports()
 
                 available_ports = []
+
                 for p in ports:
                     available_ports.append(p.device)
 
                 print("Puertos disponibles: " + str(available_ports))
                 port = input("Seleccione nombre de puerto: ")
 
-                comunic = serial.Serial(port, baudrate=4800, timeout=1)
+                comunic = serial.Serial(port, baudrate=9600, timeout=1)
 
                 print("Conectado!")
-                #print(data)
+
                 conectado = True
             except:
                 comunic = None
@@ -203,14 +209,19 @@ def threadGetData():
             try:
                 data = comunic.readline().decode("ascii")
 
+                print("Received Data: ")
                 print("data", data)
 
-                data = data
+
+                #data = data
+
+                """
                 dataString = str(data)
-                print("Informacion obtenida: ", dataString)
                 if dataString != "":
                     try:
+
                         code, mode, angulo = decodeInfo(dataString)
+
 
                         print(code, mode, angulo)
                         code -= 1
@@ -227,6 +238,7 @@ def threadGetData():
                         print("Informacion actualizada")
                     except:
                         print("Información corrompida")
+                """
             except:
                 print("Error with decoding")
 
@@ -262,7 +274,7 @@ def main():
 
     comunic = None
 
-    t1 = threading.Thread(target=threadGetData, args=())
+    t1 = threading.Thread(target = threadGetData, args = ())
     t1.start()
 
     while True:
