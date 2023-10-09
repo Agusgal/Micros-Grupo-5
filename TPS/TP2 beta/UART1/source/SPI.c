@@ -190,7 +190,7 @@ void SPI_Init (void)
 
 uint8_t SPI_Get_Status(void)
 {
-	return(get_Queue_Status(0));
+	return(get_Queue_Status(1));
 }
 
 /**

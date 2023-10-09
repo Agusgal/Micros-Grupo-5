@@ -26,6 +26,9 @@ int main (void)
 
 	CAN_SPI_SendInfo(&data);
 
+	while(!CAN_SPI_Is_Read_Ready());
+	RXB_RAWDATA_t a = CAN_SPI_Get_Data();
+
 	// Enable interrupts
 
 	__FOREVER__

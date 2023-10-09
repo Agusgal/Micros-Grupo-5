@@ -49,7 +49,7 @@ void CAN_SPI_Init (void);
  * @brief
  * @return
  */
-uint8_t CAN_SPI_Get_Status(void);
+uint8_t CAN_SPI_Is_Read_Ready(void);
 
 /**
  * @brief

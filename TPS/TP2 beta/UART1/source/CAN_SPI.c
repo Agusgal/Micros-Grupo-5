@@ -76,6 +76,9 @@ typedef struct spican_buffer{
 
 spican_buffer_t can_spi_buffers[1];
 
+static uint8_t	transmitting = 0;
+static uint8_t	receiving = 0;
+
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -179,8 +182,8 @@ void CAN_SPI_Init (void)
 
 	queue_Init(0);
 	// Set interrupt pin for RX interrupt detection
-	gpioMode (PORTNUM2PIN(INT_PIN, INT_PORT), INPUT_PULLDOWN);
-	gpioIRQ_Config (PORTNUM2PIN(INT_PIN, INT_PORT), PORT_eInterruptFalling);
+	gpioMode (PORTNUM2PIN(INT_PORT,INT_PIN), INPUT_PULLDOWN);
+	gpioIRQ_Config (PORTNUM2PIN(INT_PORT, INT_PIN), PORT_eInterruptFalling);
 
 
 	// 2- Reset mode
@@ -239,13 +242,13 @@ void CAN_SPI_Init (void)
 	// 5- Reception configurations
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = RxB0CTRL;
-	data[2] = 0b00000100;//Roll-over enabled (RX0 TO RX1)
+	data[2] = 0b01100000; //0b00000100;//Roll-over enabled (RX0 TO RX1)
 	SPI_SendData(data, 3, 0);
 	while(SPI_Transmission_In_Process());
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = RxB1CTRL;
-	data[2] = 0b00000000;
+	data[2] = 0b01100000;
 	SPI_SendData(data, 3, 0);
 	while(SPI_Transmission_In_Process());
 
@@ -266,8 +269,8 @@ void CAN_SPI_Init (void)
 	// 7- Normal mode
 	data[0] = BIT_MODIFY_INSTRUCTION;
 	data[1] = CANCTRL;
-	data[2] = 0b11000000; // Mask
-	data[3] = 0b00000000;
+	data[2] = 0b11100000; // Mask
+	data[3] = 0b01000000; //Loopback 0b01000000
 	SPI_SendData(data, 4, 0);
 	while(SPI_Transmission_In_Process());
 
@@ -280,9 +283,9 @@ void CAN_SPI_Init (void)
  * @return
  */
 
-uint8_t CAN_SPI_Get_Status(void)
+uint8_t CAN_SPI_Is_Read_Ready(void)
 {
-	return(get_Queue_Status(0));
+	return(!receiving && get_Queue_Status(0));
 }
 
 /**
@@ -305,7 +308,7 @@ RXB_RAWDATA_t CAN_SPI_Get_Data(void)
 
 void CAN_SPI_ReceiveInfo(void)
 {
-	uint8_t receiveState = 0;
+	static uint8_t receiveState = 0;
 	static uint8_t aux[16];
 	static uint8_t intStatus = 0;
 
@@ -313,6 +316,7 @@ void CAN_SPI_ReceiveInfo(void)
 	switch(receiveState)
 	{
 	case 0:
+		receiving = 1;
 		read_SPICAN(CANINTF, 1, &CAN_SPI_ReceiveInfo);
 		receiveState = 1;
 		break;
@@ -347,12 +351,14 @@ void CAN_SPI_ReceiveInfo(void)
 			read_RX_buffer(0b10, 13, &CAN_SPI_ReceiveInfo);
 			receiveState = 3;
 		}
+		break;
 
 
 	case 3:
 		checkDoubleBuffers();
 		// Can data started to be sent
 		receiveState = 0;
+		receiving = 0;
 		break;
 
 	case 4:
@@ -362,7 +368,8 @@ void CAN_SPI_ReceiveInfo(void)
 		break;
 
 	default:
-		receiveState = 3;
+		receiveState = 0;
+		receiving = 0;
 		break;
 
 
@@ -389,51 +396,56 @@ void CAN_SPI_SendInfo(RXB_RAWDATA_t * rawdata)
 	switch(sendState)
 	{
 	case 0:
+		transmitting = 1;
+		sendState = 1;
 		parseData(rawdata, data_to_send);
 		read_status(&CAN_SPI_SendInfo);
-		sendState = 1;
 		break;
 
 	case 1:
 		SPI_Get_DataBytes(aux, 3);
 		rxStatus = aux[1];
 
-		if(rxStatus & 0b00000100)	// if TX
+		if(!(rxStatus & 0b00000100))	// if TX
 		{
+			sendState = 2;
 			load_TX_buffer(0b000000000, data_to_send, 13, &CAN_SPI_SendInfo);
 			number_buffer = 0;
-			sendState = 2;
 		}
-		else if(rxStatus & 0b00010000)
+		else if(!(rxStatus & 0b00010000))
 		{
+			sendState = 2;
 			load_TX_buffer(0b000000010, data_to_send, 13, &CAN_SPI_SendInfo);
 			number_buffer = 1;
-			sendState = 2;
 		}
-		else if(rxStatus & 0b01000000)
+		else if(!(rxStatus & 0b01000000))
 		{
+			sendState = 2;
 			load_TX_buffer(0b000000100, data_to_send, 13, &CAN_SPI_SendInfo);
 			number_buffer = 2;
-			sendState = 2;
 		}
 		else
 		{
 			sendState = 0;
+			transmitting = 0;
 		}
 
 		break;
 
 	case 2:
-		RTS(number_buffer, &CAN_SPI_SendInfo);
 		sendState = 3;
+		RTS(number_buffer, &CAN_SPI_SendInfo);
+		break;
 
 	case 3:
 		// Can data started to be sent
 		sendState = 0;
+		transmitting = 0;
 		break;
 
 	default:
 		sendState = 0;
+		transmitting = 0;
 		break;
 
 
@@ -521,7 +533,7 @@ static void read_RX_buffer(uint8_t nm, uint8_t num_bytes_to_read, void (*cb) (vo
 static void read_status(void (*cb) (void))
 {
 	uint8_t aux[16];
-	aux[0] = 0b1010000;
+	aux[0] = 0b10100000;
 	uint32_t i;
 	for(i = 0; i < 2; i++)
 	{
@@ -574,17 +586,17 @@ static void checkDoubleBuffers(void)
 
 	uint32_t i = 0;
 
-	for(i = 0; i < get_Queue_Status(0) / RXLENGTH; i++)
+	for(i = 0; i < SPI_Get_Status() / RXLENGTH; i++)
 	{
 		// read
-		SPI_Get_DataBytes(aux, 13);
+		SPI_Get_DataBytes(aux, 14);
 		//
-		received_data.SID = (((uint16_t)aux[0]) << 3) | ((aux[1] & 0b11100000)>> 5);
-		received_data.DLC = aux[4] & 0b00001111;
+		received_data.SID = (((uint16_t)aux[1]) << 3) | ((aux[2] & 0b11100000)>> 5);
+		received_data.DLC = aux[5] & 0b00001111;
 		uint32_t j = 0;
 		for(j = 0; j < received_data.DLC; j++)
 		{
-			received_data.Dn[j] = aux[j + 5];
+			received_data.Dn[j] = aux[j + 6];
 		}
 
 		push_Queue_Element(0, received_data);
@@ -597,7 +609,6 @@ __ISR__ PORTC_IRQHandler(void)
 {
 	PORTC->PCR[INT_PIN] |= PORT_PCR_ISF_MASK;
 	CAN_SPI_ReceiveInfo();
-
 }
 
 

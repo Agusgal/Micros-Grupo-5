@@ -139,10 +139,10 @@ bool gpioRead (pin_t pin)
  * @param pin			The pin to configure
  * @param irq_config	The IRQ configuration
  */
-void gpioIRQ_Config (pin_t pin, PORTEvent_t irq_config)
+void gpioIRQ_Config (pin_t pin, PORTEvent_t irqMode)
 {
 	NVIC_EnableIRQ(PORTA_IRQn + PIN2PORT(pin));
-	PORT(PIN2PORT(pin))->PCR[PIN2NUM(pin)] |= PORT_PCR_IRQC(irq_config);
+	PORT(PIN2PORT(pin))->PCR[PIN2NUM(pin)] = (PORT(PIN2PORT(pin))->PCR[PIN2NUM(pin)] & ~PORT_PCR_IRQC_MASK) | PORT_PCR_IRQC(irqMode);
 }
 
 /**

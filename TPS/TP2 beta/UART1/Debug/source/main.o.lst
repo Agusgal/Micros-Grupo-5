@@ -56,14 +56,14 @@
   16:../source/main.c **** {
   42              		.loc 1 16 0
   43              		.cfi_startproc
-  44              		@ args = 0, pretend = 0, frame = 16
+  44              		@ args = 0, pretend = 0, frame = 24
   45              		@ frame_needed = 1, uses_anonymous_args = 0
   46 0000 80B5     		push	{r7, lr}
   47              		.cfi_def_cfa_offset 8
   48              		.cfi_offset 7, -8
   49              		.cfi_offset 14, -4
-  50 0002 84B0     		sub	sp, sp, #16
-  51              		.cfi_def_cfa_offset 24
+  50 0002 86B0     		sub	sp, sp, #24
+  51              		.cfi_def_cfa_offset 32
   52 0004 00AF     		add	r7, sp, #0
   53              		.cfi_def_cfa_register 7
   17:../source/main.c **** 	unsigned char uart_data;
@@ -86,42 +86,57 @@
   24:../source/main.c **** 
   25:../source/main.c **** 	RXB_RAWDATA_t data = {0x105, 8, {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8}};
   64              		.loc 1 25 0
-  65 001a 054A     		ldr	r2, .L3
-  66 001c 3B1D     		adds	r3, r7, #4
-  67 001e 07CA     		ldm	r2, {r0, r1, r2}
-  68 0020 83E80700 		stm	r3, {r0, r1, r2}
+  65 001a 0B4A     		ldr	r2, .L4
+  66 001c 07F10C03 		add	r3, r7, #12
+  67 0020 07CA     		ldm	r2, {r0, r1, r2}
+  68 0022 83E80700 		stm	r3, {r0, r1, r2}
   26:../source/main.c **** 
   27:../source/main.c **** 	CAN_SPI_SendInfo(&data);
   69              		.loc 1 27 0
-  70 0024 3B1D     		adds	r3, r7, #4
-  71 0026 1846     		mov	r0, r3
-  72 0028 FFF7FEFF 		bl	CAN_SPI_SendInfo
-  73              	.L2:
+  70 0026 07F10C03 		add	r3, r7, #12
+  71 002a 1846     		mov	r0, r3
+  72 002c FFF7FEFF 		bl	CAN_SPI_SendInfo
   28:../source/main.c **** 
-  29:../source/main.c **** 	// Enable interrupts
-  30:../source/main.c **** 
-  31:../source/main.c **** 	__FOREVER__
-  74              		.loc 1 31 0 discriminator 1
-  75 002c FEE7     		b	.L2
-  76              	.L4:
-  77 002e 00BF     		.align	2
-  78              	.L3:
-  79 0030 00000000 		.word	.LC0
-  80              		.cfi_endproc
-  81              	.LFE123:
-  83              		.text
-  84              	.Letext0:
-  85              		.file 2 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\sys\\libconfig-arm.h"
-  86              		.file 3 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\stdint.h"
-  87              		.file 4 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
-  88              		.file 5 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
-  89              		.file 6 "../source/CAN_SPI.h"
+  29:../source/main.c **** 	while(!CAN_SPI_Is_Read_Ready());
+  73              		.loc 1 29 0
+  74 0030 00BF     		nop
+  75              	.L2:
+  76              		.loc 1 29 0 is_stmt 0 discriminator 1
+  77 0032 FFF7FEFF 		bl	CAN_SPI_Is_Read_Ready
+  78 0036 0346     		mov	r3, r0
+  79 0038 002B     		cmp	r3, #0
+  80 003a FAD0     		beq	.L2
+  30:../source/main.c **** 	RXB_RAWDATA_t a = CAN_SPI_Get_Data();
+  81              		.loc 1 30 0 is_stmt 1
+  82 003c 3B46     		mov	r3, r7
+  83 003e 1846     		mov	r0, r3
+  84 0040 FFF7FEFF 		bl	CAN_SPI_Get_Data
+  85              	.L3:
+  31:../source/main.c **** 
+  32:../source/main.c **** 	// Enable interrupts
+  33:../source/main.c **** 
+  34:../source/main.c **** 	__FOREVER__
+  86              		.loc 1 34 0 discriminator 1
+  87 0044 FEE7     		b	.L3
+  88              	.L5:
+  89 0046 00BF     		.align	2
+  90              	.L4:
+  91 0048 00000000 		.word	.LC0
+  92              		.cfi_endproc
+  93              	.LFE123:
+  95              		.text
+  96              	.Letext0:
+  97              		.file 2 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\sys\\libconfig-arm.h"
+  98              		.file 3 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\stdint.h"
+  99              		.file 4 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
+ 100              		.file 5 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
+ 101              		.file 6 "../source/CAN_SPI.h"
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\lucia\AppData\Local\Temp\ccXpKfNh.s:18     .rodata:00000000 $d
-C:\Users\lucia\AppData\Local\Temp\ccXpKfNh.s:32     .text.main:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccXpKfNh.s:39     .text.main:00000000 main
-C:\Users\lucia\AppData\Local\Temp\ccXpKfNh.s:79     .text.main:00000030 $d
+C:\Users\lucia\AppData\Local\Temp\cc3jLK8V.s:18     .rodata:00000000 $d
+C:\Users\lucia\AppData\Local\Temp\cc3jLK8V.s:32     .text.main:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\cc3jLK8V.s:39     .text.main:00000000 main
+C:\Users\lucia\AppData\Local\Temp\cc3jLK8V.s:91     .text.main:00000048 $d
                            .group:00000000 wm4.0.33db8b643112917ec54934b4f2c2f387
                            .group:00000000 wm4.redlib_version.h.16.f905717e4b3a91dcbdbb631865150df4
                            .group:00000000 wm4.libconfigarm.h.18.1ad1d24f96d0dc8c4cf52dc19b0aa2c7
@@ -145,3 +160,5 @@ UART_Init
 hw_EnableInterrupts
 CAN_SPI_Init
 CAN_SPI_SendInfo
+CAN_SPI_Is_Read_Ready
+CAN_SPI_Get_Data
