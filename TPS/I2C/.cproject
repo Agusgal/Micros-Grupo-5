@@ -538,7 +538,7 @@
 	</storageModule>
 	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
 		<sdkName>SDK_2.x_FRDM-K64F</sdkName>
-		<sdkVersion>2.4.1</sdkVersion>
+		<sdkVersion>2.11.0</sdkVersion>
 		<sdkComponents>startup;CMSIS_Include;</sdkComponents>
 		<boardId>frdmk64f</boardId>
 		<core>cm4</core>
