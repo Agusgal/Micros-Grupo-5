@@ -62,9 +62,12 @@ void SPI_Get_DataBytes(uint8_t *data, uint32_t num_of_bytes);
  * @brief	Starts the Transmission of the data (8-bits words)
  * @param	bytes	Array of data (uint8_t*)
  * @param	num_of_bytes	Number of bytes of the array
+ * @param 	callback		Function (NULL if not wanted) to be called
+ * 							everytime a transmission is completed
  */
 
-void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes);
+
+void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes, void (*callback)(void));
 
 
 /**

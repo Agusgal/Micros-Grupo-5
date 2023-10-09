@@ -97,23 +97,42 @@ Discarded input sections
  .group         0x00000000        0xc ./source/CAN_SPI.o
  .group         0x00000000        0xc ./source/CAN_SPI.o
  .group         0x00000000        0xc ./source/CAN_SPI.o
+ .group         0x00000000        0xc ./source/CAN_SPI.o
  .text          0x00000000        0x0 ./source/CAN_SPI.o
  .data          0x00000000        0x0 ./source/CAN_SPI.o
  .bss           0x00000000        0x0 ./source/CAN_SPI.o
+ .bss.can_spi_buffers
+                0x00000000       0x68 ./source/CAN_SPI.o
  .text.CAN_SPI_Get_Status
                 0x00000000       0x10 ./source/CAN_SPI.o
  .text.CAN_SPI_Get_Data
                 0x00000000       0x1a ./source/CAN_SPI.o
- .text.CAN_SPI_SendByte
-                0x00000000       0x22 ./source/CAN_SPI.o
+ .text.CAN_SPI_SendInfo
+                0x00000000      0x100 ./source/CAN_SPI.o
  .text.CAN_SPI_SendMsg
                 0x00000000       0x64 ./source/CAN_SPI.o
- .text.push_Queue_Element
-                0x00000000       0xcc ./source/CAN_SPI.o
- .text.pull_Queue_Element
-                0x00000000       0xec ./source/CAN_SPI.o
  .text.get_Queue_Status
                 0x00000000       0x2c ./source/CAN_SPI.o
+ .text.load_TX_buffer
+                0x00000000       0x62 ./source/CAN_SPI.o
+ .text.write_SPICAN
+                0x00000000       0x60 ./source/CAN_SPI.o
+ .text.read_SPICAN
+                0x00000000       0x58 ./source/CAN_SPI.o
+ .text.read_RX_buffer
+                0x00000000       0x5a ./source/CAN_SPI.o
+ .text.read_status
+                0x00000000       0x46 ./source/CAN_SPI.o
+ .text.RTS      0x00000000       0x38 ./source/CAN_SPI.o
+ .text.parseData
+                0x00000000       0x78 ./source/CAN_SPI.o
+ .bss.sendState.7061
+                0x00000000        0x1 ./source/CAN_SPI.o
+ .bss.data_to_send.7063
+                0x00000000       0x10 ./source/CAN_SPI.o
+ .bss.aux.7062  0x00000000       0x10 ./source/CAN_SPI.o
+ .bss.number_buffer.7064
+                0x00000000        0x1 ./source/CAN_SPI.o
  .debug_macro   0x00000000      0xa7e ./source/CAN_SPI.o
  .group         0x00000000        0xc ./source/SPI.o
  .group         0x00000000        0xc ./source/SPI.o
@@ -139,8 +158,12 @@ Discarded input sections
                 0x00000000       0x10 ./source/SPI.o
  .text.SPI_Get_Data
                 0x00000000       0x1a ./source/SPI.o
+ .text.SPI_Get_DataBytes
+                0x00000000       0x3a ./source/SPI.o
  .text.SPI_SendByte
                 0x00000000       0x74 ./source/SPI.o
+ .text.SPI_Read_Status
+                0x00000000       0x38 ./source/SPI.o
  .debug_macro   0x00000000      0xa7e ./source/SPI.o
  .debug_macro   0x00000000       0x10 ./source/SPI.o
  .debug_macro   0x00000000      0x12d ./source/SPI.o
@@ -277,6 +300,7 @@ Discarded input sections
  .group         0x00000000        0xc ./source/main.o
  .group         0x00000000        0xc ./source/main.o
  .group         0x00000000        0xc ./source/main.o
+ .group         0x00000000        0xc ./source/main.o
  .text          0x00000000        0x0 ./source/main.o
  .data          0x00000000        0x0 ./source/main.o
  .bss           0x00000000        0x0 ./source/main.o
@@ -294,6 +318,7 @@ Discarded input sections
  .debug_macro   0x00000000     0xe07b ./source/main.o
  .debug_macro   0x00000000     0x13c7 ./source/main.o
  .debug_macro   0x00000000       0x16 ./source/main.o
+ .debug_macro   0x00000000       0x10 ./source/main.o
  .group         0x00000000        0xc ./CMSIS/system_MK64F12.o
  .group         0x00000000        0xc ./CMSIS/system_MK64F12.o
  .group         0x00000000        0xc ./CMSIS/system_MK64F12.o
@@ -514,7 +539,7 @@ END GROUP
                 0x14001000                __top_FLEX_RAM = 0x14001000
                 0x14001000                __top_RAM3 = 0x14001000
 
-.text           0x00000000     0x1e88
+.text           0x00000000     0x1c00
  FILL mask 0xff
                 0x00000000                __vectors_start__ = ABSOLUTE (.)
  *(.isr_vector)
@@ -524,19 +549,19 @@ END GROUP
                 0x00000198                . = ALIGN (0x4)
                 0x00000198                __section_table_start = .
                 0x00000198                __data_section_table = .
-                0x00000198        0x4 LONG 0x1e88 LOADADDR (.data)
+                0x00000198        0x4 LONG 0x1c00 LOADADDR (.data)
                 0x0000019c        0x4 LONG 0x20000000 ADDR (.data)
                 0x000001a0        0x4 LONG 0x0 SIZEOF (.data)
-                0x000001a4        0x4 LONG 0x1e88 LOADADDR (.data_RAM2)
+                0x000001a4        0x4 LONG 0x1c00 LOADADDR (.data_RAM2)
                 0x000001a8        0x4 LONG 0x1fff0000 ADDR (.data_RAM2)
                 0x000001ac        0x4 LONG 0x0 SIZEOF (.data_RAM2)
-                0x000001b0        0x4 LONG 0x1e88 LOADADDR (.data_RAM3)
+                0x000001b0        0x4 LONG 0x1c00 LOADADDR (.data_RAM3)
                 0x000001b4        0x4 LONG 0x14000000 ADDR (.data_RAM3)
                 0x000001b8        0x4 LONG 0x0 SIZEOF (.data_RAM3)
                 0x000001bc                __data_section_table_end = .
                 0x000001bc                __bss_section_table = .
                 0x000001bc        0x4 LONG 0x20000000 ADDR (.bss)
-                0x000001c0        0x4 LONG 0x440 SIZEOF (.bss)
+                0x000001c0        0x4 LONG 0x3e0 SIZEOF (.bss)
                 0x000001c4        0x4 LONG 0x1fff0000 ADDR (.bss_RAM2)
                 0x000001c8        0x4 LONG 0x0 SIZEOF (.bss_RAM2)
                 0x000001cc        0x4 LONG 0x14000000 ADDR (.bss_RAM3)
@@ -895,198 +920,188 @@ END GROUP
                 0x00000688        0x8 ./startup/startup_mk64f12.o
                 0x00000688                ENET_Error_IRQHandler
  .text.CAN_SPI_Init
-                0x00000690      0x3ae ./source/CAN_SPI.o
+                0x00000690      0x1e2 ./source/CAN_SPI.o
                 0x00000690                CAN_SPI_Init
- *fill*         0x00000a3e        0x2 ff
- .text.queue_Init
-                0x00000a40       0x68 ./source/CAN_SPI.o
+ *fill*         0x00000872        0x2 ff
  .text.NVIC_EnableIRQ
-                0x00000aa8       0x34 ./source/SPI.o
+                0x00000874       0x34 ./source/SPI.o
  .text.SPI_Init
-                0x00000adc      0x128 ./source/SPI.o
-                0x00000adc                SPI_Init
- .text.SPI_Get_DataBytes
-                0x00000c04       0x3a ./source/SPI.o
-                0x00000c04                SPI_Get_DataBytes
- *fill*         0x00000c3e        0x2 ff
+                0x000008a8      0x128 ./source/SPI.o
+                0x000008a8                SPI_Init
  .text.SPI_SendMsg
-                0x00000c40       0xa4 ./source/SPI.o
-                0x00000c40                SPI_SendMsg
+                0x000009d0       0xa4 ./source/SPI.o
+                0x000009d0                SPI_SendMsg
  .text.SPI_SendData
-                0x00000ce4       0xa8 ./source/SPI.o
-                0x00000ce4                SPI_SendData
+                0x00000a74       0xbc ./source/SPI.o
+                0x00000a74                SPI_SendData
  .text.SPI_Transmission_In_Process
-                0x00000d8c       0x20 ./source/SPI.o
-                0x00000d8c                SPI_Transmission_In_Process
- .text.SPI_Read_Status
-                0x00000dac       0x38 ./source/SPI.o
-                0x00000dac                SPI_Read_Status
+                0x00000b30       0x20 ./source/SPI.o
+                0x00000b30                SPI_Transmission_In_Process
  .text.SPI0_IRQHandler
-                0x00000de4       0xa8 ./source/SPI.o
-                0x00000de4                SPI0_IRQHandler
+                0x00000b50       0xb8 ./source/SPI.o
+                0x00000b50                SPI0_IRQHandler
  .text.queue_Init
-                0x00000e8c       0x70 ./source/SPI.o
+                0x00000c08       0x70 ./source/SPI.o
  .text.push_Queue_Element
-                0x00000efc       0xe0 ./source/SPI.o
+                0x00000c78       0xe0 ./source/SPI.o
  .text.pull_Queue_Element
-                0x00000fdc      0x100 ./source/SPI.o
+                0x00000d58      0x100 ./source/SPI.o
  .text.get_Queue_Status
-                0x000010dc       0x2c ./source/SPI.o
+                0x00000e58       0x2c ./source/SPI.o
  .text.flush_Queue
-                0x00001108       0x50 ./source/SPI.o
+                0x00000e84       0x50 ./source/SPI.o
  .text.SysTick_Handler
-                0x00001158       0xac ./source/Systick.o
-                0x00001158                SysTick_Handler
+                0x00000ed4       0xac ./source/Systick.o
+                0x00000ed4                SysTick_Handler
  .text.NVIC_EnableIRQ
-                0x00001204       0x34 ./source/UART.o
+                0x00000f80       0x34 ./source/UART.o
  .text.UART_Init
-                0x00001238      0x160 ./source/UART.o
-                0x00001238                UART_Init
+                0x00000fb4      0x160 ./source/UART.o
+                0x00000fb4                UART_Init
  .text.UART_SetBaudRate
-                0x00001398       0xb8 ./source/UART.o
-                0x00001398                UART_SetBaudRate
+                0x00001114       0xb8 ./source/UART.o
+                0x00001114                UART_SetBaudRate
  .text.UART_rx_tx_irq_handler
-                0x00001450       0x78 ./source/UART.o
-                0x00001450                UART_rx_tx_irq_handler
+                0x000011cc       0x78 ./source/UART.o
+                0x000011cc                UART_rx_tx_irq_handler
  .text.queue_Init
-                0x000014c8       0x54 ./source/UART.o
+                0x00001244       0x54 ./source/UART.o
  .text.push_Queue_Element
-                0x0000151c       0xa8 ./source/UART.o
+                0x00001298       0xa8 ./source/UART.o
  .text.pull_Queue_Element
-                0x000015c4       0xa8 ./source/UART.o
+                0x00001340       0xa8 ./source/UART.o
  .text.get_Queue_Status
-                0x0000166c       0x28 ./source/UART.o
+                0x000013e8       0x28 ./source/UART.o
  .text.UART0_RX_TX_IRQHandler
-                0x00001694       0x24 ./source/UART.o
-                0x00001694                UART0_RX_TX_IRQHandler
+                0x00001410       0x24 ./source/UART.o
+                0x00001410                UART0_RX_TX_IRQHandler
  .text.UART1_RX_TX_IRQHandler
-                0x000016b8       0x24 ./source/UART.o
-                0x000016b8                UART1_RX_TX_IRQHandler
+                0x00001434       0x24 ./source/UART.o
+                0x00001434                UART1_RX_TX_IRQHandler
  .text.UART2_RX_TX_IRQHandler
-                0x000016dc       0x24 ./source/UART.o
-                0x000016dc                UART2_RX_TX_IRQHandler
+                0x00001458       0x24 ./source/UART.o
+                0x00001458                UART2_RX_TX_IRQHandler
  .text.UART3_RX_TX_IRQHandler
-                0x00001700       0x24 ./source/UART.o
-                0x00001700                UART3_RX_TX_IRQHandler
+                0x0000147c       0x24 ./source/UART.o
+                0x0000147c                UART3_RX_TX_IRQHandler
  .text.UART4_RX_TX_IRQHandler
-                0x00001724       0x24 ./source/UART.o
-                0x00001724                UART4_RX_TX_IRQHandler
- .text.hw_Init  0x00001748       0xf4 ./source/hardware.o
-                0x00001748                hw_Init
+                0x000014a0       0x24 ./source/UART.o
+                0x000014a0                UART4_RX_TX_IRQHandler
+ .text.hw_Init  0x000014c4       0xf4 ./source/hardware.o
+                0x000014c4                hw_Init
  .text.hw_EnableInterrupts
-                0x0000183c       0x30 ./source/hardware.o
-                0x0000183c                hw_EnableInterrupts
+                0x000015b8       0x30 ./source/hardware.o
+                0x000015b8                hw_EnableInterrupts
  .text.hw_DisableInterrupts
-                0x0000186c       0x20 ./source/hardware.o
-                0x0000186c                hw_DisableInterrupts
- .text.main     0x0000188c       0x60 ./source/main.o
-                0x0000188c                main
+                0x000015e8       0x20 ./source/hardware.o
+                0x000015e8                hw_DisableInterrupts
+ .text.main     0x00001608       0x60 ./source/main.o
+                0x00001608                main
  .text.SystemInit
-                0x000018ec       0x40 ./CMSIS/system_MK64F12.o
-                0x000018ec                SystemInit
- .text.__main   0x0000192c        0xe c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(_cr__main.o)
-                0x0000192c                __main
- *fill*         0x0000193a        0x2 ff
- .text._initio  0x0000193c       0x78 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(initio.o)
-                0x0000193c                _initio
- .text.setvbuf  0x000019b4       0x40 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(setvbuf.o)
-                0x000019b4                setvbuf
- .text._fdopen  0x000019f4       0x68 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_fdopen.o)
-                0x000019f4                _fdopen
- .text.fclose   0x00001a5c       0x58 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(fclose.o)
-                0x00001a5c                fclose
- .text.fflush   0x00001ab4       0x44 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(fflush.o)
-                0x00001ab4                fflush
- .text.fseek    0x00001af8      0x100 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(fseek.o)
-                0x00001af8                fseek
- .text.ftell    0x00001bf8       0x44 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(ftell.o)
-                0x00001bf8                ftell
- .text.remove   0x00001c3c       0x14 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(remove.o)
-                0x00001c3c                remove
- .text.strlen   0x00001c50       0x4a c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(strlen.o)
-                0x00001c50                strlen
- .text.memset   0x00001c9a        0x4 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(memset.o)
-                0x00001c9a                memset
+                0x00001668       0x40 ./CMSIS/system_MK64F12.o
+                0x00001668                SystemInit
+ .text.__main   0x000016a8        0xe c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(_cr__main.o)
+                0x000016a8                __main
+ *fill*         0x000016b6        0x2 ff
+ .text._initio  0x000016b8       0x78 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(initio.o)
+                0x000016b8                _initio
+ .text.setvbuf  0x00001730       0x40 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(setvbuf.o)
+                0x00001730                setvbuf
+ .text._fdopen  0x00001770       0x68 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_fdopen.o)
+                0x00001770                _fdopen
+ .text.fclose   0x000017d8       0x58 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(fclose.o)
+                0x000017d8                fclose
+ .text.fflush   0x00001830       0x44 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(fflush.o)
+                0x00001830                fflush
+ .text.fseek    0x00001874      0x100 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(fseek.o)
+                0x00001874                fseek
+ .text.ftell    0x00001974       0x44 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(ftell.o)
+                0x00001974                ftell
+ .text.remove   0x000019b8       0x14 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(remove.o)
+                0x000019b8                remove
+ .text.strlen   0x000019cc       0x4a c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(strlen.o)
+                0x000019cc                strlen
+ .text.memset   0x00001a16        0x4 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(memset.o)
+                0x00001a16                memset
  .text._do_fflush
-                0x00001c9e       0x40 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_do_fflush.o)
-                0x00001c9e                _do_fflush
- .text._fflush  0x00001cde       0x52 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_fflush.o)
-                0x00001cde                _fflush
+                0x00001a1a       0x40 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_do_fflush.o)
+                0x00001a1a                _do_fflush
+ .text._fflush  0x00001a5a       0x52 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_fflush.o)
+                0x00001a5a                _fflush
  .text._Cwritebuf
-                0x00001d30       0x6c c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_writebuf.o)
-                0x00001d30                _Cwritebuf
- .text.free     0x00001d9c       0x30 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(alloc.o)
-                0x00001d9c                free
+                0x00001aac       0x6c c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_writebuf.o)
+                0x00001aac                _Cwritebuf
+ .text.free     0x00001b18       0x30 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(alloc.o)
+                0x00001b18                free
  .text._deferredlazyseek
-                0x00001dcc       0x40 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_deferredlazyseek.o)
-                0x00001dcc                _deferredlazyseek
+                0x00001b48       0x40 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(_deferredlazyseek.o)
+                0x00001b48                _deferredlazyseek
  .text.__aeabi_memset_lowlevel
-                0x00001e0c       0x32 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/thumb/v7e-m/fpv4-sp/hard\libcr_eabihelpers.a(memcpy.o)
-                0x00001e0c                __aeabi_lowlevel_memset
+                0x00001b88       0x32 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/thumb/v7e-m/fpv4-sp/hard\libcr_eabihelpers.a(memcpy.o)
+                0x00001b88                __aeabi_lowlevel_memset
  .text.__sys_close
-                0x00001e3e        0x6 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_close.o)
-                0x00001e3e                __sys_close
+                0x00001bba        0x6 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_close.o)
+                0x00001bba                __sys_close
  .text.__sys_flen
-                0x00001e44        0x6 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_flen.o)
-                0x00001e44                __sys_flen
+                0x00001bc0        0x6 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_flen.o)
+                0x00001bc0                __sys_flen
  .text.__sys_istty
-                0x00001e4a        0x6 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_istty.o)
-                0x00001e4a                __sys_istty
+                0x00001bc6        0x6 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_istty.o)
+                0x00001bc6                __sys_istty
  .text.__sys_remove
-                0x00001e50        0x6 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_remove.o)
-                0x00001e50                __sys_remove
+                0x00001bcc        0x6 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_remove.o)
+                0x00001bcc                __sys_remove
  .text.__sys_seek
-                0x00001e56        0x6 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_seek.o)
-                0x00001e56                __sys_seek
+                0x00001bd2        0x6 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_seek.o)
+                0x00001bd2                __sys_seek
  .text.__sys_tmpnam
-                0x00001e5c        0x6 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_tmpnam.o)
-                0x00001e5c                __sys_tmpnam
+                0x00001bd8        0x6 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_tmpnam.o)
+                0x00001bd8                __sys_tmpnam
  .text.__sys_write
-                0x00001e62        0x4 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_write.o)
-                0x00001e62                __sys_write
+                0x00001bde        0x4 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_write.o)
+                0x00001bde                __sys_write
  *(.rodata .rodata.* .constdata .constdata.*)
- *fill*         0x00001e66        0x2 ff
- .rodata        0x00001e68       0x12 ./source/main.o
+ *fill*         0x00001be2        0x2 ff
+ .rodata        0x00001be4       0x12 ./source/main.o
  .rodata._initio.str1.1
-                0x00001e7a        0x4 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(initio.o)
- *fill*         0x00001e7e        0x2 ff
+                0x00001bf6        0x4 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(initio.o)
+ *fill*         0x00001bfa        0x2 ff
  .rodata.__num_Ciob_streams
-                0x00001e80        0x4 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__ciob.o)
-                0x00001e80                __num_Ciob_streams
-                0x00001e88                . = ALIGN (0x8)
- *fill*         0x00001e84        0x4 ff
+                0x00001bfc        0x4 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__ciob.o)
+                0x00001bfc                __num_Ciob_streams
+                0x00001c00                . = ALIGN (0x8)
 
-.glue_7         0x00001e88        0x0
- .glue_7        0x00001e88        0x0 linker stubs
+.glue_7         0x00001c00        0x0
+ .glue_7        0x00001c00        0x0 linker stubs
 
-.glue_7t        0x00001e88        0x0
- .glue_7t       0x00001e88        0x0 linker stubs
+.glue_7t        0x00001c00        0x0
+ .glue_7t       0x00001c00        0x0 linker stubs
 
-.vfp11_veneer   0x00001e88        0x0
- .vfp11_veneer  0x00001e88        0x0 linker stubs
+.vfp11_veneer   0x00001c00        0x0
+ .vfp11_veneer  0x00001c00        0x0 linker stubs
 
-.v4_bx          0x00001e88        0x0
- .v4_bx         0x00001e88        0x0 linker stubs
+.v4_bx          0x00001c00        0x0
+ .v4_bx         0x00001c00        0x0 linker stubs
 
-.iplt           0x00001e88        0x0
- .iplt          0x00001e88        0x0 ./startup/startup_mk64f12.o
+.iplt           0x00001c00        0x0
+ .iplt          0x00001c00        0x0 ./startup/startup_mk64f12.o
 
-.rel.dyn        0x00001e88        0x0
- .rel.iplt      0x00001e88        0x0 ./startup/startup_mk64f12.o
+.rel.dyn        0x00001c00        0x0
+ .rel.iplt      0x00001c00        0x0 ./startup/startup_mk64f12.o
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x00001e88                __exidx_start = .
+                0x00001c00                __exidx_start = .
 
 .ARM.exidx
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-                0x00001e88                __exidx_end = .
-                0x00001e88                _etext = .
+                0x00001c00                __exidx_end = .
+                0x00001c00                _etext = .
 
 .m_usb_data
  *(m_usb_bdt)
 
-.data_RAM2      0x1fff0000        0x0 load address 0x00001e88
+.data_RAM2      0x1fff0000        0x0 load address 0x00001c00
  FILL mask 0xff
                 [!provide]                PROVIDE (__start_data_RAM2, .)
  *(.ramfunc.$RAM2)
@@ -1096,7 +1111,7 @@ END GROUP
                 0x1fff0000                . = ALIGN (0x8)
                 [!provide]                PROVIDE (__end_data_RAM2, .)
 
-.data_RAM3      0x14000000        0x0 load address 0x00001e88
+.data_RAM3      0x14000000        0x0 load address 0x00001c00
  FILL mask 0xff
                 [!provide]                PROVIDE (__start_data_RAM3, .)
  *(.ramfunc.$RAM3)
@@ -1112,7 +1127,7 @@ END GROUP
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                _end_uninit_RESERVED = .
 
-.data           0x20000000        0x0 load address 0x00001e88
+.data           0x20000000        0x0 load address 0x00001c00
  FILL mask 0xff
                 0x20000000                _data = .
  *(vtable)
@@ -1121,7 +1136,7 @@ END GROUP
                 0x20000000                . = ALIGN (0x8)
                 0x20000000                _edata = .
 
-.igot.plt       0x20000000        0x0 load address 0x00001e88
+.igot.plt       0x20000000        0x0 load address 0x00001c00
  .igot.plt      0x20000000        0x0 ./startup/startup_mk64f12.o
 
 .bss_RAM2       0x1fff0000        0x0
@@ -1138,34 +1153,34 @@ END GROUP
                 0x14000000                . = ALIGN ((. != 0x0)?0x8:0x1)
                 [!provide]                PROVIDE (__end_bss_RAM3, .)
 
-.bss            0x20000000      0x440
+.bss            0x20000000      0x3e0
                 0x20000000                _bss = .
  *(.bss*)
- .bss.can_spi_buffers
-                0x20000000       0x68 ./source/CAN_SPI.o
-                0x20000000                can_spi_buffers
  .bss.spi_buffers
-                0x20000068       0xe0 ./source/SPI.o
-                0x20000068                spi_buffers
+                0x20000000       0xe0 ./source/SPI.o
+                0x20000000                spi_buffers
  .bss.transfer_complete
-                0x20000148        0x1 ./source/SPI.o
- *fill*         0x20000149        0x3 
+                0x200000e0        0x1 ./source/SPI.o
+ *fill*         0x200000e1        0x3 
+ .bss.externalCB
+                0x200000e4        0x4 ./source/SPI.o
  .bss.systick_Callback_Array
-                0x2000014c       0xb4 ./source/Systick.o
+                0x200000e8       0xb4 ./source/Systick.o
  .bss.num_Callbacks
-                0x20000200        0x4 ./source/Systick.o
+                0x2000019c        0x4 ./source/Systick.o
  .bss.uart_buffers
-                0x20000204      0x180 ./source/UART.o
-                0x20000204                uart_buffers
+                0x200001a0      0x180 ./source/UART.o
+                0x200001a0                uart_buffers
  .bss.__LDM_interruptDisableCount
-                0x20000384        0x4 ./source/hardware.o
- .bss.errno     0x20000388        0x4 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(errno.o)
-                0x20000388                errno
- .bss.__Ciob    0x2000038c       0xb4 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__ciob.o)
-                0x2000038c                __Ciob
+                0x20000320        0x4 ./source/hardware.o
+ .bss.errno     0x20000324        0x4 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_c.a(errno.o)
+                0x20000324                errno
+ .bss.__Ciob    0x20000328       0xb4 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__ciob.o)
+                0x20000328                __Ciob
  *(COMMON)
-                0x20000440                . = ALIGN (0x8)
-                0x20000440                _ebss = .
+                0x200003e0                . = ALIGN (0x8)
+ *fill*         0x200003dc        0x4 
+                0x200003e0                _ebss = .
                 [!provide]                PROVIDE (end, .)
 
 .noinit_RAM2    0x1fff0000        0x0
@@ -1178,134 +1193,135 @@ END GROUP
  *(.noinit.$FLEX_RAM*)
                 0x14000000                . = ALIGN (0x8)
 
-.noinit         0x20000440        0x0
-                0x20000440                _noinit = .
+.noinit         0x200003e0        0x0
+                0x200003e0                _noinit = .
  *(.noinit*)
-                0x20000440                . = ALIGN (0x8)
-                0x20000440                _end_noinit = .
+                0x200003e0                . = ALIGN (0x8)
+                0x200003e0                _end_noinit = .
                 0x00001000                _HeapSize = 0x1000
 
-.heap           0x20000440     0x1000
-                0x20000440                _pvHeapStart = .
-                0x20001440                . = (. + _HeapSize)
- *fill*         0x20000440     0x1000 
-                0x20001440                . = ALIGN (0x8)
-                0x20001440                _pvHeapLimit = .
+.heap           0x200003e0     0x1000
+                0x200003e0                _pvHeapStart = .
+                0x200013e0                . = (. + _HeapSize)
+ *fill*         0x200003e0     0x1000 
+                0x200013e0                . = ALIGN (0x8)
+                0x200013e0                _pvHeapLimit = .
                 0x00001000                _StackSize = 0x1000
 
 .heap2stackfill
-                0x20001440     0x1000
-                0x20002440                . = (. + _StackSize)
- *fill*         0x20001440     0x1000 
+                0x200013e0     0x1000
+                0x200023e0                . = (. + _StackSize)
+ *fill*         0x200013e0     0x1000 
 
 .stack          0x2002f000        0x0
                 0x2002f000                _vStackBase = .
                 0x2002f000                . = ALIGN (0x8)
                 0x20030000                _vStackTop = (. + _StackSize)
                 0x00000000                _image_start = LOADADDR (.text)
-                0x00001e88                _image_end = (LOADADDR (.data) + SIZEOF (.data))
-                0x00001e88                _image_size = (_image_end - _image_start)
+                0x00001c00                _image_end = (LOADADDR (.data) + SIZEOF (.data))
+                0x00001c00                _image_size = (_image_end - _image_start)
 OUTPUT(UART1.axf elf32-littlearm)
 
-.debug_info     0x00000000     0x37d3
+.debug_info     0x00000000     0x3a79
  .debug_info    0x00000000      0x8b0 ./startup/startup_mk64f12.o
- .debug_info    0x000008b0      0x50c ./source/CAN_SPI.o
- .debug_info    0x00000dbc      0xd4a ./source/SPI.o
- .debug_info    0x00001b06      0x22f ./source/Systick.o
- .debug_info    0x00001d35      0xcdd ./source/UART.o
- .debug_info    0x00002a12      0x6aa ./source/hardware.o
- .debug_info    0x000030bc       0xf8 ./source/main.o
- .debug_info    0x000031b4      0x61f ./CMSIS/system_MK64F12.o
+ .debug_info    0x000008b0      0x790 ./source/CAN_SPI.o
+ .debug_info    0x00001040      0xd6c ./source/SPI.o
+ .debug_info    0x00001dac      0x22f ./source/Systick.o
+ .debug_info    0x00001fdb      0xcdd ./source/UART.o
+ .debug_info    0x00002cb8      0x6aa ./source/hardware.o
+ .debug_info    0x00003362       0xf8 ./source/main.o
+ .debug_info    0x0000345a      0x61f ./CMSIS/system_MK64F12.o
 
-.debug_abbrev   0x00000000      0xde5
+.debug_abbrev   0x00000000      0xdfb
  .debug_abbrev  0x00000000      0x15c ./startup/startup_mk64f12.o
- .debug_abbrev  0x0000015c      0x214 ./source/CAN_SPI.o
- .debug_abbrev  0x00000370      0x2fc ./source/SPI.o
- .debug_abbrev  0x0000066c      0x169 ./source/Systick.o
- .debug_abbrev  0x000007d5      0x2df ./source/UART.o
- .debug_abbrev  0x00000ab4      0x14d ./source/hardware.o
- .debug_abbrev  0x00000c01       0xa8 ./source/main.o
- .debug_abbrev  0x00000ca9      0x13c ./CMSIS/system_MK64F12.o
+ .debug_abbrev  0x0000015c      0x239 ./source/CAN_SPI.o
+ .debug_abbrev  0x00000395      0x2ed ./source/SPI.o
+ .debug_abbrev  0x00000682      0x169 ./source/Systick.o
+ .debug_abbrev  0x000007eb      0x2df ./source/UART.o
+ .debug_abbrev  0x00000aca      0x14d ./source/hardware.o
+ .debug_abbrev  0x00000c17       0xa8 ./source/main.o
+ .debug_abbrev  0x00000cbf      0x13c ./CMSIS/system_MK64F12.o
 
-.debug_aranges  0x00000000      0x570
+.debug_aranges  0x00000000      0x590
  .debug_aranges
                 0x00000000      0x330 ./startup/startup_mk64f12.o
  .debug_aranges
-                0x00000330       0x60 ./source/CAN_SPI.o
+                0x00000330       0x80 ./source/CAN_SPI.o
  .debug_aranges
-                0x00000390       0x98 ./source/SPI.o
+                0x000003b0       0x98 ./source/SPI.o
  .debug_aranges
-                0x00000428       0x30 ./source/Systick.o
+                0x00000448       0x30 ./source/Systick.o
  .debug_aranges
-                0x00000458       0xa0 ./source/UART.o
+                0x00000478       0xa0 ./source/UART.o
  .debug_aranges
-                0x000004f8       0x30 ./source/hardware.o
+                0x00000518       0x30 ./source/hardware.o
  .debug_aranges
-                0x00000528       0x20 ./source/main.o
+                0x00000548       0x20 ./source/main.o
  .debug_aranges
-                0x00000548       0x28 ./CMSIS/system_MK64F12.o
+                0x00000568       0x28 ./CMSIS/system_MK64F12.o
 
-.debug_ranges   0x00000000      0x508
+.debug_ranges   0x00000000      0x528
  .debug_ranges  0x00000000      0x320 ./startup/startup_mk64f12.o
- .debug_ranges  0x00000320       0x50 ./source/CAN_SPI.o
- .debug_ranges  0x00000370       0xa0 ./source/SPI.o
- .debug_ranges  0x00000410       0x20 ./source/Systick.o
- .debug_ranges  0x00000430       0x90 ./source/UART.o
- .debug_ranges  0x000004c0       0x20 ./source/hardware.o
- .debug_ranges  0x000004e0       0x10 ./source/main.o
- .debug_ranges  0x000004f0       0x18 ./CMSIS/system_MK64F12.o
+ .debug_ranges  0x00000320       0x70 ./source/CAN_SPI.o
+ .debug_ranges  0x00000390       0xa0 ./source/SPI.o
+ .debug_ranges  0x00000430       0x20 ./source/Systick.o
+ .debug_ranges  0x00000450       0x90 ./source/UART.o
+ .debug_ranges  0x000004e0       0x20 ./source/hardware.o
+ .debug_ranges  0x00000500       0x10 ./source/main.o
+ .debug_ranges  0x00000510       0x18 ./CMSIS/system_MK64F12.o
 
-.debug_macro    0x00000000    0x11ae6
+.debug_macro    0x00000000    0x11b3c
  .debug_macro   0x00000000       0x29 ./startup/startup_mk64f12.o
  .debug_macro   0x00000029      0xa7e ./startup/startup_mk64f12.o
- .debug_macro   0x00000aa7      0x135 ./source/CAN_SPI.o
- .debug_macro   0x00000bdc       0x10 ./source/CAN_SPI.o
- .debug_macro   0x00000bec      0x12d ./source/CAN_SPI.o
- .debug_macro   0x00000d19      0x5b2 ./source/CAN_SPI.o
- .debug_macro   0x000012cb       0x22 ./source/CAN_SPI.o
- .debug_macro   0x000012ed       0x10 ./source/CAN_SPI.o
- .debug_macro   0x000012fd       0x5b ./source/CAN_SPI.o
- .debug_macro   0x00001358       0x3b ./source/CAN_SPI.o
- .debug_macro   0x00001393       0x50 ./source/CAN_SPI.o
- .debug_macro   0x000013e3      0xd40 ./source/CAN_SPI.o
- .debug_macro   0x00002123       0x44 ./source/CAN_SPI.o
- .debug_macro   0x00002167     0xe07b ./source/CAN_SPI.o
- .debug_macro   0x000101e2     0x13c7 ./source/CAN_SPI.o
- .debug_macro   0x000115a9       0x16 ./source/CAN_SPI.o
- .debug_macro   0x000115bf      0x101 ./source/SPI.o
- .debug_macro   0x000116c0       0xd6 ./source/Systick.o
- .debug_macro   0x00011796       0x1c ./source/Systick.o
- .debug_macro   0x000117b2       0xfb ./source/UART.o
- .debug_macro   0x000118ad       0xbb ./source/hardware.o
- .debug_macro   0x00011968       0xdf ./source/main.o
- .debug_macro   0x00011a47       0x9f ./CMSIS/system_MK64F12.o
+ .debug_macro   0x00000aa7      0x17c ./source/CAN_SPI.o
+ .debug_macro   0x00000c23       0x10 ./source/CAN_SPI.o
+ .debug_macro   0x00000c33      0x12d ./source/CAN_SPI.o
+ .debug_macro   0x00000d60      0x5b2 ./source/CAN_SPI.o
+ .debug_macro   0x00001312       0x22 ./source/CAN_SPI.o
+ .debug_macro   0x00001334       0x10 ./source/CAN_SPI.o
+ .debug_macro   0x00001344       0x5b ./source/CAN_SPI.o
+ .debug_macro   0x0000139f       0x3b ./source/CAN_SPI.o
+ .debug_macro   0x000013da       0x50 ./source/CAN_SPI.o
+ .debug_macro   0x0000142a      0xd40 ./source/CAN_SPI.o
+ .debug_macro   0x0000216a       0x44 ./source/CAN_SPI.o
+ .debug_macro   0x000021ae     0xe07b ./source/CAN_SPI.o
+ .debug_macro   0x00010229     0x13c7 ./source/CAN_SPI.o
+ .debug_macro   0x000115f0       0x16 ./source/CAN_SPI.o
+ .debug_macro   0x00011606       0x10 ./source/CAN_SPI.o
+ .debug_macro   0x00011616      0x101 ./source/SPI.o
+ .debug_macro   0x00011717       0xd6 ./source/Systick.o
+ .debug_macro   0x000117ed       0x1c ./source/Systick.o
+ .debug_macro   0x00011809       0xfb ./source/UART.o
+ .debug_macro   0x00011904       0xbb ./source/hardware.o
+ .debug_macro   0x000119bf       0xde ./source/main.o
+ .debug_macro   0x00011a9d       0x9f ./CMSIS/system_MK64F12.o
 
-.debug_line     0x00000000     0x1c72
+.debug_line     0x00000000     0x1c9b
  .debug_line    0x00000000      0x6d4 ./startup/startup_mk64f12.o
- .debug_line    0x000006d4      0x430 ./source/CAN_SPI.o
- .debug_line    0x00000b04      0x412 ./source/SPI.o
- .debug_line    0x00000f16      0x27b ./source/Systick.o
- .debug_line    0x00001191      0x3fe ./source/UART.o
- .debug_line    0x0000158f      0x278 ./source/hardware.o
- .debug_line    0x00001807      0x25f ./source/main.o
- .debug_line    0x00001a66      0x20c ./CMSIS/system_MK64F12.o
+ .debug_line    0x000006d4      0x454 ./source/CAN_SPI.o
+ .debug_line    0x00000b28      0x417 ./source/SPI.o
+ .debug_line    0x00000f3f      0x27b ./source/Systick.o
+ .debug_line    0x000011ba      0x3fe ./source/UART.o
+ .debug_line    0x000015b8      0x278 ./source/hardware.o
+ .debug_line    0x00001830      0x25f ./source/main.o
+ .debug_line    0x00001a8f      0x20c ./CMSIS/system_MK64F12.o
 
-.debug_str      0x00000000    0x78e37
+.debug_str      0x00000000    0x7902a
  .debug_str     0x00000000     0x35c1 ./startup/startup_mk64f12.o
                                0x3619 (size before relaxing)
- .debug_str     0x000035c1    0x74a80 ./source/CAN_SPI.o
-                              0x778a2 (size before relaxing)
- .debug_str     0x00078041      0x89b ./source/SPI.o
-                              0x77ff3 (size before relaxing)
- .debug_str     0x000788dc      0x165 ./source/Systick.o
+ .debug_str     0x000035c1    0x74c1e ./source/CAN_SPI.o
+                              0x77a44 (size before relaxing)
+ .debug_str     0x000781df      0x8f9 ./source/SPI.o
+                              0x78007 (size before relaxing)
+ .debug_str     0x00078ad8      0x165 ./source/Systick.o
                               0x776e1 (size before relaxing)
- .debug_str     0x00078a41      0x21d ./source/UART.o
+ .debug_str     0x00078c3d      0x214 ./source/UART.o
                               0x77fd5 (size before relaxing)
- .debug_str     0x00078c5e      0x16a ./source/hardware.o
+ .debug_str     0x00078e51      0x16a ./source/hardware.o
                               0x777a0 (size before relaxing)
- .debug_str     0x00078dc8       0x20 ./source/main.o
-                              0x7759b (size before relaxing)
- .debug_str     0x00078de8       0x4f ./CMSIS/system_MK64F12.o
+ .debug_str     0x00078fbb       0x20 ./source/main.o
+                              0x775a9 (size before relaxing)
+ .debug_str     0x00078fdb       0x4f ./CMSIS/system_MK64F12.o
                               0x776a1 (size before relaxing)
 
 .comment        0x00000000       0x7e
@@ -1415,12 +1431,12 @@ OUTPUT(UART1.axf elf32-littlearm)
  .ARM.attributes
                 0x00000745       0x39 c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libcr_nohost_nf.a(__sys_write.o)
 
-.debug_frame    0x00000000     0x12e8
+.debug_frame    0x00000000     0x1380
  .debug_frame   0x00000000      0xa60 ./startup/startup_mk64f12.o
- .debug_frame   0x00000a60      0x174 ./source/CAN_SPI.o
- .debug_frame   0x00000bd4      0x280 ./source/SPI.o
- .debug_frame   0x00000e54       0x98 ./source/Systick.o
- .debug_frame   0x00000eec      0x2f4 ./source/UART.o
- .debug_frame   0x000011e0       0x7c ./source/hardware.o
- .debug_frame   0x0000125c       0x2c ./source/main.o
- .debug_frame   0x00001288       0x60 ./CMSIS/system_MK64F12.o
+ .debug_frame   0x00000a60      0x20c ./source/CAN_SPI.o
+ .debug_frame   0x00000c6c      0x280 ./source/SPI.o
+ .debug_frame   0x00000eec       0x98 ./source/Systick.o
+ .debug_frame   0x00000f84      0x2f4 ./source/UART.o
+ .debug_frame   0x00001278       0x7c ./source/hardware.o
+ .debug_frame   0x000012f4       0x2c ./source/main.o
+ .debug_frame   0x00001320       0x60 ./CMSIS/system_MK64F12.o

@@ -48,6 +48,8 @@ static uint8_t delay_flag = 0;
 
 static uint8_t transfer_complete = 0;
 
+static void (*externalCB)(void);
+
 typedef enum
 {
 	PORT_mAnalog,
@@ -290,10 +292,14 @@ void SPI_SendMsg(uint8_t* msg)
  * @brief	Starts the Transmission of the data (8-bits words)
  * @param	bytes	Array of data (uint8_t*)
  * @param	num_of_bytes	Number of bytes of the array
+ * @param 	callback		Function (NULL if not wanted) to be called
+ * 							everytime a transmission is completed
  */
 
-void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes)
+void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes, void (*callback)(void))
 {
+	externalCB = callback;	// saves Callback to be used if necessary
+
 	flush_Queue(1);
 	uint32_t i = 0;
 	for(i = 0; i < num_of_bytes; i++)
@@ -387,6 +393,10 @@ __ISR__ SPI0_IRQHandler(void)
 			// write 0 to disable TFFF interrupt
 			SPI0->RSER &= ~SPI_RSER_TCF_RE_MASK;
 			transfer_complete = 1;
+			if (!externalCB)
+			{
+				externalCB();	// callback function
+			}
 		}
 	}
 

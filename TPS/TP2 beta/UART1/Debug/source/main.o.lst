@@ -90,65 +90,66 @@
   63 001e 0346     		mov	r3, r0
   64 0020 002B     		cmp	r3, #0
   65 0022 FAD1     		bne	.L2
-  27:../source/main.c **** 	SPI_SendData("a",1);
+  27:../source/main.c **** 	SPI_SendData("a",1, 0);
   66              		.loc 1 27 0 is_stmt 1
-  67 0024 0121     		movs	r1, #1
-  68 0026 0B48     		ldr	r0, .L6
-  69 0028 FFF7FEFF 		bl	SPI_SendData
+  67 0024 0022     		movs	r2, #0
+  68 0026 0121     		movs	r1, #1
+  69 0028 0A48     		ldr	r0, .L6
+  70 002a FFF7FEFF 		bl	SPI_SendData
   28:../source/main.c **** 	while(SPI_Transmission_In_Process());
-  70              		.loc 1 28 0
-  71 002c 00BF     		nop
-  72              	.L3:
-  73              		.loc 1 28 0 is_stmt 0 discriminator 1
-  74 002e FFF7FEFF 		bl	SPI_Transmission_In_Process
-  75 0032 0346     		mov	r3, r0
-  76 0034 002B     		cmp	r3, #0
-  77 0036 FAD1     		bne	.L3
+  71              		.loc 1 28 0
+  72 002e 00BF     		nop
+  73              	.L3:
+  74              		.loc 1 28 0 is_stmt 0 discriminator 1
+  75 0030 FFF7FEFF 		bl	SPI_Transmission_In_Process
+  76 0034 0346     		mov	r3, r0
+  77 0036 002B     		cmp	r3, #0
+  78 0038 FAD1     		bne	.L3
   29:../source/main.c **** 	SPI_SendMsg("Hola");
-  78              		.loc 1 29 0 is_stmt 1
-  79 0038 0748     		ldr	r0, .L6+4
-  80 003a FFF7FEFF 		bl	SPI_SendMsg
+  79              		.loc 1 29 0 is_stmt 1
+  80 003a 0748     		ldr	r0, .L6+4
+  81 003c FFF7FEFF 		bl	SPI_SendMsg
   30:../source/main.c **** 	while(SPI_Transmission_In_Process());
-  81              		.loc 1 30 0
-  82 003e 00BF     		nop
-  83              	.L4:
-  84              		.loc 1 30 0 is_stmt 0 discriminator 1
-  85 0040 FFF7FEFF 		bl	SPI_Transmission_In_Process
-  86 0044 0346     		mov	r3, r0
-  87 0046 002B     		cmp	r3, #0
-  88 0048 FAD1     		bne	.L4
+  82              		.loc 1 30 0
+  83 0040 00BF     		nop
+  84              	.L4:
+  85              		.loc 1 30 0 is_stmt 0 discriminator 1
+  86 0042 FFF7FEFF 		bl	SPI_Transmission_In_Process
+  87 0046 0346     		mov	r3, r0
+  88 0048 002B     		cmp	r3, #0
+  89 004a FAD1     		bne	.L4
   31:../source/main.c **** 	SPI_SendMsg("Messi");
-  89              		.loc 1 31 0 is_stmt 1
-  90 004a 0448     		ldr	r0, .L6+8
-  91 004c FFF7FEFF 		bl	SPI_SendMsg
-  92              	.L5:
+  90              		.loc 1 31 0 is_stmt 1
+  91 004c 0348     		ldr	r0, .L6+8
+  92 004e FFF7FEFF 		bl	SPI_SendMsg
+  93              	.L5:
   32:../source/main.c **** 
   33:../source/main.c **** 
   34:../source/main.c **** 	// Enable interrupts
   35:../source/main.c **** 
   36:../source/main.c **** 	__FOREVER__
-  93              		.loc 1 36 0 discriminator 1
-  94 0050 FEE7     		b	.L5
-  95              	.L7:
-  96 0052 00BF     		.align	2
-  97              	.L6:
-  98 0054 00000000 		.word	.LC0
-  99 0058 04000000 		.word	.LC1
- 100 005c 0C000000 		.word	.LC2
- 101              		.cfi_endproc
- 102              	.LFE123:
- 104              		.text
- 105              	.Letext0:
- 106              		.file 2 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\sys\\libconfig-arm.h"
- 107              		.file 3 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\stdint.h"
- 108              		.file 4 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
- 109              		.file 5 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
+  94              		.loc 1 36 0 discriminator 1
+  95 0052 FEE7     		b	.L5
+  96              	.L7:
+  97              		.align	2
+  98              	.L6:
+  99 0054 00000000 		.word	.LC0
+ 100 0058 04000000 		.word	.LC1
+ 101 005c 0C000000 		.word	.LC2
+ 102              		.cfi_endproc
+ 103              	.LFE123:
+ 105              		.text
+ 106              	.Letext0:
+ 107              		.file 2 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\sys\\libconfig-arm.h"
+ 108              		.file 3 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\stdint.h"
+ 109              		.file 4 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
+ 110              		.file 5 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\lucia\AppData\Local\Temp\ccwRS41P.s:18     .rodata:00000000 $d
-C:\Users\lucia\AppData\Local\Temp\ccwRS41P.s:28     .text.main:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccwRS41P.s:35     .text.main:00000000 main
-C:\Users\lucia\AppData\Local\Temp\ccwRS41P.s:98     .text.main:00000054 $d
+C:\Users\lucia\AppData\Local\Temp\ccgTXgiM.s:18     .rodata:00000000 $d
+C:\Users\lucia\AppData\Local\Temp\ccgTXgiM.s:28     .text.main:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccgTXgiM.s:35     .text.main:00000000 main
+C:\Users\lucia\AppData\Local\Temp\ccgTXgiM.s:99     .text.main:00000054 $d
                            .group:00000000 wm4.0.33db8b643112917ec54934b4f2c2f387
                            .group:00000000 wm4.redlib_version.h.16.f905717e4b3a91dcbdbb631865150df4
                            .group:00000000 wm4.libconfigarm.h.18.1ad1d24f96d0dc8c4cf52dc19b0aa2c7
@@ -163,6 +164,7 @@ C:\Users\lucia\AppData\Local\Temp\ccwRS41P.s:98     .text.main:00000054 $d
                            .group:00000000 wm4.MK64F12.h.475.0d927260271b4d8005bb15983309abd6
                            .group:00000000 wm4.MK64F12_features.h.92.512cea46d882153168efeec0bc3a9da7
                            .group:00000000 wm4.hardware.h.27.0531344360c1b4ef1fba1263e2a4c488
+                           .group:00000000 wm4.CAN_SPI.h.8.350e3e1f52a198bbfc0e1828c1cffe4a
 
 UNDEFINED SYMBOLS
 hw_DisableInterrupts
