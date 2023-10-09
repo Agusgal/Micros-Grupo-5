@@ -64,7 +64,7 @@
 
 #define RXLENGTH		13
 
-#define	BUFFER_SIZE	 20
+#define	BUFFER_SIZE	 50
 #define OVERFLOW     -1
 
 typedef struct spican_buffer{
@@ -112,41 +112,41 @@ static uint8_t get_Queue_Status(uint8_t id);
  * @brief
  * @return
  */
-static uint8_t load_TX_buffer(uint8_t abc, uint8_t * bytes, uint8_t num_bytes, void cb(void));
+static void load_TX_buffer(uint8_t abc, uint8_t * bytes, uint8_t num_bytes, void (*cb)(void));
 
 /**
  * @brief
  * @return
  */
-static uint8_t write_SPICAN(uint8_t address, uint8_t * bytes_data, uint8_t num_bytes_data, void cb(void));
+static void write_SPICAN(uint8_t address, uint8_t * bytes_data, uint8_t num_bytes_data, void (*cb)(void));
 
 /**
  * @brief
  * @return
  */
-static uint8_t read_SPICAN(uint8_t address, uint8_t num_bytes_to_read, void cb(void));
-
-
-/**
- * @brief
- * @return
- */
-static uint8_t read_RX_buffer(uint8_t nm, uint8_t num_bytes_to_read, void cb(void));
-
-/**
- * @brief
- * @return
- */
-static uint8_t read_status(void cb(void));
+static void read_SPICAN(uint8_t address, uint8_t num_bytes_to_read, void (*cb)(void));
 
 
 /**
  * @brief
  * @return
  */
-static RTS(uint8_t txn, void cb(void));
+static void read_RX_buffer(uint8_t nm, uint8_t num_bytes_to_read, void (*cb)(void));
 
-static parseData(RXB_RAWDATA_t * rawdata, uint8_t *data_to_send);
+/**
+ * @brief
+ * @return
+ */
+static void read_status(void (*cb)(void));
+
+
+/**
+ * @brief
+ * @return
+ */
+static void RTS(uint8_t txn, void (*cb)(void));
+
+static void parseData(RXB_RAWDATA_t * rawdata, uint8_t *data_to_send);
 
 
 /**
@@ -177,6 +177,7 @@ void CAN_SPI_Init (void)
 	// 1- SPI in mode 0,0
 	SPI_Init();
 
+	queue_Init(0);
 	// Set interrupt pin for RX interrupt detection
 	gpioMode (PORTNUM2PIN(INT_PIN, INT_PORT), INPUT_PULLDOWN);
 	gpioIRQ_Config (PORTNUM2PIN(INT_PIN, INT_PORT), PORT_eInterruptFalling);
@@ -451,7 +452,7 @@ void CAN_SPI_SendInfo(RXB_RAWDATA_t * rawdata)
  * @brief
  * @return
  */
-static uint8_t load_TX_buffer(uint8_t abc, uint8_t * bytes_data, uint8_t num_bytes_data, void cb(void))
+static void load_TX_buffer(uint8_t abc, uint8_t * bytes_data, uint8_t num_bytes_data, void (*cb) (void))
 {
 	uint8_t aux[16];
 	aux[0] = 0b01000000 | abc;
@@ -467,7 +468,7 @@ static uint8_t load_TX_buffer(uint8_t abc, uint8_t * bytes_data, uint8_t num_byt
  * @brief
  * @return
  */
-static uint8_t write_SPICAN(uint8_t address, uint8_t * bytes_data, uint8_t num_bytes_data, void cb(void))
+static void write_SPICAN(uint8_t address, uint8_t * bytes_data, uint8_t num_bytes_data, void (*cb) (void))
 {
 	uint8_t aux[16];
 	aux[0] = WRITE_INSTRUCTION;
@@ -484,7 +485,7 @@ static uint8_t write_SPICAN(uint8_t address, uint8_t * bytes_data, uint8_t num_b
  * @brief
  * @return
  */
-static uint8_t read_SPICAN(uint8_t address, uint8_t num_bytes_to_read, void cb(void))
+static void read_SPICAN(uint8_t address, uint8_t num_bytes_to_read, void (*cb) (void))
 {
 	uint8_t aux[16];
 	aux[0] = READ_INSTRUCTION;
@@ -501,7 +502,7 @@ static uint8_t read_SPICAN(uint8_t address, uint8_t num_bytes_to_read, void cb(v
  * @brief
  * @return
  */
-static uint8_t read_RX_buffer(uint8_t nm, uint8_t num_bytes_to_read, void cb(void))
+static void read_RX_buffer(uint8_t nm, uint8_t num_bytes_to_read, void (*cb) (void))
 {
 	uint8_t aux[16];
 	aux[0] = 0b10010000 | nm;
@@ -517,7 +518,7 @@ static uint8_t read_RX_buffer(uint8_t nm, uint8_t num_bytes_to_read, void cb(voi
  * @brief
  * @return
  */
-static uint8_t read_status(void cb(void))
+static void read_status(void (*cb) (void))
 {
 	uint8_t aux[16];
 	aux[0] = 0b1010000;
@@ -533,7 +534,7 @@ static uint8_t read_status(void cb(void))
  * @brief
  * @return
  */
-static RTS(uint8_t txn, void cb(void))
+static void RTS(uint8_t txn, void (*cb) (void))
 {
 	uint8_t aux[16];
 	aux[0] = 0b10000000 | (1 << txn);
@@ -546,7 +547,7 @@ static RTS(uint8_t txn, void cb(void))
  * @brief
  * @return
  */
-static parseData(RXB_RAWDATA_t * rawdata, uint8_t *data_to_send)
+static void parseData(RXB_RAWDATA_t * rawdata, uint8_t *data_to_send)
 {
 	data_to_send[0] = (rawdata->SID >> 3);
 	data_to_send[1] = (rawdata->SID << 5) & 0b11100000;
@@ -573,9 +574,20 @@ static void checkDoubleBuffers(void)
 
 	uint32_t i = 0;
 
-	for(i = 0; i < get_Queue_Status(1) / RXLENGTH; i++)
+	for(i = 0; i < get_Queue_Status(0) / RXLENGTH; i++)
 	{
+		// read
+		SPI_Get_DataBytes(aux, 13);
+		//
+		received_data.SID = (((uint16_t)aux[0]) << 3) | ((aux[1] & 0b11100000)>> 5);
+		received_data.DLC = aux[4] & 0b00001111;
+		uint32_t j = 0;
+		for(j = 0; j < received_data.DLC; j++)
+		{
+			received_data.Dn[j] = aux[j + 5];
+		}
 
+		push_Queue_Element(0, received_data);
 	}
 
 }
