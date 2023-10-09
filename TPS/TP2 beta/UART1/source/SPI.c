@@ -19,6 +19,7 @@
 #define IS_RFDF(tmp)	((tmp) & SPI_SR_RFDF_MASK)
 #define IS_TFFF(tmp)	((tmp) & SPI_SR_TFFF_MASK)
 #define IS_EOQF(tmp)	((tmp) & SPI_SR_EOQF_MASK)
+#define	IS_TCF(tmp)		((tmp) & SPI_SR_TCF_MASK)
 
 #define SPI0_PCS_PIN	0 //PTD0
 #define SPI0_SCK_PIN	1 //PTD1
@@ -44,6 +45,10 @@ spi_buffer_t spi_buffers[2]; //doubles the value for input and output buffers. 1
 
 static uint32_t delay = 0;
 static uint8_t delay_flag = 0;
+
+static uint8_t transfer_complete = 0;
+
+static void (*externalCB)(void);
 
 typedef enum
 {
@@ -167,11 +172,7 @@ void SPI_Init (void)
 		SPI0->CTAR[0] = SPI_CTAR_FMSZ(7) | SPI_CTAR_PBR_MASK | SPI_CTAR_BR(6) | SPI_CTAR_DT(0b00001000) | SPI_CTAR_CSSCK(0b00000111) | SPI_CTAR_ASC(0b00000111); //insert 10 usec in between transfers
 
 		SPI0->SR = 0x0;
-		SPI0->SR = SPI_SR_TXRXS_MASK ;
-
-		// Only Read Drain Flag enable (TFFF is enabled everytime a new message is to be sent)
-		SPI0->RSER = 0x0;
-		SPI0->RSER = SPI_RSER_RFDF_RE_MASK;
+		SPI0->SR = SPI_SR_TXRXS_MASK;
 
 		// Enable transmissions
 		//SPI0->MCR &= ~SPI_MCR_HALT_MASK;
@@ -224,14 +225,27 @@ void SPI_Get_DataBytes(uint8_t *data, uint32_t num_of_bytes)
  */
 void SPI_SendByte(uint8_t byte)
 {
-	//SPI0->MCR |= SPI_MCR_CLR_RXF_MASK | SPI_MCR_CLR_TXF_MASK;
-	//flush_Queue(0);
-	//flush_Queue(1);
+
 	buffer_element_t event = {byte, 1};
 	push_Queue_Element(0, event);
 
-	// Enable TFFF flag to start pushing data to the queue
-	SPI0->RSER |= SPI_RSER_TFFF_RE_MASK;
+	buffer_element_t buffer_data_out = pull_Queue_Element(0);
+	uint32_t data_out = SPI_PUSHR_CONT_MASK;
+	if (buffer_data_out.end_of_data)
+	{
+		// If last word, indicate that the chip select should not be held
+		data_out &= ~SPI_PUSHR_CONT_MASK;
+	}
+	// Select chip_select 0
+	data_out |= SPI_PUSHR_PCS(1);
+	data_out |= SPI_PUSHR_TXDATA(buffer_data_out.data);
+
+	transfer_complete = 0;
+	// Enable TCF flag to start pushing data to the queue
+	SPI0->RSER |= SPI_RSER_TCF_RE_MASK;
+
+	SPI0 -> PUSHR = data_out;
+
 }
 
 /**
@@ -241,10 +255,6 @@ void SPI_SendByte(uint8_t byte)
 
 void SPI_SendMsg(uint8_t* msg)
 {
-	// clear all queues
-	//SPI0->MCR |= SPI_MCR_CLR_RXF_MASK | SPI_MCR_CLR_TXF_MASK;
-	//flush_Queue(0);
-	//flush_Queue(1);
 
 	uint32_t i = 0;
 	while (msg[i]  != '\0')
@@ -259,11 +269,22 @@ void SPI_SendMsg(uint8_t* msg)
 		i++;
 	}
 
-	// Enable TFFF flag to start pushing data to the queue
-	SPI0->RSER |= SPI_RSER_TFFF_RE_MASK;
+	buffer_element_t buffer_data_out = pull_Queue_Element(0);
+	uint32_t data_out = SPI_PUSHR_CONT_MASK;
+	if (buffer_data_out.end_of_data)
+	{
+		// If last word, indicate that the chip select should not be held
+		data_out &= ~SPI_PUSHR_CONT_MASK;
+	}
+	// Select chip_select 0
+	data_out |= SPI_PUSHR_PCS(1);
+	data_out |= SPI_PUSHR_TXDATA(buffer_data_out.data);
 
-	// Enable transfer
-	//SPI0 -> SR |= SPI_SR_EOQF_MASK;
+	transfer_complete = 0;
+	// Enable TCF flag to start pushing data to the queue
+	SPI0->RSER |= SPI_RSER_TCF_RE_MASK;
+
+	SPI0 -> PUSHR = data_out;
 
 }
 
@@ -271,14 +292,15 @@ void SPI_SendMsg(uint8_t* msg)
  * @brief	Starts the Transmission of the data (8-bits words)
  * @param	bytes	Array of data (uint8_t*)
  * @param	num_of_bytes	Number of bytes of the array
+ * @param 	callback		Function (NULL if not wanted) to be called
+ * 							everytime a transmission is completed
  */
 
-void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes)
+void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes, void (*callback)(void))
 {
-	// clear all queues
-	//SPI0->MCR |= SPI_MCR_CLR_RXF_MASK | SPI_MCR_CLR_TXF_MASK;
-	//flush_Queue(0);
-	//flush_Queue(1);
+	externalCB = callback;	// saves Callback to be used if necessary
+
+	flush_Queue(1);
 	uint32_t i = 0;
 	for(i = 0; i < num_of_bytes; i++)
 	{
@@ -291,8 +313,22 @@ void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes)
 		push_Queue_Element(0, event);
 	}
 
-	// Enable TFFF flag to start pushing data to the queue
-	SPI0->RSER |= SPI_RSER_TFFF_RE_MASK;
+	buffer_element_t buffer_data_out = pull_Queue_Element(0);
+	uint32_t data_out = SPI_PUSHR_CONT_MASK;
+	if (buffer_data_out.end_of_data)
+	{
+		// If last word, indicate that the chip select should not be held
+		data_out &= ~SPI_PUSHR_CONT_MASK;
+	}
+	// Select chip_select 0
+	data_out |= SPI_PUSHR_PCS(1);
+	data_out |= SPI_PUSHR_TXDATA(buffer_data_out.data);
+
+	transfer_complete = 0;
+	// Enable TCF flag to start pushing data to the queue
+	SPI0->RSER |= SPI_RSER_TCF_RE_MASK;
+
+	SPI0 -> PUSHR = data_out;
 
 }
 
@@ -302,7 +338,7 @@ void SPI_SendData(uint8_t* bytes, uint32_t num_of_bytes)
 
 uint8_t SPI_Transmission_In_Process()
 {
-	return (SPI0 -> SR & SPI_SR_TXCTR_MASK) && get_Queue_Status(0);	// if EOQF==1; transmission is completed
+	return !transfer_complete;	// if EOQF==1; transmission is completed
 }
 
 /**
@@ -325,22 +361,24 @@ uint8_t SPI_Read_Status()
  */
 __ISR__ SPI0_IRQHandler(void)
 {
-	uint32_t tmp, clearFlags = 0x0;
+	uint32_t tmp;
 	tmp = SPI0 -> SR;// Dummy read status register
-	//SPI0 -> SR = tmp; //clear all flags
 
 	// Transfer FIFO Fill Flag (1 if not empty)
-	if(IS_TFFF(tmp))
+	if(IS_TCF(tmp))
 	{
-		clearFlags = SPI_SR_TFFF_MASK;
+		SPI0->SR = SPI_SR_TCF_MASK;
+
+		uint32_t rxdata = SPI0 -> POPR;
+		buffer_element_t data_in = {rxdata, 0};
+		push_Queue_Element(1, data_in); //positions itself in the receiver queue
+
 		if (get_Queue_Status(0))
 		{
 			buffer_element_t buffer_data_out = pull_Queue_Element(0);
 			uint32_t data_out = SPI_PUSHR_CONT_MASK;
 			if (buffer_data_out.end_of_data)
 			{
-				//data_out |= SPI_PUSHR_EOQ_MASK;
-
 				// If last word, indicate that the chip select should not be held
 				data_out &= ~SPI_PUSHR_CONT_MASK;
 			}
@@ -353,21 +391,15 @@ __ISR__ SPI0_IRQHandler(void)
 		else
 		{
 			// write 0 to disable TFFF interrupt
-			SPI0->RSER &= ~SPI_RSER_TFFF_RE_MASK;
+			SPI0->RSER &= ~SPI_RSER_TCF_RE_MASK;
+			transfer_complete = 1;
+			if (!externalCB)
+			{
+				externalCB();	// callback function
+			}
 		}
 	}
 
-	// Receive FIFO Drain Flag
-	if(IS_RFDF(tmp))
-	{
-		clearFlags |= SPI_SR_RFDF_MASK;
-		uint32_t rxdata = SPI0 -> POPR;
-		buffer_element_t data_in= {rxdata, 0};
-		push_Queue_Element(1, data_in); //positions itself in the receiver queue
-		// check if flag should be cleared (Maybe better to do at the end of all interrupts
-	}
-
-	SPI0 -> SR = clearFlags;
 }
 
 /**
@@ -453,11 +485,8 @@ static uint8_t get_Queue_Status(uint8_t id)
 
 static void flush_Queue(uint8_t id)
 {
-	uint32_t i;
-	for(i = 0; i < BUFFER_SIZE; i++)
-	{
-		pull_Queue_Element(id);
-	}
+	spi_buffers[id].pout = spi_buffers[id].pin;
+	spi_buffers[id].num_Of_Words = 0;
 }
 
 

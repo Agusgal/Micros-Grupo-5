@@ -24,7 +24,7 @@ int main (void)
 
 
 	while(SPI_Transmission_In_Process());
-	SPI_SendData("a",1);
+	SPI_SendData("a",1, 0);
 	while(SPI_Transmission_In_Process());
 	SPI_SendMsg("Hola");
 	while(SPI_Transmission_In_Process());

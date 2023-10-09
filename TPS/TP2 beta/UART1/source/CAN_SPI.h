@@ -18,7 +18,14 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
+#define BUFFER_SIZE	8
 
+typedef struct RXB_RAWDATA
+{
+    uint16_t SID;
+    uint8_t DLC;
+    uint8_t Dn[BUFFER_SIZE];
+}RXB_RAWDATA_t;
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
