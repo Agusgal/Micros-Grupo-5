@@ -146,10 +146,10 @@
  110              		.file 5 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\lucia\AppData\Local\Temp\ccgTXgiM.s:18     .rodata:00000000 $d
-C:\Users\lucia\AppData\Local\Temp\ccgTXgiM.s:28     .text.main:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccgTXgiM.s:35     .text.main:00000000 main
-C:\Users\lucia\AppData\Local\Temp\ccgTXgiM.s:99     .text.main:00000054 $d
+C:\Users\lucia\AppData\Local\Temp\cctJGads.s:18     .rodata:00000000 $d
+C:\Users\lucia\AppData\Local\Temp\cctJGads.s:28     .text.main:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\cctJGads.s:35     .text.main:00000000 main
+C:\Users\lucia\AppData\Local\Temp\cctJGads.s:99     .text.main:00000054 $d
                            .group:00000000 wm4.0.33db8b643112917ec54934b4f2c2f387
                            .group:00000000 wm4.redlib_version.h.16.f905717e4b3a91dcbdbb631865150df4
                            .group:00000000 wm4.libconfigarm.h.18.1ad1d24f96d0dc8c4cf52dc19b0aa2c7

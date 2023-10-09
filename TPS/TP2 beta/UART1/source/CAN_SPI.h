@@ -55,19 +55,13 @@ uint8_t CAN_SPI_Get_Status(void);
  * @brief
  * @return
  */
-uint8_t CAN_SPI_Get_Data(void);
+RXB_RAWDATA_t CAN_SPI_Get_Data(void);
 
 /**
  * @brief
  * @return
  */
-void CAN_SPI_SendMsg(uint8_t* msg);
-
-/**
- * @brief
- * @return
- */
-void CAN_SPI_SendByte(uint8_t byte);
+void CAN_SPI_SendInfo(RXB_RAWDATA_t * rawdata);
 
 
 /*******************************************************************************

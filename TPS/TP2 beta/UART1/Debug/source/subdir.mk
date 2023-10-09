@@ -8,6 +8,7 @@ C_SRCS += \
 ../source/SPI.c \
 ../source/Systick.c \
 ../source/UART.c \
+../source/gpio.c \
 ../source/hardware.c \
 ../source/main.c 
 
@@ -16,6 +17,7 @@ OBJS += \
 ./source/SPI.o \
 ./source/Systick.o \
 ./source/UART.o \
+./source/gpio.o \
 ./source/hardware.o \
 ./source/main.o 
 
@@ -24,6 +26,7 @@ C_DEPS += \
 ./source/SPI.d \
 ./source/Systick.d \
 ./source/UART.d \
+./source/gpio.d \
 ./source/hardware.d \
 ./source/main.d 
 

@@ -59,48 +59,23 @@
 #define	TXB1DLC			0b01000101
 #define	TXB2DLC			0b01010101
 
+#define	RXB0D0			0b01100110
+#define	RXB1D0			0b01110110
+
+#define RXLENGTH		13
+
 #define	BUFFER_SIZE	 20
 #define OVERFLOW     -1
 
-typedef struct buffer_element{
-	uint8_t data;
-	uint8_t end_of_data; //last byte if value is 1
-}buffer_element_t;
-
-typedef struct spi_buffer{
-	buffer_element_t *pin;
-	buffer_element_t *pout;
-	buffer_element_t buffer[BUFFER_SIZE];
+typedef struct spican_buffer{
+	RXB_RAWDATA_t *pin;
+	RXB_RAWDATA_t *pout;
+	RXB_RAWDATA_t buffer[BUFFER_SIZE];
 	uint8_t num_Of_Words;
-}spi_buffer_t;
+}spican_buffer_t;
 
-spi_buffer_t can_spi_buffers[2]; //doubles the value for input and output buffers. 1 is input, 0 is output.
+spican_buffer_t can_spi_buffers[1];
 
-typedef enum
-{
-	PORT_mAnalog,
-	PORT_mGPIO,
-	PORT_mAlt2,
-	PORT_mAlt3,
-	PORT_mAlt4,
-	PORT_mAlt5,
-	PORT_mAlt6,
-	PORT_mAlt7,
-
-} PORTMux_t;
-
-typedef enum
-{
-	PORT_eDisabled				= 0x00,
-	PORT_eDMARising				= 0x01,
-	PORT_eDMAFalling			= 0x02,
-	PORT_eDMAEither				= 0x03,
-	PORT_eInterruptDisasserted	= 0x08,
-	PORT_eInterruptRising		= 0x09,
-	PORT_eInterruptFalling		= 0x0A,
-	PORT_eInterruptEither		= 0x0B,
-	PORT_eInterruptAsserted		= 0x0C,
-} PORTEvent_t;
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -116,14 +91,14 @@ static void queue_Init (uint8_t id);
  * @param event The element to add to the queue
  * @return Number of pending events. Returns value OVERFLOW if the maximun number of events is reached
  */
-static int8_t push_Queue_Element(uint8_t id, buffer_element_t event);
+static int8_t push_Queue_Element(uint8_t id, RXB_RAWDATA_t event);
 
 
 /**
  * @brief Pulls the earliest event from the queue
  * @return Event_Type variable with the current event if no OVERFLOW is detected.
  */
-static buffer_element_t pull_Queue_Element(uint8_t id);
+static RXB_RAWDATA_t pull_Queue_Element(uint8_t id);
 
 
 /**
@@ -173,6 +148,14 @@ static RTS(uint8_t txn, void cb(void));
 
 static parseData(RXB_RAWDATA_t * rawdata, uint8_t *data_to_send);
 
+
+/**
+ * @brief
+ * @param
+ * @return
+ */
+
+static void checkDoubleBuffers(void);
 
 
 /*******************************************************************************
@@ -307,9 +290,9 @@ uint8_t CAN_SPI_Get_Status(void)
  * @return
  */
 
-uint8_t CAN_SPI_Get_Data(void)
+RXB_RAWDATA_t CAN_SPI_Get_Data(void)
 {
-	return(pull_Queue_Element(0).data);
+	return(pull_Queue_Element(0));
 }
 
 
@@ -321,64 +304,70 @@ uint8_t CAN_SPI_Get_Data(void)
 
 void CAN_SPI_ReceiveInfo(void)
 {
-	switch(sendState)
+	uint8_t receiveState = 0;
+	static uint8_t aux[16];
+	static uint8_t intStatus = 0;
+
+
+	switch(receiveState)
 	{
 	case 0:
-		read_SPICAN(CANINTF, uint8_t num_bytes_to_read, void cb(void))
-		parseData(rawdata, data_to_send);
-		RX_STATUS_buffer(&CAN_SPI_SendInfo);
-		sendState = 1;
+		read_SPICAN(CANINTF, 1, &CAN_SPI_ReceiveInfo);
+		receiveState = 1;
 		break;
 
 	case 1:
 		SPI_Get_DataBytes(aux, 3);
-		uint8_t rxStatus = aux[1];
+		intStatus = aux[2];
+		aux[0] = 0;
 
-		if(rxStatus & 0b00000100)	// if TX
-		{
-			load_TX_buffer(0b000000000, data_to_send, 13, &CAN_SPI_SendInfo);
-			number_buffer = 0;
-			sendState = 2;
-		}
-		else if(rxStatus & 0b00010000)
-		{
-			load_TX_buffer(0b000000010, data_to_send, 13, &CAN_SPI_SendInfo);
-			number_buffer = 1;
-			sendState = 2;
-		}
-		else if(rxStatus & 0b01000000)
-		{
-			load_TX_buffer(0b000000100, data_to_send, 13, &CAN_SPI_SendInfo);
-			number_buffer = 2;
-			sendState = 2;
-		}
-		else
-		{
-			sendState = 0;
-		}
-
+		write_SPICAN(CANINTF, aux, 1, &CAN_SPI_ReceiveInfo);
+		// clear interrupt flags
+		receiveState = 2;
 		break;
 
 	case 2:
-		RTS(number_buffer, &CAN_SPI_SendInfo);
-		sendState = 3;
+		// Check which RX received data
+		if((intStatus & 0b11) == 0b11)
+		{
+			// Read RX 0 first, then RX1
+			read_RX_buffer(0b00, 13, &CAN_SPI_ReceiveInfo);
+			receiveState = 4;
+		}
+		else if((intStatus & 0b11) == 0b01)
+		{
+			// Read RX 0
+			read_RX_buffer(0b00, 13, &CAN_SPI_ReceiveInfo);
+			receiveState = 3;
+		}
+		else if((intStatus & 0b11) == 0b10)
+		{
+			// Read RX 1
+			read_RX_buffer(0b10, 13, &CAN_SPI_ReceiveInfo);
+			receiveState = 3;
+		}
+
 
 	case 3:
+		checkDoubleBuffers();
 		// Can data started to be sent
-		sendState = 0;
+		receiveState = 0;
+		break;
+
+	case 4:
+		// read RX1, after reading RX1, if both flags on
+		read_RX_buffer(0b10, 13, &CAN_SPI_ReceiveInfo);
+		receiveState = 3;
 		break;
 
 	default:
-		sendState = 0;
+		receiveState = 3;
 		break;
 
 
-		}
 	}
 
 }
-
-
 
 
 /**
@@ -394,18 +383,19 @@ void CAN_SPI_SendInfo(RXB_RAWDATA_t * rawdata)
 	static uint8_t aux[16];
 	static uint8_t data_to_send[16];
 	static uint8_t number_buffer = 0;
+	static uint8_t rxStatus;
 
 	switch(sendState)
 	{
 	case 0:
 		parseData(rawdata, data_to_send);
-		RX_STATUS_buffer(&CAN_SPI_SendInfo);
+		read_status(&CAN_SPI_SendInfo);
 		sendState = 1;
 		break;
 
 	case 1:
 		SPI_Get_DataBytes(aux, 3);
-		uint8_t rxStatus = aux[1];
+		rxStatus = aux[1];
 
 		if(rxStatus & 0b00000100)	// if TX
 		{
@@ -449,35 +439,6 @@ void CAN_SPI_SendInfo(RXB_RAWDATA_t * rawdata)
 	}
 }
 
-/**
- * @brief
- * @param
- * @return
- */
-
-void CAN_SPI_SendMsg(uint8_t* msg)
-{
-	uint32_t i = 0;
-	while (msg[i]  != '\0')
-	{
-		uint8_t end_of_data = 0;
-		if(msg[i+1] == '\0')
-		{
-			end_of_data = 1;
-		}
-		buffer_element_t event = {msg[i], end_of_data};
-		push_Queue_Element(0, event);
-		i++;
-	}
-
-	// Enable TFFF flag to start pushing data to the queue
-	SPI0->RSER |= SPI_RSER_TFFF_RE_MASK;
-
-	// Enable transfer
-	//SPI0 -> SR |= SPI_SR_EOQF_MASK;
-
-}
-
 
 
 
@@ -486,18 +447,6 @@ void CAN_SPI_SendMsg(uint8_t* msg)
                         LOCAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
-
-
-/**
- * @brief Gets the status of the queue
- * @return Returns the number of pending events in the queue
- */
-static uint8_t get_Queue_Status(uint8_t id)
-{
-	return can_spi_buffers[id].num_Of_Words;
-}
-
-
 /**
  * @brief
  * @return
@@ -611,6 +560,26 @@ static parseData(RXB_RAWDATA_t * rawdata, uint8_t *data_to_send)
 	}
 }
 
+/**
+ * @brief
+ * @param
+ * @return
+ */
+
+static void checkDoubleBuffers(void)
+{
+	uint8_t aux[16];
+	RXB_RAWDATA_t received_data;
+
+	uint32_t i = 0;
+
+	for(i = 0; i < get_Queue_Status(1) / RXLENGTH; i++)
+	{
+
+	}
+
+}
+
 
 __ISR__ PORTD_IRQHandler(void)
 {
@@ -619,6 +588,96 @@ __ISR__ PORTD_IRQHandler(void)
 
 }
 
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+/**
+ * @brief Initializes the circular queue
+ */
+static void queue_Init (uint8_t id)
+{
+	can_spi_buffers[id].pin = can_spi_buffers[id].buffer;
+	can_spi_buffers[id].pout = can_spi_buffers[id].pin;
+	can_spi_buffers[id].num_Of_Words = 0;
+}
+
+/**
+ * @brief Pushes an event to the queue
+ * @param event The element to add to the queue
+ * @return Number of pending events. Returns value OVERFLOW if the maximun number of events is reached
+ */
+static int8_t push_Queue_Element(uint8_t id, RXB_RAWDATA_t event)
+{
+	// Check for EventQueue Overflow
+	if (can_spi_buffers[id].num_Of_Words > BUFFER_SIZE-1)
+	{
+		return OVERFLOW;
+	}
+
+	*(can_spi_buffers[id].pin)++ = event;
+	can_spi_buffers[id].num_Of_Words++;
+
+	// Return pointer to the beginning if necessary
+	if (can_spi_buffers[id].pin == BUFFER_SIZE + can_spi_buffers[id].buffer)
+	{
+		can_spi_buffers[id].pin = can_spi_buffers[id].buffer;
+	}
+
+	return can_spi_buffers[id].num_Of_Words;
+
+}
+
+/**
+ * @brief Pulls the earliest event from the queue
+ * @return Event_Type variable with the current event if no OVERFLOW is detected.
+ */
+
+
+static RXB_RAWDATA_t pull_Queue_Element(uint8_t id)
+{
+	RXB_RAWDATA_t event = *(can_spi_buffers[id].pout);
+
+	if (can_spi_buffers[id].num_Of_Words == 0)
+	{
+		RXB_RAWDATA_t event1 = {0,2};
+		return event1;
+	}
+
+	can_spi_buffers[id].num_Of_Words--;
+	can_spi_buffers[id].pout++;
+
+	if (can_spi_buffers[id].pout == BUFFER_SIZE + can_spi_buffers[id].buffer)
+	{
+		can_spi_buffers[id].pout = can_spi_buffers[id].buffer;
+	}
+
+	return event;
+
+}
+
+
+/**
+ * @brief Gets the status of the queue
+ * @return Returns the number of pending events in the queue
+ */
+static uint8_t get_Queue_Status(uint8_t id)
+{
+	return can_spi_buffers[id].num_Of_Words;
+}
+
+
+/**
+ * @brief Pulls the earliest event from the queue
+ * @return Event_Type variable with the current event if no OVERFLOW is detected.
+ */
+
+
+static void flush_Queue(uint8_t id)
+{
+	can_spi_buffers[id].pout = can_spi_buffers[id].pin;
+	can_spi_buffers[id].num_Of_Words = 0;
+}
 
 
 
