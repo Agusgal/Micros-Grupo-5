@@ -192,7 +192,7 @@ def threadGetData():
     global showCabeceo, showRolido, showOrientacion, targetShowCabeceo, targetShowOrientacion, targetShowRolido
 
     while 1:
-        pygame.time.wait(500)
+        pygame.time.wait(15)
 
         if not conectado:
             try:

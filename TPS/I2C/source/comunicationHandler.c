@@ -58,45 +58,51 @@ void Com_EventHandler(void)
 {
 	//Reemplazado por el nuestro
 	//getter de la informacion se CAN que llego, llamo un servicio del driver de can
-	RXB_RAWDATA_t bufferRXB = CAN_SPI_Get_Data();
+	//RXB_RAWDATA_t bufferRXB = CAN_SPI_Get_Data();
 
 	//TEST
-	//uint16_t sid = 0x105;
-	//uint8_t dlc = 0x4;
+	uint16_t sid = 0x105;
+	uint8_t dlc = 0x4;
 
-	//CAN_RAWDATA_t bufferRXB = {.SID=sid, .DLC=dlc, {'R', '+', '2', '5'}};
+	RXB_RAWDATA_t bufferRXB = {.SID=sid, .DLC=dlc, {'R', '-','2', '5'}};
 
 
 
 	uint8_t group_index = ((bufferRXB.SID) & 0x00F) - 1;
-	uint8_t digitos = bufferRXB.DLC - 2;
+	uint8_t digitos;
 	uint8_t angle;
-
-	if(digitos == 1)
-	{
-		angle = bufferRXB.Dn[2] - '0';
-	}
-	else if(digitos == 2)
-	{
-		angle = (bufferRXB.Dn[2] - '0')*10 + (bufferRXB.Dn[3] - '0');
-	}
-	else if(digitos == 3)
-	{
-		angle = (bufferRXB.Dn[2] - '0')*100 + (bufferRXB.Dn[3] - '0')*10 + (bufferRXB.Dn[4] - '0');
-	}
 
 	switch (bufferRXB.Dn[1])
 	{
 		case '+':
+			digitos = bufferRXB.DLC - 2;
 			break;
 		case '-':
 			angle = -angle;
+			digitos = bufferRXB.DLC - 2;
 			break;
 		default:
-			// Si no es + ni - seguro es un 0
-			angle = 0;
+			digitos = bufferRXB.DLC - 1;
 			break;
 	}
+
+	uint8_t dlc_ = bufferRXB.DLC;
+
+
+	if(digitos == 1)
+	{
+		angle = bufferRXB.Dn[dlc_ - 1] - '0';
+	}
+	else if(digitos == 2)
+	{
+		angle = (bufferRXB.Dn[dlc_ - 2] - '0')*10 + (bufferRXB.Dn[dlc_ - 1] - '0');
+	}
+	else if(digitos == 3)
+	{
+		angle = (bufferRXB.Dn[dlc_ - 3] - '0')*100 + (bufferRXB.Dn[dlc_ - 2] - '0')*10 + (bufferRXB.Dn[dlc_ - 1] - '0');
+	}
+
+
 
 	switch (bufferRXB.Dn[0])
 	{
@@ -124,13 +130,13 @@ void Com_EventHandler(void)
 	}
 	else
 	{
-		if(bufferRXB.Dn[1] == '+')
-		{
-			bufferPC[2] = '+';
-		}
-		else if(bufferRXB.Dn[1] == '-')
+		if(bufferRXB.Dn[1] == '-')
 		{
 			bufferPC[2] = '-';
+		}
+		else
+		{
+			bufferPC[2] = '+';
 		}
 
 
