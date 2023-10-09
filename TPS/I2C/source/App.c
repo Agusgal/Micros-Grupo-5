@@ -99,7 +99,16 @@ void App_Init (void)
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-	if(getCAN_Event())
+	while(CAN_SPI_Is_Busy());
+	CAN_SPI_Attempt_to_read();
+	while(CAN_SPI_Is_Busy());
+	if(CAN_SPI_Is_Read_Ready())
+	{
+		Com_EventHandler();
+	}
+
+
+	/*if(getCAN_Event())
 	{
 		Com_EventHandler();
 		flag = 1;
@@ -108,7 +117,7 @@ void App_Run (void)
 	if(flag == 1)
 	{
 		flag = CAN_SPI_Attempt_to_read();
-	}
+	}*/
 
 }
 

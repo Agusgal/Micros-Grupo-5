@@ -73,7 +73,7 @@ void Com_EventHandler(void)
 	}
 	else
 	{
-		group_index = '0';
+		group_index = 0;
 	}
 
 
@@ -127,7 +127,7 @@ void Com_EventHandler(void)
 
 
 	// Refresco de PC y formateo para enviar a python
-	bufferPC[0] = group_index;
+	bufferPC[0] = group_index + 0x30;
 	bufferPC[1] = bufferRXB.Dn[0];
 	if(bufferRXB.Dn[1] == 0)
 	{
@@ -250,7 +250,7 @@ void comunicationHandler_send2Ext(Orient_t myBoard, uint8_t typeUPD)
 	}
 
 	//todo: cambiar por el posta
-	if (isWriteAvailable(typeUPD))
+	if (isWriteAvailable(typeUPD) && !CAN_SPI_Is_Busy())
 	{
 		CAN_SPI_SendInfo(&data_to_send);
 	}

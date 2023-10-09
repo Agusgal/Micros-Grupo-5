@@ -290,6 +290,11 @@ uint8_t CAN_SPI_Is_Read_Ready(void)
 	return(get_Queue_Status(0) && !receiving);
 }
 
+uint8_t CAN_SPI_Is_Busy(void)
+{
+	return receiving || transmitting;
+}
+
 /**
  * @brief
  * @param
@@ -310,7 +315,7 @@ RXB_RAWDATA_t CAN_SPI_Get_Data(void)
 uint8_t CAN_SPI_Attempt_to_read(void)
 {
 	uint8_t flag = 1;
-	if(!gpioRead(PORTNUM2PIN(INT_PORT,INT_PIN+1)) && !receiving)
+	if(!gpioRead(PORTNUM2PIN(INT_PORT,INT_PIN+1)) && !receiving && !transmitting)
 	{
 		CAN_SPI_ReceiveInfo();
 		flag = 0;
