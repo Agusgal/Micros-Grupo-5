@@ -182,8 +182,8 @@ void CAN_SPI_Init (void)
 
 	queue_Init(0);
 	// Set interrupt pin for RX interrupt detection
-	gpioMode (PORTNUM2PIN(INT_PORT,INT_PIN), INPUT_PULLDOWN);
-	gpioIRQ_Config (PORTNUM2PIN(INT_PORT, INT_PIN), PORT_eInterruptFalling);
+	//gpioMode (PORTNUM2PIN(INT_PORT,INT_PIN), INPUT_PULLDOWN);
+	//gpioIRQ_Config (PORTNUM2PIN(INT_PORT, INT_PIN), PORT_eInterruptFalling);
 
 	gpioMode (PORTNUM2PIN(INT_PORT,INT_PIN+1), INPUT_PULLDOWN);
 
@@ -287,7 +287,7 @@ void CAN_SPI_Init (void)
 
 uint8_t CAN_SPI_Is_Read_Ready(void)
 {
-	return(!receiving && get_Queue_Status(0));
+	return(get_Queue_Status(0) && !receiving);
 }
 
 /**
@@ -309,9 +309,9 @@ RXB_RAWDATA_t CAN_SPI_Get_Data(void)
 
 void CAN_SPI_Attempt_to_read(void)
 {
-	if(gpioRead(PORTNUM2PIN(INT_PORT,INT_PIN+1)))
+	if(!gpioRead(PORTNUM2PIN(INT_PORT,INT_PIN+1)) && !receiving)
 	{
-
+		CAN_SPI_ReceiveInfo();
 	}
 }
 
@@ -332,7 +332,7 @@ void CAN_SPI_ReceiveInfo(void)
 	switch(receiveState)
 	{
 	case 0:
-		while(receiving);
+		//while(receiving);
 		receiving = 1;
 		read_SPICAN(CANINTF, 1, &CAN_SPI_ReceiveInfo);
 		receiveState = 2;

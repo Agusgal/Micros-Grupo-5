@@ -102,15 +102,15 @@ void App_Run (void)
 	{
 		Com_EventHandler();
 	}
+	CAN_SPI_Attempt_to_read();
 }
 
 
 bool getCAN_Event(void)
 {
-
 	//CAN_Com_Happened es un servicio de can que indica si hubo evento de recebcion o envio de datos de CAN.
 	bool a = CAN_SPI_Is_Read_Ready();
-	return CAN_SPI_Is_Read_Ready();
+	return a;
 }
 
 void enableSend()
