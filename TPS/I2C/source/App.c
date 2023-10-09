@@ -84,9 +84,9 @@ void periodicRefresh(void)
 /* Función que se llama 1 vez, al comienzo del programa */
 void App_Init (void)
 {
-	gpioMode(I2C_TP_PIN,OUTPUT);
-	gpioMode(CAN_TP_PIN,OUTPUT);
-	gpioWrite(I2C_TP_PIN,HIGH);
+	//gpioMode(I2C_TP_PIN,OUTPUT);
+	//gpioMode(CAN_TP_PIN,OUTPUT);
+	//gpioWrite(I2C_TP_PIN,HIGH);
     SysTick_Init();
 
 	FX_I2C_Init();
