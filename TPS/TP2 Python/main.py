@@ -4,9 +4,8 @@ import pygame
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
-import random
-import sys
-import time
+
+
 from serial.tools import list_ports
 import serial
 import numpy as np
@@ -62,7 +61,6 @@ texts = [
     "Placa 5",
     "Placa 6",
     "Placa 7",
-    "Placa 8"
 ]
 
 cubePositions = (
@@ -146,21 +144,33 @@ codes = {
     "5": 4,
     "6": 5,
     "7": 6,
-    "8": 7
+
 }
 
 def decodeInfo(text):
     try:
 
-        print(text[1])
-        code = int(text[0])
+
+        if len(text) == 7:
+            code = int(text[0])
+            mode = text[1]
+            signo = text[2]
+            angulo = int(text[3]) * 100 + int(text[4]) * 10 + int(text[5])
+        else:
+            code = int(text[1])
+            mode = text[2]
+            signo = text[3]
+            angulo = int(text[4]) * 100 + int(text[5]) * 10 + int(text[6])
+
+        print(len(text))
+        #code = int(text[0])
         print("Code: ", code)
-        mode = text[1]
+        #mode = text[1]
         print("Mode: ", mode)
-        signo = text[2]
+        #signo = text[2]
         print("Signo: ", signo)
 
-        angulo = int(text[3]) * 100 + int(text[4]) * 10 + int(text[5])
+        #angulo = int(text[3]) * 100 + int(text[4]) * 10 + int(text[5])
         print("Angulo: ", angulo)
 
         if signo == "-":
@@ -213,9 +223,9 @@ def threadGetData():
                 print("data", data)
 
 
-                #data = data
+                data = data
 
-                """
+
                 dataString = str(data)
                 if dataString != "":
                     try:
@@ -238,7 +248,7 @@ def threadGetData():
                         print("Informacion actualizada")
                     except:
                         print("Información corrompida")
-                """
+
             except:
                 print("Error with decoding")
 
@@ -321,7 +331,7 @@ def main():
             drawText((positions[i]-2, 6, -10), texts[i], (255, 255, 255))
             smallDrawText((positions[i]-2.5, 5, -10), "(Presionar Enter)",(255,255,255))
 
-            drawText((positions[i]-4, -6, -18), "Orientacion: %d " % orientacion[i], (0, 255, 0))
+            drawText((positions[i]-4, -6, -18), "Norte: %d " % orientacion[i], (0, 255, 0))
             drawText((positions[i]-4, -8, -18), "Rolido: %d " % rolido[i], (0, 0, 255))
             drawText((positions[i]-4, -10, -18), "Cabeceo: %d " % cabeceo[i], (255, 0, 0))
 
