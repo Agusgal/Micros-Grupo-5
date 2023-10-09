@@ -41,10 +41,6 @@ typedef struct uart_buffer{
 
 uart_buffer_t uart_buffers[2 * TOTAL_UARTS]; //doubles the value for input and output buffers
 
-static unsigned char rx_flag = false;
-static unsigned char rx_data;
-
-
 
 typedef enum
 {
