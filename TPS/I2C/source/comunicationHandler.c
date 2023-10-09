@@ -28,7 +28,7 @@
  ******************************************************************************/
 static Orient_t Boards[GROUPS];
 static uint8_t myGroup;
-static char bufferPC[7] = {'5', 'R', '+', '1', '2', '3', '\0'}; //TOdo: ???????
+static char bufferPC[7] = {'5', 'R', '+', '1', '2', '3', '\0'};
 
 typedef struct
 {
@@ -37,12 +37,10 @@ typedef struct
 	uint8_t Dn[8];
 }CAN_RAWDATA_t;
 
+bool writeAvailable[3]={1,1,1};
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
-
-
-//int16_t ComHandler_parseCANmsj(char* buf, int16_t* boardDATA, uint8_t typeUPD, Orient_t myBoard);
 
 /*******************************************************************************
  *******************************************************************************
@@ -127,7 +125,7 @@ void Com_EventHandler(void)
 	bufferPC[1] = bufferRXB.Dn[0];
 	if(bufferRXB.Dn[1] == 0)
 	{
-		bufferPC[2] = PLUS_CHAR;
+		bufferPC[2] = '+';
 		bufferPC[3] = 0;
 		bufferPC[4] = 0;
 		bufferPC[5] = 0;
@@ -156,7 +154,7 @@ void Com_EventHandler(void)
 
 }
 
-int16_t ComHandler_parseCANmsj(char* buf, int16_t* boardDATA, uint8_t typeUPD, Orient_t myBoard)
+int16_t ComHandler_CAN_Parser(char* buf, int16_t* boardDATA, uint8_t typeUPD, Orient_t myBoard)
 {
 	int16_t nBytes;
 
@@ -234,10 +232,14 @@ void comunicationHandler_send2Ext(Orient_t myBoard, uint8_t typeUPD)
 	int16_t boardDATA, nBytes;
 	char buffer[5]; // Considero peor caso, pero cuando mando indico cuantos bytes son
 
-	nBytes = ComHandler_parseCANmsj(buffer, &boardDATA, typeUPD, myBoard);
+	nBytes = ComHandler_CAN_Parser(buffer, &boardDATA, typeUPD, myBoard);
 
 	//todo: cambiar por el posta
+	if (isWriteAvailable(typeUPD))
+	{
 	//send_CAN(0x105, buffer, nBytes);
+		setWriteAvailable(typeUPD,false);
+	}
 
 	bufferPC[0] = myGroup + '0';
 	bufferPC[1] = buffer[0];
@@ -274,7 +276,14 @@ void comunicationHandler_send2Ext(Orient_t myBoard, uint8_t typeUPD)
 		bufferPC[4] = buffer[3];
 		bufferPC[5] = buffer[4];
 	}
-
+	/*
+	bufferPC[0]='2';
+	bufferPC[1]='R';
+	bufferPC[2]='+';
+	bufferPC[3]='0';
+	bufferPC[4]='1';
+	bufferPC[5]='5';
+	*/
 	UART_SendMsg(bufferPC, 0);
 
 	Boards[myGroup].rolido = myBoard.rolido;
@@ -282,58 +291,14 @@ void comunicationHandler_send2Ext(Orient_t myBoard, uint8_t typeUPD)
 	Boards[myGroup].norte = myBoard.norte;
 }
 
-
-int16_t testParser(char* buf, int16_t* boardDATA, uint8_t typeUPD, Orient_t myBoard)
+bool isWriteAvailable(uint8_t typeUPD)
 {
-	int16_t nBytes;
-	buf[0] = '5';
-	int angle;
-	switch (typeUPD) {
-		case ROLL_UPD:
-			angle = myBoard.rolido;
-			buf[1] = 'R';
-			break;
-		case PITCHING_UPD:
-			angle = myBoard.cabeceo;
-			buf[1] = 'C';
-			break;
-		case ORIENTATION_UPD:
-			angle = myBoard.norte;
-			buf[1] = 'O';
-			break;
-	}
-
-	if(boardDATA == 0)
-	{
-		buf[1] = 0;
-		nBytes = 2;
-	}
-	else
-	{
-		// Defino signo
-		if(angle > 0)
-		{
-			buf[2] = '+';
-		}
-		else
-		{
-			buf[2] = '-';
-			angle = -(angle);
-		}
-
-
-
-	// Refresco de PC y formateo para enviar a python
-
-	buf[5] = (angle % 10) + '0';
-	buf[4] = ((angle / 10) % 10) + '0';
-	buf[3] = ((angle / 100) % 10) + '0';
-	buf[6] = '\0';
-	}
-
-
-	return nBytes;
+	return writeAvailable[typeUPD];
 }
 
+void setWriteAvailable(uint8_t typeUPD, bool value)
+{
+	writeAvailable[typeUPD]=value;
+}
 /*******************************************************************************
  ******************************************************************************/
