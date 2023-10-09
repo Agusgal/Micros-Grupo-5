@@ -30,14 +30,7 @@ static Orient_t Boards[GROUPS];
 static uint8_t myGroup;
 static char bufferPC[7] = {'5', 'R', '+', '1', '2', '3', '\0'};
 
-typedef struct
-{
-	uint16_t SID;
-	uint8_t DLC;
-	uint8_t Dn[8];
-}CAN_RAWDATA_t;
-
-bool writeAvailable[3]={1,1,1};
+bool writeAvailable[4]={0,1,1,1};
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
@@ -52,7 +45,7 @@ void comunicationHandler_init(uint8_t group_num)
 	myGroup = group_num;
 
 	//Reemplazado con el nuestro
-	CAN_SPI_Init();
+	//CAN_SPI_Init();
 
 	UART_Init();
 
@@ -233,12 +226,19 @@ void comunicationHandler_send2Ext(Orient_t myBoard, uint8_t typeUPD)
 
 	nBytes = ComHandler_CAN_Parser(buffer, &boardDATA, typeUPD, myBoard);
 
+	RXB_RAWDATA_t data_to_send;
+	data_to_send.SID = 0x105;
+	data_to_send.DLC = nBytes;
+	uint32_t i;
+	for(i = 0; i < nBytes; i++)
+	{
+		data_to_send.Dn[i] = buffer[i];
+	}
 
 	//todo: cambiar por el posta
 	if (isWriteAvailable(typeUPD))
 	{
-	//send_CAN(0x105, buffer, nBytes);
-		setWriteAvailable(typeUPD,false);
+		CAN_SPI_SendInfo(&data_to_send);
 	}
 
 	bufferPC[0] = myGroup + '0';
@@ -284,7 +284,11 @@ void comunicationHandler_send2Ext(Orient_t myBoard, uint8_t typeUPD)
 	bufferPC[4]='1';
 	bufferPC[5]='5';
 	*/
-	UART_SendMsg(bufferPC, 0);
+	if(isWriteAvailable(typeUPD))
+	{
+		UART_SendMsg(bufferPC, 0);
+		setWriteAvailable(typeUPD,false);
+	}
 
 	Boards[myGroup].rolido = myBoard.rolido;
 	Boards[myGroup].cabeceo = myBoard.cabeceo;

@@ -185,6 +185,8 @@ void CAN_SPI_Init (void)
 	gpioMode (PORTNUM2PIN(INT_PORT,INT_PIN), INPUT_PULLDOWN);
 	gpioIRQ_Config (PORTNUM2PIN(INT_PORT, INT_PIN), PORT_eInterruptFalling);
 
+	gpioMode (PORTNUM2PIN(INT_PORT,INT_PIN+1), INPUT_PULLDOWN);
+
 
 	// 2- Reset mode
 	uint8_t data[10];
@@ -270,7 +272,7 @@ void CAN_SPI_Init (void)
 	data[0] = BIT_MODIFY_INSTRUCTION;
 	data[1] = CANCTRL;
 	data[2] = 0b11100000; // Mask
-	data[3] = 0b01000000; //Loopback 0b01000000
+	data[3] = 0b00000000; //Loopback 0b01000000, NORMAL = 0b00000000
 	SPI_SendData(data, 4, 0);
 	while(SPI_Transmission_In_Process());
 
@@ -299,6 +301,20 @@ RXB_RAWDATA_t CAN_SPI_Get_Data(void)
 	return(pull_Queue_Element(0));
 }
 
+/**
+ * @brief
+ * @param
+ * @return
+ */
+
+void CAN_SPI_Attempt_to_read(void)
+{
+	if(gpioRead(PORTNUM2PIN(INT_PORT,INT_PIN+1)))
+	{
+
+	}
+}
+
 
 /**
  * @brief
@@ -316,22 +332,25 @@ void CAN_SPI_ReceiveInfo(void)
 	switch(receiveState)
 	{
 	case 0:
+		while(receiving);
 		receiving = 1;
 		read_SPICAN(CANINTF, 1, &CAN_SPI_ReceiveInfo);
-		receiveState = 1;
+		receiveState = 2;
 		break;
 
 	case 1:
 		SPI_Get_DataBytes(aux, 3);
 		intStatus = aux[2];
-		aux[0] = 0;
+		//aux[0] = intStatus & 0b11111100;
 
-		write_SPICAN(CANINTF, aux, 1, &CAN_SPI_ReceiveInfo);
+		//write_SPICAN(CANINTF, aux, 1, &CAN_SPI_ReceiveInfo);
 		// clear interrupt flags
 		receiveState = 2;
 		break;
 
 	case 2:
+		SPI_Get_DataBytes(aux, 3);
+		intStatus = aux[2];
 		// Check which RX received data
 		if((intStatus & 0b11) == 0b11)
 		{
@@ -357,14 +376,21 @@ void CAN_SPI_ReceiveInfo(void)
 	case 3:
 		checkDoubleBuffers();
 		// Can data started to be sent
-		receiveState = 0;
-		receiving = 0;
+		uint8_t temp[1] = {0};
+		// clear flags
+		write_SPICAN(CANINTF, temp, 1, &CAN_SPI_ReceiveInfo);
+		receiveState = 5;
 		break;
 
 	case 4:
 		// read RX1, after reading RX1, if both flags on
 		read_RX_buffer(0b10, 13, &CAN_SPI_ReceiveInfo);
 		receiveState = 3;
+		break;
+
+	case 5:
+		receiveState = 0;
+		receiving = 0;
 		break;
 
 	default:

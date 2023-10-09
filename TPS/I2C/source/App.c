@@ -16,8 +16,7 @@
 #include "SysTick.h"
 #include "comunicationHandler.h"
 #include "drv/Uart.h"
-
-//#include "drv/CAN.h"
+#include "drv/CAN_SPI.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -108,15 +107,17 @@ void App_Run (void)
 
 bool getCAN_Event(void)
 {
+
 	//CAN_Com_Happened es un servicio de can que indica si hubo evento de recebcion o envio de datos de CAN.
-	//return CAN_Com_Happened();
+	bool a = CAN_SPI_Is_Read_Ready();
+	return CAN_SPI_Is_Read_Ready();
 }
 
 void enableSend()
 {
-	setWriteAvailable(0,true);
 	setWriteAvailable(1,true);
 	setWriteAvailable(2,true);
+	setWriteAvailable(3,true);
 }
 /*******************************************************************************
  *******************************************************************************
