@@ -54,7 +54,7 @@ positions = [
     350
 ]
 texts = [
-    "Placa 1",
+    "Placa 0",
     "Placa 2",
     "Placa 3",
     "Placa 4",

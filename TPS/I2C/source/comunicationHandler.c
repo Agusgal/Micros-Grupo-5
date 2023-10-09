@@ -127,7 +127,7 @@ void Com_EventHandler(void)
 
 
 	// Refresco de PC y formateo para enviar a python
-	bufferPC[0] = group_index + 0x30;
+	bufferPC[0] = group_index + 0x30 + 1;
 	bufferPC[1] = bufferRXB.Dn[0];
 	if(bufferRXB.Dn[1] == 0)
 	{

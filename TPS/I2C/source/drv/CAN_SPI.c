@@ -332,6 +332,7 @@ uint8_t CAN_SPI_Attempt_to_read(void)
 
 void CAN_SPI_ReceiveInfo(void)
 {
+	gpioWrite(CAN_TP_PIN,HIGH);
 	static uint8_t receiveState = 0;
 	static uint8_t aux[16];
 	static uint8_t intStatus = 0;
@@ -408,7 +409,7 @@ void CAN_SPI_ReceiveInfo(void)
 
 
 	}
-
+	gpioWrite(CAN_TP_PIN,LOW);
 }
 
 
@@ -420,6 +421,7 @@ void CAN_SPI_ReceiveInfo(void)
 
 void CAN_SPI_SendInfo(RXB_RAWDATA_t * rawdata)
 {
+	gpioWrite(CAN_TP_PIN,HIGH);
 	// Initial Send Info state
 	static uint8_t sendState = 0;
 	static uint8_t aux[16];
@@ -484,6 +486,7 @@ void CAN_SPI_SendInfo(RXB_RAWDATA_t * rawdata)
 
 
 	}
+	gpioWrite(CAN_TP_PIN,LOW);
 }
 
 
