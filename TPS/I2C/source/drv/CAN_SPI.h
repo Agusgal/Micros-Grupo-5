@@ -63,6 +63,8 @@ RXB_RAWDATA_t CAN_SPI_Get_Data(void);
  */
 void CAN_SPI_SendInfo(RXB_RAWDATA_t * rawdata);
 
+uint8_t CAN_SPI_Attempt_to_read(void);
+
 
 /*******************************************************************************
  ******************************************************************************/

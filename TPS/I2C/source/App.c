@@ -26,6 +26,7 @@ enum{ROLL_REFRESH, PITCH_REFRESH, ORIENT_REFRESH};
 uint8_t fsm = ROLL_REFRESH;
 
 Orient_t AppBoard;
+uint8_t flag = 1;
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -101,8 +102,14 @@ void App_Run (void)
 	if(getCAN_Event())
 	{
 		Com_EventHandler();
+		flag = 1;
+
 	}
-	CAN_SPI_Attempt_to_read();
+	if(flag == 1)
+	{
+		flag = CAN_SPI_Attempt_to_read();
+	}
+
 }
 
 

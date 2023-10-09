@@ -307,12 +307,15 @@ RXB_RAWDATA_t CAN_SPI_Get_Data(void)
  * @return
  */
 
-void CAN_SPI_Attempt_to_read(void)
+uint8_t CAN_SPI_Attempt_to_read(void)
 {
+	uint8_t flag = 1;
 	if(!gpioRead(PORTNUM2PIN(INT_PORT,INT_PIN+1)) && !receiving)
 	{
 		CAN_SPI_ReceiveInfo();
+		flag = 0;
 	}
+	return flag;
 }
 
 

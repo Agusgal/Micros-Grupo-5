@@ -58,17 +58,25 @@ void Com_EventHandler(void)
 {
 	//Reemplazado por el nuestro
 	//getter de la informacion se CAN que llego, llamo un servicio del driver de can
-	//RXB_RAWDATA_t bufferRXB = CAN_SPI_Get_Data();
+	RXB_RAWDATA_t bufferRXB = CAN_SPI_Get_Data();
 
 	//TEST
-	uint16_t sid = 0x105;
-	uint8_t dlc = 0x4;
+	//uint16_t sid = 0x105;
+	//uint8_t dlc = 0x4;
 
-	RXB_RAWDATA_t bufferRXB = {.SID=sid, .DLC=dlc, {'R', '-','2', '5'}};
+	//RXB_RAWDATA_t bufferRXB = {.SID=sid, .DLC=dlc, {'R', '-','2', '5'}};
+
+	uint8_t group_index;
+	if (bufferRXB.SID != 0x100)
+	{
+		group_index = ((bufferRXB.SID) & 0x00F) - 1;
+	}
+	else
+	{
+		group_index = '0';
+	}
 
 
-
-	uint8_t group_index = ((bufferRXB.SID) & 0x00F) - 1;
 	uint8_t digitos;
 	uint8_t angle;
 

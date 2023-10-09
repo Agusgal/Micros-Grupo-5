@@ -14,7 +14,7 @@
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-#define GROUPS	6
+#define GROUPS	7
 
 enum {ROLL_UPD = 1 , PITCHING_UPD, ORIENTATION_UPD};
 
