@@ -149,8 +149,6 @@ codes = {
 
 def decodeInfo(text):
     try:
-
-
         if len(text) == 7:
             code = int(text[0])
             mode = text[1]
@@ -162,7 +160,7 @@ def decodeInfo(text):
             signo = text[3]
             angulo = int(text[4]) * 100 + int(text[5]) * 10 + int(text[6])
 
-        print(len(text))
+
         #code = int(text[0])
         print("Code: ", code)
         #mode = text[1]
@@ -232,9 +230,10 @@ def threadGetData():
 
                         code, mode, angulo = decodeInfo(dataString)
 
+                        if code != 0:
+                            code -= 1
 
-                        print(code, mode, angulo)
-                        code -= 1
+                        #code -= 1
 
                         if mode == "R":
                             rolido[code] = angulo
