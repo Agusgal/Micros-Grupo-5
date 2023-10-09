@@ -10,7 +10,7 @@
 
 #include "comunicationHandler.h"
 //#include "drv/SPI.h"
-//#include "drv/CAN.h"
+#include "drv/CAN_SPI.h"
 #include "drv/UART.h"
 
 /*******************************************************************************
@@ -51,9 +51,8 @@ void comunicationHandler_init(uint8_t group_num)
 {
 	myGroup = group_num;
 
-	//Todo: reemplazar con los posta
-	//SPI_Init();
-	//init_CAN(myGroup, ExternManager_EventHandler);
+	//Reemplazado con el nuestro
+	CAN_SPI_Init();
 
 	UART_Init();
 
@@ -64,15 +63,15 @@ void comunicationHandler_init(uint8_t group_num)
 
 void Com_EventHandler(void)
 {
-
+	//Reemplazado por el nuestro
 	//getter de la informacion se CAN que llego, llamo un servicio del driver de can
-	//CAN_RAWDATA_t bufferRXB = CAN_getRawData();
+	RXB_RAWDATA_t bufferRXB = CAN_SPI_Get_Data();
 
 	//TEST
-	uint16_t sid = 0x105;
-	uint8_t dlc = 0x4;
+	//uint16_t sid = 0x105;
+	//uint8_t dlc = 0x4;
 
-	CAN_RAWDATA_t bufferRXB = {.SID=sid, .DLC=dlc, {'R', '+', '2', '5'}};
+	//CAN_RAWDATA_t bufferRXB = {.SID=sid, .DLC=dlc, {'R', '+', '2', '5'}};
 
 
 
@@ -233,6 +232,7 @@ void comunicationHandler_send2Ext(Orient_t myBoard, uint8_t typeUPD)
 	char buffer[5]; // Considero peor caso, pero cuando mando indico cuantos bytes son
 
 	nBytes = ComHandler_CAN_Parser(buffer, &boardDATA, typeUPD, myBoard);
+
 
 	//todo: cambiar por el posta
 	if (isWriteAvailable(typeUPD))
