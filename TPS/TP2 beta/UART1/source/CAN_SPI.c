@@ -207,69 +207,69 @@ void CAN_SPI_Init (void)
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = CNF3_ADDRESS;
 	data[2] = 0b10000101; // sof = 1; WAKFL = 0; PHSEG2 = 6 (5+1)
-	while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3, 0);
+	while(SPI_Transmission_In_Process());
 
 
 	// 4- Filter configurations
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = RxM0SIDH;
 	data[2] = 0b11111111;
-	while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3, 0);
+	while(SPI_Transmission_In_Process());
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = RxM0SIDL;
 	data[2] = 0b00000000;
-	while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3, 0);
+	while(SPI_Transmission_In_Process());
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = RxF0SIDH;
 	data[2] = 0b00100000;
-	while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3, 0);
+	while(SPI_Transmission_In_Process());
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = RxF0SIDL;
 	data[2] = 0b00000000;
-	while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3, 0);
+	while(SPI_Transmission_In_Process());
 
 	// 5- Reception configurations
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = RxB0CTRL;
 	data[2] = 0b00000100;//Roll-over enabled (RX0 TO RX1)
-	while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3, 0);
+	while(SPI_Transmission_In_Process());
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = RxB1CTRL;
 	data[2] = 0b00000000;
-	while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3, 0);
+	while(SPI_Transmission_In_Process());
 
 
 	// 6- Erase flags and enable interrupts
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = CANINTE;
 	data[2] = 0b00000011;
-	while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3, 0);
+	while(SPI_Transmission_In_Process());
 
 	data[0] = WRITE_INSTRUCTION;
 	data[1] = CANINTF;
 	data[2] = 0b00000000;	// all flags in 0
-	while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 3, 0);
+	while(SPI_Transmission_In_Process());
 
 	// 7- Normal mode
 	data[0] = BIT_MODIFY_INSTRUCTION;
 	data[1] = CANCTRL;
 	data[2] = 0b11000000; // Mask
 	data[3] = 0b00000000;
-	while(SPI_Transmission_In_Process());
 	SPI_SendData(data, 4, 0);
+	while(SPI_Transmission_In_Process());
 
 }
 
@@ -593,7 +593,7 @@ static void checkDoubleBuffers(void)
 }
 
 
-__ISR__ PORTD_IRQHandler(void)
+__ISR__ PORTC_IRQHandler(void)
 {
 	PORTC->PCR[INT_PIN] |= PORT_PCR_ISF_MASK;
 	CAN_SPI_ReceiveInfo();

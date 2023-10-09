@@ -22,14 +22,9 @@ int main (void)
 	hw_EnableInterrupts();
 	CAN_SPI_Init();
 
+	RXB_RAWDATA_t data = {0x105, 8, {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8}};
 
-	while(SPI_Transmission_In_Process());
-	SPI_SendData("a",1, 0);
-	while(SPI_Transmission_In_Process());
-	SPI_SendMsg("Hola");
-	while(SPI_Transmission_In_Process());
-	SPI_SendMsg("Messi");
-
+	CAN_SPI_SendInfo(&data);
 
 	// Enable interrupts
 

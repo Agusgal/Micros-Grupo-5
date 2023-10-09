@@ -17,25 +17,27 @@
   17              		.section	.rodata
   18              		.align	2
   19              	.LC0:
-  20 0000 6100     		.ascii	"a\000"
-  21 0002 0000     		.align	2
-  22              	.LC1:
-  23 0004 486F6C61 		.ascii	"Hola\000"
-  23      00
-  24 0009 000000   		.align	2
-  25              	.LC2:
-  26 000c 4D657373 		.ascii	"Messi\000"
-  26      6900
-  27              		.section	.text.main,"ax",%progbits
-  28              		.align	1
-  29              		.global	main
-  30              		.syntax unified
-  31              		.thumb
-  32              		.thumb_func
-  33              		.fpu fpv4-sp-d16
-  35              	main:
-  36              	.LFB123:
-  37              		.file 1 "../source/main.c"
+  20 0000 0501     		.short	261
+  21 0002 08       		.byte	8
+  22 0003 01       		.byte	1
+  23 0004 02       		.byte	2
+  24 0005 03       		.byte	3
+  25 0006 04       		.byte	4
+  26 0007 05       		.byte	5
+  27 0008 06       		.byte	6
+  28 0009 07       		.byte	7
+  29 000a 08       		.byte	8
+  30 000b 00       		.space	1
+  31              		.section	.text.main,"ax",%progbits
+  32              		.align	1
+  33              		.global	main
+  34              		.syntax unified
+  35              		.thumb
+  36              		.thumb_func
+  37              		.fpu fpv4-sp-d16
+  39              	main:
+  40              	.LFB123:
+  41              		.file 1 "../source/main.c"
    1:../source/main.c **** /*
    2:../source/main.c ****  * main.c
    3:../source/main.c ****  *
@@ -52,104 +54,74 @@
   14:../source/main.c **** 
   15:../source/main.c **** int main (void)
   16:../source/main.c **** {
-  38              		.loc 1 16 0
-  39              		.cfi_startproc
-  40              		@ args = 0, pretend = 0, frame = 0
-  41              		@ frame_needed = 1, uses_anonymous_args = 0
-  42 0000 80B5     		push	{r7, lr}
-  43              		.cfi_def_cfa_offset 8
-  44              		.cfi_offset 7, -8
-  45              		.cfi_offset 14, -4
-  46 0002 00AF     		add	r7, sp, #0
-  47              		.cfi_def_cfa_register 7
+  42              		.loc 1 16 0
+  43              		.cfi_startproc
+  44              		@ args = 0, pretend = 0, frame = 16
+  45              		@ frame_needed = 1, uses_anonymous_args = 0
+  46 0000 80B5     		push	{r7, lr}
+  47              		.cfi_def_cfa_offset 8
+  48              		.cfi_offset 7, -8
+  49              		.cfi_offset 14, -4
+  50 0002 84B0     		sub	sp, sp, #16
+  51              		.cfi_def_cfa_offset 24
+  52 0004 00AF     		add	r7, sp, #0
+  53              		.cfi_def_cfa_register 7
   17:../source/main.c **** 	unsigned char uart_data;
   18:../source/main.c **** 
   19:../source/main.c **** 	hw_DisableInterrupts();
-  48              		.loc 1 19 0
-  49 0004 FFF7FEFF 		bl	hw_DisableInterrupts
+  54              		.loc 1 19 0
+  55 0006 FFF7FEFF 		bl	hw_DisableInterrupts
   20:../source/main.c **** 	hw_Init ();
-  50              		.loc 1 20 0
-  51 0008 FFF7FEFF 		bl	hw_Init
+  56              		.loc 1 20 0
+  57 000a FFF7FEFF 		bl	hw_Init
   21:../source/main.c **** 	UART_Init();
-  52              		.loc 1 21 0
-  53 000c FFF7FEFF 		bl	UART_Init
+  58              		.loc 1 21 0
+  59 000e FFF7FEFF 		bl	UART_Init
   22:../source/main.c **** 	hw_EnableInterrupts();
-  54              		.loc 1 22 0
-  55 0010 FFF7FEFF 		bl	hw_EnableInterrupts
+  60              		.loc 1 22 0
+  61 0012 FFF7FEFF 		bl	hw_EnableInterrupts
   23:../source/main.c **** 	CAN_SPI_Init();
-  56              		.loc 1 23 0
-  57 0014 FFF7FEFF 		bl	CAN_SPI_Init
+  62              		.loc 1 23 0
+  63 0016 FFF7FEFF 		bl	CAN_SPI_Init
   24:../source/main.c **** 
-  25:../source/main.c **** 
-  26:../source/main.c **** 	while(SPI_Transmission_In_Process());
-  58              		.loc 1 26 0
-  59 0018 00BF     		nop
-  60              	.L2:
-  61              		.loc 1 26 0 is_stmt 0 discriminator 1
-  62 001a FFF7FEFF 		bl	SPI_Transmission_In_Process
-  63 001e 0346     		mov	r3, r0
-  64 0020 002B     		cmp	r3, #0
-  65 0022 FAD1     		bne	.L2
-  27:../source/main.c **** 	SPI_SendData("a",1, 0);
-  66              		.loc 1 27 0 is_stmt 1
-  67 0024 0022     		movs	r2, #0
-  68 0026 0121     		movs	r1, #1
-  69 0028 0A48     		ldr	r0, .L6
-  70 002a FFF7FEFF 		bl	SPI_SendData
-  28:../source/main.c **** 	while(SPI_Transmission_In_Process());
-  71              		.loc 1 28 0
-  72 002e 00BF     		nop
-  73              	.L3:
-  74              		.loc 1 28 0 is_stmt 0 discriminator 1
-  75 0030 FFF7FEFF 		bl	SPI_Transmission_In_Process
-  76 0034 0346     		mov	r3, r0
-  77 0036 002B     		cmp	r3, #0
-  78 0038 FAD1     		bne	.L3
-  29:../source/main.c **** 	SPI_SendMsg("Hola");
-  79              		.loc 1 29 0 is_stmt 1
-  80 003a 0748     		ldr	r0, .L6+4
-  81 003c FFF7FEFF 		bl	SPI_SendMsg
-  30:../source/main.c **** 	while(SPI_Transmission_In_Process());
-  82              		.loc 1 30 0
-  83 0040 00BF     		nop
-  84              	.L4:
-  85              		.loc 1 30 0 is_stmt 0 discriminator 1
-  86 0042 FFF7FEFF 		bl	SPI_Transmission_In_Process
-  87 0046 0346     		mov	r3, r0
-  88 0048 002B     		cmp	r3, #0
-  89 004a FAD1     		bne	.L4
-  31:../source/main.c **** 	SPI_SendMsg("Messi");
-  90              		.loc 1 31 0 is_stmt 1
-  91 004c 0348     		ldr	r0, .L6+8
-  92 004e FFF7FEFF 		bl	SPI_SendMsg
-  93              	.L5:
-  32:../source/main.c **** 
-  33:../source/main.c **** 
-  34:../source/main.c **** 	// Enable interrupts
-  35:../source/main.c **** 
-  36:../source/main.c **** 	__FOREVER__
-  94              		.loc 1 36 0 discriminator 1
-  95 0052 FEE7     		b	.L5
-  96              	.L7:
-  97              		.align	2
-  98              	.L6:
-  99 0054 00000000 		.word	.LC0
- 100 0058 04000000 		.word	.LC1
- 101 005c 0C000000 		.word	.LC2
- 102              		.cfi_endproc
- 103              	.LFE123:
- 105              		.text
- 106              	.Letext0:
- 107              		.file 2 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\sys\\libconfig-arm.h"
- 108              		.file 3 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\stdint.h"
- 109              		.file 4 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
- 110              		.file 5 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
+  25:../source/main.c **** 	RXB_RAWDATA_t data = {0x105, 8, {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8}};
+  64              		.loc 1 25 0
+  65 001a 054A     		ldr	r2, .L3
+  66 001c 3B1D     		adds	r3, r7, #4
+  67 001e 07CA     		ldm	r2, {r0, r1, r2}
+  68 0020 83E80700 		stm	r3, {r0, r1, r2}
+  26:../source/main.c **** 
+  27:../source/main.c **** 	CAN_SPI_SendInfo(&data);
+  69              		.loc 1 27 0
+  70 0024 3B1D     		adds	r3, r7, #4
+  71 0026 1846     		mov	r0, r3
+  72 0028 FFF7FEFF 		bl	CAN_SPI_SendInfo
+  73              	.L2:
+  28:../source/main.c **** 
+  29:../source/main.c **** 	// Enable interrupts
+  30:../source/main.c **** 
+  31:../source/main.c **** 	__FOREVER__
+  74              		.loc 1 31 0 discriminator 1
+  75 002c FEE7     		b	.L2
+  76              	.L4:
+  77 002e 00BF     		.align	2
+  78              	.L3:
+  79 0030 00000000 		.word	.LC0
+  80              		.cfi_endproc
+  81              	.LFE123:
+  83              		.text
+  84              	.Letext0:
+  85              		.file 2 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\sys\\libconfig-arm.h"
+  86              		.file 3 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\stdint.h"
+  87              		.file 4 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
+  88              		.file 5 "C:\\Users\\lucia\\OneDrive\\Documents\\2C2023\\Labo_de_Micros\\repo\\Micros-Grupo-5\\TPS\
+  89              		.file 6 "../source/CAN_SPI.h"
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\lucia\AppData\Local\Temp\ccAcLLVb.s:18     .rodata:00000000 $d
-C:\Users\lucia\AppData\Local\Temp\ccAcLLVb.s:28     .text.main:00000000 $t
-C:\Users\lucia\AppData\Local\Temp\ccAcLLVb.s:35     .text.main:00000000 main
-C:\Users\lucia\AppData\Local\Temp\ccAcLLVb.s:99     .text.main:00000054 $d
+C:\Users\lucia\AppData\Local\Temp\ccXpKfNh.s:18     .rodata:00000000 $d
+C:\Users\lucia\AppData\Local\Temp\ccXpKfNh.s:32     .text.main:00000000 $t
+C:\Users\lucia\AppData\Local\Temp\ccXpKfNh.s:39     .text.main:00000000 main
+C:\Users\lucia\AppData\Local\Temp\ccXpKfNh.s:79     .text.main:00000030 $d
                            .group:00000000 wm4.0.33db8b643112917ec54934b4f2c2f387
                            .group:00000000 wm4.redlib_version.h.16.f905717e4b3a91dcbdbb631865150df4
                            .group:00000000 wm4.libconfigarm.h.18.1ad1d24f96d0dc8c4cf52dc19b0aa2c7
@@ -172,6 +144,4 @@ hw_Init
 UART_Init
 hw_EnableInterrupts
 CAN_SPI_Init
-SPI_Transmission_In_Process
-SPI_SendData
-SPI_SendMsg
+CAN_SPI_SendInfo

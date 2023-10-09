@@ -393,7 +393,7 @@ __ISR__ SPI0_IRQHandler(void)
 			// write 0 to disable TFFF interrupt
 			SPI0->RSER &= ~SPI_RSER_TCF_RE_MASK;
 			transfer_complete = 1;
-			if (!externalCB)
+			if (externalCB)
 			{
 				externalCB();	// callback function
 			}
