@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     App.c
   @brief    Application functions
-  @author   Nicolás Magliola
+  @author   Grupo 5
  ******************************************************************************/
 
 /*******************************************************************************
@@ -135,17 +135,16 @@ void App_Init (void)
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-	if(!testVar)
+	if(getCAN_Event())
 	{
 		Com_EventHandler();
-		testVar = !testVar;
 	}
 }
 
 
 bool getCAN_Event(void)
 {
-	//CAN_Com_Happened es un servicio de can que indica si hubo evento de recebcion o envio de can
+	//CAN_Com_Happened es un servicio de can que indica si hubo evento de recebcion o envio de datos de CAN.
 	//return CAN_Com_Happened();
 }
 

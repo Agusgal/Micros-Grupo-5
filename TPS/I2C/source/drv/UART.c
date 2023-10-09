@@ -26,7 +26,7 @@
 #define UART0_RX_PIN 	16   //PTB16
 
 
-#define	BUFFER_SIZE	 20
+#define	BUFFER_SIZE	 60
 #define NONE_EV      24
 #define TOTAL_UARTS   6
 #define OVERFLOW     -1

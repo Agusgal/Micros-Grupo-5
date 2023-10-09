@@ -239,6 +239,44 @@ void comunicationHandler_send2Ext(Orient_t myBoard, uint8_t typeUPD)
 	//todo: cambiar por el posta
 	//send_CAN(0x105, buffer, nBytes);
 
+	bufferPC[0] = myGroup + '0';
+	bufferPC[1] = buffer[0];
+	if(boardDATA != 0)
+	{
+		bufferPC[2] = buffer[1];
+	}
+	else
+	{
+		bufferPC[2] = '+';
+	}
+
+	if(nBytes == 2) // Es 0
+	{
+		bufferPC[3] = '0';
+		bufferPC[4] = '0';
+		bufferPC[5] = '0';
+	}
+	else if(nBytes == 3)
+	{
+		bufferPC[3] = '0';
+		bufferPC[4] = '0';
+		bufferPC[5] = buffer[2];
+	}
+	else if(nBytes == 4)
+	{
+		bufferPC[3] = '0';
+		bufferPC[4] = buffer[2];
+		bufferPC[5] = buffer[3];
+	}
+	else if(nBytes == 5)
+	{
+		bufferPC[3] = buffer[2];
+		bufferPC[4] = buffer[3];
+		bufferPC[5] = buffer[4];
+	}
+
+	UART_SendMsg(bufferPC, 0);
+
 	Boards[myGroup].rolido = myBoard.rolido;
 	Boards[myGroup].cabeceo = myBoard.cabeceo;
 	Boards[myGroup].norte = myBoard.norte;
