@@ -1,0 +1,7 @@
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/I2C/SDK/CMSIS/core_cm4.h:1626:22:NVIC_EnableIRQ	16	static
+../source/drv/gpio.c:43:6:gpioMode	24	static
+../source/drv/gpio.c:91:6:gpioWrite	16	static
+../source/drv/gpio.c:108:6:gpioToggle	16	static
+../source/drv/gpio.c:118:6:gpioRead	16	static
+../source/drv/gpio.c:128:6:gpioIRQ_Config	16	static
+../source/drv/gpio.c:138:6:gpio_clear_interrupt_flag	16	static

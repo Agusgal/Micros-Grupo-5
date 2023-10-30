@@ -1,0 +1,1267 @@
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"accel.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "../source/drv/accel.c"
+  20              		.section	.bss.Accel,"aw",%nobits
+  21              		.align	2
+  24              	Accel:
+  25 0000 00000000 		.space	68
+  25      00000000 
+  25      00000000 
+  25      00000000 
+  25      00000000 
+  26              		.section	.text.FX_ReadReg,"ax",%progbits
+  27              		.align	1
+  28              		.syntax unified
+  29              		.thumb
+  30              		.thumb_func
+  32              	FX_ReadReg:
+  33              	.LFB123:
+   1:../source/drv/accel.c **** 
+   2:../source/drv/accel.c **** /*******************************************************************************
+   3:../source/drv/accel.c ****  * INCLUDE HEADER FILES
+   4:../source/drv/accel.c ****  ******************************************************************************/
+   5:../source/drv/accel.c **** 
+   6:../source/drv/accel.c **** #include "i2c.h"
+   7:../source/drv/accel.c **** #include "accel.h"
+   8:../source/drv/accel.c **** #include "FXOS8700CQ.h"
+   9:../source/drv/accel.c **** #include <stdbool.h>
+  10:../source/drv/accel.c **** #include "SysTick.h"
+  11:../source/drv/accel.c **** #include <math.h>
+  12:../source/drv/accel.c **** #include "gpio.h"
+  13:../source/drv/accel.c **** /*******************************************************************************
+  14:../source/drv/accel.c ****  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
+  15:../source/drv/accel.c ****  ******************************************************************************/
+  16:../source/drv/accel.c **** 
+  17:../source/drv/accel.c **** #define FXOS8700CQ_UPDATE_TICK_MS       50		//20 Hz
+  18:../source/drv/accel.c **** #define FX_PISR_PERIOD_MS       50		//20 Hz
+  19:../source/drv/accel.c **** #define FX_WRITE_BUFFER_SIZE    20
+  20:../source/drv/accel.c **** #define FX_READ_BUFFER_SIZE     20
+  21:../source/drv/accel.c **** #define WHOAMI_VALUE         	0xC7
+  22:../source/drv/accel.c **** #define NULL					0
+  23:../source/drv/accel.c **** /*******************************************************************************
+  24:../source/drv/accel.c ****  * VARIABLE PROTOTYPES WITH LOCAL SCOPE
+  25:../source/drv/accel.c ****  ******************************************************************************/
+  26:../source/drv/accel.c **** 
+  27:../source/drv/accel.c **** 
+  28:../source/drv/accel.c **** typedef struct {
+  29:../source/drv/accel.c **** 	int16_t x;
+  30:../source/drv/accel.c **** 	int16_t y;
+  31:../source/drv/accel.c **** 	int16_t z;
+  32:../source/drv/accel.c **** } Coord16_t;
+  33:../source/drv/accel.c **** 
+  34:../source/drv/accel.c **** typedef struct {
+  35:../source/drv/accel.c **** 	float x;
+  36:../source/drv/accel.c **** 	float y;
+  37:../source/drv/accel.c **** 	float z;
+  38:../source/drv/accel.c **** } Coord_Float_t;
+  39:../source/drv/accel.c **** 
+  40:../source/drv/accel.c **** typedef enum {
+  41:../source/drv/accel.c ****   FX_Init,
+  42:../source/drv/accel.c ****   FX_Running,
+  43:../source/drv/accel.c ****   FX_Error
+  44:../source/drv/accel.c **** } Acc_Status_t;
+  45:../source/drv/accel.c **** 
+  46:../source/drv/accel.c **** 
+  47:../source/drv/accel.c **** 
+  48:../source/drv/accel.c **** // Accelerometer data structure
+  49:../source/drv/accel.c **** typedef struct {
+  50:../source/drv/accel.c **** 
+  51:../source/drv/accel.c ****   bool                  alreadyInit;            // Driver inicializado
+  52:../source/drv/accel.c ****   Acc_Status_t          status;                 // Estado del acelerometro
+  53:../source/drv/accel.c ****   uint8_t               counter;				// Counter para FSM
+  54:../source/drv/accel.c **** 
+  55:../source/drv/accel.c ****   Coord16_t	          	accelerometer;        // Vector acceleration
+  56:../source/drv/accel.c ****   Coord16_t				magnetometer;		 //
+  57:../source/drv/accel.c ****   Orient_t				orientation;
+  58:../source/drv/accel.c **** 
+  59:../source/drv/accel.c ****   /* I2C message buffers */
+  60:../source/drv/accel.c ****   uint8_t               writeBuffer[FX_WRITE_BUFFER_SIZE];
+  61:../source/drv/accel.c ****   uint8_t               readBuffer[FX_READ_BUFFER_SIZE];
+  62:../source/drv/accel.c **** 
+  63:../source/drv/accel.c **** } Accel_t;
+  64:../source/drv/accel.c **** 
+  65:../source/drv/accel.c **** static Accel_t 	Accel;
+  66:../source/drv/accel.c **** /*******************************************************************************
+  67:../source/drv/accel.c ****  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
+  68:../source/drv/accel.c ****  ******************************************************************************/
+  69:../source/drv/accel.c **** 
+  70:../source/drv/accel.c **** void FX_InitSequence(bool resetCounter);
+  71:../source/drv/accel.c **** static void FX_RunningSequence(bool reset);
+  72:../source/drv/accel.c **** static void FX_ReadReg(uint8_t reg);
+  73:../source/drv/accel.c **** static void FX_WriteReg(uint8_t reg, uint8_t value);
+  74:../source/drv/accel.c **** /*******************************************************************************
+  75:../source/drv/accel.c ****  *******************************************************************************
+  76:../source/drv/accel.c ****                         GLOBAL FUNCTION DEFINITIONS
+  77:../source/drv/accel.c ****  *******************************************************************************
+  78:../source/drv/accel.c ****  ******************************************************************************/
+  79:../source/drv/accel.c **** 
+  80:../source/drv/accel.c **** /*******************************************************************************
+  81:../source/drv/accel.c ****  *******************************************************************************
+  82:../source/drv/accel.c ****                         LOCAL FUNCTION DEFINITIONS
+  83:../source/drv/accel.c ****  *******************************************************************************
+  84:../source/drv/accel.c ****  ******************************************************************************/
+  85:../source/drv/accel.c **** 
+  86:../source/drv/accel.c **** static void FX_ReadReg(uint8_t reg)
+  87:../source/drv/accel.c **** {
+  34              		.loc 1 87 1
+  35              		.cfi_startproc
+  36              		@ args = 0, pretend = 0, frame = 8
+  37              		@ frame_needed = 1, uses_anonymous_args = 0
+  38 0000 80B5     		push	{r7, lr}
+  39              		.cfi_def_cfa_offset 8
+  40              		.cfi_offset 7, -8
+  41              		.cfi_offset 14, -4
+  42 0002 84B0     		sub	sp, sp, #16
+  43              		.cfi_def_cfa_offset 24
+  44 0004 02AF     		add	r7, sp, #8
+  45              		.cfi_def_cfa 7, 16
+  46 0006 0346     		mov	r3, r0
+  47 0008 FB71     		strb	r3, [r7, #7]
+  88:../source/drv/accel.c ****   Accel.writeBuffer[0] = reg;
+  48              		.loc 1 88 24
+  49 000a 114A     		ldr	r2, .L5
+  50 000c FB79     		ldrb	r3, [r7, #7]
+  51 000e 1377     		strb	r3, [r2, #28]
+  89:../source/drv/accel.c ****   switch(reg)
+  52              		.loc 1 89 3
+  53 0010 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+  54 0012 012B     		cmp	r3, #1
+  55 0014 01D0     		beq	.L2
+  56 0016 332B     		cmp	r3, #51
+  57 0018 0AD1     		bne	.L3
+  58              	.L2:
+  90:../source/drv/accel.c ****   {
+  91:../source/drv/accel.c ****   	  case MOUT_X_MSB_REG:
+  92:../source/drv/accel.c ****   	  case OUT_X_MSB_REG:
+  93:../source/drv/accel.c ****   		I2C_InitObject(0, Accel.readBuffer,12,Accel.writeBuffer,1,0x1D);
+  59              		.loc 1 93 5
+  60 001a 1D23     		movs	r3, #29
+  61 001c 0193     		str	r3, [sp, #4]
+  62 001e 0123     		movs	r3, #1
+  63 0020 0093     		str	r3, [sp]
+  64 0022 0C4B     		ldr	r3, .L5+4
+  65 0024 0C22     		movs	r2, #12
+  66 0026 0C49     		ldr	r1, .L5+8
+  67 0028 0020     		movs	r0, #0
+  68 002a FFF7FEFF 		bl	I2C_InitObject
+  94:../source/drv/accel.c ****   		break;
+  69              		.loc 1 94 5
+  70 002e 0AE0     		b	.L4
+  71              	.L3:
+  95:../source/drv/accel.c **** 
+  96:../source/drv/accel.c ****   	  default:
+  97:../source/drv/accel.c ****   		I2C_InitObject(0, Accel.readBuffer,1,Accel.writeBuffer,1,0x1D);
+  72              		.loc 1 97 5
+  73 0030 1D23     		movs	r3, #29
+  74 0032 0193     		str	r3, [sp, #4]
+  75 0034 0123     		movs	r3, #1
+  76 0036 0093     		str	r3, [sp]
+  77 0038 064B     		ldr	r3, .L5+4
+  78 003a 0122     		movs	r2, #1
+  79 003c 0649     		ldr	r1, .L5+8
+  80 003e 0020     		movs	r0, #0
+  81 0040 FFF7FEFF 		bl	I2C_InitObject
+  98:../source/drv/accel.c ****   		break;
+  82              		.loc 1 98 5
+  83 0044 00BF     		nop
+  84              	.L4:
+  99:../source/drv/accel.c **** 
+ 100:../source/drv/accel.c ****   }
+ 101:../source/drv/accel.c **** 
+ 102:../source/drv/accel.c **** }
+  85              		.loc 1 102 1
+  86 0046 00BF     		nop
+  87 0048 0837     		adds	r7, r7, #8
+  88              		.cfi_def_cfa_offset 8
+  89 004a BD46     		mov	sp, r7
+  90              		.cfi_def_cfa_register 13
+  91              		@ sp needed
+  92 004c 80BD     		pop	{r7, pc}
+  93              	.L6:
+  94 004e 00BF     		.align	2
+  95              	.L5:
+  96 0050 00000000 		.word	Accel
+  97 0054 1C000000 		.word	Accel+28
+  98 0058 30000000 		.word	Accel+48
+  99              		.cfi_endproc
+ 100              	.LFE123:
+ 102              		.section	.text.FX_WriteReg,"ax",%progbits
+ 103              		.align	1
+ 104              		.syntax unified
+ 105              		.thumb
+ 106              		.thumb_func
+ 108              	FX_WriteReg:
+ 109              	.LFB124:
+ 103:../source/drv/accel.c **** 
+ 104:../source/drv/accel.c **** static void FX_WriteReg(uint8_t reg, uint8_t value)
+ 105:../source/drv/accel.c **** {
+ 110              		.loc 1 105 1
+ 111              		.cfi_startproc
+ 112              		@ args = 0, pretend = 0, frame = 8
+ 113              		@ frame_needed = 1, uses_anonymous_args = 0
+ 114 0000 80B5     		push	{r7, lr}
+ 115              		.cfi_def_cfa_offset 8
+ 116              		.cfi_offset 7, -8
+ 117              		.cfi_offset 14, -4
+ 118 0002 84B0     		sub	sp, sp, #16
+ 119              		.cfi_def_cfa_offset 24
+ 120 0004 02AF     		add	r7, sp, #8
+ 121              		.cfi_def_cfa 7, 16
+ 122 0006 0346     		mov	r3, r0
+ 123 0008 0A46     		mov	r2, r1
+ 124 000a FB71     		strb	r3, [r7, #7]
+ 125 000c 1346     		mov	r3, r2
+ 126 000e BB71     		strb	r3, [r7, #6]
+ 106:../source/drv/accel.c ****   Accel.writeBuffer[0] = reg;
+ 127              		.loc 1 106 24
+ 128 0010 094A     		ldr	r2, .L8
+ 129 0012 FB79     		ldrb	r3, [r7, #7]
+ 130 0014 1377     		strb	r3, [r2, #28]
+ 107:../source/drv/accel.c ****   Accel.writeBuffer[1] = value;
+ 131              		.loc 1 107 24
+ 132 0016 084A     		ldr	r2, .L8
+ 133 0018 BB79     		ldrb	r3, [r7, #6]
+ 134 001a 5377     		strb	r3, [r2, #29]
+ 108:../source/drv/accel.c ****   I2C_InitObject(0,NULL,0,Accel.writeBuffer,2,0x1D);
+ 135              		.loc 1 108 3
+ 136 001c 1D23     		movs	r3, #29
+ 137 001e 0193     		str	r3, [sp, #4]
+ 138 0020 0223     		movs	r3, #2
+ 139 0022 0093     		str	r3, [sp]
+ 140 0024 054B     		ldr	r3, .L8+4
+ 141 0026 0022     		movs	r2, #0
+ 142 0028 0021     		movs	r1, #0
+ 143 002a 0020     		movs	r0, #0
+ 144 002c FFF7FEFF 		bl	I2C_InitObject
+ 109:../source/drv/accel.c **** }
+ 145              		.loc 1 109 1
+ 146 0030 00BF     		nop
+ 147 0032 0837     		adds	r7, r7, #8
+ 148              		.cfi_def_cfa_offset 8
+ 149 0034 BD46     		mov	sp, r7
+ 150              		.cfi_def_cfa_register 13
+ 151              		@ sp needed
+ 152 0036 80BD     		pop	{r7, pc}
+ 153              	.L9:
+ 154              		.align	2
+ 155              	.L8:
+ 156 0038 00000000 		.word	Accel
+ 157 003c 1C000000 		.word	Accel+28
+ 158              		.cfi_endproc
+ 159              	.LFE124:
+ 161              		.section	.text.FX_I2C_Init,"ax",%progbits
+ 162              		.align	1
+ 163              		.global	FX_I2C_Init
+ 164              		.syntax unified
+ 165              		.thumb
+ 166              		.thumb_func
+ 168              	FX_I2C_Init:
+ 169              	.LFB125:
+ 110:../source/drv/accel.c **** 
+ 111:../source/drv/accel.c **** bool FX_I2C_Init()
+ 112:../source/drv/accel.c **** {
+ 170              		.loc 1 112 1
+ 171              		.cfi_startproc
+ 172              		@ args = 0, pretend = 0, frame = 0
+ 173              		@ frame_needed = 1, uses_anonymous_args = 0
+ 174 0000 80B5     		push	{r7, lr}
+ 175              		.cfi_def_cfa_offset 8
+ 176              		.cfi_offset 7, -8
+ 177              		.cfi_offset 14, -4
+ 178 0002 00AF     		add	r7, sp, #0
+ 179              		.cfi_def_cfa_register 7
+ 113:../source/drv/accel.c **** 	 if (!Accel.alreadyInit)
+ 180              		.loc 1 113 13
+ 181 0004 0A4B     		ldr	r3, .L13
+ 182 0006 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 183              		.loc 1 113 7
+ 184 0008 83F00103 		eor	r3, r3, #1
+ 185 000c DBB2     		uxtb	r3, r3
+ 186              		.loc 1 113 6
+ 187 000e 002B     		cmp	r3, #0
+ 188 0010 0AD0     		beq	.L11
+ 114:../source/drv/accel.c **** 	  {
+ 115:../source/drv/accel.c **** 	    // Initialize the I2C driver
+ 116:../source/drv/accel.c **** 	    I2C_InitModule(0);
+ 189              		.loc 1 116 6
+ 190 0012 0020     		movs	r0, #0
+ 191 0014 FFF7FEFF 		bl	I2C_InitModule
+ 117:../source/drv/accel.c **** 	    // Initialize and set the periodic service routine
+ 118:../source/drv/accel.c **** 	    SysTick_Reg_Callback(FX_PISR,FX_PISR_PERIOD_MS * MS_TO_US);
+ 192              		.loc 1 118 6
+ 193 0018 4CF25031 		movw	r1, #50000
+ 194 001c 0548     		ldr	r0, .L13+4
+ 195 001e FFF7FEFF 		bl	SysTick_Reg_Callback
+ 119:../source/drv/accel.c **** 
+ 120:../source/drv/accel.c **** 	    // Raise the already initialized flag
+ 121:../source/drv/accel.c **** 	    Accel.alreadyInit = true;
+ 196              		.loc 1 121 24
+ 197 0022 034B     		ldr	r3, .L13
+ 198 0024 0122     		movs	r2, #1
+ 199 0026 1A70     		strb	r2, [r3]
+ 200              	.L11:
+ 122:../source/drv/accel.c **** 	  }
+ 123:../source/drv/accel.c **** 
+ 124:../source/drv/accel.c **** 	  return Accel.alreadyInit;
+ 201              		.loc 1 124 16
+ 202 0028 014B     		ldr	r3, .L13
+ 203 002a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 125:../source/drv/accel.c **** }
+ 204              		.loc 1 125 1
+ 205 002c 1846     		mov	r0, r3
+ 206 002e 80BD     		pop	{r7, pc}
+ 207              	.L14:
+ 208              		.align	2
+ 209              	.L13:
+ 210 0030 00000000 		.word	Accel
+ 211 0034 00000000 		.word	FX_PISR
+ 212              		.cfi_endproc
+ 213              	.LFE125:
+ 215              		.section	.text.FX_InitSequence,"ax",%progbits
+ 216              		.align	1
+ 217              		.global	FX_InitSequence
+ 218              		.syntax unified
+ 219              		.thumb
+ 220              		.thumb_func
+ 222              	FX_InitSequence:
+ 223              	.LFB126:
+ 126:../source/drv/accel.c **** 
+ 127:../source/drv/accel.c **** void FX_InitSequence(bool resetCounter)
+ 128:../source/drv/accel.c **** {
+ 224              		.loc 1 128 1
+ 225              		.cfi_startproc
+ 226              		@ args = 0, pretend = 0, frame = 8
+ 227              		@ frame_needed = 1, uses_anonymous_args = 0
+ 228 0000 80B5     		push	{r7, lr}
+ 229              		.cfi_def_cfa_offset 8
+ 230              		.cfi_offset 7, -8
+ 231              		.cfi_offset 14, -4
+ 232 0002 82B0     		sub	sp, sp, #8
+ 233              		.cfi_def_cfa_offset 16
+ 234 0004 00AF     		add	r7, sp, #0
+ 235              		.cfi_def_cfa_register 7
+ 236 0006 0346     		mov	r3, r0
+ 237 0008 FB71     		strb	r3, [r7, #7]
+ 129:../source/drv/accel.c **** 	if (resetCounter)
+ 238              		.loc 1 129 5
+ 239 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 240 000c 002B     		cmp	r3, #0
+ 241 000e 02D0     		beq	.L16
+ 130:../source/drv/accel.c **** 		  Accel.counter = 0;
+ 242              		.loc 1 130 19
+ 243 0010 324B     		ldr	r3, .L35
+ 244 0012 0022     		movs	r2, #0
+ 245 0014 9A70     		strb	r2, [r3, #2]
+ 246              	.L16:
+ 131:../source/drv/accel.c **** 
+ 132:../source/drv/accel.c **** 	switch (Accel.counter++)
+ 247              		.loc 1 132 15
+ 248 0016 314B     		ldr	r3, .L35
+ 249 0018 9B78     		ldrb	r3, [r3, #2]	@ zero_extendqisi2
+ 250              		.loc 1 132 23
+ 251 001a 5A1C     		adds	r2, r3, #1
+ 252 001c D1B2     		uxtb	r1, r2
+ 253 001e 2F4A     		ldr	r2, .L35
+ 254 0020 9170     		strb	r1, [r2, #2]
+ 255              		.loc 1 132 2
+ 256 0022 0A2B     		cmp	r3, #10
+ 257 0024 55D8     		bhi	.L33
+ 258 0026 01A2     		adr	r2, .L19
+ 259 0028 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 260              		.p2align 2
+ 261              	.L19:
+ 262 002c 59000000 		.word	.L29+1
+ 263 0030 61000000 		.word	.L28+1
+ 264 0034 7D000000 		.word	.L27+1
+ 265 0038 87000000 		.word	.L26+1
+ 266 003c 91000000 		.word	.L25+1
+ 267 0040 9B000000 		.word	.L24+1
+ 268 0044 A5000000 		.word	.L23+1
+ 269 0048 AF000000 		.word	.L22+1
+ 270 004c B9000000 		.word	.L21+1
+ 271 0050 C1000000 		.word	.L20+1
+ 272 0054 CB000000 		.word	.L18+1
+ 273              		.p2align 1
+ 274              	.L29:
+ 133:../source/drv/accel.c **** 	{
+ 134:../source/drv/accel.c **** 	case 0: // Read WHO_AM_I register to check device presence
+ 135:../source/drv/accel.c **** 	  FX_ReadReg(WHO_AM_I_REG);
+ 275              		.loc 1 135 4
+ 276 0058 0D20     		movs	r0, #13
+ 277 005a FFF7FEFF 		bl	FX_ReadReg
+ 136:../source/drv/accel.c **** 	  break;
+ 278              		.loc 1 136 4
+ 279 005e 39E0     		b	.L30
+ 280              	.L28:
+ 137:../source/drv/accel.c **** 
+ 138:../source/drv/accel.c **** 	case 1: // Check WHO_AM_I value read matches
+ 139:../source/drv/accel.c **** 	  if (Accel.readBuffer[0] == 0xC7)
+ 281              		.loc 1 139 24
+ 282 0060 1E4B     		ldr	r3, .L35
+ 283 0062 93F83030 		ldrb	r3, [r3, #48]	@ zero_extendqisi2
+ 284              		.loc 1 139 7
+ 285 0066 C72B     		cmp	r3, #199
+ 286 0068 04D1     		bne	.L31
+ 140:../source/drv/accel.c **** 	  {
+ 141:../source/drv/accel.c **** 		// Set FXOS to standby mode
+ 142:../source/drv/accel.c **** 		FX_WriteReg(CTRL_REG1, 0);			//FX_WriteReg(CTRL_REG1, 0);
+ 287              		.loc 1 142 3
+ 288 006a 0021     		movs	r1, #0
+ 289 006c 2A20     		movs	r0, #42
+ 290 006e FFF7FEFF 		bl	FX_WriteReg
+ 143:../source/drv/accel.c **** 	  }
+ 144:../source/drv/accel.c **** 	  else
+ 145:../source/drv/accel.c **** 	  {
+ 146:../source/drv/accel.c **** 		Accel.status = FX_Error;
+ 147:../source/drv/accel.c **** 	  }
+ 148:../source/drv/accel.c **** 	  break;
+ 291              		.loc 1 148 4
+ 292 0072 2FE0     		b	.L30
+ 293              	.L31:
+ 146:../source/drv/accel.c **** 	  }
+ 294              		.loc 1 146 16
+ 295 0074 194B     		ldr	r3, .L35
+ 296 0076 0222     		movs	r2, #2
+ 297 0078 5A70     		strb	r2, [r3, #1]
+ 298              		.loc 1 148 4
+ 299 007a 2BE0     		b	.L30
+ 300              	.L27:
+ 149:../source/drv/accel.c **** 
+ 150:../source/drv/accel.c **** 	case 2:
+ 151:../source/drv/accel.c **** 		FX_WriteReg(XYZ_DATA_CFG_REG, 0x00);		//+-2g resolution
+ 301              		.loc 1 151 3
+ 302 007c 0021     		movs	r1, #0
+ 303 007e 0E20     		movs	r0, #14
+ 304 0080 FFF7FEFF 		bl	FX_WriteReg
+ 152:../source/drv/accel.c **** 	  break;
+ 305              		.loc 1 152 4
+ 306 0084 26E0     		b	.L30
+ 307              	.L26:
+ 153:../source/drv/accel.c **** 
+ 154:../source/drv/accel.c **** 	case 3:
+ 155:../source/drv/accel.c **** 		FX_WriteReg(M_CTRL_REG1, 0x9F);
+ 308              		.loc 1 155 3
+ 309 0086 9F21     		movs	r1, #159
+ 310 0088 5B20     		movs	r0, #91
+ 311 008a FFF7FEFF 		bl	FX_WriteReg
+ 156:../source/drv/accel.c **** 	  break;
+ 312              		.loc 1 156 4
+ 313 008e 21E0     		b	.L30
+ 314              	.L25:
+ 157:../source/drv/accel.c **** 
+ 158:../source/drv/accel.c **** 	case 4:
+ 159:../source/drv/accel.c **** 		FX_WriteReg(M_CTRL_REG2, 0x20);
+ 315              		.loc 1 159 3
+ 316 0090 2021     		movs	r1, #32
+ 317 0092 5C20     		movs	r0, #92
+ 318 0094 FFF7FEFF 		bl	FX_WriteReg
+ 160:../source/drv/accel.c **** 	  break;
+ 319              		.loc 1 160 4
+ 320 0098 1CE0     		b	.L30
+ 321              	.L24:
+ 161:../source/drv/accel.c **** 
+ 162:../source/drv/accel.c **** 	case 5:
+ 163:../source/drv/accel.c **** 		FX_WriteReg(CTRL_REG3, 0x01);
+ 322              		.loc 1 163 3
+ 323 009a 0121     		movs	r1, #1
+ 324 009c 2C20     		movs	r0, #44
+ 325 009e FFF7FEFF 		bl	FX_WriteReg
+ 164:../source/drv/accel.c **** 	  break;
+ 326              		.loc 1 164 4
+ 327 00a2 17E0     		b	.L30
+ 328              	.L23:
+ 165:../source/drv/accel.c **** 
+ 166:../source/drv/accel.c **** 	case 6:
+ 167:../source/drv/accel.c **** 		FX_WriteReg(CTRL_REG4, 0x01);
+ 329              		.loc 1 167 3
+ 330 00a4 0121     		movs	r1, #1
+ 331 00a6 2D20     		movs	r0, #45
+ 332 00a8 FFF7FEFF 		bl	FX_WriteReg
+ 168:../source/drv/accel.c **** 	  break;
+ 333              		.loc 1 168 4
+ 334 00ac 12E0     		b	.L30
+ 335              	.L22:
+ 169:../source/drv/accel.c **** 
+ 170:../source/drv/accel.c **** 	case 7:
+ 171:../source/drv/accel.c **** 		FX_WriteReg(CTRL_REG5, 0x01);
+ 336              		.loc 1 171 3
+ 337 00ae 0121     		movs	r1, #1
+ 338 00b0 2E20     		movs	r0, #46
+ 339 00b2 FFF7FEFF 		bl	FX_WriteReg
+ 172:../source/drv/accel.c **** 	  break;
+ 340              		.loc 1 172 4
+ 341 00b6 0DE0     		b	.L30
+ 342              	.L21:
+ 173:../source/drv/accel.c **** 
+ 174:../source/drv/accel.c **** 	case 8:
+ 175:../source/drv/accel.c **** 		FX_WriteReg(PL_CFG_REG, 0x40);
+ 343              		.loc 1 175 3
+ 344 00b8 4021     		movs	r1, #64
+ 345 00ba 1120     		movs	r0, #17
+ 346 00bc FFF7FEFF 		bl	FX_WriteReg
+ 347              	.L20:
+ 176:../source/drv/accel.c **** 
+ 177:../source/drv/accel.c **** 	case 9: // Set the accelerometer active
+ 178:../source/drv/accel.c **** 		FX_WriteReg(CTRL_REG1, 0x35);
+ 348              		.loc 1 178 3
+ 349 00c0 3521     		movs	r1, #53
+ 350 00c2 2A20     		movs	r0, #42
+ 351 00c4 FFF7FEFF 		bl	FX_WriteReg
+ 179:../source/drv/accel.c **** 	  break;
+ 352              		.loc 1 179 4
+ 353 00c8 04E0     		b	.L30
+ 354              	.L18:
+ 180:../source/drv/accel.c **** 
+ 181:../source/drv/accel.c **** 	case 10: // Change to running state
+ 182:../source/drv/accel.c **** 		Accel.status = FX_Running;
+ 355              		.loc 1 182 16
+ 356 00ca 044B     		ldr	r3, .L35
+ 357 00cc 0122     		movs	r2, #1
+ 358 00ce 5A70     		strb	r2, [r3, #1]
+ 183:../source/drv/accel.c **** 		break;
+ 359              		.loc 1 183 3
+ 360 00d0 00E0     		b	.L30
+ 361              	.L33:
+ 184:../source/drv/accel.c **** 
+ 185:../source/drv/accel.c **** 	default:
+ 186:../source/drv/accel.c **** 	  break;
+ 362              		.loc 1 186 4
+ 363 00d2 00BF     		nop
+ 364              	.L30:
+ 187:../source/drv/accel.c **** 	}
+ 188:../source/drv/accel.c **** }
+ 365              		.loc 1 188 1
+ 366 00d4 00BF     		nop
+ 367 00d6 0837     		adds	r7, r7, #8
+ 368              		.cfi_def_cfa_offset 8
+ 369 00d8 BD46     		mov	sp, r7
+ 370              		.cfi_def_cfa_register 13
+ 371              		@ sp needed
+ 372 00da 80BD     		pop	{r7, pc}
+ 373              	.L36:
+ 374              		.align	2
+ 375              	.L35:
+ 376 00dc 00000000 		.word	Accel
+ 377              		.cfi_endproc
+ 378              	.LFE126:
+ 380              		.global	__aeabi_i2d
+ 381              		.global	__aeabi_dmul
+ 382              		.global	__aeabi_ddiv
+ 383              		.global	__aeabi_dadd
+ 384              		.global	__aeabi_d2f
+ 385              		.global	__aeabi_d2iz
+ 386              		.section	.text.FX_RunningSequence,"ax",%progbits
+ 387              		.align	1
+ 388              		.syntax unified
+ 389              		.thumb
+ 390              		.thumb_func
+ 392              	FX_RunningSequence:
+ 393              	.LFB127:
+ 189:../source/drv/accel.c **** 
+ 190:../source/drv/accel.c **** void FX_RunningSequence(bool resetCounter)
+ 191:../source/drv/accel.c **** {
+ 394              		.loc 1 191 1
+ 395              		.cfi_startproc
+ 396              		@ args = 0, pretend = 0, frame = 16
+ 397              		@ frame_needed = 1, uses_anonymous_args = 0
+ 398 0000 B0B5     		push	{r4, r5, r7, lr}
+ 399              		.cfi_def_cfa_offset 16
+ 400              		.cfi_offset 4, -16
+ 401              		.cfi_offset 5, -12
+ 402              		.cfi_offset 7, -8
+ 403              		.cfi_offset 14, -4
+ 404 0002 84B0     		sub	sp, sp, #16
+ 405              		.cfi_def_cfa_offset 32
+ 406 0004 00AF     		add	r7, sp, #0
+ 407              		.cfi_def_cfa_register 7
+ 408 0006 0346     		mov	r3, r0
+ 409 0008 FB71     		strb	r3, [r7, #7]
+ 192:../source/drv/accel.c **** 
+ 193:../source/drv/accel.c ****   if (resetCounter)
+ 410              		.loc 1 193 6
+ 411 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 412 000c 002B     		cmp	r3, #0
+ 413 000e 02D0     		beq	.L38
+ 194:../source/drv/accel.c ****   {
+ 195:../source/drv/accel.c ****     Accel.counter = 0;
+ 414              		.loc 1 195 19
+ 415 0010 8D4B     		ldr	r3, .L46+8
+ 416 0012 0022     		movs	r2, #0
+ 417 0014 9A70     		strb	r2, [r3, #2]
+ 418              	.L38:
+ 196:../source/drv/accel.c ****   }
+ 197:../source/drv/accel.c **** 
+ 198:../source/drv/accel.c ****   switch (Accel.counter++)
+ 419              		.loc 1 198 16
+ 420 0016 8C4B     		ldr	r3, .L46+8
+ 421 0018 9B78     		ldrb	r3, [r3, #2]	@ zero_extendqisi2
+ 422              		.loc 1 198 24
+ 423 001a 5A1C     		adds	r2, r3, #1
+ 424 001c D1B2     		uxtb	r1, r2
+ 425 001e 8A4A     		ldr	r2, .L46+8
+ 426 0020 9170     		strb	r1, [r2, #2]
+ 427              		.loc 1 198 3
+ 428 0022 002B     		cmp	r3, #0
+ 429 0024 02D0     		beq	.L39
+ 430 0026 012B     		cmp	r3, #1
+ 431 0028 03D0     		beq	.L40
+ 432              	.LBB2:
+ 199:../source/drv/accel.c ****   {
+ 200:../source/drv/accel.c ****   	case 0:
+ 201:../source/drv/accel.c ****   		FX_ReadReg(OUT_X_MSB_REG);
+ 202:../source/drv/accel.c ****     case 1:
+ 203:../source/drv/accel.c **** 
+ 204:../source/drv/accel.c **** 
+ 205:../source/drv/accel.c ****         Accel.accelerometer.x = ((int16_t)(Accel.readBuffer[0] << 8 | Accel.readBuffer[1])) >> 2;  
+ 206:../source/drv/accel.c ****         Accel.accelerometer.y = ((int16_t)(Accel.readBuffer[2] << 8 | Accel.readBuffer[3])) >> 2;  
+ 207:../source/drv/accel.c ****         Accel.accelerometer.z = ((int16_t)(Accel.readBuffer[4] << 8 | Accel.readBuffer[5])) >> 2;  
+ 208:../source/drv/accel.c **** 
+ 209:../source/drv/accel.c **** 		// Magnetometer data converted to microteslas
+ 210:../source/drv/accel.c ****     	Accel.magnetometer.x = (int16_t)(Accel.readBuffer[6] << 8 | Accel.readBuffer[7]);  // Compute 
+ 211:../source/drv/accel.c ****     	Accel.magnetometer.y = (int16_t)(Accel.readBuffer[8] << 8 | Accel.readBuffer[9]);  // Compute 
+ 212:../source/drv/accel.c ****     	Accel.magnetometer.z = (int16_t)(Accel.readBuffer[10] << 8 | Accel.readBuffer[11]);  // Comput
+ 213:../source/drv/accel.c **** 
+ 214:../source/drv/accel.c ****     	float north =90+atan2(Accel.magnetometer.y, Accel.magnetometer.x) * 180 / 3.14159;
+ 215:../source/drv/accel.c **** 
+ 216:../source/drv/accel.c ****     	if (north>=180)
+ 217:../source/drv/accel.c ****     		north-=360;
+ 218:../source/drv/accel.c ****     	Accel.orientation.norte=north;
+ 219:../source/drv/accel.c ****     	Accel.orientation.rolido=atan2(Accel.accelerometer.x, Accel.accelerometer.z) * 180 / 3.14159;
+ 220:../source/drv/accel.c ****     	Accel.orientation.cabeceo=atan2(Accel.accelerometer.y, Accel.accelerometer.z) * 180 / 3.14159;
+ 221:../source/drv/accel.c **** 
+ 222:../source/drv/accel.c **** 
+ 223:../source/drv/accel.c ****       break;
+ 224:../source/drv/accel.c **** 
+ 225:../source/drv/accel.c ****     default:
+ 226:../source/drv/accel.c ****       break;
+ 433              		.loc 1 226 7
+ 434 002a 05E1     		b	.L44
+ 435              	.L39:
+ 201:../source/drv/accel.c ****     case 1:
+ 436              		.loc 1 201 5
+ 437 002c 0120     		movs	r0, #1
+ 438 002e FFF7FEFF 		bl	FX_ReadReg
+ 439              	.L40:
+ 205:../source/drv/accel.c ****         Accel.accelerometer.y = ((int16_t)(Accel.readBuffer[2] << 8 | Accel.readBuffer[3])) >> 2;  
+ 440              		.loc 1 205 60
+ 441 0032 854B     		ldr	r3, .L46+8
+ 442 0034 93F83030 		ldrb	r3, [r3, #48]	@ zero_extendqisi2
+ 205:../source/drv/accel.c ****         Accel.accelerometer.y = ((int16_t)(Accel.readBuffer[2] << 8 | Accel.readBuffer[3])) >> 2;  
+ 443              		.loc 1 205 64
+ 444 0038 1B02     		lsls	r3, r3, #8
+ 205:../source/drv/accel.c ****         Accel.accelerometer.y = ((int16_t)(Accel.readBuffer[2] << 8 | Accel.readBuffer[3])) >> 2;  
+ 445              		.loc 1 205 34
+ 446 003a 1AB2     		sxth	r2, r3
+ 205:../source/drv/accel.c ****         Accel.accelerometer.y = ((int16_t)(Accel.readBuffer[2] << 8 | Accel.readBuffer[3])) >> 2;  
+ 447              		.loc 1 205 87
+ 448 003c 824B     		ldr	r3, .L46+8
+ 449 003e 93F83130 		ldrb	r3, [r3, #49]	@ zero_extendqisi2
+ 450 0042 1BB2     		sxth	r3, r3
+ 205:../source/drv/accel.c ****         Accel.accelerometer.y = ((int16_t)(Accel.readBuffer[2] << 8 | Accel.readBuffer[3])) >> 2;  
+ 451              		.loc 1 205 34
+ 452 0044 1343     		orrs	r3, r3, r2
+ 453 0046 1BB2     		sxth	r3, r3
+ 205:../source/drv/accel.c ****         Accel.accelerometer.y = ((int16_t)(Accel.readBuffer[2] << 8 | Accel.readBuffer[3])) >> 2;  
+ 454              		.loc 1 205 31
+ 455 0048 9B10     		asrs	r3, r3, #2
+ 456 004a 1AB2     		sxth	r2, r3
+ 457 004c 7E4B     		ldr	r3, .L46+8
+ 458 004e 9A80     		strh	r2, [r3, #4]	@ movhi
+ 206:../source/drv/accel.c ****         Accel.accelerometer.z = ((int16_t)(Accel.readBuffer[4] << 8 | Accel.readBuffer[5])) >> 2;  
+ 459              		.loc 1 206 60
+ 460 0050 7D4B     		ldr	r3, .L46+8
+ 461 0052 93F83230 		ldrb	r3, [r3, #50]	@ zero_extendqisi2
+ 206:../source/drv/accel.c ****         Accel.accelerometer.z = ((int16_t)(Accel.readBuffer[4] << 8 | Accel.readBuffer[5])) >> 2;  
+ 462              		.loc 1 206 64
+ 463 0056 1B02     		lsls	r3, r3, #8
+ 206:../source/drv/accel.c ****         Accel.accelerometer.z = ((int16_t)(Accel.readBuffer[4] << 8 | Accel.readBuffer[5])) >> 2;  
+ 464              		.loc 1 206 34
+ 465 0058 1AB2     		sxth	r2, r3
+ 206:../source/drv/accel.c ****         Accel.accelerometer.z = ((int16_t)(Accel.readBuffer[4] << 8 | Accel.readBuffer[5])) >> 2;  
+ 466              		.loc 1 206 87
+ 467 005a 7B4B     		ldr	r3, .L46+8
+ 468 005c 93F83330 		ldrb	r3, [r3, #51]	@ zero_extendqisi2
+ 469 0060 1BB2     		sxth	r3, r3
+ 206:../source/drv/accel.c ****         Accel.accelerometer.z = ((int16_t)(Accel.readBuffer[4] << 8 | Accel.readBuffer[5])) >> 2;  
+ 470              		.loc 1 206 34
+ 471 0062 1343     		orrs	r3, r3, r2
+ 472 0064 1BB2     		sxth	r3, r3
+ 206:../source/drv/accel.c ****         Accel.accelerometer.z = ((int16_t)(Accel.readBuffer[4] << 8 | Accel.readBuffer[5])) >> 2;  
+ 473              		.loc 1 206 31
+ 474 0066 9B10     		asrs	r3, r3, #2
+ 475 0068 1AB2     		sxth	r2, r3
+ 476 006a 774B     		ldr	r3, .L46+8
+ 477 006c DA80     		strh	r2, [r3, #6]	@ movhi
+ 207:../source/drv/accel.c **** 
+ 478              		.loc 1 207 60
+ 479 006e 764B     		ldr	r3, .L46+8
+ 480 0070 93F83430 		ldrb	r3, [r3, #52]	@ zero_extendqisi2
+ 207:../source/drv/accel.c **** 
+ 481              		.loc 1 207 64
+ 482 0074 1B02     		lsls	r3, r3, #8
+ 207:../source/drv/accel.c **** 
+ 483              		.loc 1 207 34
+ 484 0076 1AB2     		sxth	r2, r3
+ 207:../source/drv/accel.c **** 
+ 485              		.loc 1 207 87
+ 486 0078 734B     		ldr	r3, .L46+8
+ 487 007a 93F83530 		ldrb	r3, [r3, #53]	@ zero_extendqisi2
+ 488 007e 1BB2     		sxth	r3, r3
+ 207:../source/drv/accel.c **** 
+ 489              		.loc 1 207 34
+ 490 0080 1343     		orrs	r3, r3, r2
+ 491 0082 1BB2     		sxth	r3, r3
+ 207:../source/drv/accel.c **** 
+ 492              		.loc 1 207 31
+ 493 0084 9B10     		asrs	r3, r3, #2
+ 494 0086 1AB2     		sxth	r2, r3
+ 495 0088 6F4B     		ldr	r3, .L46+8
+ 496 008a 1A81     		strh	r2, [r3, #8]	@ movhi
+ 210:../source/drv/accel.c ****     	Accel.magnetometer.y = (int16_t)(Accel.readBuffer[8] << 8 | Accel.readBuffer[9]);  // Compute 
+ 497              		.loc 1 210 55
+ 498 008c 6E4B     		ldr	r3, .L46+8
+ 499 008e 93F83630 		ldrb	r3, [r3, #54]	@ zero_extendqisi2
+ 210:../source/drv/accel.c ****     	Accel.magnetometer.y = (int16_t)(Accel.readBuffer[8] << 8 | Accel.readBuffer[9]);  // Compute 
+ 500              		.loc 1 210 59
+ 501 0092 1B02     		lsls	r3, r3, #8
+ 210:../source/drv/accel.c ****     	Accel.magnetometer.y = (int16_t)(Accel.readBuffer[8] << 8 | Accel.readBuffer[9]);  // Compute 
+ 502              		.loc 1 210 29
+ 503 0094 1AB2     		sxth	r2, r3
+ 210:../source/drv/accel.c ****     	Accel.magnetometer.y = (int16_t)(Accel.readBuffer[8] << 8 | Accel.readBuffer[9]);  // Compute 
+ 504              		.loc 1 210 82
+ 505 0096 6C4B     		ldr	r3, .L46+8
+ 506 0098 93F83730 		ldrb	r3, [r3, #55]	@ zero_extendqisi2
+ 507 009c 1BB2     		sxth	r3, r3
+ 210:../source/drv/accel.c ****     	Accel.magnetometer.y = (int16_t)(Accel.readBuffer[8] << 8 | Accel.readBuffer[9]);  // Compute 
+ 508              		.loc 1 210 29
+ 509 009e 1343     		orrs	r3, r3, r2
+ 510 00a0 1AB2     		sxth	r2, r3
+ 210:../source/drv/accel.c ****     	Accel.magnetometer.y = (int16_t)(Accel.readBuffer[8] << 8 | Accel.readBuffer[9]);  // Compute 
+ 511              		.loc 1 210 27
+ 512 00a2 694B     		ldr	r3, .L46+8
+ 513 00a4 5A81     		strh	r2, [r3, #10]	@ movhi
+ 211:../source/drv/accel.c ****     	Accel.magnetometer.z = (int16_t)(Accel.readBuffer[10] << 8 | Accel.readBuffer[11]);  // Comput
+ 514              		.loc 1 211 55
+ 515 00a6 684B     		ldr	r3, .L46+8
+ 516 00a8 93F83830 		ldrb	r3, [r3, #56]	@ zero_extendqisi2
+ 211:../source/drv/accel.c ****     	Accel.magnetometer.z = (int16_t)(Accel.readBuffer[10] << 8 | Accel.readBuffer[11]);  // Comput
+ 517              		.loc 1 211 59
+ 518 00ac 1B02     		lsls	r3, r3, #8
+ 211:../source/drv/accel.c ****     	Accel.magnetometer.z = (int16_t)(Accel.readBuffer[10] << 8 | Accel.readBuffer[11]);  // Comput
+ 519              		.loc 1 211 29
+ 520 00ae 1AB2     		sxth	r2, r3
+ 211:../source/drv/accel.c ****     	Accel.magnetometer.z = (int16_t)(Accel.readBuffer[10] << 8 | Accel.readBuffer[11]);  // Comput
+ 521              		.loc 1 211 82
+ 522 00b0 654B     		ldr	r3, .L46+8
+ 523 00b2 93F83930 		ldrb	r3, [r3, #57]	@ zero_extendqisi2
+ 524 00b6 1BB2     		sxth	r3, r3
+ 211:../source/drv/accel.c ****     	Accel.magnetometer.z = (int16_t)(Accel.readBuffer[10] << 8 | Accel.readBuffer[11]);  // Comput
+ 525              		.loc 1 211 29
+ 526 00b8 1343     		orrs	r3, r3, r2
+ 527 00ba 1AB2     		sxth	r2, r3
+ 211:../source/drv/accel.c ****     	Accel.magnetometer.z = (int16_t)(Accel.readBuffer[10] << 8 | Accel.readBuffer[11]);  // Comput
+ 528              		.loc 1 211 27
+ 529 00bc 624B     		ldr	r3, .L46+8
+ 530 00be 9A81     		strh	r2, [r3, #12]	@ movhi
+ 212:../source/drv/accel.c **** 
+ 531              		.loc 1 212 55
+ 532 00c0 614B     		ldr	r3, .L46+8
+ 533 00c2 93F83A30 		ldrb	r3, [r3, #58]	@ zero_extendqisi2
+ 212:../source/drv/accel.c **** 
+ 534              		.loc 1 212 60
+ 535 00c6 1B02     		lsls	r3, r3, #8
+ 212:../source/drv/accel.c **** 
+ 536              		.loc 1 212 29
+ 537 00c8 1AB2     		sxth	r2, r3
+ 212:../source/drv/accel.c **** 
+ 538              		.loc 1 212 83
+ 539 00ca 5F4B     		ldr	r3, .L46+8
+ 540 00cc 93F83B30 		ldrb	r3, [r3, #59]	@ zero_extendqisi2
+ 541 00d0 1BB2     		sxth	r3, r3
+ 212:../source/drv/accel.c **** 
+ 542              		.loc 1 212 29
+ 543 00d2 1343     		orrs	r3, r3, r2
+ 544 00d4 1AB2     		sxth	r2, r3
+ 212:../source/drv/accel.c **** 
+ 545              		.loc 1 212 27
+ 546 00d6 5C4B     		ldr	r3, .L46+8
+ 547 00d8 DA81     		strh	r2, [r3, #14]	@ movhi
+ 214:../source/drv/accel.c **** 
+ 548              		.loc 1 214 46
+ 549 00da 5B4B     		ldr	r3, .L46+8
+ 550 00dc B3F90C30 		ldrsh	r3, [r3, #12]
+ 214:../source/drv/accel.c **** 
+ 551              		.loc 1 214 22
+ 552 00e0 1846     		mov	r0, r3
+ 553 00e2 FFF7FEFF 		bl	__aeabi_i2d
+ 554 00e6 0446     		mov	r4, r0
+ 555 00e8 0D46     		mov	r5, r1
+ 214:../source/drv/accel.c **** 
+ 556              		.loc 1 214 68
+ 557 00ea 574B     		ldr	r3, .L46+8
+ 558 00ec B3F90A30 		ldrsh	r3, [r3, #10]
+ 214:../source/drv/accel.c **** 
+ 559              		.loc 1 214 22
+ 560 00f0 1846     		mov	r0, r3
+ 561 00f2 FFF7FEFF 		bl	__aeabi_i2d
+ 562 00f6 0246     		mov	r2, r0
+ 563 00f8 0B46     		mov	r3, r1
+ 564 00fa 43EC112B 		vmov	d1, r2, r3
+ 565 00fe 45EC104B 		vmov	d0, r4, r5
+ 566 0102 FFF7FEFF 		bl	atan2
+ 567 0106 51EC100B 		vmov	r0, r1, d0
+ 214:../source/drv/accel.c **** 
+ 568              		.loc 1 214 72
+ 569 010a 4FF00002 		mov	r2, #0
+ 570 010e 4F4B     		ldr	r3, .L46+12
+ 571 0110 FFF7FEFF 		bl	__aeabi_dmul
+ 572 0114 0246     		mov	r2, r0
+ 573 0116 0B46     		mov	r3, r1
+ 574 0118 1046     		mov	r0, r2
+ 575 011a 1946     		mov	r1, r3
+ 214:../source/drv/accel.c **** 
+ 576              		.loc 1 214 78
+ 577 011c 48A3     		adr	r3, .L46
+ 578 011e D3E90023 		ldrd	r2, [r3]
+ 579 0122 FFF7FEFF 		bl	__aeabi_ddiv
+ 580 0126 0246     		mov	r2, r0
+ 581 0128 0B46     		mov	r3, r1
+ 582 012a 1046     		mov	r0, r2
+ 583 012c 1946     		mov	r1, r3
+ 214:../source/drv/accel.c **** 
+ 584              		.loc 1 214 21
+ 585 012e 4FF00002 		mov	r2, #0
+ 586 0132 474B     		ldr	r3, .L46+16
+ 587 0134 FFF7FEFF 		bl	__aeabi_dadd
+ 588 0138 0246     		mov	r2, r0
+ 589 013a 0B46     		mov	r3, r1
+ 214:../source/drv/accel.c **** 
+ 590              		.loc 1 214 12
+ 591 013c 1046     		mov	r0, r2
+ 592 013e 1946     		mov	r1, r3
+ 593 0140 FFF7FEFF 		bl	__aeabi_d2f
+ 594 0144 0346     		mov	r3, r0	@ float
+ 595 0146 FB60     		str	r3, [r7, #12]	@ float
+ 216:../source/drv/accel.c ****     		north-=360;
+ 596              		.loc 1 216 9
+ 597 0148 D7ED037A 		vldr.32	s15, [r7, #12]
+ 598 014c 9FED417A 		vldr.32	s14, .L46+20
+ 599 0150 F4EEC77A 		vcmpe.f32	s15, s14
+ 600 0154 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 601 0158 07DB     		blt	.L42
+ 217:../source/drv/accel.c ****     	Accel.orientation.norte=north;
+ 602              		.loc 1 217 12
+ 603 015a D7ED037A 		vldr.32	s15, [r7, #12]
+ 604 015e 9FED3E7A 		vldr.32	s14, .L46+24
+ 605 0162 77EEC77A 		vsub.f32	s15, s15, s14
+ 606 0166 C7ED037A 		vstr.32	s15, [r7, #12]
+ 607              	.L42:
+ 218:../source/drv/accel.c ****     	Accel.orientation.rolido=atan2(Accel.accelerometer.x, Accel.accelerometer.z) * 180 / 3.14159;
+ 608              		.loc 1 218 29
+ 609 016a D7ED037A 		vldr.32	s15, [r7, #12]
+ 610 016e FDEEE77A 		vcvt.s32.f32	s15, s15
+ 611 0172 17EE902A 		vmov	r2, s15	@ int
+ 612 0176 344B     		ldr	r3, .L46+8
+ 613 0178 9A61     		str	r2, [r3, #24]
+ 219:../source/drv/accel.c ****     	Accel.orientation.cabeceo=atan2(Accel.accelerometer.y, Accel.accelerometer.z) * 180 / 3.14159;
+ 614              		.loc 1 219 56
+ 615 017a 334B     		ldr	r3, .L46+8
+ 616 017c B3F90430 		ldrsh	r3, [r3, #4]
+ 219:../source/drv/accel.c ****     	Accel.orientation.cabeceo=atan2(Accel.accelerometer.y, Accel.accelerometer.z) * 180 / 3.14159;
+ 617              		.loc 1 219 31
+ 618 0180 1846     		mov	r0, r3
+ 619 0182 FFF7FEFF 		bl	__aeabi_i2d
+ 620 0186 0446     		mov	r4, r0
+ 621 0188 0D46     		mov	r5, r1
+ 219:../source/drv/accel.c ****     	Accel.orientation.cabeceo=atan2(Accel.accelerometer.y, Accel.accelerometer.z) * 180 / 3.14159;
+ 622              		.loc 1 219 79
+ 623 018a 2F4B     		ldr	r3, .L46+8
+ 624 018c B3F90830 		ldrsh	r3, [r3, #8]
+ 219:../source/drv/accel.c ****     	Accel.orientation.cabeceo=atan2(Accel.accelerometer.y, Accel.accelerometer.z) * 180 / 3.14159;
+ 625              		.loc 1 219 31
+ 626 0190 1846     		mov	r0, r3
+ 627 0192 FFF7FEFF 		bl	__aeabi_i2d
+ 628 0196 0246     		mov	r2, r0
+ 629 0198 0B46     		mov	r3, r1
+ 630 019a 43EC112B 		vmov	d1, r2, r3
+ 631 019e 45EC104B 		vmov	d0, r4, r5
+ 632 01a2 FFF7FEFF 		bl	atan2
+ 633 01a6 51EC100B 		vmov	r0, r1, d0
+ 219:../source/drv/accel.c ****     	Accel.orientation.cabeceo=atan2(Accel.accelerometer.y, Accel.accelerometer.z) * 180 / 3.14159;
+ 634              		.loc 1 219 83
+ 635 01aa 4FF00002 		mov	r2, #0
+ 636 01ae 274B     		ldr	r3, .L46+12
+ 637 01b0 FFF7FEFF 		bl	__aeabi_dmul
+ 638 01b4 0246     		mov	r2, r0
+ 639 01b6 0B46     		mov	r3, r1
+ 640 01b8 1046     		mov	r0, r2
+ 641 01ba 1946     		mov	r1, r3
+ 219:../source/drv/accel.c ****     	Accel.orientation.cabeceo=atan2(Accel.accelerometer.y, Accel.accelerometer.z) * 180 / 3.14159;
+ 642              		.loc 1 219 89
+ 643 01bc 20A3     		adr	r3, .L46
+ 644 01be D3E90023 		ldrd	r2, [r3]
+ 645 01c2 FFF7FEFF 		bl	__aeabi_ddiv
+ 646 01c6 0246     		mov	r2, r0
+ 647 01c8 0B46     		mov	r3, r1
+ 219:../source/drv/accel.c ****     	Accel.orientation.cabeceo=atan2(Accel.accelerometer.y, Accel.accelerometer.z) * 180 / 3.14159;
+ 648              		.loc 1 219 30
+ 649 01ca 1046     		mov	r0, r2
+ 650 01cc 1946     		mov	r1, r3
+ 651 01ce FFF7FEFF 		bl	__aeabi_d2iz
+ 652 01d2 0346     		mov	r3, r0
+ 653 01d4 1C4A     		ldr	r2, .L46+8
+ 654 01d6 1361     		str	r3, [r2, #16]
+ 220:../source/drv/accel.c **** 
+ 655              		.loc 1 220 57
+ 656 01d8 1B4B     		ldr	r3, .L46+8
+ 657 01da B3F90630 		ldrsh	r3, [r3, #6]
+ 220:../source/drv/accel.c **** 
+ 658              		.loc 1 220 32
+ 659 01de 1846     		mov	r0, r3
+ 660 01e0 FFF7FEFF 		bl	__aeabi_i2d
+ 661 01e4 0446     		mov	r4, r0
+ 662 01e6 0D46     		mov	r5, r1
+ 220:../source/drv/accel.c **** 
+ 663              		.loc 1 220 80
+ 664 01e8 174B     		ldr	r3, .L46+8
+ 665 01ea B3F90830 		ldrsh	r3, [r3, #8]
+ 220:../source/drv/accel.c **** 
+ 666              		.loc 1 220 32
+ 667 01ee 1846     		mov	r0, r3
+ 668 01f0 FFF7FEFF 		bl	__aeabi_i2d
+ 669 01f4 0246     		mov	r2, r0
+ 670 01f6 0B46     		mov	r3, r1
+ 671 01f8 43EC112B 		vmov	d1, r2, r3
+ 672 01fc 45EC104B 		vmov	d0, r4, r5
+ 673 0200 FFF7FEFF 		bl	atan2
+ 674 0204 51EC100B 		vmov	r0, r1, d0
+ 220:../source/drv/accel.c **** 
+ 675              		.loc 1 220 84
+ 676 0208 4FF00002 		mov	r2, #0
+ 677 020c 0F4B     		ldr	r3, .L46+12
+ 678 020e FFF7FEFF 		bl	__aeabi_dmul
+ 679 0212 0246     		mov	r2, r0
+ 680 0214 0B46     		mov	r3, r1
+ 681 0216 1046     		mov	r0, r2
+ 682 0218 1946     		mov	r1, r3
+ 220:../source/drv/accel.c **** 
+ 683              		.loc 1 220 90
+ 684 021a 09A3     		adr	r3, .L46
+ 685 021c D3E90023 		ldrd	r2, [r3]
+ 686 0220 FFF7FEFF 		bl	__aeabi_ddiv
+ 687 0224 0246     		mov	r2, r0
+ 688 0226 0B46     		mov	r3, r1
+ 220:../source/drv/accel.c **** 
+ 689              		.loc 1 220 31
+ 690 0228 1046     		mov	r0, r2
+ 691 022a 1946     		mov	r1, r3
+ 692 022c FFF7FEFF 		bl	__aeabi_d2iz
+ 693 0230 0346     		mov	r3, r0
+ 694 0232 054A     		ldr	r2, .L46+8
+ 695 0234 5361     		str	r3, [r2, #20]
+ 223:../source/drv/accel.c **** 
+ 696              		.loc 1 223 7
+ 697 0236 00BF     		nop
+ 698              	.L44:
+ 699              	.LBE2:
+ 227:../source/drv/accel.c ****   }
+ 228:../source/drv/accel.c **** 
+ 229:../source/drv/accel.c **** }
+ 700              		.loc 1 229 1
+ 701 0238 00BF     		nop
+ 702 023a 1037     		adds	r7, r7, #16
+ 703              		.cfi_def_cfa_offset 16
+ 704 023c BD46     		mov	sp, r7
+ 705              		.cfi_def_cfa_register 13
+ 706              		@ sp needed
+ 707 023e B0BD     		pop	{r4, r5, r7, pc}
+ 708              	.L47:
+ 709              		.align	3
+ 710              	.L46:
+ 711 0240 6E861BF0 		.word	-266631570
+ 712 0244 F9210940 		.word	1074340345
+ 713 0248 00000000 		.word	Accel
+ 714 024c 00806640 		.word	1080459264
+ 715 0250 00805640 		.word	1079410688
+ 716 0254 00003443 		.word	1127481344
+ 717 0258 0000B443 		.word	1135869952
+ 718              		.cfi_endproc
+ 719              	.LFE127:
+ 721              		.section	.text.FX_PISR,"ax",%progbits
+ 722              		.align	1
+ 723              		.global	FX_PISR
+ 724              		.syntax unified
+ 725              		.thumb
+ 726              		.thumb_func
+ 728              	FX_PISR:
+ 729              	.LFB128:
+ 230:../source/drv/accel.c **** void FX_PISR(void)
+ 231:../source/drv/accel.c **** {
+ 730              		.loc 1 231 1
+ 731              		.cfi_startproc
+ 732              		@ args = 0, pretend = 0, frame = 0
+ 733              		@ frame_needed = 1, uses_anonymous_args = 0
+ 734 0000 80B5     		push	{r7, lr}
+ 735              		.cfi_def_cfa_offset 8
+ 736              		.cfi_offset 7, -8
+ 737              		.cfi_offset 14, -4
+ 738 0002 00AF     		add	r7, sp, #0
+ 739              		.cfi_def_cfa_register 7
+ 232:../source/drv/accel.c ****   if (Accel.status == FX_Init)
+ 740              		.loc 1 232 12
+ 741 0004 084B     		ldr	r3, .L52
+ 742 0006 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 743              		.loc 1 232 6
+ 744 0008 002B     		cmp	r3, #0
+ 745 000a 03D1     		bne	.L49
+ 233:../source/drv/accel.c ****     FX_InitSequence(true);
+ 746              		.loc 1 233 5
+ 747 000c 0120     		movs	r0, #1
+ 748 000e FFF7FEFF 		bl	FX_InitSequence
+ 234:../source/drv/accel.c ****   else if (Accel.status == FX_Running)
+ 235:../source/drv/accel.c ****     FX_RunningSequence(true);
+ 236:../source/drv/accel.c **** }
+ 749              		.loc 1 236 1
+ 750 0012 06E0     		b	.L51
+ 751              	.L49:
+ 234:../source/drv/accel.c ****   else if (Accel.status == FX_Running)
+ 752              		.loc 1 234 17
+ 753 0014 044B     		ldr	r3, .L52
+ 754 0016 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 234:../source/drv/accel.c ****   else if (Accel.status == FX_Running)
+ 755              		.loc 1 234 11
+ 756 0018 012B     		cmp	r3, #1
+ 757 001a 02D1     		bne	.L51
+ 235:../source/drv/accel.c **** }
+ 758              		.loc 1 235 5
+ 759 001c 0120     		movs	r0, #1
+ 760 001e FFF7FEFF 		bl	FX_RunningSequence
+ 761              	.L51:
+ 762              		.loc 1 236 1
+ 763 0022 00BF     		nop
+ 764 0024 80BD     		pop	{r7, pc}
+ 765              	.L53:
+ 766 0026 00BF     		.align	2
+ 767              	.L52:
+ 768 0028 00000000 		.word	Accel
+ 769              		.cfi_endproc
+ 770              	.LFE128:
+ 772              		.section	.text.FX_I2C_Finished,"ax",%progbits
+ 773              		.align	1
+ 774              		.global	FX_I2C_Finished
+ 775              		.syntax unified
+ 776              		.thumb
+ 777              		.thumb_func
+ 779              	FX_I2C_Finished:
+ 780              	.LFB129:
+ 237:../source/drv/accel.c **** 
+ 238:../source/drv/accel.c **** void FX_I2C_Finished(void)
+ 239:../source/drv/accel.c **** {
+ 781              		.loc 1 239 1
+ 782              		.cfi_startproc
+ 783              		@ args = 0, pretend = 0, frame = 8
+ 784              		@ frame_needed = 1, uses_anonymous_args = 0
+ 785 0000 80B5     		push	{r7, lr}
+ 786              		.cfi_def_cfa_offset 8
+ 787              		.cfi_offset 7, -8
+ 788              		.cfi_offset 14, -4
+ 789 0002 82B0     		sub	sp, sp, #8
+ 790              		.cfi_def_cfa_offset 16
+ 791 0004 00AF     		add	r7, sp, #0
+ 792              		.cfi_def_cfa_register 7
+ 793              	.LBB3:
+ 240:../source/drv/accel.c ****   for(uint32_t i = 0 ; i < 1000 ; i++);
+ 794              		.loc 1 240 16
+ 795 0006 0023     		movs	r3, #0
+ 796 0008 7B60     		str	r3, [r7, #4]
+ 797              		.loc 1 240 3
+ 798 000a 02E0     		b	.L55
+ 799              	.L56:
+ 800              		.loc 1 240 36 discriminator 3
+ 801 000c 7B68     		ldr	r3, [r7, #4]
+ 802 000e 0133     		adds	r3, r3, #1
+ 803 0010 7B60     		str	r3, [r7, #4]
+ 804              	.L55:
+ 805              		.loc 1 240 26 discriminator 1
+ 806 0012 7B68     		ldr	r3, [r7, #4]
+ 807 0014 B3F57A7F 		cmp	r3, #1000
+ 808 0018 F8D3     		bcc	.L56
+ 809              	.LBE3:
+ 241:../source/drv/accel.c **** 
+ 242:../source/drv/accel.c ****   if (Accel.status == FX_Init)
+ 810              		.loc 1 242 12
+ 811 001a 094B     		ldr	r3, .L60
+ 812 001c 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 813              		.loc 1 242 6
+ 814 001e 002B     		cmp	r3, #0
+ 815 0020 03D1     		bne	.L57
+ 243:../source/drv/accel.c ****     FX_InitSequence(false);
+ 816              		.loc 1 243 5
+ 817 0022 0020     		movs	r0, #0
+ 818 0024 FFF7FEFF 		bl	FX_InitSequence
+ 244:../source/drv/accel.c ****   else if (Accel.status == FX_Running)
+ 245:../source/drv/accel.c **** 	  FX_RunningSequence(false);
+ 246:../source/drv/accel.c **** }
+ 819              		.loc 1 246 1
+ 820 0028 06E0     		b	.L59
+ 821              	.L57:
+ 244:../source/drv/accel.c ****   else if (Accel.status == FX_Running)
+ 822              		.loc 1 244 17
+ 823 002a 054B     		ldr	r3, .L60
+ 824 002c 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 244:../source/drv/accel.c ****   else if (Accel.status == FX_Running)
+ 825              		.loc 1 244 11
+ 826 002e 012B     		cmp	r3, #1
+ 827 0030 02D1     		bne	.L59
+ 245:../source/drv/accel.c **** }
+ 828              		.loc 1 245 4
+ 829 0032 0020     		movs	r0, #0
+ 830 0034 FFF7FEFF 		bl	FX_RunningSequence
+ 831              	.L59:
+ 832              		.loc 1 246 1
+ 833 0038 00BF     		nop
+ 834 003a 0837     		adds	r7, r7, #8
+ 835              		.cfi_def_cfa_offset 8
+ 836 003c BD46     		mov	sp, r7
+ 837              		.cfi_def_cfa_register 13
+ 838              		@ sp needed
+ 839 003e 80BD     		pop	{r7, pc}
+ 840              	.L61:
+ 841              		.align	2
+ 842              	.L60:
+ 843 0040 00000000 		.word	Accel
+ 844              		.cfi_endproc
+ 845              	.LFE129:
+ 847              		.section	.text.getAccelData,"ax",%progbits
+ 848              		.align	1
+ 849              		.global	getAccelData
+ 850              		.syntax unified
+ 851              		.thumb
+ 852              		.thumb_func
+ 854              	getAccelData:
+ 855              	.LFB130:
+ 247:../source/drv/accel.c **** 
+ 248:../source/drv/accel.c **** Orient_t getAccelData()
+ 249:../source/drv/accel.c **** {
+ 856              		.loc 1 249 1
+ 857              		.cfi_startproc
+ 858              		@ args = 0, pretend = 0, frame = 8
+ 859              		@ frame_needed = 1, uses_anonymous_args = 0
+ 860              		@ link register save eliminated.
+ 861 0000 90B4     		push	{r4, r7}
+ 862              		.cfi_def_cfa_offset 8
+ 863              		.cfi_offset 4, -8
+ 864              		.cfi_offset 7, -4
+ 865 0002 82B0     		sub	sp, sp, #8
+ 866              		.cfi_def_cfa_offset 16
+ 867 0004 00AF     		add	r7, sp, #0
+ 868              		.cfi_def_cfa_register 7
+ 869 0006 7860     		str	r0, [r7, #4]
+ 250:../source/drv/accel.c **** 	return Accel.orientation;
+ 870              		.loc 1 250 14
+ 871 0008 7A68     		ldr	r2, [r7, #4]
+ 872 000a 064B     		ldr	r3, .L64
+ 873 000c 1446     		mov	r4, r2
+ 874 000e 1033     		adds	r3, r3, #16
+ 875 0010 93E80700 		ldm	r3, {r0, r1, r2}
+ 876 0014 84E80700 		stm	r4, {r0, r1, r2}
+ 251:../source/drv/accel.c **** }
+ 877              		.loc 1 251 1
+ 878 0018 7868     		ldr	r0, [r7, #4]
+ 879 001a 0837     		adds	r7, r7, #8
+ 880              		.cfi_def_cfa_offset 8
+ 881 001c BD46     		mov	sp, r7
+ 882              		.cfi_def_cfa_register 13
+ 883              		@ sp needed
+ 884 001e 90BC     		pop	{r4, r7}
+ 885              		.cfi_restore 7
+ 886              		.cfi_restore 4
+ 887              		.cfi_def_cfa_offset 0
+ 888 0020 7047     		bx	lr
+ 889              	.L65:
+ 890 0022 00BF     		.align	2
+ 891              	.L64:
+ 892 0024 00000000 		.word	Accel
+ 893              		.cfi_endproc
+ 894              	.LFE130:
+ 896              		.text
+ 897              	.Letext0:
+ 898              		.file 2 "/Applications/MCUXpressoIDE_11.8.0_1165/ide/plugins/com.nxp.mcuxpresso.tools.macosx_11.8.
+ 899              		.file 3 "/Applications/MCUXpressoIDE_11.8.0_1165/ide/plugins/com.nxp.mcuxpresso.tools.macosx_11.8.
+ 900              		.file 4 "../source/drv/i2c.h"
+ 901              		.file 5 "../source/drv/accel.h"
+ 902              		.file 6 "/Applications/MCUXpressoIDE_11.8.0_1165/ide/plugins/com.nxp.mcuxpresso.tools.macosx_11.8.
+ 903              		.file 7 "../source/drv/SysTick.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 accel.c
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:21     .bss.Accel:0000000000000000 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:24     .bss.Accel:0000000000000000 Accel
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:27     .text.FX_ReadReg:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:32     .text.FX_ReadReg:0000000000000000 FX_ReadReg
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:96     .text.FX_ReadReg:0000000000000050 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:103    .text.FX_WriteReg:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:108    .text.FX_WriteReg:0000000000000000 FX_WriteReg
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:156    .text.FX_WriteReg:0000000000000038 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:162    .text.FX_I2C_Init:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:168    .text.FX_I2C_Init:0000000000000000 FX_I2C_Init
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:210    .text.FX_I2C_Init:0000000000000030 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:728    .text.FX_PISR:0000000000000000 FX_PISR
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:216    .text.FX_InitSequence:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:222    .text.FX_InitSequence:0000000000000000 FX_InitSequence
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:262    .text.FX_InitSequence:000000000000002c $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:273    .text.FX_InitSequence:0000000000000058 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:376    .text.FX_InitSequence:00000000000000dc $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:387    .text.FX_RunningSequence:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:392    .text.FX_RunningSequence:0000000000000000 FX_RunningSequence
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:711    .text.FX_RunningSequence:0000000000000240 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:722    .text.FX_PISR:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:768    .text.FX_PISR:0000000000000028 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:773    .text.FX_I2C_Finished:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:779    .text.FX_I2C_Finished:0000000000000000 FX_I2C_Finished
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:843    .text.FX_I2C_Finished:0000000000000040 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:848    .text.getAccelData:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:854    .text.getAccelData:0000000000000000 getAccelData
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccS9AujZ.s:892    .text.getAccelData:0000000000000024 $d
+                           .group:0000000000000000 wm4.0.23798b1d0196e1dacad68e887eef18fd
+                           .group:0000000000000000 wm4.redlib_version.h.24.4f43d7bc124a54bfe120050dd03d6b37
+                           .group:0000000000000000 wm4.libconfigarm.h.19.34723c94cbd19598192aa6b1e87fca41
+                           .group:0000000000000000 wm4.stdint.h.31.58198de4ea930fb897655479091e17c7
+                           .group:0000000000000000 wm4.stdbool.h.15.fddf1cb2402fd739d8e2516677869231
+                           .group:0000000000000000 wm4.FXOS8700CQ.h.10.e9b2be8a3b923610c300948aa46e3954
+                           .group:0000000000000000 wm4.SysTick.h.8.90576eeec008989fde607facc91171c6
+                           .group:0000000000000000 wm4.math.h.10.68e109de95b1d51cd4842d9cf6f19e3b
+                           .group:0000000000000000 wm4.MK64F12.h.105.e884e5c80776532d2ec0f5c21e2ea7cb
+                           .group:0000000000000000 wm4.core_cm4.h.42.42f38327ee0970d80f60117e6a3ba2b0
+                           .group:0000000000000000 wm4.cmsis_gcc.h.36.39970cb43ce4b53c82644a1f9bc2eab9
+                           .group:0000000000000000 wm4.core_cm4.h.223.7b48c9958ef5573320c4765074c8b0ce
+                           .group:0000000000000000 wm4.system_MK64F12.h.109.c6d21568e03be21b21c922eb7345d6e3
+                           .group:0000000000000000 wm4.MK64F12.h.475.cafa8e1e521f96f0b72de286863a6df7
+                           .group:0000000000000000 wm4.gpio.h.29.c6aad71d79bc2c89ec77d6be0e13d3d4
+
+UNDEFINED SYMBOLS
+I2C_InitObject
+I2C_InitModule
+SysTick_Reg_Callback
+__aeabi_i2d
+__aeabi_dmul
+__aeabi_ddiv
+__aeabi_dadd
+__aeabi_d2f
+__aeabi_d2iz
+atan2

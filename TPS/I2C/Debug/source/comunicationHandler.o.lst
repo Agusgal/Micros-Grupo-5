@@ -1,0 +1,1474 @@
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"comunicationHandler.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "../source/comunicationHandler.c"
+  20              		.section	.bss.Boards,"aw",%nobits
+  21              		.align	2
+  24              	Boards:
+  25 0000 00000000 		.space	84
+  25      00000000 
+  25      00000000 
+  25      00000000 
+  25      00000000 
+  26              		.section	.bss.myGroup,"aw",%nobits
+  29              	myGroup:
+  30 0000 00       		.space	1
+  31              		.section	.data.bufferPC,"aw"
+  32              		.align	2
+  35              	bufferPC:
+  36 0000 35522B31 		.ascii	"5R+123\000"
+  36      323300
+  37              		.global	writeAvailable
+  38              		.section	.data.writeAvailable,"aw"
+  39              		.align	2
+  42              	writeAvailable:
+  43 0000 00       		.byte	0
+  44 0001 01       		.byte	1
+  45 0002 01       		.byte	1
+  46 0003 01       		.byte	1
+  47              		.section	.text.comunicationHandler_init,"ax",%progbits
+  48              		.align	1
+  49              		.global	comunicationHandler_init
+  50              		.syntax unified
+  51              		.thumb
+  52              		.thumb_func
+  54              	comunicationHandler_init:
+  55              	.LFB123:
+   1:../source/comunicationHandler.c **** /*
+   2:../source/comunicationHandler.c ****  * comunicationHandler.c
+   3:../source/comunicationHandler.c ****  *
+   4:../source/comunicationHandler.c ****  *  Created on: 8 oct. 2023
+   5:../source/comunicationHandler.c ****  *      Author: Grupo 5
+   6:../source/comunicationHandler.c ****  */
+   7:../source/comunicationHandler.c **** 
+   8:../source/comunicationHandler.c **** 
+   9:../source/comunicationHandler.c **** 
+  10:../source/comunicationHandler.c **** 
+  11:../source/comunicationHandler.c **** #include "comunicationHandler.h"
+  12:../source/comunicationHandler.c **** //#include "drv/SPI.h"
+  13:../source/comunicationHandler.c **** #include "drv/CAN_SPI.h"
+  14:../source/comunicationHandler.c **** #include "drv/UART.h"
+  15:../source/comunicationHandler.c **** 
+  16:../source/comunicationHandler.c **** /*******************************************************************************
+  17:../source/comunicationHandler.c ****  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
+  18:../source/comunicationHandler.c ****  ******************************************************************************/
+  19:../source/comunicationHandler.c **** #define R_CHAR		0x82
+  20:../source/comunicationHandler.c **** #define C_CHAR		0x67
+  21:../source/comunicationHandler.c **** #define O_CHAR		0x79
+  22:../source/comunicationHandler.c **** #define PLUS_CHAR	0x43
+  23:../source/comunicationHandler.c **** #define MINUS_CHAR	0x45
+  24:../source/comunicationHandler.c **** 
+  25:../source/comunicationHandler.c **** 
+  26:../source/comunicationHandler.c **** /*******************************************************************************
+  27:../source/comunicationHandler.c ****  * VARIABLES WITH GLOBAL SCOPE
+  28:../source/comunicationHandler.c ****  ******************************************************************************/
+  29:../source/comunicationHandler.c **** static Orient_t Boards[GROUPS];
+  30:../source/comunicationHandler.c **** static uint8_t myGroup;
+  31:../source/comunicationHandler.c **** static char bufferPC[7] = {'5', 'R', '+', '1', '2', '3', '\0'};
+  32:../source/comunicationHandler.c **** 
+  33:../source/comunicationHandler.c **** bool writeAvailable[4]={0,1,1,1};
+  34:../source/comunicationHandler.c **** /*******************************************************************************
+  35:../source/comunicationHandler.c ****  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
+  36:../source/comunicationHandler.c ****  ******************************************************************************/
+  37:../source/comunicationHandler.c **** 
+  38:../source/comunicationHandler.c **** /*******************************************************************************
+  39:../source/comunicationHandler.c ****  *******************************************************************************
+  40:../source/comunicationHandler.c ****                         GLOBAL FUNCTION DEFINITIONS
+  41:../source/comunicationHandler.c ****  *******************************************************************************
+  42:../source/comunicationHandler.c ****  ******************************************************************************/
+  43:../source/comunicationHandler.c **** void comunicationHandler_init(uint8_t group_num)
+  44:../source/comunicationHandler.c **** {
+  56              		.loc 1 44 1
+  57              		.cfi_startproc
+  58              		@ args = 0, pretend = 0, frame = 8
+  59              		@ frame_needed = 1, uses_anonymous_args = 0
+  60 0000 80B5     		push	{r7, lr}
+  61              		.cfi_def_cfa_offset 8
+  62              		.cfi_offset 7, -8
+  63              		.cfi_offset 14, -4
+  64 0002 82B0     		sub	sp, sp, #8
+  65              		.cfi_def_cfa_offset 16
+  66 0004 00AF     		add	r7, sp, #0
+  67              		.cfi_def_cfa_register 7
+  68 0006 0346     		mov	r3, r0
+  69 0008 FB71     		strb	r3, [r7, #7]
+  45:../source/comunicationHandler.c **** 	myGroup = group_num;
+  70              		.loc 1 45 10
+  71 000a 044A     		ldr	r2, .L2
+  72 000c FB79     		ldrb	r3, [r7, #7]
+  73 000e 1370     		strb	r3, [r2]
+  46:../source/comunicationHandler.c **** 
+  47:../source/comunicationHandler.c **** 	//Reemplazado con el nuestro
+  48:../source/comunicationHandler.c **** 	//CAN_SPI_Init();
+  49:../source/comunicationHandler.c **** 
+  50:../source/comunicationHandler.c **** 	UART_Init();
+  74              		.loc 1 50 2
+  75 0010 FFF7FEFF 		bl	UART_Init
+  51:../source/comunicationHandler.c **** 
+  52:../source/comunicationHandler.c **** 	// Borrar lo de abajo es prueba
+  53:../source/comunicationHandler.c ****     //char buf[4] = {'O', '-', 4, 7};
+  54:../source/comunicationHandler.c ****     //send_CAN(0x105, buf, 4);
+  55:../source/comunicationHandler.c **** }
+  76              		.loc 1 55 1
+  77 0014 00BF     		nop
+  78 0016 0837     		adds	r7, r7, #8
+  79              		.cfi_def_cfa_offset 8
+  80 0018 BD46     		mov	sp, r7
+  81              		.cfi_def_cfa_register 13
+  82              		@ sp needed
+  83 001a 80BD     		pop	{r7, pc}
+  84              	.L3:
+  85              		.align	2
+  86              	.L2:
+  87 001c 00000000 		.word	myGroup
+  88              		.cfi_endproc
+  89              	.LFE123:
+  91              		.section	.text.Com_EventHandler,"ax",%progbits
+  92              		.align	1
+  93              		.global	Com_EventHandler
+  94              		.syntax unified
+  95              		.thumb
+  96              		.thumb_func
+  98              	Com_EventHandler:
+  99              	.LFB124:
+  56:../source/comunicationHandler.c **** 
+  57:../source/comunicationHandler.c **** void Com_EventHandler(void)
+  58:../source/comunicationHandler.c **** {
+ 100              		.loc 1 58 1
+ 101              		.cfi_startproc
+ 102              		@ args = 0, pretend = 0, frame = 16
+ 103              		@ frame_needed = 1, uses_anonymous_args = 0
+ 104 0000 80B5     		push	{r7, lr}
+ 105              		.cfi_def_cfa_offset 8
+ 106              		.cfi_offset 7, -8
+ 107              		.cfi_offset 14, -4
+ 108 0002 84B0     		sub	sp, sp, #16
+ 109              		.cfi_def_cfa_offset 24
+ 110 0004 00AF     		add	r7, sp, #0
+ 111              		.cfi_def_cfa_register 7
+  59:../source/comunicationHandler.c **** 	//Reemplazado por el nuestro
+  60:../source/comunicationHandler.c **** 	//getter de la informacion se CAN que llego, llamo un servicio del driver de can
+  61:../source/comunicationHandler.c **** 	RXB_RAWDATA_t bufferRXB = CAN_SPI_Get_Data();
+ 112              		.loc 1 61 28
+ 113 0006 3B46     		mov	r3, r7
+ 114 0008 1846     		mov	r0, r3
+ 115 000a FFF7FEFF 		bl	CAN_SPI_Get_Data
+  62:../source/comunicationHandler.c **** 
+  63:../source/comunicationHandler.c **** 	//TEST
+  64:../source/comunicationHandler.c **** 	//uint16_t sid = 0x105;
+  65:../source/comunicationHandler.c **** 	//uint8_t dlc = 0x4;
+  66:../source/comunicationHandler.c **** 
+  67:../source/comunicationHandler.c **** 	//RXB_RAWDATA_t bufferRXB = {.SID=sid, .DLC=dlc, {'R', '-','2', '5'}};
+  68:../source/comunicationHandler.c **** 
+  69:../source/comunicationHandler.c **** 	uint8_t group_index;
+  70:../source/comunicationHandler.c **** 	if (bufferRXB.SID != 0x100)
+ 116              		.loc 1 70 15
+ 117 000e 3B88     		ldrh	r3, [r7]
+ 118              		.loc 1 70 5
+ 119 0010 B3F5807F 		cmp	r3, #256
+ 120 0014 07D0     		beq	.L5
+  71:../source/comunicationHandler.c **** 	{
+  72:../source/comunicationHandler.c **** 		group_index = ((bufferRXB.SID) & 0x00F) - 1;
+ 121              		.loc 1 72 28
+ 122 0016 3B88     		ldrh	r3, [r7]
+ 123              		.loc 1 72 34
+ 124 0018 DBB2     		uxtb	r3, r3
+ 125 001a 03F00F03 		and	r3, r3, #15
+ 126 001e DBB2     		uxtb	r3, r3
+ 127              		.loc 1 72 15
+ 128 0020 013B     		subs	r3, r3, #1
+ 129 0022 FB73     		strb	r3, [r7, #15]
+ 130 0024 01E0     		b	.L6
+ 131              	.L5:
+  73:../source/comunicationHandler.c **** 	}
+  74:../source/comunicationHandler.c **** 	else
+  75:../source/comunicationHandler.c **** 	{
+  76:../source/comunicationHandler.c **** 		group_index = 0;
+ 132              		.loc 1 76 15
+ 133 0026 0023     		movs	r3, #0
+ 134 0028 FB73     		strb	r3, [r7, #15]
+ 135              	.L6:
+  77:../source/comunicationHandler.c **** 	}
+  78:../source/comunicationHandler.c **** 
+  79:../source/comunicationHandler.c **** 
+  80:../source/comunicationHandler.c **** 	uint8_t digitos;
+  81:../source/comunicationHandler.c **** 	uint8_t angle;
+  82:../source/comunicationHandler.c **** 
+  83:../source/comunicationHandler.c **** 	switch (bufferRXB.Dn[1])
+ 136              		.loc 1 83 22
+ 137 002a 3B79     		ldrb	r3, [r7, #4]	@ zero_extendqisi2
+ 138              		.loc 1 83 2
+ 139 002c 2B2B     		cmp	r3, #43
+ 140 002e 02D0     		beq	.L7
+ 141 0030 2D2B     		cmp	r3, #45
+ 142 0032 04D0     		beq	.L8
+ 143 0034 0AE0     		b	.L22
+ 144              	.L7:
+  84:../source/comunicationHandler.c **** 	{
+  85:../source/comunicationHandler.c **** 		case '+':
+  86:../source/comunicationHandler.c **** 			digitos = bufferRXB.DLC - 2;
+ 145              		.loc 1 86 23
+ 146 0036 BB78     		ldrb	r3, [r7, #2]	@ zero_extendqisi2
+ 147              		.loc 1 86 12
+ 148 0038 023B     		subs	r3, r3, #2
+ 149 003a BB73     		strb	r3, [r7, #14]
+  87:../source/comunicationHandler.c **** 			break;
+ 150              		.loc 1 87 4
+ 151 003c 0AE0     		b	.L10
+ 152              	.L8:
+  88:../source/comunicationHandler.c **** 		case '-':
+  89:../source/comunicationHandler.c **** 			angle = -angle;
+ 153              		.loc 1 89 10
+ 154 003e 7B7B     		ldrb	r3, [r7, #13]
+ 155 0040 5B42     		rsbs	r3, r3, #0
+ 156 0042 7B73     		strb	r3, [r7, #13]
+  90:../source/comunicationHandler.c **** 			digitos = bufferRXB.DLC - 2;
+ 157              		.loc 1 90 23
+ 158 0044 BB78     		ldrb	r3, [r7, #2]	@ zero_extendqisi2
+ 159              		.loc 1 90 12
+ 160 0046 023B     		subs	r3, r3, #2
+ 161 0048 BB73     		strb	r3, [r7, #14]
+  91:../source/comunicationHandler.c **** 			break;
+ 162              		.loc 1 91 4
+ 163 004a 03E0     		b	.L10
+ 164              	.L22:
+  92:../source/comunicationHandler.c **** 		default:
+  93:../source/comunicationHandler.c **** 			digitos = bufferRXB.DLC - 1;
+ 165              		.loc 1 93 23
+ 166 004c BB78     		ldrb	r3, [r7, #2]	@ zero_extendqisi2
+ 167              		.loc 1 93 12
+ 168 004e 013B     		subs	r3, r3, #1
+ 169 0050 BB73     		strb	r3, [r7, #14]
+  94:../source/comunicationHandler.c **** 			break;
+ 170              		.loc 1 94 4
+ 171 0052 00BF     		nop
+ 172              	.L10:
+  95:../source/comunicationHandler.c **** 	}
+  96:../source/comunicationHandler.c **** 
+  97:../source/comunicationHandler.c **** 	uint8_t dlc_ = bufferRXB.DLC;
+ 173              		.loc 1 97 10
+ 174 0054 BB78     		ldrb	r3, [r7, #2]
+ 175 0056 3B73     		strb	r3, [r7, #12]
+  98:../source/comunicationHandler.c **** 
+  99:../source/comunicationHandler.c **** 
+ 100:../source/comunicationHandler.c **** 	if(digitos == 1)
+ 176              		.loc 1 100 4
+ 177 0058 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 178 005a 012B     		cmp	r3, #1
+ 179 005c 08D1     		bne	.L11
+ 101:../source/comunicationHandler.c **** 	{
+ 102:../source/comunicationHandler.c **** 		angle = bufferRXB.Dn[dlc_ - 1] - '0';
+ 180              		.loc 1 102 29
+ 181 005e 3B7B     		ldrb	r3, [r7, #12]	@ zero_extendqisi2
+ 182 0060 013B     		subs	r3, r3, #1
+ 183              		.loc 1 102 23
+ 184 0062 1033     		adds	r3, r3, #16
+ 185 0064 3B44     		add	r3, r3, r7
+ 186 0066 13F80D3C 		ldrb	r3, [r3, #-13]	@ zero_extendqisi2
+ 187              		.loc 1 102 9
+ 188 006a 303B     		subs	r3, r3, #48
+ 189 006c 7B73     		strb	r3, [r7, #13]
+ 190 006e 42E0     		b	.L12
+ 191              	.L11:
+ 103:../source/comunicationHandler.c **** 	}
+ 104:../source/comunicationHandler.c **** 	else if(digitos == 2)
+ 192              		.loc 1 104 9
+ 193 0070 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 194 0072 022B     		cmp	r3, #2
+ 195 0074 15D1     		bne	.L13
+ 105:../source/comunicationHandler.c **** 	{
+ 106:../source/comunicationHandler.c **** 		angle = (bufferRXB.Dn[dlc_ - 2] - '0')*10 + (bufferRXB.Dn[dlc_ - 1] - '0');
+ 196              		.loc 1 106 30
+ 197 0076 3B7B     		ldrb	r3, [r7, #12]	@ zero_extendqisi2
+ 198 0078 023B     		subs	r3, r3, #2
+ 199              		.loc 1 106 24
+ 200 007a 1033     		adds	r3, r3, #16
+ 201 007c 3B44     		add	r3, r3, r7
+ 202 007e 13F80D3C 		ldrb	r3, [r3, #-13]	@ zero_extendqisi2
+ 203              		.loc 1 106 45
+ 204 0082 1A46     		mov	r2, r3
+ 205 0084 9200     		lsls	r2, r2, #2
+ 206 0086 1344     		add	r3, r3, r2
+ 207 0088 5B00     		lsls	r3, r3, #1
+ 208 008a DAB2     		uxtb	r2, r3
+ 209              		.loc 1 106 66
+ 210 008c 3B7B     		ldrb	r3, [r7, #12]	@ zero_extendqisi2
+ 211 008e 013B     		subs	r3, r3, #1
+ 212              		.loc 1 106 60
+ 213 0090 1033     		adds	r3, r3, #16
+ 214 0092 3B44     		add	r3, r3, r7
+ 215 0094 13F80D3C 		ldrb	r3, [r3, #-13]	@ zero_extendqisi2
+ 216              		.loc 1 106 45
+ 217 0098 1344     		add	r3, r3, r2
+ 218 009a DBB2     		uxtb	r3, r3
+ 219              		.loc 1 106 9
+ 220 009c 103B     		subs	r3, r3, #16
+ 221 009e 7B73     		strb	r3, [r7, #13]
+ 222 00a0 29E0     		b	.L12
+ 223              	.L13:
+ 107:../source/comunicationHandler.c **** 	}
+ 108:../source/comunicationHandler.c **** 	else if(digitos == 3)
+ 224              		.loc 1 108 9
+ 225 00a2 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 226 00a4 032B     		cmp	r3, #3
+ 227 00a6 26D1     		bne	.L12
+ 109:../source/comunicationHandler.c **** 	{
+ 110:../source/comunicationHandler.c **** 		angle = (bufferRXB.Dn[dlc_ - 3] - '0')*100 + (bufferRXB.Dn[dlc_ - 2] - '0')*10 + (bufferRXB.Dn[dl
+ 228              		.loc 1 110 30
+ 229 00a8 3B7B     		ldrb	r3, [r7, #12]	@ zero_extendqisi2
+ 230 00aa 033B     		subs	r3, r3, #3
+ 231              		.loc 1 110 24
+ 232 00ac 1033     		adds	r3, r3, #16
+ 233 00ae 3B44     		add	r3, r3, r7
+ 234 00b0 13F80D3C 		ldrb	r3, [r3, #-13]	@ zero_extendqisi2
+ 235              		.loc 1 110 46
+ 236 00b4 1A46     		mov	r2, r3
+ 237 00b6 9200     		lsls	r2, r2, #2
+ 238 00b8 1344     		add	r3, r3, r2
+ 239 00ba 1A46     		mov	r2, r3
+ 240 00bc 9100     		lsls	r1, r2, #2
+ 241 00be 1A46     		mov	r2, r3
+ 242 00c0 0B46     		mov	r3, r1
+ 243 00c2 1344     		add	r3, r3, r2
+ 244 00c4 9B00     		lsls	r3, r3, #2
+ 245 00c6 DAB2     		uxtb	r2, r3
+ 246              		.loc 1 110 67
+ 247 00c8 3B7B     		ldrb	r3, [r7, #12]	@ zero_extendqisi2
+ 248 00ca 023B     		subs	r3, r3, #2
+ 249              		.loc 1 110 61
+ 250 00cc 1033     		adds	r3, r3, #16
+ 251 00ce 3B44     		add	r3, r3, r7
+ 252 00d0 13F80D3C 		ldrb	r3, [r3, #-13]	@ zero_extendqisi2
+ 253              		.loc 1 110 46
+ 254 00d4 1946     		mov	r1, r3
+ 255 00d6 8900     		lsls	r1, r1, #2
+ 256 00d8 0B44     		add	r3, r3, r1
+ 257 00da 5B00     		lsls	r3, r3, #1
+ 258 00dc DBB2     		uxtb	r3, r3
+ 259 00de 1344     		add	r3, r3, r2
+ 260 00e0 DAB2     		uxtb	r2, r3
+ 261              		.loc 1 110 103
+ 262 00e2 3B7B     		ldrb	r3, [r7, #12]	@ zero_extendqisi2
+ 263 00e4 013B     		subs	r3, r3, #1
+ 264              		.loc 1 110 97
+ 265 00e6 1033     		adds	r3, r3, #16
+ 266 00e8 3B44     		add	r3, r3, r7
+ 267 00ea 13F80D3C 		ldrb	r3, [r3, #-13]	@ zero_extendqisi2
+ 268              		.loc 1 110 82
+ 269 00ee 1344     		add	r3, r3, r2
+ 270 00f0 DBB2     		uxtb	r3, r3
+ 271              		.loc 1 110 9
+ 272 00f2 3033     		adds	r3, r3, #48
+ 273 00f4 7B73     		strb	r3, [r7, #13]
+ 274              	.L12:
+ 111:../source/comunicationHandler.c **** 	}
+ 112:../source/comunicationHandler.c **** 
+ 113:../source/comunicationHandler.c **** 
+ 114:../source/comunicationHandler.c **** 
+ 115:../source/comunicationHandler.c **** 	switch (bufferRXB.Dn[0])
+ 275              		.loc 1 115 22
+ 276 00f6 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 277              		.loc 1 115 2
+ 278 00f8 522B     		cmp	r3, #82
+ 279 00fa 06D0     		beq	.L14
+ 280 00fc 522B     		cmp	r3, #82
+ 281 00fe 24DC     		bgt	.L15
+ 282 0100 432B     		cmp	r3, #67
+ 283 0102 0CD0     		beq	.L16
+ 284 0104 4F2B     		cmp	r3, #79
+ 285 0106 15D0     		beq	.L17
+ 286 0108 1FE0     		b	.L15
+ 287              	.L14:
+ 116:../source/comunicationHandler.c **** 	{
+ 117:../source/comunicationHandler.c **** 		case 'R':
+ 118:../source/comunicationHandler.c **** 			Boards[group_index].rolido = angle;
+ 288              		.loc 1 118 23
+ 289 010a FA7B     		ldrb	r2, [r7, #15]	@ zero_extendqisi2
+ 290              		.loc 1 118 31
+ 291 010c 797B     		ldrb	r1, [r7, #13]	@ zero_extendqisi2
+ 292 010e 3F48     		ldr	r0, .L23
+ 293 0110 1346     		mov	r3, r2
+ 294 0112 5B00     		lsls	r3, r3, #1
+ 295 0114 1344     		add	r3, r3, r2
+ 296 0116 9B00     		lsls	r3, r3, #2
+ 297 0118 0344     		add	r3, r3, r0
+ 298 011a 1960     		str	r1, [r3]
+ 119:../source/comunicationHandler.c **** 			break;
+ 299              		.loc 1 119 4
+ 300 011c 15E0     		b	.L15
+ 301              	.L16:
+ 120:../source/comunicationHandler.c **** 		case 'C':
+ 121:../source/comunicationHandler.c **** 			Boards[group_index].cabeceo = angle;
+ 302              		.loc 1 121 23
+ 303 011e FA7B     		ldrb	r2, [r7, #15]	@ zero_extendqisi2
+ 304              		.loc 1 121 32
+ 305 0120 797B     		ldrb	r1, [r7, #13]	@ zero_extendqisi2
+ 306 0122 3A48     		ldr	r0, .L23
+ 307 0124 1346     		mov	r3, r2
+ 308 0126 5B00     		lsls	r3, r3, #1
+ 309 0128 1344     		add	r3, r3, r2
+ 310 012a 9B00     		lsls	r3, r3, #2
+ 311 012c 0344     		add	r3, r3, r0
+ 312 012e 0433     		adds	r3, r3, #4
+ 313 0130 1960     		str	r1, [r3]
+ 122:../source/comunicationHandler.c **** 			break;
+ 314              		.loc 1 122 4
+ 315 0132 0AE0     		b	.L15
+ 316              	.L17:
+ 123:../source/comunicationHandler.c **** 		case 'O':
+ 124:../source/comunicationHandler.c **** 			Boards[group_index].norte = angle;
+ 317              		.loc 1 124 23
+ 318 0134 FA7B     		ldrb	r2, [r7, #15]	@ zero_extendqisi2
+ 319              		.loc 1 124 30
+ 320 0136 797B     		ldrb	r1, [r7, #13]	@ zero_extendqisi2
+ 321 0138 3448     		ldr	r0, .L23
+ 322 013a 1346     		mov	r3, r2
+ 323 013c 5B00     		lsls	r3, r3, #1
+ 324 013e 1344     		add	r3, r3, r2
+ 325 0140 9B00     		lsls	r3, r3, #2
+ 326 0142 0344     		add	r3, r3, r0
+ 327 0144 0833     		adds	r3, r3, #8
+ 328 0146 1960     		str	r1, [r3]
+ 125:../source/comunicationHandler.c **** 			break;
+ 329              		.loc 1 125 4
+ 330 0148 00BF     		nop
+ 331              	.L15:
+ 126:../source/comunicationHandler.c **** 	}
+ 127:../source/comunicationHandler.c **** 
+ 128:../source/comunicationHandler.c **** 
+ 129:../source/comunicationHandler.c **** 	// Refresco de PC y formateo para enviar a python
+ 130:../source/comunicationHandler.c **** 	bufferPC[0] = group_index + 0x30 + 1;
+ 332              		.loc 1 130 35
+ 333 014a FB7B     		ldrb	r3, [r7, #15]
+ 334 014c 3133     		adds	r3, r3, #49
+ 335 014e DAB2     		uxtb	r2, r3
+ 336              		.loc 1 130 14
+ 337 0150 2F4B     		ldr	r3, .L23+4
+ 338 0152 1A70     		strb	r2, [r3]
+ 131:../source/comunicationHandler.c **** 	bufferPC[1] = bufferRXB.Dn[0];
+ 339              		.loc 1 131 28
+ 340 0154 FA78     		ldrb	r2, [r7, #3]	@ zero_extendqisi2
+ 341              		.loc 1 131 14
+ 342 0156 2E4B     		ldr	r3, .L23+4
+ 343 0158 5A70     		strb	r2, [r3, #1]
+ 132:../source/comunicationHandler.c **** 	if(bufferRXB.Dn[1] == 0)
+ 344              		.loc 1 132 17
+ 345 015a 3B79     		ldrb	r3, [r7, #4]	@ zero_extendqisi2
+ 346              		.loc 1 132 4
+ 347 015c 002B     		cmp	r3, #0
+ 348 015e 0CD1     		bne	.L18
+ 133:../source/comunicationHandler.c **** 	{
+ 134:../source/comunicationHandler.c **** 		bufferPC[2] = '+';
+ 349              		.loc 1 134 15
+ 350 0160 2B4B     		ldr	r3, .L23+4
+ 351 0162 2B22     		movs	r2, #43
+ 352 0164 9A70     		strb	r2, [r3, #2]
+ 135:../source/comunicationHandler.c **** 		bufferPC[3] = 0;
+ 353              		.loc 1 135 15
+ 354 0166 2A4B     		ldr	r3, .L23+4
+ 355 0168 0022     		movs	r2, #0
+ 356 016a DA70     		strb	r2, [r3, #3]
+ 136:../source/comunicationHandler.c **** 		bufferPC[4] = 0;
+ 357              		.loc 1 136 15
+ 358 016c 284B     		ldr	r3, .L23+4
+ 359 016e 0022     		movs	r2, #0
+ 360 0170 1A71     		strb	r2, [r3, #4]
+ 137:../source/comunicationHandler.c **** 		bufferPC[5] = 0;
+ 361              		.loc 1 137 15
+ 362 0172 274B     		ldr	r3, .L23+4
+ 363 0174 0022     		movs	r2, #0
+ 364 0176 5A71     		strb	r2, [r3, #5]
+ 365 0178 40E0     		b	.L19
+ 366              	.L18:
+ 138:../source/comunicationHandler.c **** 	}
+ 139:../source/comunicationHandler.c **** 	else
+ 140:../source/comunicationHandler.c **** 	{
+ 141:../source/comunicationHandler.c **** 		if(bufferRXB.Dn[1] == '-')
+ 367              		.loc 1 141 18
+ 368 017a 3B79     		ldrb	r3, [r7, #4]	@ zero_extendqisi2
+ 369              		.loc 1 141 5
+ 370 017c 2D2B     		cmp	r3, #45
+ 371 017e 03D1     		bne	.L20
+ 142:../source/comunicationHandler.c **** 		{
+ 143:../source/comunicationHandler.c **** 			bufferPC[2] = '-';
+ 372              		.loc 1 143 16
+ 373 0180 234B     		ldr	r3, .L23+4
+ 374 0182 2D22     		movs	r2, #45
+ 375 0184 9A70     		strb	r2, [r3, #2]
+ 376 0186 02E0     		b	.L21
+ 377              	.L20:
+ 144:../source/comunicationHandler.c **** 		}
+ 145:../source/comunicationHandler.c **** 		else
+ 146:../source/comunicationHandler.c **** 		{
+ 147:../source/comunicationHandler.c **** 			bufferPC[2] = '+';
+ 378              		.loc 1 147 16
+ 379 0188 214B     		ldr	r3, .L23+4
+ 380 018a 2B22     		movs	r2, #43
+ 381 018c 9A70     		strb	r2, [r3, #2]
+ 382              	.L21:
+ 148:../source/comunicationHandler.c **** 		}
+ 149:../source/comunicationHandler.c **** 
+ 150:../source/comunicationHandler.c **** 
+ 151:../source/comunicationHandler.c **** 		bufferPC[3] = ((angle / 100) % 10) + '0';
+ 383              		.loc 1 151 38
+ 384 018e 7B7B     		ldrb	r3, [r7, #13]	@ zero_extendqisi2
+ 385 0190 204A     		ldr	r2, .L23+8
+ 386 0192 A2FB0323 		umull	r2, r3, r2, r3
+ 387 0196 5B09     		lsrs	r3, r3, #5
+ 388 0198 DAB2     		uxtb	r2, r3
+ 389 019a 1F4B     		ldr	r3, .L23+12
+ 390 019c A3FB0213 		umull	r1, r3, r3, r2
+ 391 01a0 D908     		lsrs	r1, r3, #3
+ 392 01a2 0B46     		mov	r3, r1
+ 393 01a4 9B00     		lsls	r3, r3, #2
+ 394 01a6 0B44     		add	r3, r3, r1
+ 395 01a8 5B00     		lsls	r3, r3, #1
+ 396 01aa D31A     		subs	r3, r2, r3
+ 397 01ac DBB2     		uxtb	r3, r3
+ 398 01ae 3033     		adds	r3, r3, #48
+ 399 01b0 DAB2     		uxtb	r2, r3
+ 400              		.loc 1 151 15
+ 401 01b2 174B     		ldr	r3, .L23+4
+ 402 01b4 DA70     		strb	r2, [r3, #3]
+ 152:../source/comunicationHandler.c **** 		bufferPC[4] = ((angle / 10) % 10) + '0';
+ 403              		.loc 1 152 37
+ 404 01b6 7B7B     		ldrb	r3, [r7, #13]	@ zero_extendqisi2
+ 405 01b8 174A     		ldr	r2, .L23+12
+ 406 01ba A2FB0323 		umull	r2, r3, r2, r3
+ 407 01be DB08     		lsrs	r3, r3, #3
+ 408 01c0 DAB2     		uxtb	r2, r3
+ 409 01c2 154B     		ldr	r3, .L23+12
+ 410 01c4 A3FB0213 		umull	r1, r3, r3, r2
+ 411 01c8 D908     		lsrs	r1, r3, #3
+ 412 01ca 0B46     		mov	r3, r1
+ 413 01cc 9B00     		lsls	r3, r3, #2
+ 414 01ce 0B44     		add	r3, r3, r1
+ 415 01d0 5B00     		lsls	r3, r3, #1
+ 416 01d2 D31A     		subs	r3, r2, r3
+ 417 01d4 DBB2     		uxtb	r3, r3
+ 418 01d6 3033     		adds	r3, r3, #48
+ 419 01d8 DAB2     		uxtb	r2, r3
+ 420              		.loc 1 152 15
+ 421 01da 0D4B     		ldr	r3, .L23+4
+ 422 01dc 1A71     		strb	r2, [r3, #4]
+ 153:../source/comunicationHandler.c **** 		bufferPC[5] = (angle % 10) + '0';
+ 423              		.loc 1 153 30
+ 424 01de 7A7B     		ldrb	r2, [r7, #13]	@ zero_extendqisi2
+ 425 01e0 0D4B     		ldr	r3, .L23+12
+ 426 01e2 A3FB0213 		umull	r1, r3, r3, r2
+ 427 01e6 D908     		lsrs	r1, r3, #3
+ 428 01e8 0B46     		mov	r3, r1
+ 429 01ea 9B00     		lsls	r3, r3, #2
+ 430 01ec 0B44     		add	r3, r3, r1
+ 431 01ee 5B00     		lsls	r3, r3, #1
+ 432 01f0 D31A     		subs	r3, r2, r3
+ 433 01f2 DBB2     		uxtb	r3, r3
+ 434 01f4 3033     		adds	r3, r3, #48
+ 435 01f6 DAB2     		uxtb	r2, r3
+ 436              		.loc 1 153 15
+ 437 01f8 054B     		ldr	r3, .L23+4
+ 438 01fa 5A71     		strb	r2, [r3, #5]
+ 439              	.L19:
+ 154:../source/comunicationHandler.c **** 
+ 155:../source/comunicationHandler.c **** 	}
+ 156:../source/comunicationHandler.c **** 
+ 157:../source/comunicationHandler.c **** 
+ 158:../source/comunicationHandler.c **** 	//Todo: Si algo falla probablemente este aca
+ 159:../source/comunicationHandler.c **** 	UART_SendMsg(bufferPC, 0);
+ 440              		.loc 1 159 2
+ 441 01fc 0021     		movs	r1, #0
+ 442 01fe 0448     		ldr	r0, .L23+4
+ 443 0200 FFF7FEFF 		bl	UART_SendMsg
+ 160:../source/comunicationHandler.c **** 
+ 161:../source/comunicationHandler.c **** }
+ 444              		.loc 1 161 1
+ 445 0204 00BF     		nop
+ 446 0206 1037     		adds	r7, r7, #16
+ 447              		.cfi_def_cfa_offset 8
+ 448 0208 BD46     		mov	sp, r7
+ 449              		.cfi_def_cfa_register 13
+ 450              		@ sp needed
+ 451 020a 80BD     		pop	{r7, pc}
+ 452              	.L24:
+ 453              		.align	2
+ 454              	.L23:
+ 455 020c 00000000 		.word	Boards
+ 456 0210 00000000 		.word	bufferPC
+ 457 0214 1F85EB51 		.word	1374389535
+ 458 0218 CDCCCCCC 		.word	-858993459
+ 459              		.cfi_endproc
+ 460              	.LFE124:
+ 462              		.section	.text.ComHandler_CAN_Parser,"ax",%progbits
+ 463              		.align	1
+ 464              		.global	ComHandler_CAN_Parser
+ 465              		.syntax unified
+ 466              		.thumb
+ 467              		.thumb_func
+ 469              	ComHandler_CAN_Parser:
+ 470              	.LFB125:
+ 162:../source/comunicationHandler.c **** 
+ 163:../source/comunicationHandler.c **** int16_t ComHandler_CAN_Parser(char* buf, int16_t* boardDATA, uint8_t typeUPD, Orient_t myBoard)
+ 164:../source/comunicationHandler.c **** {
+ 471              		.loc 1 164 1
+ 472              		.cfi_startproc
+ 473              		@ args = 16, pretend = 8, frame = 24
+ 474              		@ frame_needed = 1, uses_anonymous_args = 0
+ 475              		@ link register save eliminated.
+ 476 0000 82B0     		sub	sp, sp, #8
+ 477              		.cfi_def_cfa_offset 8
+ 478 0002 80B4     		push	{r7}
+ 479              		.cfi_def_cfa_offset 12
+ 480              		.cfi_offset 7, -12
+ 481 0004 87B0     		sub	sp, sp, #28
+ 482              		.cfi_def_cfa_offset 40
+ 483 0006 00AF     		add	r7, sp, #0
+ 484              		.cfi_def_cfa_register 7
+ 485 0008 F860     		str	r0, [r7, #12]
+ 486 000a B960     		str	r1, [r7, #8]
+ 487 000c 7B62     		str	r3, [r7, #36]
+ 488 000e 1346     		mov	r3, r2
+ 489 0010 FB71     		strb	r3, [r7, #7]
+ 165:../source/comunicationHandler.c **** 	int16_t nBytes;
+ 166:../source/comunicationHandler.c **** 
+ 167:../source/comunicationHandler.c **** 	switch (typeUPD) {
+ 490              		.loc 1 167 2
+ 491 0012 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 492 0014 032B     		cmp	r3, #3
+ 493 0016 16D0     		beq	.L26
+ 494 0018 032B     		cmp	r3, #3
+ 495 001a 1CDC     		bgt	.L27
+ 496 001c 012B     		cmp	r3, #1
+ 497 001e 02D0     		beq	.L28
+ 498 0020 022B     		cmp	r3, #2
+ 499 0022 08D0     		beq	.L29
+ 500 0024 17E0     		b	.L27
+ 501              	.L28:
+ 168:../source/comunicationHandler.c **** 		case ROLL_UPD:
+ 169:../source/comunicationHandler.c **** 			*boardDATA = myBoard.rolido;
+ 502              		.loc 1 169 24
+ 503 0026 7B6A     		ldr	r3, [r7, #36]
+ 504              		.loc 1 169 15
+ 505 0028 1AB2     		sxth	r2, r3
+ 506 002a BB68     		ldr	r3, [r7, #8]
+ 507 002c 1A80     		strh	r2, [r3]	@ movhi
+ 170:../source/comunicationHandler.c **** 			buf[0] = 'R';
+ 508              		.loc 1 170 11
+ 509 002e FB68     		ldr	r3, [r7, #12]
+ 510 0030 5222     		movs	r2, #82
+ 511 0032 1A70     		strb	r2, [r3]
+ 171:../source/comunicationHandler.c **** 			break;
+ 512              		.loc 1 171 4
+ 513 0034 0FE0     		b	.L27
+ 514              	.L29:
+ 172:../source/comunicationHandler.c **** 		case PITCHING_UPD:
+ 173:../source/comunicationHandler.c **** 			*boardDATA = myBoard.cabeceo;
+ 515              		.loc 1 173 24
+ 516 0036 BB6A     		ldr	r3, [r7, #40]
+ 517              		.loc 1 173 15
+ 518 0038 1AB2     		sxth	r2, r3
+ 519 003a BB68     		ldr	r3, [r7, #8]
+ 520 003c 1A80     		strh	r2, [r3]	@ movhi
+ 174:../source/comunicationHandler.c **** 			buf[0] = 'C';
+ 521              		.loc 1 174 11
+ 522 003e FB68     		ldr	r3, [r7, #12]
+ 523 0040 4322     		movs	r2, #67
+ 524 0042 1A70     		strb	r2, [r3]
+ 175:../source/comunicationHandler.c **** 			break;
+ 525              		.loc 1 175 4
+ 526 0044 07E0     		b	.L27
+ 527              	.L26:
+ 176:../source/comunicationHandler.c **** 		case ORIENTATION_UPD:
+ 177:../source/comunicationHandler.c **** 			*boardDATA = myBoard.norte;
+ 528              		.loc 1 177 24
+ 529 0046 FB6A     		ldr	r3, [r7, #44]
+ 530              		.loc 1 177 15
+ 531 0048 1AB2     		sxth	r2, r3
+ 532 004a BB68     		ldr	r3, [r7, #8]
+ 533 004c 1A80     		strh	r2, [r3]	@ movhi
+ 178:../source/comunicationHandler.c **** 			buf[0] = 'O';
+ 534              		.loc 1 178 11
+ 535 004e FB68     		ldr	r3, [r7, #12]
+ 536 0050 4F22     		movs	r2, #79
+ 537 0052 1A70     		strb	r2, [r3]
+ 179:../source/comunicationHandler.c **** 			break;
+ 538              		.loc 1 179 4
+ 539 0054 00BF     		nop
+ 540              	.L27:
+ 180:../source/comunicationHandler.c **** 	}
+ 181:../source/comunicationHandler.c **** 
+ 182:../source/comunicationHandler.c **** 	if(boardDATA == 0)
+ 541              		.loc 1 182 4
+ 542 0056 BB68     		ldr	r3, [r7, #8]
+ 543 0058 002B     		cmp	r3, #0
+ 544 005a 06D1     		bne	.L30
+ 183:../source/comunicationHandler.c **** 	{
+ 184:../source/comunicationHandler.c **** 		buf[1] = 0;
+ 545              		.loc 1 184 6
+ 546 005c FB68     		ldr	r3, [r7, #12]
+ 547 005e 0133     		adds	r3, r3, #1
+ 548              		.loc 1 184 10
+ 549 0060 0022     		movs	r2, #0
+ 550 0062 1A70     		strb	r2, [r3]
+ 185:../source/comunicationHandler.c **** 		nBytes = 2;
+ 551              		.loc 1 185 10
+ 552 0064 0223     		movs	r3, #2
+ 553 0066 FB82     		strh	r3, [r7, #22]	@ movhi
+ 554 0068 80E0     		b	.L31
+ 555              	.L30:
+ 556              	.LBB2:
+ 186:../source/comunicationHandler.c **** 	}
+ 187:../source/comunicationHandler.c **** 	else
+ 188:../source/comunicationHandler.c **** 	{
+ 189:../source/comunicationHandler.c **** 		// Defino signo
+ 190:../source/comunicationHandler.c **** 		if(*boardDATA > 0)
+ 557              		.loc 1 190 6
+ 558 006a BB68     		ldr	r3, [r7, #8]
+ 559 006c B3F90030 		ldrsh	r3, [r3]
+ 560              		.loc 1 190 5
+ 561 0070 002B     		cmp	r3, #0
+ 562 0072 04DD     		ble	.L32
+ 191:../source/comunicationHandler.c **** 		{
+ 192:../source/comunicationHandler.c **** 			buf[1] = '+';
+ 563              		.loc 1 192 7
+ 564 0074 FB68     		ldr	r3, [r7, #12]
+ 565 0076 0133     		adds	r3, r3, #1
+ 566              		.loc 1 192 11
+ 567 0078 2B22     		movs	r2, #43
+ 568 007a 1A70     		strb	r2, [r3]
+ 569 007c 0CE0     		b	.L33
+ 570              	.L32:
+ 193:../source/comunicationHandler.c **** 		}
+ 194:../source/comunicationHandler.c **** 		else
+ 195:../source/comunicationHandler.c **** 		{
+ 196:../source/comunicationHandler.c **** 			buf[1] = '-';
+ 571              		.loc 1 196 7
+ 572 007e FB68     		ldr	r3, [r7, #12]
+ 573 0080 0133     		adds	r3, r3, #1
+ 574              		.loc 1 196 11
+ 575 0082 2D22     		movs	r2, #45
+ 576 0084 1A70     		strb	r2, [r3]
+ 197:../source/comunicationHandler.c **** 			*boardDATA = -(*boardDATA);
+ 577              		.loc 1 197 19
+ 578 0086 BB68     		ldr	r3, [r7, #8]
+ 579 0088 B3F90030 		ldrsh	r3, [r3]
+ 580 008c 9BB2     		uxth	r3, r3
+ 581              		.loc 1 197 15
+ 582 008e 5B42     		rsbs	r3, r3, #0
+ 583 0090 9BB2     		uxth	r3, r3
+ 584 0092 1AB2     		sxth	r2, r3
+ 585 0094 BB68     		ldr	r3, [r7, #8]
+ 586 0096 1A80     		strh	r2, [r3]	@ movhi
+ 587              	.L33:
+ 198:../source/comunicationHandler.c **** 		}
+ 199:../source/comunicationHandler.c **** 
+ 200:../source/comunicationHandler.c **** 
+ 201:../source/comunicationHandler.c **** 		// Defino digitos
+ 202:../source/comunicationHandler.c **** 		uint8_t c, d, u;
+ 203:../source/comunicationHandler.c **** 		c = ((*boardDATA / 100) % 10) + '0';
+ 588              		.loc 1 203 9
+ 589 0098 BB68     		ldr	r3, [r7, #8]
+ 590 009a B3F90030 		ldrsh	r3, [r3]
+ 591              		.loc 1 203 33
+ 592 009e 384A     		ldr	r2, .L37
+ 593 00a0 82FB0312 		smull	r1, r2, r2, r3
+ 594 00a4 5211     		asrs	r2, r2, #5
+ 595 00a6 DB17     		asrs	r3, r3, #31
+ 596 00a8 D31A     		subs	r3, r2, r3
+ 597 00aa 1AB2     		sxth	r2, r3
+ 598 00ac 354B     		ldr	r3, .L37+4
+ 599 00ae 83FB0213 		smull	r1, r3, r3, r2
+ 600 00b2 9910     		asrs	r1, r3, #2
+ 601 00b4 D317     		asrs	r3, r2, #31
+ 602 00b6 C91A     		subs	r1, r1, r3
+ 603 00b8 0B46     		mov	r3, r1
+ 604 00ba 9B00     		lsls	r3, r3, #2
+ 605 00bc 0B44     		add	r3, r3, r1
+ 606 00be 5B00     		lsls	r3, r3, #1
+ 607 00c0 D31A     		subs	r3, r2, r3
+ 608 00c2 1BB2     		sxth	r3, r3
+ 609 00c4 DBB2     		uxtb	r3, r3
+ 610              		.loc 1 203 5
+ 611 00c6 3033     		adds	r3, r3, #48
+ 612 00c8 7B75     		strb	r3, [r7, #21]
+ 204:../source/comunicationHandler.c **** 		d = ((*boardDATA / 10) % 10) + '0';
+ 613              		.loc 1 204 9
+ 614 00ca BB68     		ldr	r3, [r7, #8]
+ 615 00cc B3F90030 		ldrsh	r3, [r3]
+ 616              		.loc 1 204 32
+ 617 00d0 2C4A     		ldr	r2, .L37+4
+ 618 00d2 82FB0312 		smull	r1, r2, r2, r3
+ 619 00d6 9210     		asrs	r2, r2, #2
+ 620 00d8 DB17     		asrs	r3, r3, #31
+ 621 00da D31A     		subs	r3, r2, r3
+ 622 00dc 1AB2     		sxth	r2, r3
+ 623 00de 294B     		ldr	r3, .L37+4
+ 624 00e0 83FB0213 		smull	r1, r3, r3, r2
+ 625 00e4 9910     		asrs	r1, r3, #2
+ 626 00e6 D317     		asrs	r3, r2, #31
+ 627 00e8 C91A     		subs	r1, r1, r3
+ 628 00ea 0B46     		mov	r3, r1
+ 629 00ec 9B00     		lsls	r3, r3, #2
+ 630 00ee 0B44     		add	r3, r3, r1
+ 631 00f0 5B00     		lsls	r3, r3, #1
+ 632 00f2 D31A     		subs	r3, r2, r3
+ 633 00f4 1BB2     		sxth	r3, r3
+ 634 00f6 DBB2     		uxtb	r3, r3
+ 635              		.loc 1 204 5
+ 636 00f8 3033     		adds	r3, r3, #48
+ 637 00fa 3B75     		strb	r3, [r7, #20]
+ 205:../source/comunicationHandler.c **** 
+ 206:../source/comunicationHandler.c **** 
+ 207:../source/comunicationHandler.c **** 		u = (*boardDATA % 10) + '0';
+ 638              		.loc 1 207 8
+ 639 00fc BB68     		ldr	r3, [r7, #8]
+ 640 00fe B3F90020 		ldrsh	r2, [r3]
+ 641              		.loc 1 207 25
+ 642 0102 204B     		ldr	r3, .L37+4
+ 643 0104 83FB0213 		smull	r1, r3, r3, r2
+ 644 0108 9910     		asrs	r1, r3, #2
+ 645 010a D317     		asrs	r3, r2, #31
+ 646 010c C91A     		subs	r1, r1, r3
+ 647 010e 0B46     		mov	r3, r1
+ 648 0110 9B00     		lsls	r3, r3, #2
+ 649 0112 0B44     		add	r3, r3, r1
+ 650 0114 5B00     		lsls	r3, r3, #1
+ 651 0116 D31A     		subs	r3, r2, r3
+ 652 0118 1BB2     		sxth	r3, r3
+ 653 011a DBB2     		uxtb	r3, r3
+ 654              		.loc 1 207 5
+ 655 011c 3033     		adds	r3, r3, #48
+ 656 011e FB74     		strb	r3, [r7, #19]
+ 208:../source/comunicationHandler.c **** 
+ 209:../source/comunicationHandler.c **** 		if(c != '0')
+ 657              		.loc 1 209 5
+ 658 0120 7B7D     		ldrb	r3, [r7, #21]	@ zero_extendqisi2
+ 659 0122 302B     		cmp	r3, #48
+ 660 0124 0ED0     		beq	.L34
+ 210:../source/comunicationHandler.c **** 		{
+ 211:../source/comunicationHandler.c **** 			buf[2] = c;
+ 661              		.loc 1 211 7
+ 662 0126 FB68     		ldr	r3, [r7, #12]
+ 663 0128 0233     		adds	r3, r3, #2
+ 664              		.loc 1 211 11
+ 665 012a 7A7D     		ldrb	r2, [r7, #21]
+ 666 012c 1A70     		strb	r2, [r3]
+ 212:../source/comunicationHandler.c **** 			buf[3] = d;
+ 667              		.loc 1 212 7
+ 668 012e FB68     		ldr	r3, [r7, #12]
+ 669 0130 0333     		adds	r3, r3, #3
+ 670              		.loc 1 212 11
+ 671 0132 3A7D     		ldrb	r2, [r7, #20]
+ 672 0134 1A70     		strb	r2, [r3]
+ 213:../source/comunicationHandler.c **** 			buf[4] = u;
+ 673              		.loc 1 213 7
+ 674 0136 FB68     		ldr	r3, [r7, #12]
+ 675 0138 0433     		adds	r3, r3, #4
+ 676              		.loc 1 213 11
+ 677 013a FA7C     		ldrb	r2, [r7, #19]
+ 678 013c 1A70     		strb	r2, [r3]
+ 214:../source/comunicationHandler.c **** 			nBytes = 5;
+ 679              		.loc 1 214 11
+ 680 013e 0523     		movs	r3, #5
+ 681 0140 FB82     		strh	r3, [r7, #22]	@ movhi
+ 682 0142 13E0     		b	.L31
+ 683              	.L34:
+ 215:../source/comunicationHandler.c **** 		}
+ 216:../source/comunicationHandler.c **** 		else
+ 217:../source/comunicationHandler.c **** 		{
+ 218:../source/comunicationHandler.c **** 			if(d != '0')
+ 684              		.loc 1 218 6
+ 685 0144 3B7D     		ldrb	r3, [r7, #20]	@ zero_extendqisi2
+ 686 0146 302B     		cmp	r3, #48
+ 687 0148 0AD0     		beq	.L35
+ 219:../source/comunicationHandler.c **** 			{
+ 220:../source/comunicationHandler.c **** 				buf[2] = d;
+ 688              		.loc 1 220 8
+ 689 014a FB68     		ldr	r3, [r7, #12]
+ 690 014c 0233     		adds	r3, r3, #2
+ 691              		.loc 1 220 12
+ 692 014e 3A7D     		ldrb	r2, [r7, #20]
+ 693 0150 1A70     		strb	r2, [r3]
+ 221:../source/comunicationHandler.c **** 				buf[3] = u;
+ 694              		.loc 1 221 8
+ 695 0152 FB68     		ldr	r3, [r7, #12]
+ 696 0154 0333     		adds	r3, r3, #3
+ 697              		.loc 1 221 12
+ 698 0156 FA7C     		ldrb	r2, [r7, #19]
+ 699 0158 1A70     		strb	r2, [r3]
+ 222:../source/comunicationHandler.c **** 				nBytes = 4;
+ 700              		.loc 1 222 12
+ 701 015a 0423     		movs	r3, #4
+ 702 015c FB82     		strh	r3, [r7, #22]	@ movhi
+ 703 015e 05E0     		b	.L31
+ 704              	.L35:
+ 223:../source/comunicationHandler.c **** 			}
+ 224:../source/comunicationHandler.c **** 			else
+ 225:../source/comunicationHandler.c **** 			{
+ 226:../source/comunicationHandler.c **** 				buf[2] = u;
+ 705              		.loc 1 226 8
+ 706 0160 FB68     		ldr	r3, [r7, #12]
+ 707 0162 0233     		adds	r3, r3, #2
+ 708              		.loc 1 226 12
+ 709 0164 FA7C     		ldrb	r2, [r7, #19]
+ 710 0166 1A70     		strb	r2, [r3]
+ 227:../source/comunicationHandler.c **** 				nBytes = 3;
+ 711              		.loc 1 227 12
+ 712 0168 0323     		movs	r3, #3
+ 713 016a FB82     		strh	r3, [r7, #22]	@ movhi
+ 714              	.L31:
+ 715              	.LBE2:
+ 228:../source/comunicationHandler.c **** 
+ 229:../source/comunicationHandler.c **** 			}
+ 230:../source/comunicationHandler.c **** 		}
+ 231:../source/comunicationHandler.c **** 	}
+ 232:../source/comunicationHandler.c **** 
+ 233:../source/comunicationHandler.c **** 	return nBytes;
+ 716              		.loc 1 233 9
+ 717 016c B7F91630 		ldrsh	r3, [r7, #22]
+ 234:../source/comunicationHandler.c **** }
+ 718              		.loc 1 234 1
+ 719 0170 1846     		mov	r0, r3
+ 720 0172 1C37     		adds	r7, r7, #28
+ 721              		.cfi_def_cfa_offset 12
+ 722 0174 BD46     		mov	sp, r7
+ 723              		.cfi_def_cfa_register 13
+ 724              		@ sp needed
+ 725 0176 5DF8047B 		ldr	r7, [sp], #4
+ 726              		.cfi_restore 7
+ 727              		.cfi_def_cfa_offset 8
+ 728 017a 02B0     		add	sp, sp, #8
+ 729              		.cfi_def_cfa_offset 0
+ 730 017c 7047     		bx	lr
+ 731              	.L38:
+ 732 017e 00BF     		.align	2
+ 733              	.L37:
+ 734 0180 1F85EB51 		.word	1374389535
+ 735 0184 67666666 		.word	1717986919
+ 736              		.cfi_endproc
+ 737              	.LFE125:
+ 739              		.section	.text.comunicationHandler_send2Ext,"ax",%progbits
+ 740              		.align	1
+ 741              		.global	comunicationHandler_send2Ext
+ 742              		.syntax unified
+ 743              		.thumb
+ 744              		.thumb_func
+ 746              	comunicationHandler_send2Ext:
+ 747              	.LFB126:
+ 235:../source/comunicationHandler.c **** 
+ 236:../source/comunicationHandler.c **** void comunicationHandler_send2Ext(Orient_t myBoard, uint8_t typeUPD)
+ 237:../source/comunicationHandler.c **** {
+ 748              		.loc 1 237 1
+ 749              		.cfi_startproc
+ 750              		@ args = 0, pretend = 0, frame = 48
+ 751              		@ frame_needed = 1, uses_anonymous_args = 0
+ 752 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 753              		.cfi_def_cfa_offset 20
+ 754              		.cfi_offset 4, -20
+ 755              		.cfi_offset 5, -16
+ 756              		.cfi_offset 6, -12
+ 757              		.cfi_offset 7, -8
+ 758              		.cfi_offset 14, -4
+ 759 0002 8FB0     		sub	sp, sp, #60
+ 760              		.cfi_def_cfa_offset 80
+ 761 0004 02AF     		add	r7, sp, #8
+ 762              		.cfi_def_cfa 7, 72
+ 763 0006 3C1D     		adds	r4, r7, #4
+ 764 0008 84E80700 		stm	r4, {r0, r1, r2}
+ 765 000c FB70     		strb	r3, [r7, #3]
+ 238:../source/comunicationHandler.c **** 	int16_t boardDATA, nBytes;
+ 239:../source/comunicationHandler.c **** 	char buffer[5]; // Considero peor caso, pero cuando mando indico cuantos bytes son
+ 240:../source/comunicationHandler.c **** 
+ 241:../source/comunicationHandler.c **** 	nBytes = ComHandler_CAN_Parser(buffer, &boardDATA, typeUPD, myBoard);
+ 766              		.loc 1 241 11
+ 767 000e FA78     		ldrb	r2, [r7, #3]	@ zero_extendqisi2
+ 768 0010 07F12805 		add	r5, r7, #40
+ 769 0014 07F12004 		add	r4, r7, #32
+ 770 0018 6E46     		mov	r6, sp
+ 771 001a 07F10803 		add	r3, r7, #8
+ 772 001e 93E80300 		ldm	r3, {r0, r1}
+ 773 0022 86E80300 		stm	r6, {r0, r1}
+ 774 0026 7B68     		ldr	r3, [r7, #4]
+ 775 0028 2946     		mov	r1, r5
+ 776 002a 2046     		mov	r0, r4
+ 777 002c FFF7FEFF 		bl	ComHandler_CAN_Parser
+ 778 0030 0346     		mov	r3, r0
+ 779 0032 7B85     		strh	r3, [r7, #42]	@ movhi
+ 242:../source/comunicationHandler.c **** 
+ 243:../source/comunicationHandler.c **** 	RXB_RAWDATA_t data_to_send;
+ 244:../source/comunicationHandler.c **** 	data_to_send.SID = 0x105;
+ 780              		.loc 1 244 19
+ 781 0034 40F20513 		movw	r3, #261
+ 782 0038 BB82     		strh	r3, [r7, #20]	@ movhi
+ 245:../source/comunicationHandler.c **** 	data_to_send.DLC = nBytes;
+ 783              		.loc 1 245 19
+ 784 003a 7B8D     		ldrh	r3, [r7, #42]	@ movhi
+ 785 003c DBB2     		uxtb	r3, r3
+ 786 003e BB75     		strb	r3, [r7, #22]
+ 246:../source/comunicationHandler.c **** 	uint32_t i;
+ 247:../source/comunicationHandler.c **** 	for(i = 0; i < nBytes; i++)
+ 787              		.loc 1 247 8
+ 788 0040 0023     		movs	r3, #0
+ 789 0042 FB62     		str	r3, [r7, #44]
+ 790              		.loc 1 247 2
+ 791 0044 0DE0     		b	.L40
+ 792              	.L41:
+ 248:../source/comunicationHandler.c **** 	{
+ 249:../source/comunicationHandler.c **** 		data_to_send.Dn[i] = buffer[i];
+ 793              		.loc 1 249 30 discriminator 3
+ 794 0046 07F12002 		add	r2, r7, #32
+ 795 004a FB6A     		ldr	r3, [r7, #44]
+ 796 004c 1344     		add	r3, r3, r2
+ 797 004e 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 798              		.loc 1 249 22 discriminator 3
+ 799 0050 07F11702 		add	r2, r7, #23
+ 800 0054 FB6A     		ldr	r3, [r7, #44]
+ 801 0056 1344     		add	r3, r3, r2
+ 802 0058 0A46     		mov	r2, r1
+ 803 005a 1A70     		strb	r2, [r3]
+ 247:../source/comunicationHandler.c **** 	{
+ 804              		.loc 1 247 26 discriminator 3
+ 805 005c FB6A     		ldr	r3, [r7, #44]
+ 806 005e 0133     		adds	r3, r3, #1
+ 807 0060 FB62     		str	r3, [r7, #44]
+ 808              	.L40:
+ 247:../source/comunicationHandler.c **** 	{
+ 809              		.loc 1 247 15 discriminator 1
+ 810 0062 B7F92A30 		ldrsh	r3, [r7, #42]
+ 811 0066 FA6A     		ldr	r2, [r7, #44]
+ 812 0068 9A42     		cmp	r2, r3
+ 813 006a ECD3     		bcc	.L41
+ 250:../source/comunicationHandler.c **** 	}
+ 251:../source/comunicationHandler.c **** 
+ 252:../source/comunicationHandler.c **** 	//todo: cambiar por el posta
+ 253:../source/comunicationHandler.c **** 	if (isWriteAvailable(typeUPD) && !CAN_SPI_Is_Busy())
+ 814              		.loc 1 253 6
+ 815 006c FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 816 006e 1846     		mov	r0, r3
+ 817 0070 FFF7FEFF 		bl	isWriteAvailable
+ 818 0074 0346     		mov	r3, r0
+ 819              		.loc 1 253 5
+ 820 0076 002B     		cmp	r3, #0
+ 821 0078 09D0     		beq	.L42
+ 822              		.loc 1 253 36 discriminator 1
+ 823 007a FFF7FEFF 		bl	CAN_SPI_Is_Busy
+ 824 007e 0346     		mov	r3, r0
+ 825              		.loc 1 253 32 discriminator 1
+ 826 0080 002B     		cmp	r3, #0
+ 827 0082 04D1     		bne	.L42
+ 254:../source/comunicationHandler.c **** 	{
+ 255:../source/comunicationHandler.c **** 		CAN_SPI_SendInfo(&data_to_send);
+ 828              		.loc 1 255 3
+ 829 0084 07F11403 		add	r3, r7, #20
+ 830 0088 1846     		mov	r0, r3
+ 831 008a FFF7FEFF 		bl	CAN_SPI_SendInfo
+ 832              	.L42:
+ 256:../source/comunicationHandler.c **** 	}
+ 257:../source/comunicationHandler.c **** 
+ 258:../source/comunicationHandler.c **** 	bufferPC[0] = myGroup + '0';
+ 833              		.loc 1 258 24
+ 834 008e 454B     		ldr	r3, .L50
+ 835 0090 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 836 0092 3033     		adds	r3, r3, #48
+ 837 0094 DAB2     		uxtb	r2, r3
+ 838              		.loc 1 258 14
+ 839 0096 444B     		ldr	r3, .L50+4
+ 840 0098 1A70     		strb	r2, [r3]
+ 259:../source/comunicationHandler.c **** 	bufferPC[1] = buffer[0];
+ 841              		.loc 1 259 22
+ 842 009a 97F82020 		ldrb	r2, [r7, #32]	@ zero_extendqisi2
+ 843              		.loc 1 259 14
+ 844 009e 424B     		ldr	r3, .L50+4
+ 845 00a0 5A70     		strb	r2, [r3, #1]
+ 260:../source/comunicationHandler.c **** 	if(boardDATA != 0)
+ 846              		.loc 1 260 15
+ 847 00a2 B7F92830 		ldrsh	r3, [r7, #40]
+ 848              		.loc 1 260 4
+ 849 00a6 002B     		cmp	r3, #0
+ 850 00a8 04D0     		beq	.L43
+ 261:../source/comunicationHandler.c **** 	{
+ 262:../source/comunicationHandler.c **** 		bufferPC[2] = buffer[1];
+ 851              		.loc 1 262 23
+ 852 00aa 97F82120 		ldrb	r2, [r7, #33]	@ zero_extendqisi2
+ 853              		.loc 1 262 15
+ 854 00ae 3E4B     		ldr	r3, .L50+4
+ 855 00b0 9A70     		strb	r2, [r3, #2]
+ 856 00b2 02E0     		b	.L44
+ 857              	.L43:
+ 263:../source/comunicationHandler.c **** 	}
+ 264:../source/comunicationHandler.c **** 	else
+ 265:../source/comunicationHandler.c **** 	{
+ 266:../source/comunicationHandler.c **** 		bufferPC[2] = '+';
+ 858              		.loc 1 266 15
+ 859 00b4 3C4B     		ldr	r3, .L50+4
+ 860 00b6 2B22     		movs	r2, #43
+ 861 00b8 9A70     		strb	r2, [r3, #2]
+ 862              	.L44:
+ 267:../source/comunicationHandler.c **** 	}
+ 268:../source/comunicationHandler.c **** 
+ 269:../source/comunicationHandler.c **** 	if(nBytes == 2) // Es 0
+ 863              		.loc 1 269 4
+ 864 00ba B7F92A30 		ldrsh	r3, [r7, #42]
+ 865 00be 022B     		cmp	r3, #2
+ 866 00c0 09D1     		bne	.L45
+ 270:../source/comunicationHandler.c **** 	{
+ 271:../source/comunicationHandler.c **** 		bufferPC[3] = '0';
+ 867              		.loc 1 271 15
+ 868 00c2 394B     		ldr	r3, .L50+4
+ 869 00c4 3022     		movs	r2, #48
+ 870 00c6 DA70     		strb	r2, [r3, #3]
+ 272:../source/comunicationHandler.c **** 		bufferPC[4] = '0';
+ 871              		.loc 1 272 15
+ 872 00c8 374B     		ldr	r3, .L50+4
+ 873 00ca 3022     		movs	r2, #48
+ 874 00cc 1A71     		strb	r2, [r3, #4]
+ 273:../source/comunicationHandler.c **** 		bufferPC[5] = '0';
+ 875              		.loc 1 273 15
+ 876 00ce 364B     		ldr	r3, .L50+4
+ 877 00d0 3022     		movs	r2, #48
+ 878 00d2 5A71     		strb	r2, [r3, #5]
+ 879 00d4 2EE0     		b	.L46
+ 880              	.L45:
+ 274:../source/comunicationHandler.c **** 	}
+ 275:../source/comunicationHandler.c **** 	else if(nBytes == 3)
+ 881              		.loc 1 275 9
+ 882 00d6 B7F92A30 		ldrsh	r3, [r7, #42]
+ 883 00da 032B     		cmp	r3, #3
+ 884 00dc 0AD1     		bne	.L47
+ 276:../source/comunicationHandler.c **** 	{
+ 277:../source/comunicationHandler.c **** 		bufferPC[3] = '0';
+ 885              		.loc 1 277 15
+ 886 00de 324B     		ldr	r3, .L50+4
+ 887 00e0 3022     		movs	r2, #48
+ 888 00e2 DA70     		strb	r2, [r3, #3]
+ 278:../source/comunicationHandler.c **** 		bufferPC[4] = '0';
+ 889              		.loc 1 278 15
+ 890 00e4 304B     		ldr	r3, .L50+4
+ 891 00e6 3022     		movs	r2, #48
+ 892 00e8 1A71     		strb	r2, [r3, #4]
+ 279:../source/comunicationHandler.c **** 		bufferPC[5] = buffer[2];
+ 893              		.loc 1 279 23
+ 894 00ea 97F82220 		ldrb	r2, [r7, #34]	@ zero_extendqisi2
+ 895              		.loc 1 279 15
+ 896 00ee 2E4B     		ldr	r3, .L50+4
+ 897 00f0 5A71     		strb	r2, [r3, #5]
+ 898 00f2 1FE0     		b	.L46
+ 899              	.L47:
+ 280:../source/comunicationHandler.c **** 	}
+ 281:../source/comunicationHandler.c **** 	else if(nBytes == 4)
+ 900              		.loc 1 281 9
+ 901 00f4 B7F92A30 		ldrsh	r3, [r7, #42]
+ 902 00f8 042B     		cmp	r3, #4
+ 903 00fa 0BD1     		bne	.L48
+ 282:../source/comunicationHandler.c **** 	{
+ 283:../source/comunicationHandler.c **** 		bufferPC[3] = '0';
+ 904              		.loc 1 283 15
+ 905 00fc 2A4B     		ldr	r3, .L50+4
+ 906 00fe 3022     		movs	r2, #48
+ 907 0100 DA70     		strb	r2, [r3, #3]
+ 284:../source/comunicationHandler.c **** 		bufferPC[4] = buffer[2];
+ 908              		.loc 1 284 23
+ 909 0102 97F82220 		ldrb	r2, [r7, #34]	@ zero_extendqisi2
+ 910              		.loc 1 284 15
+ 911 0106 284B     		ldr	r3, .L50+4
+ 912 0108 1A71     		strb	r2, [r3, #4]
+ 285:../source/comunicationHandler.c **** 		bufferPC[5] = buffer[3];
+ 913              		.loc 1 285 23
+ 914 010a 97F82320 		ldrb	r2, [r7, #35]	@ zero_extendqisi2
+ 915              		.loc 1 285 15
+ 916 010e 264B     		ldr	r3, .L50+4
+ 917 0110 5A71     		strb	r2, [r3, #5]
+ 918 0112 0FE0     		b	.L46
+ 919              	.L48:
+ 286:../source/comunicationHandler.c **** 	}
+ 287:../source/comunicationHandler.c **** 	else if(nBytes == 5)
+ 920              		.loc 1 287 9
+ 921 0114 B7F92A30 		ldrsh	r3, [r7, #42]
+ 922 0118 052B     		cmp	r3, #5
+ 923 011a 0BD1     		bne	.L46
+ 288:../source/comunicationHandler.c **** 	{
+ 289:../source/comunicationHandler.c **** 		bufferPC[3] = buffer[2];
+ 924              		.loc 1 289 23
+ 925 011c 97F82220 		ldrb	r2, [r7, #34]	@ zero_extendqisi2
+ 926              		.loc 1 289 15
+ 927 0120 214B     		ldr	r3, .L50+4
+ 928 0122 DA70     		strb	r2, [r3, #3]
+ 290:../source/comunicationHandler.c **** 		bufferPC[4] = buffer[3];
+ 929              		.loc 1 290 23
+ 930 0124 97F82320 		ldrb	r2, [r7, #35]	@ zero_extendqisi2
+ 931              		.loc 1 290 15
+ 932 0128 1F4B     		ldr	r3, .L50+4
+ 933 012a 1A71     		strb	r2, [r3, #4]
+ 291:../source/comunicationHandler.c **** 		bufferPC[5] = buffer[4];
+ 934              		.loc 1 291 23
+ 935 012c 97F82420 		ldrb	r2, [r7, #36]	@ zero_extendqisi2
+ 936              		.loc 1 291 15
+ 937 0130 1D4B     		ldr	r3, .L50+4
+ 938 0132 5A71     		strb	r2, [r3, #5]
+ 939              	.L46:
+ 292:../source/comunicationHandler.c **** 	}
+ 293:../source/comunicationHandler.c **** 	/*
+ 294:../source/comunicationHandler.c **** 	bufferPC[0]='2';
+ 295:../source/comunicationHandler.c **** 	bufferPC[1]='R';
+ 296:../source/comunicationHandler.c **** 	bufferPC[2]='+';
+ 297:../source/comunicationHandler.c **** 	bufferPC[3]='0';
+ 298:../source/comunicationHandler.c **** 	bufferPC[4]='1';
+ 299:../source/comunicationHandler.c **** 	bufferPC[5]='5';
+ 300:../source/comunicationHandler.c **** 	*/
+ 301:../source/comunicationHandler.c **** 	if(isWriteAvailable(typeUPD))
+ 940              		.loc 1 301 5
+ 941 0134 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 942 0136 1846     		mov	r0, r3
+ 943 0138 FFF7FEFF 		bl	isWriteAvailable
+ 944 013c 0346     		mov	r3, r0
+ 945              		.loc 1 301 4
+ 946 013e 002B     		cmp	r3, #0
+ 947 0140 08D0     		beq	.L49
+ 302:../source/comunicationHandler.c **** 	{
+ 303:../source/comunicationHandler.c **** 		UART_SendMsg(bufferPC, 0);
+ 948              		.loc 1 303 3
+ 949 0142 0021     		movs	r1, #0
+ 950 0144 1848     		ldr	r0, .L50+4
+ 951 0146 FFF7FEFF 		bl	UART_SendMsg
+ 304:../source/comunicationHandler.c **** 		setWriteAvailable(typeUPD,false);
+ 952              		.loc 1 304 3
+ 953 014a FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 954 014c 0021     		movs	r1, #0
+ 955 014e 1846     		mov	r0, r3
+ 956 0150 FFF7FEFF 		bl	setWriteAvailable
+ 957              	.L49:
+ 305:../source/comunicationHandler.c **** 	}
+ 306:../source/comunicationHandler.c **** 
+ 307:../source/comunicationHandler.c **** 	Boards[myGroup].rolido = myBoard.rolido;
+ 958              		.loc 1 307 17
+ 959 0154 134B     		ldr	r3, .L50
+ 960 0156 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 961 0158 1846     		mov	r0, r3
+ 962              		.loc 1 307 34
+ 963 015a 7A68     		ldr	r2, [r7, #4]
+ 964              		.loc 1 307 25
+ 965 015c 1349     		ldr	r1, .L50+8
+ 966 015e 0346     		mov	r3, r0
+ 967 0160 5B00     		lsls	r3, r3, #1
+ 968 0162 0344     		add	r3, r3, r0
+ 969 0164 9B00     		lsls	r3, r3, #2
+ 970 0166 0B44     		add	r3, r3, r1
+ 971 0168 1A60     		str	r2, [r3]
+ 308:../source/comunicationHandler.c **** 	Boards[myGroup].cabeceo = myBoard.cabeceo;
+ 972              		.loc 1 308 17
+ 973 016a 0E4B     		ldr	r3, .L50
+ 974 016c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 975 016e 1846     		mov	r0, r3
+ 976              		.loc 1 308 35
+ 977 0170 BA68     		ldr	r2, [r7, #8]
+ 978              		.loc 1 308 26
+ 979 0172 0E49     		ldr	r1, .L50+8
+ 980 0174 0346     		mov	r3, r0
+ 981 0176 5B00     		lsls	r3, r3, #1
+ 982 0178 0344     		add	r3, r3, r0
+ 983 017a 9B00     		lsls	r3, r3, #2
+ 984 017c 0B44     		add	r3, r3, r1
+ 985 017e 0433     		adds	r3, r3, #4
+ 986 0180 1A60     		str	r2, [r3]
+ 309:../source/comunicationHandler.c **** 	Boards[myGroup].norte = myBoard.norte;
+ 987              		.loc 1 309 17
+ 988 0182 084B     		ldr	r3, .L50
+ 989 0184 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 990 0186 1846     		mov	r0, r3
+ 991              		.loc 1 309 33
+ 992 0188 FA68     		ldr	r2, [r7, #12]
+ 993              		.loc 1 309 24
+ 994 018a 0849     		ldr	r1, .L50+8
+ 995 018c 0346     		mov	r3, r0
+ 996 018e 5B00     		lsls	r3, r3, #1
+ 997 0190 0344     		add	r3, r3, r0
+ 998 0192 9B00     		lsls	r3, r3, #2
+ 999 0194 0B44     		add	r3, r3, r1
+ 1000 0196 0833     		adds	r3, r3, #8
+ 1001 0198 1A60     		str	r2, [r3]
+ 310:../source/comunicationHandler.c **** }
+ 1002              		.loc 1 310 1
+ 1003 019a 00BF     		nop
+ 1004 019c 3437     		adds	r7, r7, #52
+ 1005              		.cfi_def_cfa_offset 20
+ 1006 019e BD46     		mov	sp, r7
+ 1007              		.cfi_def_cfa_register 13
+ 1008              		@ sp needed
+ 1009 01a0 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 1010              	.L51:
+ 1011 01a2 00BF     		.align	2
+ 1012              	.L50:
+ 1013 01a4 00000000 		.word	myGroup
+ 1014 01a8 00000000 		.word	bufferPC
+ 1015 01ac 00000000 		.word	Boards
+ 1016              		.cfi_endproc
+ 1017              	.LFE126:
+ 1019              		.section	.text.isWriteAvailable,"ax",%progbits
+ 1020              		.align	1
+ 1021              		.global	isWriteAvailable
+ 1022              		.syntax unified
+ 1023              		.thumb
+ 1024              		.thumb_func
+ 1026              	isWriteAvailable:
+ 1027              	.LFB127:
+ 311:../source/comunicationHandler.c **** 
+ 312:../source/comunicationHandler.c **** bool isWriteAvailable(uint8_t typeUPD)
+ 313:../source/comunicationHandler.c **** {
+ 1028              		.loc 1 313 1
+ 1029              		.cfi_startproc
+ 1030              		@ args = 0, pretend = 0, frame = 8
+ 1031              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1032              		@ link register save eliminated.
+ 1033 0000 80B4     		push	{r7}
+ 1034              		.cfi_def_cfa_offset 4
+ 1035              		.cfi_offset 7, -4
+ 1036 0002 83B0     		sub	sp, sp, #12
+ 1037              		.cfi_def_cfa_offset 16
+ 1038 0004 00AF     		add	r7, sp, #0
+ 1039              		.cfi_def_cfa_register 7
+ 1040 0006 0346     		mov	r3, r0
+ 1041 0008 FB71     		strb	r3, [r7, #7]
+ 314:../source/comunicationHandler.c **** 	return writeAvailable[typeUPD];
+ 1042              		.loc 1 314 23
+ 1043 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1044 000c 034A     		ldr	r2, .L54
+ 1045 000e D35C     		ldrb	r3, [r2, r3]	@ zero_extendqisi2
+ 315:../source/comunicationHandler.c **** }
+ 1046              		.loc 1 315 1
+ 1047 0010 1846     		mov	r0, r3
+ 1048 0012 0C37     		adds	r7, r7, #12
+ 1049              		.cfi_def_cfa_offset 4
+ 1050 0014 BD46     		mov	sp, r7
+ 1051              		.cfi_def_cfa_register 13
+ 1052              		@ sp needed
+ 1053 0016 5DF8047B 		ldr	r7, [sp], #4
+ 1054              		.cfi_restore 7
+ 1055              		.cfi_def_cfa_offset 0
+ 1056 001a 7047     		bx	lr
+ 1057              	.L55:
+ 1058              		.align	2
+ 1059              	.L54:
+ 1060 001c 00000000 		.word	writeAvailable
+ 1061              		.cfi_endproc
+ 1062              	.LFE127:
+ 1064              		.section	.text.setWriteAvailable,"ax",%progbits
+ 1065              		.align	1
+ 1066              		.global	setWriteAvailable
+ 1067              		.syntax unified
+ 1068              		.thumb
+ 1069              		.thumb_func
+ 1071              	setWriteAvailable:
+ 1072              	.LFB128:
+ 316:../source/comunicationHandler.c **** 
+ 317:../source/comunicationHandler.c **** void setWriteAvailable(uint8_t typeUPD, bool value)
+ 318:../source/comunicationHandler.c **** {
+ 1073              		.loc 1 318 1
+ 1074              		.cfi_startproc
+ 1075              		@ args = 0, pretend = 0, frame = 8
+ 1076              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1077              		@ link register save eliminated.
+ 1078 0000 80B4     		push	{r7}
+ 1079              		.cfi_def_cfa_offset 4
+ 1080              		.cfi_offset 7, -4
+ 1081 0002 83B0     		sub	sp, sp, #12
+ 1082              		.cfi_def_cfa_offset 16
+ 1083 0004 00AF     		add	r7, sp, #0
+ 1084              		.cfi_def_cfa_register 7
+ 1085 0006 0346     		mov	r3, r0
+ 1086 0008 0A46     		mov	r2, r1
+ 1087 000a FB71     		strb	r3, [r7, #7]
+ 1088 000c 1346     		mov	r3, r2
+ 1089 000e BB71     		strb	r3, [r7, #6]
+ 319:../source/comunicationHandler.c **** 	writeAvailable[typeUPD]=value;
+ 1090              		.loc 1 319 16
+ 1091 0010 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1092              		.loc 1 319 25
+ 1093 0012 0449     		ldr	r1, .L57
+ 1094 0014 BA79     		ldrb	r2, [r7, #6]
+ 1095 0016 CA54     		strb	r2, [r1, r3]
+ 320:../source/comunicationHandler.c **** }
+ 1096              		.loc 1 320 1
+ 1097 0018 00BF     		nop
+ 1098 001a 0C37     		adds	r7, r7, #12
+ 1099              		.cfi_def_cfa_offset 4
+ 1100 001c BD46     		mov	sp, r7
+ 1101              		.cfi_def_cfa_register 13
+ 1102              		@ sp needed
+ 1103 001e 5DF8047B 		ldr	r7, [sp], #4
+ 1104              		.cfi_restore 7
+ 1105              		.cfi_def_cfa_offset 0
+ 1106 0022 7047     		bx	lr
+ 1107              	.L58:
+ 1108              		.align	2
+ 1109              	.L57:
+ 1110 0024 00000000 		.word	writeAvailable
+ 1111              		.cfi_endproc
+ 1112              	.LFE128:
+ 1114              		.text
+ 1115              	.Letext0:
+ 1116              		.file 2 "/Applications/MCUXpressoIDE_11.8.0_1165/ide/plugins/com.nxp.mcuxpresso.tools.macosx_11.8.
+ 1117              		.file 3 "/Users/agus/Micros/Github/Micros-Grupo-5/TPS/I2C/source/drv/accel.h"
+ 1118              		.file 4 "../source/drv/CAN_SPI.h"
+ 1119              		.file 5 "../source/drv/UART.h"
+ 1120              		.file 6 "../source/comunicationHandler.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 comunicationHandler.c
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:21     .bss.Boards:0000000000000000 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:24     .bss.Boards:0000000000000000 Boards
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:29     .bss.myGroup:0000000000000000 myGroup
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:30     .bss.myGroup:0000000000000000 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:32     .data.bufferPC:0000000000000000 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:35     .data.bufferPC:0000000000000000 bufferPC
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:42     .data.writeAvailable:0000000000000000 writeAvailable
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:39     .data.writeAvailable:0000000000000000 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:48     .text.comunicationHandler_init:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:54     .text.comunicationHandler_init:0000000000000000 comunicationHandler_init
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:87     .text.comunicationHandler_init:000000000000001c $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:92     .text.Com_EventHandler:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:98     .text.Com_EventHandler:0000000000000000 Com_EventHandler
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:455    .text.Com_EventHandler:000000000000020c $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:463    .text.ComHandler_CAN_Parser:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:469    .text.ComHandler_CAN_Parser:0000000000000000 ComHandler_CAN_Parser
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:734    .text.ComHandler_CAN_Parser:0000000000000180 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:740    .text.comunicationHandler_send2Ext:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:746    .text.comunicationHandler_send2Ext:0000000000000000 comunicationHandler_send2Ext
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:1026   .text.isWriteAvailable:0000000000000000 isWriteAvailable
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:1071   .text.setWriteAvailable:0000000000000000 setWriteAvailable
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:1013   .text.comunicationHandler_send2Ext:00000000000001a4 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:1020   .text.isWriteAvailable:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:1060   .text.isWriteAvailable:000000000000001c $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:1065   .text.setWriteAvailable:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cciDy7Oy.s:1110   .text.setWriteAvailable:0000000000000024 $d
+                           .group:0000000000000000 wm4.0.23798b1d0196e1dacad68e887eef18fd
+                           .group:0000000000000000 wm4.redlib_version.h.24.4f43d7bc124a54bfe120050dd03d6b37
+                           .group:0000000000000000 wm4.libconfigarm.h.19.34723c94cbd19598192aa6b1e87fca41
+                           .group:0000000000000000 wm4.stdint.h.31.58198de4ea930fb897655479091e17c7
+                           .group:0000000000000000 wm4.stdbool.h.15.fddf1cb2402fd739d8e2516677869231
+                           .group:0000000000000000 wm4.CAN_SPI.h.8.982c55d67150be3d9eb01d5a0e78a8eb
+                           .group:0000000000000000 wm4.MK64F12.h.105.e884e5c80776532d2ec0f5c21e2ea7cb
+                           .group:0000000000000000 wm4.core_cm4.h.42.42f38327ee0970d80f60117e6a3ba2b0
+                           .group:0000000000000000 wm4.cmsis_gcc.h.36.39970cb43ce4b53c82644a1f9bc2eab9
+                           .group:0000000000000000 wm4.core_cm4.h.223.7b48c9958ef5573320c4765074c8b0ce
+                           .group:0000000000000000 wm4.system_MK64F12.h.109.c6d21568e03be21b21c922eb7345d6e3
+                           .group:0000000000000000 wm4.MK64F12.h.475.cafa8e1e521f96f0b72de286863a6df7
+
+UNDEFINED SYMBOLS
+UART_Init
+CAN_SPI_Get_Data
+UART_SendMsg
+CAN_SPI_Is_Busy
+CAN_SPI_SendInfo

@@ -1,0 +1,5 @@
+../source/App.c:46:6:periodicRefresh	24	static
+../source/App.c:85:6:App_Init	8	static
+../source/App.c:103:6:App_Run	8	static
+../source/App.c:128:6:getCAN_Event	16	static
+../source/App.c:135:6:enableSend	8	static

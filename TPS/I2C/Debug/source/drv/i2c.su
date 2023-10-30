@@ -1,0 +1,8 @@
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/I2C/SDK/CMSIS/core_cm4.h:1626:22:NVIC_EnableIRQ	16	static
+../source/drv/i2c.c:95:6:I2C_InitModule	32	static
+../source/drv/i2c.c:144:14:I2C_InitObject	24	static
+../source/drv/i2c.c:184:6:I2C_IRQHandler	24	static
+../source/drv/i2c.c:285:19:SetBaudRate	48	static
+../source/drv/i2c.c:314:9:I2C0_IRQHandler	16	static
+../source/drv/i2c.c:318:6:I2C1_IRQHandler	8	static
+../source/drv/i2c.c:323:6:I2C2_IRQHandler	8	static

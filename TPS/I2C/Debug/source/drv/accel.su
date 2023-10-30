@@ -1,0 +1,8 @@
+../source/drv/accel.c:86:13:FX_ReadReg	24	static
+../source/drv/accel.c:104:13:FX_WriteReg	24	static
+../source/drv/accel.c:111:6:FX_I2C_Init	8	static
+../source/drv/accel.c:127:6:FX_InitSequence	16	static
+../source/drv/accel.c:190:6:FX_RunningSequence	32	static
+../source/drv/accel.c:230:6:FX_PISR	8	static
+../source/drv/accel.c:238:6:FX_I2C_Finished	16	static
+../source/drv/accel.c:248:10:getAccelData	16	static

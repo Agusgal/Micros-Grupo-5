@@ -1,0 +1,17 @@
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/I2C/SDK/CMSIS/core_cm4.h:1626:22:NVIC_EnableIRQ	16	static
+../source/drv/UART.c:116:6:UART_Init	16	static
+../source/drv/UART.c:180:6:UART_SetBaudRate	24	static
+../source/drv/UART.c:204:6:UART_rx_tx_irq_handler	24	static
+../source/drv/UART.c:237:15:UART_Get_Status	16	static
+../source/drv/UART.c:248:15:UART_Get_Data	16	static
+../source/drv/UART.c:259:6:UART_SendChar	16	static
+../source/drv/UART.c:272:6:UART_SendMsg	24	static
+../source/drv/UART.c:302:13:queue_Init	16	static
+../source/drv/UART.c:314:15:push_Queue_Element	16	static
+../source/drv/UART.c:339:16:pull_Queue_Element	24	static
+../source/drv/UART.c:365:16:get_Queue_Status	16	static
+../source/drv/UART.c:372:9:UART0_RX_TX_IRQHandler	16	static
+../source/drv/UART.c:377:9:UART1_RX_TX_IRQHandler	16	static
+../source/drv/UART.c:382:9:UART2_RX_TX_IRQHandler	16	static
+../source/drv/UART.c:387:9:UART3_RX_TX_IRQHandler	16	static
+../source/drv/UART.c:392:9:UART4_RX_TX_IRQHandler	16	static

@@ -1,0 +1,4 @@
+../source/EventQueue/queue.c:40:6:queue_Init	4	static
+../source/EventQueue/queue.c:52:8:push_Queue_Element	16	static
+../source/EventQueue/queue.c:77:12:pull_Queue_Element	16	static
+../source/EventQueue/queue.c:103:9:get_Queue_Status	4	static

@@ -1,0 +1,116 @@
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "../SDK/startup/main.c"
+  20              		.section	.text.main,"ax",%progbits
+  21              		.align	1
+  22              		.global	main
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	main:
+  28              	.LFB123:
+   1:../SDK/startup/main.c **** /***************************************************************************//**
+   2:../SDK/startup/main.c ****   @file     main.c
+   3:../SDK/startup/main.c ****   @brief    FW main
+   4:../SDK/startup/main.c ****   @author   Nicolás Magliola
+   5:../SDK/startup/main.c ****  ******************************************************************************/
+   6:../SDK/startup/main.c **** 
+   7:../SDK/startup/main.c **** #include "hardware.h"
+   8:../SDK/startup/main.c **** #include "../source/drv/CAN_SPI.h"
+   9:../SDK/startup/main.c **** #include "../source/drv/gpio.h"
+  10:../SDK/startup/main.c **** 
+  11:../SDK/startup/main.c **** void App_Init (void);
+  12:../SDK/startup/main.c **** void App_Run (void);
+  13:../SDK/startup/main.c **** 
+  14:../SDK/startup/main.c **** 
+  15:../SDK/startup/main.c **** int main (void)
+  16:../SDK/startup/main.c **** {
+  29              		.loc 1 16 1
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 1, uses_anonymous_args = 0
+  33 0000 80B5     		push	{r7, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 7, -8
+  36              		.cfi_offset 14, -4
+  37 0002 00AF     		add	r7, sp, #0
+  38              		.cfi_def_cfa_register 7
+  17:../SDK/startup/main.c ****     hw_Init();
+  39              		.loc 1 17 5
+  40 0004 FFF7FEFF 		bl	hw_Init
+  18:../SDK/startup/main.c **** 
+  19:../SDK/startup/main.c ****     //gpioMode(I2C_TP_PIN,OUTPUT);
+  20:../SDK/startup/main.c **** 	//gpioMode(CAN_TP_PIN,OUTPUT);
+  21:../SDK/startup/main.c **** 	//gpioWrite(I2C_TP_PIN,HIGH);
+  22:../SDK/startup/main.c **** 	//gpioWrite(CAN_TP_PIN,HIGH);
+  23:../SDK/startup/main.c **** 	//gpioToggle(I2C_TP_PIN);
+  24:../SDK/startup/main.c **** 
+  25:../SDK/startup/main.c ****     hw_DisableInterrupts();
+  41              		.loc 1 25 5
+  42 0008 FFF7FEFF 		bl	hw_DisableInterrupts
+  26:../SDK/startup/main.c ****     App_Init(); /* Program-specific setup */
+  43              		.loc 1 26 5
+  44 000c FFF7FEFF 		bl	App_Init
+  27:../SDK/startup/main.c ****     hw_EnableInterrupts();
+  45              		.loc 1 27 5
+  46 0010 FFF7FEFF 		bl	hw_EnableInterrupts
+  28:../SDK/startup/main.c ****     CAN_SPI_Init ();
+  47              		.loc 1 28 5
+  48 0014 FFF7FEFF 		bl	CAN_SPI_Init
+  49              	.L2:
+  29:../SDK/startup/main.c **** 
+  30:../SDK/startup/main.c ****     __FOREVER__
+  31:../SDK/startup/main.c ****         App_Run(); /* Program-specific loop  */
+  50              		.loc 1 31 9 discriminator 1
+  51 0018 FFF7FEFF 		bl	App_Run
+  52 001c FCE7     		b	.L2
+  53              		.cfi_endproc
+  54              	.LFE123:
+  56              		.text
+  57              	.Letext0:
+  58              		.file 2 "/Users/agus/Micros/Github/Micros-Grupo-5/TPS/I2C/SDK/../source/drv/CAN_SPI.h"
+  59              		.file 3 "../SDK/startup/hardware.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 main.c
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cc98Fftx.s:21     .text.main:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//cc98Fftx.s:27     .text.main:0000000000000000 main
+                           .group:0000000000000000 wm4.0.23798b1d0196e1dacad68e887eef18fd
+                           .group:0000000000000000 wm4.redlib_version.h.24.4f43d7bc124a54bfe120050dd03d6b37
+                           .group:0000000000000000 wm4.libconfigarm.h.19.34723c94cbd19598192aa6b1e87fca41
+                           .group:0000000000000000 wm4.stdint.h.31.58198de4ea930fb897655479091e17c7
+                           .group:0000000000000000 wm4.stdbool.h.15.fddf1cb2402fd739d8e2516677869231
+                           .group:0000000000000000 wm4.fsl_device_registers.h.32.f10b25a7fd7ad45b9a40904c33f28816
+                           .group:0000000000000000 wm4.MK64F12.h.105.e884e5c80776532d2ec0f5c21e2ea7cb
+                           .group:0000000000000000 wm4.core_cm4.h.42.42f38327ee0970d80f60117e6a3ba2b0
+                           .group:0000000000000000 wm4.cmsis_gcc.h.36.39970cb43ce4b53c82644a1f9bc2eab9
+                           .group:0000000000000000 wm4.core_cm4.h.223.7b48c9958ef5573320c4765074c8b0ce
+                           .group:0000000000000000 wm4.system_MK64F12.h.109.c6d21568e03be21b21c922eb7345d6e3
+                           .group:0000000000000000 wm4.MK64F12.h.475.cafa8e1e521f96f0b72de286863a6df7
+                           .group:0000000000000000 wm4.MK64F12_features.h.92.512cea46d882153168efeec0bc3a9da7
+                           .group:0000000000000000 wm4.hardware.h.27.0531344360c1b4ef1fba1263e2a4c488
+                           .group:0000000000000000 wm4.CAN_SPI.h.8.982c55d67150be3d9eb01d5a0e78a8eb
+                           .group:0000000000000000 wm4.gpio.h.29.c6aad71d79bc2c89ec77d6be0e13d3d4
+
+UNDEFINED SYMBOLS
+hw_Init
+hw_DisableInterrupts
+App_Init
+hw_EnableInterrupts
+CAN_SPI_Init
+App_Run

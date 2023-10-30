@@ -1,0 +1,16 @@
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/I2C/SDK/CMSIS/core_cm4.h:1626:22:NVIC_EnableIRQ	16	static
+../source/drv/SPI.c:104:6:SPI_Init	8	static
+../source/drv/SPI.c:166:9:SPI_Get_Status	8	static
+../source/drv/SPI.c:179:9:SPI_Get_Data	16	static
+../source/drv/SPI.c:192:6:SPI_Get_DataBytes	24	static
+../source/drv/SPI.c:207:6:SPI_SendByte	32	static
+../source/drv/SPI.c:238:6:SPI_SendMsg	40	static
+../source/drv/SPI.c:281:6:SPI_SendData	48	static
+../source/drv/SPI.c:323:9:SPI_Transmission_In_Process	8	static
+../source/drv/SPI.c:334:9:SPI_Read_Status	8	static
+../source/drv/SPI.c:350:9:SPI0_IRQHandler	40	static
+../source/drv/SPI.c:398:13:queue_Init	16	static
+../source/drv/SPI.c:410:15:push_Queue_Element	16	static
+../source/drv/SPI.c:437:25:pull_Queue_Element	32	static
+../source/drv/SPI.c:464:16:get_Queue_Status	16	static
+../source/drv/SPI.c:476:13:flush_Queue	16	static

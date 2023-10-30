@@ -1,0 +1,6 @@
+../source/comunicationHandler.c:43:6:comunicationHandler_init	16	static
+../source/comunicationHandler.c:57:6:Com_EventHandler	24	static
+../source/comunicationHandler.c:163:9:ComHandler_CAN_Parser	32	static
+../source/comunicationHandler.c:236:6:comunicationHandler_send2Ext	80	static
+../source/comunicationHandler.c:312:6:isWriteAvailable	16	static
+../source/comunicationHandler.c:317:6:setWriteAvailable	16	static

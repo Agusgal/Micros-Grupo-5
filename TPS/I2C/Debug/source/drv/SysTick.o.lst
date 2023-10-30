@@ -1,0 +1,454 @@
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"SysTick.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "../source/drv/SysTick.c"
+  20              		.section	.bss.systick_Callback_Array,"aw",%nobits
+  21              		.align	2
+  24              	systick_Callback_Array:
+  25 0000 00000000 		.space	180
+  25      00000000 
+  25      00000000 
+  25      00000000 
+  25      00000000 
+  26              		.section	.bss.num_Callbacks,"aw",%nobits
+  27              		.align	2
+  30              	num_Callbacks:
+  31 0000 00000000 		.space	4
+  32              		.section	.text.SysTick_Init,"ax",%progbits
+  33              		.align	1
+  34              		.global	SysTick_Init
+  35              		.syntax unified
+  36              		.thumb
+  37              		.thumb_func
+  39              	SysTick_Init:
+  40              	.LFB123:
+   1:../source/drv/SysTick.c **** /***************************************************************************//**
+   2:../source/drv/SysTick.c ****   @file     App.c
+   3:../source/drv/SysTick.c ****   @brief    Application functions
+   4:../source/drv/SysTick.c ****   @author   Bruno Di Sanzo
+   5:../source/drv/SysTick.c ****  ******************************************************************************/
+   6:../source/drv/SysTick.c **** 
+   7:../source/drv/SysTick.c **** /*******************************************************************************
+   8:../source/drv/SysTick.c ****  * INCLUDE HEADER FILES
+   9:../source/drv/SysTick.c ****  ******************************************************************************/
+  10:../source/drv/SysTick.c **** 
+  11:../source/drv/SysTick.c **** #include "SysTick.h"
+  12:../source/drv/SysTick.c **** #include "hardware.h"
+  13:../source/drv/SysTick.c **** #include "gpio.h"
+  14:../source/drv/SysTick.c **** 
+  15:../source/drv/SysTick.c **** /*******************************************************************************
+  16:../source/drv/SysTick.c ****  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
+  17:../source/drv/SysTick.c ****  ******************************************************************************/
+  18:../source/drv/SysTick.c **** 
+  19:../source/drv/SysTick.c **** #define TEST_PIN_2      10
+  20:../source/drv/SysTick.c **** #define TEST_PORT_2     PC
+  21:../source/drv/SysTick.c **** 
+  22:../source/drv/SysTick.c **** 
+  23:../source/drv/SysTick.c **** typedef struct SysTick_Callback_Element
+  24:../source/drv/SysTick.c **** {
+  25:../source/drv/SysTick.c **** 	void (*fun_Callback)(void);
+  26:../source/drv/SysTick.c **** 	uint32_t num_Cycles;
+  27:../source/drv/SysTick.c **** 	uint32_t counter;
+  28:../source/drv/SysTick.c **** }SysTick_Callback_Element_Type;
+  29:../source/drv/SysTick.c **** 
+  30:../source/drv/SysTick.c **** 
+  31:../source/drv/SysTick.c **** // Array of stored callback functions
+  32:../source/drv/SysTick.c **** static SysTick_Callback_Element_Type systick_Callback_Array [TOTAL_NUM_CALLBACK_FUNCTIONS];
+  33:../source/drv/SysTick.c **** static uint32_t num_Callbacks = 0;
+  34:../source/drv/SysTick.c **** 
+  35:../source/drv/SysTick.c **** 
+  36:../source/drv/SysTick.c **** /*******************************************************************************
+  37:../source/drv/SysTick.c ****  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
+  38:../source/drv/SysTick.c ****  ******************************************************************************/
+  39:../source/drv/SysTick.c **** __ISR__ SysTick_Handler(void);
+  40:../source/drv/SysTick.c **** 
+  41:../source/drv/SysTick.c **** /*******************************************************************************
+  42:../source/drv/SysTick.c ****  *******************************************************************************
+  43:../source/drv/SysTick.c ****                         GLOBAL FUNCTION DEFINITIONS
+  44:../source/drv/SysTick.c ****  *******************************************************************************
+  45:../source/drv/SysTick.c ****  ******************************************************************************/
+  46:../source/drv/SysTick.c **** 
+  47:../source/drv/SysTick.c **** /**
+  48:../source/drv/SysTick.c ****  * @brief Initialize SysTic driver
+  49:../source/drv/SysTick.c ****  * @return Initialization and registration succeed
+  50:../source/drv/SysTick.c ****  */
+  51:../source/drv/SysTick.c **** void SysTick_Init ()
+  52:../source/drv/SysTick.c **** {
+  41              		.loc 1 52 1
+  42              		.cfi_startproc
+  43              		@ args = 0, pretend = 0, frame = 0
+  44              		@ frame_needed = 1, uses_anonymous_args = 0
+  45              		@ link register save eliminated.
+  46 0000 80B4     		push	{r7}
+  47              		.cfi_def_cfa_offset 4
+  48              		.cfi_offset 7, -4
+  49 0002 00AF     		add	r7, sp, #0
+  50              		.cfi_def_cfa_register 7
+  53:../source/drv/SysTick.c **** 	SysTick->CTRL = 0x00;
+  51              		.loc 1 53 9
+  52 0004 084B     		ldr	r3, .L2
+  53              		.loc 1 53 16
+  54 0006 0022     		movs	r2, #0
+  55 0008 1A60     		str	r2, [r3]
+  54:../source/drv/SysTick.c **** 	SysTick->LOAD = (__CORE_CLOCK__/ S_TO_US) * SYSTICK_ISR_PERIOD_US - 1; //12499999L; // <= 125 ms @
+  56              		.loc 1 54 9
+  57 000a 074B     		ldr	r3, .L2
+  58              		.loc 1 54 16
+  59 000c 074A     		ldr	r2, .L2+4
+  60 000e 5A60     		str	r2, [r3, #4]
+  55:../source/drv/SysTick.c **** 	SysTick->VAL  = 0x00;
+  61              		.loc 1 55 9
+  62 0010 054B     		ldr	r3, .L2
+  63              		.loc 1 55 16
+  64 0012 0022     		movs	r2, #0
+  65 0014 9A60     		str	r2, [r3, #8]
+  56:../source/drv/SysTick.c **** 	SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
+  66              		.loc 1 56 9
+  67 0016 044B     		ldr	r3, .L2
+  68              		.loc 1 56 16
+  69 0018 0722     		movs	r2, #7
+  70 001a 1A60     		str	r2, [r3]
+  57:../source/drv/SysTick.c **** 
+  58:../source/drv/SysTick.c **** 	//gpioMode(PORTNUM2PIN(TEST_PORT_2, TEST_PIN_2), OUTPUT);
+  59:../source/drv/SysTick.c **** }
+  71              		.loc 1 59 1
+  72 001c 00BF     		nop
+  73 001e BD46     		mov	sp, r7
+  74              		.cfi_def_cfa_register 13
+  75              		@ sp needed
+  76 0020 5DF8047B 		ldr	r7, [sp], #4
+  77              		.cfi_restore 7
+  78              		.cfi_def_cfa_offset 0
+  79 0024 7047     		bx	lr
+  80              	.L3:
+  81 0026 00BF     		.align	2
+  82              	.L2:
+  83 0028 10E000E0 		.word	-536813552
+  84 002c 3F420F00 		.word	999999
+  85              		.cfi_endproc
+  86              	.LFE123:
+  88              		.section	.text.SysTick_Reg_Callback,"ax",%progbits
+  89              		.align	1
+  90              		.global	SysTick_Reg_Callback
+  91              		.syntax unified
+  92              		.thumb
+  93              		.thumb_func
+  95              	SysTick_Reg_Callback:
+  96              	.LFB124:
+  60:../source/drv/SysTick.c **** 
+  61:../source/drv/SysTick.c **** /**
+  62:../source/drv/SysTick.c ****  * @brief Initialize SysTic driver
+  63:../source/drv/SysTick.c ****  * @param funcallback Function to be call every SysTick
+  64:../source/drv/SysTick.c ****  * @param period Period in which the function will be called in microseconds (us)
+  65:../source/drv/SysTick.c ****  * @return Initialization and registration succeed
+  66:../source/drv/SysTick.c ****  */
+  67:../source/drv/SysTick.c **** bool SysTick_Reg_Callback (void (*funCallback)(void), uint32_t period)
+  68:../source/drv/SysTick.c **** {
+  97              		.loc 1 68 1
+  98              		.cfi_startproc
+  99              		@ args = 0, pretend = 0, frame = 24
+ 100              		@ frame_needed = 1, uses_anonymous_args = 0
+ 101              		@ link register save eliminated.
+ 102 0000 90B4     		push	{r4, r7}
+ 103              		.cfi_def_cfa_offset 8
+ 104              		.cfi_offset 4, -8
+ 105              		.cfi_offset 7, -4
+ 106 0002 86B0     		sub	sp, sp, #24
+ 107              		.cfi_def_cfa_offset 32
+ 108 0004 00AF     		add	r7, sp, #0
+ 109              		.cfi_def_cfa_register 7
+ 110 0006 7860     		str	r0, [r7, #4]
+ 111 0008 3960     		str	r1, [r7]
+  69:../source/drv/SysTick.c **** 	uint32_t num_Cycles = period / SYSTICK_ISR_PERIOD_US;
+ 112              		.loc 1 69 11
+ 113 000a 3B68     		ldr	r3, [r7]
+ 114 000c 154A     		ldr	r2, .L9
+ 115 000e A2FB0323 		umull	r2, r3, r2, r3
+ 116 0012 5B0B     		lsrs	r3, r3, #13
+ 117 0014 7B61     		str	r3, [r7, #20]
+  70:../source/drv/SysTick.c **** 
+  71:../source/drv/SysTick.c **** 	if(num_Callbacks > TOTAL_NUM_CALLBACK_FUNCTIONS - 1 || num_Cycles == 0)
+ 118              		.loc 1 71 19
+ 119 0016 144B     		ldr	r3, .L9+4
+ 120 0018 1B68     		ldr	r3, [r3]
+ 121              		.loc 1 71 4
+ 122 001a 0E2B     		cmp	r3, #14
+ 123 001c 02D8     		bhi	.L5
+ 124              		.loc 1 71 54 discriminator 1
+ 125 001e 7B69     		ldr	r3, [r7, #20]
+ 126 0020 002B     		cmp	r3, #0
+ 127 0022 01D1     		bne	.L6
+ 128              	.L5:
+  72:../source/drv/SysTick.c **** 	{
+  73:../source/drv/SysTick.c **** 		return false;
+ 129              		.loc 1 73 10
+ 130 0024 0023     		movs	r3, #0
+ 131 0026 18E0     		b	.L8
+ 132              	.L6:
+  74:../source/drv/SysTick.c **** 	}
+  75:../source/drv/SysTick.c **** 
+  76:../source/drv/SysTick.c **** 	SysTick_Callback_Element_Type element = {funCallback, num_Cycles, num_Cycles};
+ 133              		.loc 1 76 32
+ 134 0028 7B68     		ldr	r3, [r7, #4]
+ 135 002a BB60     		str	r3, [r7, #8]
+ 136 002c 7B69     		ldr	r3, [r7, #20]
+ 137 002e FB60     		str	r3, [r7, #12]
+ 138 0030 7B69     		ldr	r3, [r7, #20]
+ 139 0032 3B61     		str	r3, [r7, #16]
+  77:../source/drv/SysTick.c **** 	systick_Callback_Array[num_Callbacks++] = element;
+ 140              		.loc 1 77 38
+ 141 0034 0C4B     		ldr	r3, .L9+4
+ 142 0036 1A68     		ldr	r2, [r3]
+ 143 0038 531C     		adds	r3, r2, #1
+ 144 003a 0B49     		ldr	r1, .L9+4
+ 145 003c 0B60     		str	r3, [r1]
+ 146              		.loc 1 77 42
+ 147 003e 0B49     		ldr	r1, .L9+8
+ 148 0040 1346     		mov	r3, r2
+ 149 0042 5B00     		lsls	r3, r3, #1
+ 150 0044 1344     		add	r3, r3, r2
+ 151 0046 9B00     		lsls	r3, r3, #2
+ 152 0048 0B44     		add	r3, r3, r1
+ 153 004a 1C46     		mov	r4, r3
+ 154 004c 07F10803 		add	r3, r7, #8
+ 155 0050 93E80700 		ldm	r3, {r0, r1, r2}
+ 156 0054 84E80700 		stm	r4, {r0, r1, r2}
+  78:../source/drv/SysTick.c **** 	return true;
+ 157              		.loc 1 78 9
+ 158 0058 0123     		movs	r3, #1
+ 159              	.L8:
+  79:../source/drv/SysTick.c **** }
+ 160              		.loc 1 79 1 discriminator 1
+ 161 005a 1846     		mov	r0, r3
+ 162 005c 1837     		adds	r7, r7, #24
+ 163              		.cfi_def_cfa_offset 8
+ 164 005e BD46     		mov	sp, r7
+ 165              		.cfi_def_cfa_register 13
+ 166              		@ sp needed
+ 167 0060 90BC     		pop	{r4, r7}
+ 168              		.cfi_restore 7
+ 169              		.cfi_restore 4
+ 170              		.cfi_def_cfa_offset 0
+ 171 0062 7047     		bx	lr
+ 172              	.L10:
+ 173              		.align	2
+ 174              	.L9:
+ 175 0064 5917B7D1 		.word	-776530087
+ 176 0068 00000000 		.word	num_Callbacks
+ 177 006c 00000000 		.word	systick_Callback_Array
+ 178              		.cfi_endproc
+ 179              	.LFE124:
+ 181              		.section	.text.SysTick_Handler,"ax",%progbits
+ 182              		.align	1
+ 183              		.global	SysTick_Handler
+ 184              		.syntax unified
+ 185              		.thumb
+ 186              		.thumb_func
+ 188              	SysTick_Handler:
+ 189              	.LFB125:
+  80:../source/drv/SysTick.c **** 
+  81:../source/drv/SysTick.c **** 
+  82:../source/drv/SysTick.c **** /*******************************************************************************
+  83:../source/drv/SysTick.c ****  *******************************************************************************
+  84:../source/drv/SysTick.c ****                         LOCAL FUNCTION DEFINITIONS
+  85:../source/drv/SysTick.c ****  *******************************************************************************
+  86:../source/drv/SysTick.c ****  ******************************************************************************/
+  87:../source/drv/SysTick.c **** __ISR__ SysTick_Handler(void)
+  88:../source/drv/SysTick.c **** {
+ 190              		.loc 1 88 1
+ 191              		.cfi_startproc
+ 192              		@ Stack Align: May be called with mis-aligned SP.
+ 193              		@ args = 0, pretend = 0, frame = 8
+ 194              		@ frame_needed = 1, uses_anonymous_args = 0
+ 195 0000 6846     		mov	r0, sp
+ 196              		.cfi_register 13, 0
+ 197 0002 20F00701 		bic	r1, r0, #7
+ 198 0006 8D46     		mov	sp, r1
+ 199 0008 81B5     		push	{r0, r7, lr}
+ 200              		.cfi_def_cfa_offset 12
+ 201              		.cfi_offset 13, -12
+ 202              		.cfi_offset 7, -8
+ 203              		.cfi_offset 14, -4
+ 204 000a 83B0     		sub	sp, sp, #12
+ 205              		.cfi_def_cfa_offset 24
+ 206 000c 00AF     		add	r7, sp, #0
+ 207              		.cfi_def_cfa_register 7
+ 208              	.LBB2:
+  89:../source/drv/SysTick.c **** 
+  90:../source/drv/SysTick.c **** 	//test pin high
+  91:../source/drv/SysTick.c **** 	//gpioWrite(PORTNUM2PIN(TEST_PORT_2, TEST_PIN_2), HIGH);
+  92:../source/drv/SysTick.c **** 
+  93:../source/drv/SysTick.c **** 	// Iterate through all the callbacks
+  94:../source/drv/SysTick.c **** 	for (uint32_t i = 0; i < num_Callbacks; i++)
+ 209              		.loc 1 94 16
+ 210 000e 0023     		movs	r3, #0
+ 211 0010 7B60     		str	r3, [r7, #4]
+ 212              		.loc 1 94 2
+ 213 0012 3BE0     		b	.L12
+ 214              	.L14:
+  95:../source/drv/SysTick.c **** 	{
+  96:../source/drv/SysTick.c **** 		systick_Callback_Array[i].counter--;
+ 215              		.loc 1 96 28
+ 216 0014 2449     		ldr	r1, .L15
+ 217 0016 7A68     		ldr	r2, [r7, #4]
+ 218 0018 1346     		mov	r3, r2
+ 219 001a 5B00     		lsls	r3, r3, #1
+ 220 001c 1344     		add	r3, r3, r2
+ 221 001e 9B00     		lsls	r3, r3, #2
+ 222 0020 0B44     		add	r3, r3, r1
+ 223 0022 0833     		adds	r3, r3, #8
+ 224 0024 1B68     		ldr	r3, [r3]
+ 225              		.loc 1 96 36
+ 226 0026 591E     		subs	r1, r3, #1
+ 227 0028 1F48     		ldr	r0, .L15
+ 228 002a 7A68     		ldr	r2, [r7, #4]
+ 229 002c 1346     		mov	r3, r2
+ 230 002e 5B00     		lsls	r3, r3, #1
+ 231 0030 1344     		add	r3, r3, r2
+ 232 0032 9B00     		lsls	r3, r3, #2
+ 233 0034 0344     		add	r3, r3, r0
+ 234 0036 0833     		adds	r3, r3, #8
+ 235 0038 1960     		str	r1, [r3]
+  97:../source/drv/SysTick.c **** 		if (!systick_Callback_Array[i].counter) //If the counter reaches 0
+ 236              		.loc 1 97 33
+ 237 003a 1B49     		ldr	r1, .L15
+ 238 003c 7A68     		ldr	r2, [r7, #4]
+ 239 003e 1346     		mov	r3, r2
+ 240 0040 5B00     		lsls	r3, r3, #1
+ 241 0042 1344     		add	r3, r3, r2
+ 242 0044 9B00     		lsls	r3, r3, #2
+ 243 0046 0B44     		add	r3, r3, r1
+ 244 0048 0833     		adds	r3, r3, #8
+ 245 004a 1B68     		ldr	r3, [r3]
+ 246              		.loc 1 97 6
+ 247 004c 002B     		cmp	r3, #0
+ 248 004e 1AD1     		bne	.L13
+  98:../source/drv/SysTick.c **** 		{
+  99:../source/drv/SysTick.c **** 			(*systick_Callback_Array[i].fun_Callback)(); // Callback's calling.
+ 249              		.loc 1 99 5
+ 250 0050 1549     		ldr	r1, .L15
+ 251 0052 7A68     		ldr	r2, [r7, #4]
+ 252 0054 1346     		mov	r3, r2
+ 253 0056 5B00     		lsls	r3, r3, #1
+ 254 0058 1344     		add	r3, r3, r2
+ 255 005a 9B00     		lsls	r3, r3, #2
+ 256 005c 0B44     		add	r3, r3, r1
+ 257 005e 1B68     		ldr	r3, [r3]
+ 258 0060 9847     		blx	r3
+ 259              	.LVL0:
+ 100:../source/drv/SysTick.c **** 			systick_Callback_Array[i].counter = systick_Callback_Array[i].num_Cycles;	  //Counter re-establi
+ 260              		.loc 1 100 65
+ 261 0062 1149     		ldr	r1, .L15
+ 262 0064 7A68     		ldr	r2, [r7, #4]
+ 263 0066 1346     		mov	r3, r2
+ 264 0068 5B00     		lsls	r3, r3, #1
+ 265 006a 1344     		add	r3, r3, r2
+ 266 006c 9B00     		lsls	r3, r3, #2
+ 267 006e 0B44     		add	r3, r3, r1
+ 268 0070 0433     		adds	r3, r3, #4
+ 269 0072 1968     		ldr	r1, [r3]
+ 270              		.loc 1 100 38
+ 271 0074 0C48     		ldr	r0, .L15
+ 272 0076 7A68     		ldr	r2, [r7, #4]
+ 273 0078 1346     		mov	r3, r2
+ 274 007a 5B00     		lsls	r3, r3, #1
+ 275 007c 1344     		add	r3, r3, r2
+ 276 007e 9B00     		lsls	r3, r3, #2
+ 277 0080 0344     		add	r3, r3, r0
+ 278 0082 0833     		adds	r3, r3, #8
+ 279 0084 1960     		str	r1, [r3]
+ 280              	.L13:
+  94:../source/drv/SysTick.c **** 	{
+ 281              		.loc 1 94 43 discriminator 2
+ 282 0086 7B68     		ldr	r3, [r7, #4]
+ 283 0088 0133     		adds	r3, r3, #1
+ 284 008a 7B60     		str	r3, [r7, #4]
+ 285              	.L12:
+  94:../source/drv/SysTick.c **** 	{
+ 286              		.loc 1 94 25 discriminator 1
+ 287 008c 074B     		ldr	r3, .L15+4
+ 288 008e 1B68     		ldr	r3, [r3]
+ 289 0090 7A68     		ldr	r2, [r7, #4]
+ 290 0092 9A42     		cmp	r2, r3
+ 291 0094 BED3     		bcc	.L14
+ 292              	.LBE2:
+ 101:../source/drv/SysTick.c **** 		}
+ 102:../source/drv/SysTick.c **** 	}
+ 103:../source/drv/SysTick.c **** 
+ 104:../source/drv/SysTick.c **** 	//Test pin low
+ 105:../source/drv/SysTick.c **** 	//gpioWrite(PORTNUM2PIN(TEST_PORT_2, TEST_PIN_2), LOW);
+ 106:../source/drv/SysTick.c **** }
+ 293              		.loc 1 106 1
+ 294 0096 00BF     		nop
+ 295 0098 00BF     		nop
+ 296 009a 0C37     		adds	r7, r7, #12
+ 297              		.cfi_def_cfa_offset 12
+ 298 009c BD46     		mov	sp, r7
+ 299              		.cfi_def_cfa_register 13
+ 300              		@ sp needed
+ 301 009e BDE88140 		pop	{r0, r7, lr}
+ 302              		.cfi_restore 14
+ 303              		.cfi_restore 7
+ 304              		.cfi_restore 0
+ 305              		.cfi_def_cfa_offset 0
+ 306 00a2 8546     		mov	sp, r0
+ 307 00a4 7047     		bx	lr
+ 308              	.L16:
+ 309 00a6 00BF     		.align	2
+ 310              	.L15:
+ 311 00a8 00000000 		.word	systick_Callback_Array
+ 312 00ac 00000000 		.word	num_Callbacks
+ 313              		.cfi_endproc
+ 314              	.LFE125:
+ 316              		.text
+ 317              	.Letext0:
+ 318              		.file 2 "/Users/agus/Micros/Github/Micros-Grupo-5/TPS/I2C/SDK/CMSIS/core_cm4.h"
+ 319              		.file 3 "/Applications/MCUXpressoIDE_11.8.0_1165/ide/plugins/com.nxp.mcuxpresso.tools.macosx_11.8.
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 SysTick.c
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccEHVEQ3.s:21     .bss.systick_Callback_Array:0000000000000000 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccEHVEQ3.s:24     .bss.systick_Callback_Array:0000000000000000 systick_Callback_Array
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccEHVEQ3.s:27     .bss.num_Callbacks:0000000000000000 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccEHVEQ3.s:30     .bss.num_Callbacks:0000000000000000 num_Callbacks
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccEHVEQ3.s:33     .text.SysTick_Init:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccEHVEQ3.s:39     .text.SysTick_Init:0000000000000000 SysTick_Init
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccEHVEQ3.s:83     .text.SysTick_Init:0000000000000028 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccEHVEQ3.s:89     .text.SysTick_Reg_Callback:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccEHVEQ3.s:95     .text.SysTick_Reg_Callback:0000000000000000 SysTick_Reg_Callback
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccEHVEQ3.s:175    .text.SysTick_Reg_Callback:0000000000000064 $d
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccEHVEQ3.s:182    .text.SysTick_Handler:0000000000000000 $t
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccEHVEQ3.s:188    .text.SysTick_Handler:0000000000000000 SysTick_Handler
+/var/folders/mt/f0brj4z96r5_s3gdkbpppz8m0000gn/T//ccEHVEQ3.s:311    .text.SysTick_Handler:00000000000000a8 $d
+                           .group:0000000000000000 wm4.0.23798b1d0196e1dacad68e887eef18fd
+                           .group:0000000000000000 wm4.stdbool.h.15.fddf1cb2402fd739d8e2516677869231
+                           .group:0000000000000000 wm4.redlib_version.h.24.4f43d7bc124a54bfe120050dd03d6b37
+                           .group:0000000000000000 wm4.libconfigarm.h.19.34723c94cbd19598192aa6b1e87fca41
+                           .group:0000000000000000 wm4.stdint.h.31.58198de4ea930fb897655479091e17c7
+                           .group:0000000000000000 wm4.SysTick.h.21.f3039c8cb82a13b1f4025eda5afcb7c3
+                           .group:0000000000000000 wm4.fsl_device_registers.h.32.f10b25a7fd7ad45b9a40904c33f28816
+                           .group:0000000000000000 wm4.MK64F12.h.105.e884e5c80776532d2ec0f5c21e2ea7cb
+                           .group:0000000000000000 wm4.core_cm4.h.42.42f38327ee0970d80f60117e6a3ba2b0
+                           .group:0000000000000000 wm4.cmsis_gcc.h.36.39970cb43ce4b53c82644a1f9bc2eab9
+                           .group:0000000000000000 wm4.core_cm4.h.223.7b48c9958ef5573320c4765074c8b0ce
+                           .group:0000000000000000 wm4.system_MK64F12.h.109.c6d21568e03be21b21c922eb7345d6e3
+                           .group:0000000000000000 wm4.MK64F12.h.475.cafa8e1e521f96f0b72de286863a6df7
+                           .group:0000000000000000 wm4.MK64F12_features.h.92.512cea46d882153168efeec0bc3a9da7
+                           .group:0000000000000000 wm4.hardware.h.27.0531344360c1b4ef1fba1263e2a4c488
+                           .group:0000000000000000 wm4.gpio.h.29.c6aad71d79bc2c89ec77d6be0e13d3d4
+
+NO UNDEFINED SYMBOLS

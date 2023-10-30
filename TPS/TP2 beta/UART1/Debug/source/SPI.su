@@ -1,0 +1,11 @@
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TP2 beta/UART1/CMSIS/core_cm4.h:1626:22:NVIC_EnableIRQ	16	static
+../source/SPI.c:116:6:SPI_Init	8	static
+../source/SPI.c:182:9:SPI_Get_Status	8	static
+../source/SPI.c:193:9:SPI_Get_Data	16	static
+../source/SPI.c:204:6:SPI_SendByte	24	static
+../source/SPI.c:216:6:SPI_SendMsg	24	static
+../source/SPI.c:250:9:SPI0_IRQHandler	40	static
+../source/SPI.c:299:13:queue_Init	16	static
+../source/SPI.c:311:15:push_Queue_Element	16	static
+../source/SPI.c:338:25:pull_Queue_Element	32	static
+../source/SPI.c:365:16:get_Queue_Status	16	static
