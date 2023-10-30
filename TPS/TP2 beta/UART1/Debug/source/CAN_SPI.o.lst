@@ -1,0 +1,2862 @@
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"CAN_SPI.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.global	can_spi_buffers
+  18              		.section	.bss.can_spi_buffers,"aw",%nobits
+  19              		.align	2
+  22              	can_spi_buffers:
+  23 0000 00000000 		.space	612
+  23      00000000 
+  23      00000000 
+  23      00000000 
+  23      00000000 
+  24              		.section	.bss.transmitting,"aw",%nobits
+  27              	transmitting:
+  28 0000 00       		.space	1
+  29              		.section	.bss.receiving,"aw",%nobits
+  32              	receiving:
+  33 0000 00       		.space	1
+  34              		.section	.text.CAN_SPI_Init,"ax",%progbits
+  35              		.align	1
+  36              		.global	CAN_SPI_Init
+  37              		.syntax unified
+  38              		.thumb
+  39              		.thumb_func
+  40              		.fpu fpv4-sp-d16
+  42              	CAN_SPI_Init:
+  43              	.LFB123:
+  44              		.file 1 "../source/CAN_SPI.c"
+   1:../source/CAN_SPI.c **** /***************************************************************************//**
+   2:../source/CAN_SPI.c ****   @file     CAN_SPI.c
+   3:../source/CAN_SPI.c **** 
+   4:../source/CAN_SPI.c ****   @brief    CAN_sPI driver
+   5:../source/CAN_SPI.c ****   @author   Grupo 5
+   6:../source/CAN_SPI.c ****  ******************************************************************************/
+   7:../source/CAN_SPI.c **** 
+   8:../source/CAN_SPI.c **** /*******************************************************************************
+   9:../source/CAN_SPI.c ****  * INCLUDE HEADER FILES
+  10:../source/CAN_SPI.c ****  ******************************************************************************/
+  11:../source/CAN_SPI.c **** #include "hardware.h"
+  12:../source/CAN_SPI.c **** #include "CAN_SPI.h"
+  13:../source/CAN_SPI.c **** #include "SPI.h"
+  14:../source/CAN_SPI.c **** #include "gpio.h"
+  15:../source/CAN_SPI.c **** 
+  16:../source/CAN_SPI.c **** 
+  17:../source/CAN_SPI.c **** 
+  18:../source/CAN_SPI.c **** /*******************************************************************************
+  19:../source/CAN_SPI.c ****  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
+  20:../source/CAN_SPI.c ****  ******************************************************************************/
+  21:../source/CAN_SPI.c **** #define INT_PIN      16
+  22:../source/CAN_SPI.c **** #define INT_PORT     PC
+  23:../source/CAN_SPI.c **** 
+  24:../source/CAN_SPI.c **** #define	WRITE_INSTRUCTION 		0b00000010
+  25:../source/CAN_SPI.c **** #define	BIT_MODIFY_INSTRUCTION 	0b00000101
+  26:../source/CAN_SPI.c **** #define	READ_INSTRUCTION 		0b00000011
+  27:../source/CAN_SPI.c **** 
+  28:../source/CAN_SPI.c **** #define	CNF1_ADDRESS	0b00101010
+  29:../source/CAN_SPI.c **** #define	CNF2_ADDRESS	0b00101001
+  30:../source/CAN_SPI.c **** #define	CNF3_ADDRESS	0b00101000
+  31:../source/CAN_SPI.c **** 
+  32:../source/CAN_SPI.c **** #define RxM0SIDH		0b00100000
+  33:../source/CAN_SPI.c **** #define RxM0SIDL		0b00100001
+  34:../source/CAN_SPI.c **** 
+  35:../source/CAN_SPI.c **** #define RxF0SIDH		0b00000000
+  36:../source/CAN_SPI.c **** #define RxF0SIDL		0b00000001
+  37:../source/CAN_SPI.c **** 
+  38:../source/CAN_SPI.c **** #define	RxB0CTRL		0b01100000
+  39:../source/CAN_SPI.c **** #define RxB1CTRL		0b01110000
+  40:../source/CAN_SPI.c **** 
+  41:../source/CAN_SPI.c **** #define	CANINTE			0b00101011
+  42:../source/CAN_SPI.c **** #define	CANINTF			0b00101100
+  43:../source/CAN_SPI.c **** 
+  44:../source/CAN_SPI.c **** #define	CANCTRL			0b00001111
+  45:../source/CAN_SPI.c **** 
+  46:../source/CAN_SPI.c **** #define	TXB0CTRL		0b00110000
+  47:../source/CAN_SPI.c **** #define	TXB1CTRL		0b01000000
+  48:../source/CAN_SPI.c **** #define	TXB2CTRL		0b01010000
+  49:../source/CAN_SPI.c **** 
+  50:../source/CAN_SPI.c **** #define	TXB0SIDH		0b00110001
+  51:../source/CAN_SPI.c **** #define	TXB1SIDH		0b01000001
+  52:../source/CAN_SPI.c **** #define	TXB2SIDH		0b01010001
+  53:../source/CAN_SPI.c **** 
+  54:../source/CAN_SPI.c **** #define	TXB0SIDL		0b00110010
+  55:../source/CAN_SPI.c **** #define	TXB1SIDL		0b01000010
+  56:../source/CAN_SPI.c **** #define	TXB2SIDL		0b01010010
+  57:../source/CAN_SPI.c **** 
+  58:../source/CAN_SPI.c **** #define	TXB0DLC			0b00110101
+  59:../source/CAN_SPI.c **** #define	TXB1DLC			0b01000101
+  60:../source/CAN_SPI.c **** #define	TXB2DLC			0b01010101
+  61:../source/CAN_SPI.c **** 
+  62:../source/CAN_SPI.c **** #define	RXB0D0			0b01100110
+  63:../source/CAN_SPI.c **** #define	RXB1D0			0b01110110
+  64:../source/CAN_SPI.c **** 
+  65:../source/CAN_SPI.c **** #define RXLENGTH		13
+  66:../source/CAN_SPI.c **** 
+  67:../source/CAN_SPI.c **** #define	BUFFER_SIZE	 50
+  68:../source/CAN_SPI.c **** #define OVERFLOW     -1
+  69:../source/CAN_SPI.c **** 
+  70:../source/CAN_SPI.c **** typedef struct spican_buffer{
+  71:../source/CAN_SPI.c **** 	RXB_RAWDATA_t *pin;
+  72:../source/CAN_SPI.c **** 	RXB_RAWDATA_t *pout;
+  73:../source/CAN_SPI.c **** 	RXB_RAWDATA_t buffer[BUFFER_SIZE];
+  74:../source/CAN_SPI.c **** 	uint8_t num_Of_Words;
+  75:../source/CAN_SPI.c **** }spican_buffer_t;
+  76:../source/CAN_SPI.c **** 
+  77:../source/CAN_SPI.c **** spican_buffer_t can_spi_buffers[1];
+  78:../source/CAN_SPI.c **** 
+  79:../source/CAN_SPI.c **** static uint8_t	transmitting = 0;
+  80:../source/CAN_SPI.c **** static uint8_t	receiving = 0;
+  81:../source/CAN_SPI.c **** 
+  82:../source/CAN_SPI.c **** 
+  83:../source/CAN_SPI.c **** /*******************************************************************************
+  84:../source/CAN_SPI.c ****  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
+  85:../source/CAN_SPI.c **** *******************************************************************************/
+  86:../source/CAN_SPI.c **** /**
+  87:../source/CAN_SPI.c ****  * @brief Initializes the circular queue
+  88:../source/CAN_SPI.c ****  */
+  89:../source/CAN_SPI.c **** static void queue_Init (uint8_t id);
+  90:../source/CAN_SPI.c **** 
+  91:../source/CAN_SPI.c **** 
+  92:../source/CAN_SPI.c **** /**
+  93:../source/CAN_SPI.c ****  * @brief Pushes an event to the queue
+  94:../source/CAN_SPI.c ****  * @param event The element to add to the queue
+  95:../source/CAN_SPI.c ****  * @return Number of pending events. Returns value OVERFLOW if the maximun number of events is reac
+  96:../source/CAN_SPI.c ****  */
+  97:../source/CAN_SPI.c **** static int8_t push_Queue_Element(uint8_t id, RXB_RAWDATA_t event);
+  98:../source/CAN_SPI.c **** 
+  99:../source/CAN_SPI.c **** 
+ 100:../source/CAN_SPI.c **** /**
+ 101:../source/CAN_SPI.c ****  * @brief Pulls the earliest event from the queue
+ 102:../source/CAN_SPI.c ****  * @return Event_Type variable with the current event if no OVERFLOW is detected.
+ 103:../source/CAN_SPI.c ****  */
+ 104:../source/CAN_SPI.c **** static RXB_RAWDATA_t pull_Queue_Element(uint8_t id);
+ 105:../source/CAN_SPI.c **** 
+ 106:../source/CAN_SPI.c **** 
+ 107:../source/CAN_SPI.c **** /**
+ 108:../source/CAN_SPI.c ****  * @brief Gets the status of the queue
+ 109:../source/CAN_SPI.c ****  * @return Returns the number of pending events in the queue
+ 110:../source/CAN_SPI.c ****  */
+ 111:../source/CAN_SPI.c **** static uint8_t get_Queue_Status(uint8_t id);
+ 112:../source/CAN_SPI.c **** 
+ 113:../source/CAN_SPI.c **** 
+ 114:../source/CAN_SPI.c **** /**
+ 115:../source/CAN_SPI.c ****  * @brief
+ 116:../source/CAN_SPI.c ****  * @return
+ 117:../source/CAN_SPI.c ****  */
+ 118:../source/CAN_SPI.c **** static void load_TX_buffer(uint8_t abc, uint8_t * bytes, uint8_t num_bytes, void (*cb)(void));
+ 119:../source/CAN_SPI.c **** 
+ 120:../source/CAN_SPI.c **** /**
+ 121:../source/CAN_SPI.c ****  * @brief
+ 122:../source/CAN_SPI.c ****  * @return
+ 123:../source/CAN_SPI.c ****  */
+ 124:../source/CAN_SPI.c **** static void write_SPICAN(uint8_t address, uint8_t * bytes_data, uint8_t num_bytes_data, void (*cb)(
+ 125:../source/CAN_SPI.c **** 
+ 126:../source/CAN_SPI.c **** /**
+ 127:../source/CAN_SPI.c ****  * @brief
+ 128:../source/CAN_SPI.c ****  * @return
+ 129:../source/CAN_SPI.c ****  */
+ 130:../source/CAN_SPI.c **** static void read_SPICAN(uint8_t address, uint8_t num_bytes_to_read, void (*cb)(void));
+ 131:../source/CAN_SPI.c **** 
+ 132:../source/CAN_SPI.c **** 
+ 133:../source/CAN_SPI.c **** /**
+ 134:../source/CAN_SPI.c ****  * @brief
+ 135:../source/CAN_SPI.c ****  * @return
+ 136:../source/CAN_SPI.c ****  */
+ 137:../source/CAN_SPI.c **** static void read_RX_buffer(uint8_t nm, uint8_t num_bytes_to_read, void (*cb)(void));
+ 138:../source/CAN_SPI.c **** 
+ 139:../source/CAN_SPI.c **** /**
+ 140:../source/CAN_SPI.c ****  * @brief
+ 141:../source/CAN_SPI.c ****  * @return
+ 142:../source/CAN_SPI.c ****  */
+ 143:../source/CAN_SPI.c **** static void read_status(void (*cb)(void));
+ 144:../source/CAN_SPI.c **** 
+ 145:../source/CAN_SPI.c **** 
+ 146:../source/CAN_SPI.c **** /**
+ 147:../source/CAN_SPI.c ****  * @brief
+ 148:../source/CAN_SPI.c ****  * @return
+ 149:../source/CAN_SPI.c ****  */
+ 150:../source/CAN_SPI.c **** static void RTS(uint8_t txn, void (*cb)(void));
+ 151:../source/CAN_SPI.c **** 
+ 152:../source/CAN_SPI.c **** static void parseData(RXB_RAWDATA_t * rawdata, uint8_t *data_to_send);
+ 153:../source/CAN_SPI.c **** 
+ 154:../source/CAN_SPI.c **** 
+ 155:../source/CAN_SPI.c **** /**
+ 156:../source/CAN_SPI.c ****  * @brief
+ 157:../source/CAN_SPI.c ****  * @param
+ 158:../source/CAN_SPI.c ****  * @return
+ 159:../source/CAN_SPI.c ****  */
+ 160:../source/CAN_SPI.c **** 
+ 161:../source/CAN_SPI.c **** static void checkDoubleBuffers(void);
+ 162:../source/CAN_SPI.c **** 
+ 163:../source/CAN_SPI.c **** 
+ 164:../source/CAN_SPI.c **** /*******************************************************************************
+ 165:../source/CAN_SPI.c ****  *******************************************************************************
+ 166:../source/CAN_SPI.c ****                         GLOBAL FUNCTION DEFINITIONS
+ 167:../source/CAN_SPI.c ****  *******************************************************************************
+ 168:../source/CAN_SPI.c ****  ******************************************************************************/
+ 169:../source/CAN_SPI.c **** 
+ 170:../source/CAN_SPI.c **** 
+ 171:../source/CAN_SPI.c **** 
+ 172:../source/CAN_SPI.c **** /**
+ 173:../source/CAN_SPI.c ****  * @brief
+ 174:../source/CAN_SPI.c ****  * @param
+ 175:../source/CAN_SPI.c ****  * @return
+ 176:../source/CAN_SPI.c ****  */
+ 177:../source/CAN_SPI.c **** 
+ 178:../source/CAN_SPI.c **** void CAN_SPI_Init (void)
+ 179:../source/CAN_SPI.c **** {
+  45              		.loc 1 179 0
+  46              		.cfi_startproc
+  47              		@ args = 0, pretend = 0, frame = 16
+  48              		@ frame_needed = 1, uses_anonymous_args = 0
+  49 0000 80B5     		push	{r7, lr}
+  50              		.cfi_def_cfa_offset 8
+  51              		.cfi_offset 7, -8
+  52              		.cfi_offset 14, -4
+  53 0002 84B0     		sub	sp, sp, #16
+  54              		.cfi_def_cfa_offset 24
+  55 0004 00AF     		add	r7, sp, #0
+  56              		.cfi_def_cfa_register 7
+ 180:../source/CAN_SPI.c **** 	// 1- SPI in mode 0,0
+ 181:../source/CAN_SPI.c **** 	SPI_Init();
+  57              		.loc 1 181 0
+  58 0006 FFF7FEFF 		bl	SPI_Init
+ 182:../source/CAN_SPI.c **** 
+ 183:../source/CAN_SPI.c **** 	queue_Init(0);
+  59              		.loc 1 183 0
+  60 000a 0020     		movs	r0, #0
+  61 000c FFF7FEFF 		bl	queue_Init
+ 184:../source/CAN_SPI.c **** 	// Set interrupt pin for RX interrupt detection
+ 185:../source/CAN_SPI.c **** 	gpioMode (PORTNUM2PIN(INT_PORT,INT_PIN), INPUT_PULLDOWN);
+  62              		.loc 1 185 0
+  63 0010 0321     		movs	r1, #3
+  64 0012 5020     		movs	r0, #80
+  65 0014 FFF7FEFF 		bl	gpioMode
+ 186:../source/CAN_SPI.c **** 	gpioIRQ_Config (PORTNUM2PIN(INT_PORT, INT_PIN), PORT_eInterruptFalling);
+  66              		.loc 1 186 0
+  67 0018 0A21     		movs	r1, #10
+  68 001a 5020     		movs	r0, #80
+  69 001c FFF7FEFF 		bl	gpioIRQ_Config
+ 187:../source/CAN_SPI.c **** 
+ 188:../source/CAN_SPI.c **** 
+ 189:../source/CAN_SPI.c **** 	// 2- Reset mode
+ 190:../source/CAN_SPI.c **** 	uint8_t data[10];
+ 191:../source/CAN_SPI.c **** 	data[0] = 0b11000000;
+  70              		.loc 1 191 0
+  71 0020 C023     		movs	r3, #192
+  72 0022 3B71     		strb	r3, [r7, #4]
+ 192:../source/CAN_SPI.c **** 	SPI_SendData(data, 1, 0);
+  73              		.loc 1 192 0
+  74 0024 3B1D     		adds	r3, r7, #4
+  75 0026 0022     		movs	r2, #0
+  76 0028 0121     		movs	r1, #1
+  77 002a 1846     		mov	r0, r3
+  78 002c FFF7FEFF 		bl	SPI_SendData
+ 193:../source/CAN_SPI.c **** 	while(SPI_Transmission_In_Process());
+  79              		.loc 1 193 0
+  80 0030 00BF     		nop
+  81              	.L2:
+  82              		.loc 1 193 0 is_stmt 0 discriminator 1
+  83 0032 FFF7FEFF 		bl	SPI_Transmission_In_Process
+  84 0036 0346     		mov	r3, r0
+  85 0038 002B     		cmp	r3, #0
+  86 003a FAD1     		bne	.L2
+ 194:../source/CAN_SPI.c **** 
+ 195:../source/CAN_SPI.c **** 
+ 196:../source/CAN_SPI.c **** 	// 3- Bit time configuration
+ 197:../source/CAN_SPI.c **** 	data[0] = WRITE_INSTRUCTION;
+  87              		.loc 1 197 0 is_stmt 1
+  88 003c 0223     		movs	r3, #2
+  89 003e 3B71     		strb	r3, [r7, #4]
+ 198:../source/CAN_SPI.c **** 	data[1] = CNF1_ADDRESS;
+  90              		.loc 1 198 0
+  91 0040 2A23     		movs	r3, #42
+  92 0042 7B71     		strb	r3, [r7, #5]
+ 199:../source/CAN_SPI.c **** 	data[2] = 0b00000011; // SJW = 1TQ; BRP = 4 (3+1)
+  93              		.loc 1 199 0
+  94 0044 0323     		movs	r3, #3
+  95 0046 BB71     		strb	r3, [r7, #6]
+ 200:../source/CAN_SPI.c **** 	SPI_SendData(data, 3, 0);
+  96              		.loc 1 200 0
+  97 0048 3B1D     		adds	r3, r7, #4
+  98 004a 0022     		movs	r2, #0
+  99 004c 0321     		movs	r1, #3
+ 100 004e 1846     		mov	r0, r3
+ 101 0050 FFF7FEFF 		bl	SPI_SendData
+ 201:../source/CAN_SPI.c **** 	while(SPI_Transmission_In_Process());
+ 102              		.loc 1 201 0
+ 103 0054 00BF     		nop
+ 104              	.L3:
+ 105              		.loc 1 201 0 is_stmt 0 discriminator 1
+ 106 0056 FFF7FEFF 		bl	SPI_Transmission_In_Process
+ 107 005a 0346     		mov	r3, r0
+ 108 005c 002B     		cmp	r3, #0
+ 109 005e FAD1     		bne	.L3
+ 202:../source/CAN_SPI.c **** 
+ 203:../source/CAN_SPI.c **** 
+ 204:../source/CAN_SPI.c **** 	data[0] = WRITE_INSTRUCTION;
+ 110              		.loc 1 204 0 is_stmt 1
+ 111 0060 0223     		movs	r3, #2
+ 112 0062 3B71     		strb	r3, [r7, #4]
+ 205:../source/CAN_SPI.c **** 	data[1] = CNF2_ADDRESS;
+ 113              		.loc 1 205 0
+ 114 0064 2923     		movs	r3, #41
+ 115 0066 7B71     		strb	r3, [r7, #5]
+ 206:../source/CAN_SPI.c **** 	data[2] = 0b10110001; // btl=1; sam=0; phseg = 7 (6+1); prseg = 2 (1+1)
+ 116              		.loc 1 206 0
+ 117 0068 B123     		movs	r3, #177
+ 118 006a BB71     		strb	r3, [r7, #6]
+ 207:../source/CAN_SPI.c **** 	SPI_SendData(data, 3, 0);
+ 119              		.loc 1 207 0
+ 120 006c 3B1D     		adds	r3, r7, #4
+ 121 006e 0022     		movs	r2, #0
+ 122 0070 0321     		movs	r1, #3
+ 123 0072 1846     		mov	r0, r3
+ 124 0074 FFF7FEFF 		bl	SPI_SendData
+ 208:../source/CAN_SPI.c **** 	while(SPI_Transmission_In_Process());
+ 125              		.loc 1 208 0
+ 126 0078 00BF     		nop
+ 127              	.L4:
+ 128              		.loc 1 208 0 is_stmt 0 discriminator 1
+ 129 007a FFF7FEFF 		bl	SPI_Transmission_In_Process
+ 130 007e 0346     		mov	r3, r0
+ 131 0080 002B     		cmp	r3, #0
+ 132 0082 FAD1     		bne	.L4
+ 209:../source/CAN_SPI.c **** 
+ 210:../source/CAN_SPI.c **** 	data[0] = WRITE_INSTRUCTION;
+ 133              		.loc 1 210 0 is_stmt 1
+ 134 0084 0223     		movs	r3, #2
+ 135 0086 3B71     		strb	r3, [r7, #4]
+ 211:../source/CAN_SPI.c **** 	data[1] = CNF3_ADDRESS;
+ 136              		.loc 1 211 0
+ 137 0088 2823     		movs	r3, #40
+ 138 008a 7B71     		strb	r3, [r7, #5]
+ 212:../source/CAN_SPI.c **** 	data[2] = 0b10000101; // sof = 1; WAKFL = 0; PHSEG2 = 6 (5+1)
+ 139              		.loc 1 212 0
+ 140 008c 8523     		movs	r3, #133
+ 141 008e BB71     		strb	r3, [r7, #6]
+ 213:../source/CAN_SPI.c **** 	SPI_SendData(data, 3, 0);
+ 142              		.loc 1 213 0
+ 143 0090 3B1D     		adds	r3, r7, #4
+ 144 0092 0022     		movs	r2, #0
+ 145 0094 0321     		movs	r1, #3
+ 146 0096 1846     		mov	r0, r3
+ 147 0098 FFF7FEFF 		bl	SPI_SendData
+ 214:../source/CAN_SPI.c **** 	while(SPI_Transmission_In_Process());
+ 148              		.loc 1 214 0
+ 149 009c 00BF     		nop
+ 150              	.L5:
+ 151              		.loc 1 214 0 is_stmt 0 discriminator 1
+ 152 009e FFF7FEFF 		bl	SPI_Transmission_In_Process
+ 153 00a2 0346     		mov	r3, r0
+ 154 00a4 002B     		cmp	r3, #0
+ 155 00a6 FAD1     		bne	.L5
+ 215:../source/CAN_SPI.c **** 
+ 216:../source/CAN_SPI.c **** 
+ 217:../source/CAN_SPI.c **** 	// 4- Filter configurations
+ 218:../source/CAN_SPI.c **** 	data[0] = WRITE_INSTRUCTION;
+ 156              		.loc 1 218 0 is_stmt 1
+ 157 00a8 0223     		movs	r3, #2
+ 158 00aa 3B71     		strb	r3, [r7, #4]
+ 219:../source/CAN_SPI.c **** 	data[1] = RxM0SIDH;
+ 159              		.loc 1 219 0
+ 160 00ac 2023     		movs	r3, #32
+ 161 00ae 7B71     		strb	r3, [r7, #5]
+ 220:../source/CAN_SPI.c **** 	data[2] = 0b11111111;
+ 162              		.loc 1 220 0
+ 163 00b0 FF23     		movs	r3, #255
+ 164 00b2 BB71     		strb	r3, [r7, #6]
+ 221:../source/CAN_SPI.c **** 	SPI_SendData(data, 3, 0);
+ 165              		.loc 1 221 0
+ 166 00b4 3B1D     		adds	r3, r7, #4
+ 167 00b6 0022     		movs	r2, #0
+ 168 00b8 0321     		movs	r1, #3
+ 169 00ba 1846     		mov	r0, r3
+ 170 00bc FFF7FEFF 		bl	SPI_SendData
+ 222:../source/CAN_SPI.c **** 	while(SPI_Transmission_In_Process());
+ 171              		.loc 1 222 0
+ 172 00c0 00BF     		nop
+ 173              	.L6:
+ 174              		.loc 1 222 0 is_stmt 0 discriminator 1
+ 175 00c2 FFF7FEFF 		bl	SPI_Transmission_In_Process
+ 176 00c6 0346     		mov	r3, r0
+ 177 00c8 002B     		cmp	r3, #0
+ 178 00ca FAD1     		bne	.L6
+ 223:../source/CAN_SPI.c **** 
+ 224:../source/CAN_SPI.c **** 	data[0] = WRITE_INSTRUCTION;
+ 179              		.loc 1 224 0 is_stmt 1
+ 180 00cc 0223     		movs	r3, #2
+ 181 00ce 3B71     		strb	r3, [r7, #4]
+ 225:../source/CAN_SPI.c **** 	data[1] = RxM0SIDL;
+ 182              		.loc 1 225 0
+ 183 00d0 2123     		movs	r3, #33
+ 184 00d2 7B71     		strb	r3, [r7, #5]
+ 226:../source/CAN_SPI.c **** 	data[2] = 0b00000000;
+ 185              		.loc 1 226 0
+ 186 00d4 0023     		movs	r3, #0
+ 187 00d6 BB71     		strb	r3, [r7, #6]
+ 227:../source/CAN_SPI.c **** 	SPI_SendData(data, 3, 0);
+ 188              		.loc 1 227 0
+ 189 00d8 3B1D     		adds	r3, r7, #4
+ 190 00da 0022     		movs	r2, #0
+ 191 00dc 0321     		movs	r1, #3
+ 192 00de 1846     		mov	r0, r3
+ 193 00e0 FFF7FEFF 		bl	SPI_SendData
+ 228:../source/CAN_SPI.c **** 	while(SPI_Transmission_In_Process());
+ 194              		.loc 1 228 0
+ 195 00e4 00BF     		nop
+ 196              	.L7:
+ 197              		.loc 1 228 0 is_stmt 0 discriminator 1
+ 198 00e6 FFF7FEFF 		bl	SPI_Transmission_In_Process
+ 199 00ea 0346     		mov	r3, r0
+ 200 00ec 002B     		cmp	r3, #0
+ 201 00ee FAD1     		bne	.L7
+ 229:../source/CAN_SPI.c **** 
+ 230:../source/CAN_SPI.c **** 	data[0] = WRITE_INSTRUCTION;
+ 202              		.loc 1 230 0 is_stmt 1
+ 203 00f0 0223     		movs	r3, #2
+ 204 00f2 3B71     		strb	r3, [r7, #4]
+ 231:../source/CAN_SPI.c **** 	data[1] = RxF0SIDH;
+ 205              		.loc 1 231 0
+ 206 00f4 0023     		movs	r3, #0
+ 207 00f6 7B71     		strb	r3, [r7, #5]
+ 232:../source/CAN_SPI.c **** 	data[2] = 0b00100000;
+ 208              		.loc 1 232 0
+ 209 00f8 2023     		movs	r3, #32
+ 210 00fa BB71     		strb	r3, [r7, #6]
+ 233:../source/CAN_SPI.c **** 	SPI_SendData(data, 3, 0);
+ 211              		.loc 1 233 0
+ 212 00fc 3B1D     		adds	r3, r7, #4
+ 213 00fe 0022     		movs	r2, #0
+ 214 0100 0321     		movs	r1, #3
+ 215 0102 1846     		mov	r0, r3
+ 216 0104 FFF7FEFF 		bl	SPI_SendData
+ 234:../source/CAN_SPI.c **** 	while(SPI_Transmission_In_Process());
+ 217              		.loc 1 234 0
+ 218 0108 00BF     		nop
+ 219              	.L8:
+ 220              		.loc 1 234 0 is_stmt 0 discriminator 1
+ 221 010a FFF7FEFF 		bl	SPI_Transmission_In_Process
+ 222 010e 0346     		mov	r3, r0
+ 223 0110 002B     		cmp	r3, #0
+ 224 0112 FAD1     		bne	.L8
+ 235:../source/CAN_SPI.c **** 
+ 236:../source/CAN_SPI.c **** 	data[0] = WRITE_INSTRUCTION;
+ 225              		.loc 1 236 0 is_stmt 1
+ 226 0114 0223     		movs	r3, #2
+ 227 0116 3B71     		strb	r3, [r7, #4]
+ 237:../source/CAN_SPI.c **** 	data[1] = RxF0SIDL;
+ 228              		.loc 1 237 0
+ 229 0118 0123     		movs	r3, #1
+ 230 011a 7B71     		strb	r3, [r7, #5]
+ 238:../source/CAN_SPI.c **** 	data[2] = 0b00000000;
+ 231              		.loc 1 238 0
+ 232 011c 0023     		movs	r3, #0
+ 233 011e BB71     		strb	r3, [r7, #6]
+ 239:../source/CAN_SPI.c **** 	SPI_SendData(data, 3, 0);
+ 234              		.loc 1 239 0
+ 235 0120 3B1D     		adds	r3, r7, #4
+ 236 0122 0022     		movs	r2, #0
+ 237 0124 0321     		movs	r1, #3
+ 238 0126 1846     		mov	r0, r3
+ 239 0128 FFF7FEFF 		bl	SPI_SendData
+ 240:../source/CAN_SPI.c **** 	while(SPI_Transmission_In_Process());
+ 240              		.loc 1 240 0
+ 241 012c 00BF     		nop
+ 242              	.L9:
+ 243              		.loc 1 240 0 is_stmt 0 discriminator 1
+ 244 012e FFF7FEFF 		bl	SPI_Transmission_In_Process
+ 245 0132 0346     		mov	r3, r0
+ 246 0134 002B     		cmp	r3, #0
+ 247 0136 FAD1     		bne	.L9
+ 241:../source/CAN_SPI.c **** 
+ 242:../source/CAN_SPI.c **** 	// 5- Reception configurations
+ 243:../source/CAN_SPI.c **** 	data[0] = WRITE_INSTRUCTION;
+ 248              		.loc 1 243 0 is_stmt 1
+ 249 0138 0223     		movs	r3, #2
+ 250 013a 3B71     		strb	r3, [r7, #4]
+ 244:../source/CAN_SPI.c **** 	data[1] = RxB0CTRL;
+ 251              		.loc 1 244 0
+ 252 013c 6023     		movs	r3, #96
+ 253 013e 7B71     		strb	r3, [r7, #5]
+ 245:../source/CAN_SPI.c **** 	data[2] = 0b01100000; //0b00000100;//Roll-over enabled (RX0 TO RX1)
+ 254              		.loc 1 245 0
+ 255 0140 6023     		movs	r3, #96
+ 256 0142 BB71     		strb	r3, [r7, #6]
+ 246:../source/CAN_SPI.c **** 	SPI_SendData(data, 3, 0);
+ 257              		.loc 1 246 0
+ 258 0144 3B1D     		adds	r3, r7, #4
+ 259 0146 0022     		movs	r2, #0
+ 260 0148 0321     		movs	r1, #3
+ 261 014a 1846     		mov	r0, r3
+ 262 014c FFF7FEFF 		bl	SPI_SendData
+ 247:../source/CAN_SPI.c **** 	while(SPI_Transmission_In_Process());
+ 263              		.loc 1 247 0
+ 264 0150 00BF     		nop
+ 265              	.L10:
+ 266              		.loc 1 247 0 is_stmt 0 discriminator 1
+ 267 0152 FFF7FEFF 		bl	SPI_Transmission_In_Process
+ 268 0156 0346     		mov	r3, r0
+ 269 0158 002B     		cmp	r3, #0
+ 270 015a FAD1     		bne	.L10
+ 248:../source/CAN_SPI.c **** 
+ 249:../source/CAN_SPI.c **** 	data[0] = WRITE_INSTRUCTION;
+ 271              		.loc 1 249 0 is_stmt 1
+ 272 015c 0223     		movs	r3, #2
+ 273 015e 3B71     		strb	r3, [r7, #4]
+ 250:../source/CAN_SPI.c **** 	data[1] = RxB1CTRL;
+ 274              		.loc 1 250 0
+ 275 0160 7023     		movs	r3, #112
+ 276 0162 7B71     		strb	r3, [r7, #5]
+ 251:../source/CAN_SPI.c **** 	data[2] = 0b01100000;
+ 277              		.loc 1 251 0
+ 278 0164 6023     		movs	r3, #96
+ 279 0166 BB71     		strb	r3, [r7, #6]
+ 252:../source/CAN_SPI.c **** 	SPI_SendData(data, 3, 0);
+ 280              		.loc 1 252 0
+ 281 0168 3B1D     		adds	r3, r7, #4
+ 282 016a 0022     		movs	r2, #0
+ 283 016c 0321     		movs	r1, #3
+ 284 016e 1846     		mov	r0, r3
+ 285 0170 FFF7FEFF 		bl	SPI_SendData
+ 253:../source/CAN_SPI.c **** 	while(SPI_Transmission_In_Process());
+ 286              		.loc 1 253 0
+ 287 0174 00BF     		nop
+ 288              	.L11:
+ 289              		.loc 1 253 0 is_stmt 0 discriminator 1
+ 290 0176 FFF7FEFF 		bl	SPI_Transmission_In_Process
+ 291 017a 0346     		mov	r3, r0
+ 292 017c 002B     		cmp	r3, #0
+ 293 017e FAD1     		bne	.L11
+ 254:../source/CAN_SPI.c **** 
+ 255:../source/CAN_SPI.c **** 
+ 256:../source/CAN_SPI.c **** 	// 6- Erase flags and enable interrupts
+ 257:../source/CAN_SPI.c **** 	data[0] = WRITE_INSTRUCTION;
+ 294              		.loc 1 257 0 is_stmt 1
+ 295 0180 0223     		movs	r3, #2
+ 296 0182 3B71     		strb	r3, [r7, #4]
+ 258:../source/CAN_SPI.c **** 	data[1] = CANINTE;
+ 297              		.loc 1 258 0
+ 298 0184 2B23     		movs	r3, #43
+ 299 0186 7B71     		strb	r3, [r7, #5]
+ 259:../source/CAN_SPI.c **** 	data[2] = 0b00000011;
+ 300              		.loc 1 259 0
+ 301 0188 0323     		movs	r3, #3
+ 302 018a BB71     		strb	r3, [r7, #6]
+ 260:../source/CAN_SPI.c **** 	SPI_SendData(data, 3, 0);
+ 303              		.loc 1 260 0
+ 304 018c 3B1D     		adds	r3, r7, #4
+ 305 018e 0022     		movs	r2, #0
+ 306 0190 0321     		movs	r1, #3
+ 307 0192 1846     		mov	r0, r3
+ 308 0194 FFF7FEFF 		bl	SPI_SendData
+ 261:../source/CAN_SPI.c **** 	while(SPI_Transmission_In_Process());
+ 309              		.loc 1 261 0
+ 310 0198 00BF     		nop
+ 311              	.L12:
+ 312              		.loc 1 261 0 is_stmt 0 discriminator 1
+ 313 019a FFF7FEFF 		bl	SPI_Transmission_In_Process
+ 314 019e 0346     		mov	r3, r0
+ 315 01a0 002B     		cmp	r3, #0
+ 316 01a2 FAD1     		bne	.L12
+ 262:../source/CAN_SPI.c **** 
+ 263:../source/CAN_SPI.c **** 	data[0] = WRITE_INSTRUCTION;
+ 317              		.loc 1 263 0 is_stmt 1
+ 318 01a4 0223     		movs	r3, #2
+ 319 01a6 3B71     		strb	r3, [r7, #4]
+ 264:../source/CAN_SPI.c **** 	data[1] = CANINTF;
+ 320              		.loc 1 264 0
+ 321 01a8 2C23     		movs	r3, #44
+ 322 01aa 7B71     		strb	r3, [r7, #5]
+ 265:../source/CAN_SPI.c **** 	data[2] = 0b00000000;	// all flags in 0
+ 323              		.loc 1 265 0
+ 324 01ac 0023     		movs	r3, #0
+ 325 01ae BB71     		strb	r3, [r7, #6]
+ 266:../source/CAN_SPI.c **** 	SPI_SendData(data, 3, 0);
+ 326              		.loc 1 266 0
+ 327 01b0 3B1D     		adds	r3, r7, #4
+ 328 01b2 0022     		movs	r2, #0
+ 329 01b4 0321     		movs	r1, #3
+ 330 01b6 1846     		mov	r0, r3
+ 331 01b8 FFF7FEFF 		bl	SPI_SendData
+ 267:../source/CAN_SPI.c **** 	while(SPI_Transmission_In_Process());
+ 332              		.loc 1 267 0
+ 333 01bc 00BF     		nop
+ 334              	.L13:
+ 335              		.loc 1 267 0 is_stmt 0 discriminator 1
+ 336 01be FFF7FEFF 		bl	SPI_Transmission_In_Process
+ 337 01c2 0346     		mov	r3, r0
+ 338 01c4 002B     		cmp	r3, #0
+ 339 01c6 FAD1     		bne	.L13
+ 268:../source/CAN_SPI.c **** 
+ 269:../source/CAN_SPI.c **** 	// 7- Normal mode
+ 270:../source/CAN_SPI.c **** 	data[0] = BIT_MODIFY_INSTRUCTION;
+ 340              		.loc 1 270 0 is_stmt 1
+ 341 01c8 0523     		movs	r3, #5
+ 342 01ca 3B71     		strb	r3, [r7, #4]
+ 271:../source/CAN_SPI.c **** 	data[1] = CANCTRL;
+ 343              		.loc 1 271 0
+ 344 01cc 0F23     		movs	r3, #15
+ 345 01ce 7B71     		strb	r3, [r7, #5]
+ 272:../source/CAN_SPI.c **** 	data[2] = 0b11100000; // Mask
+ 346              		.loc 1 272 0
+ 347 01d0 E023     		movs	r3, #224
+ 348 01d2 BB71     		strb	r3, [r7, #6]
+ 273:../source/CAN_SPI.c **** 	data[3] = 0b01000000; //Loopback 0b01000000
+ 349              		.loc 1 273 0
+ 350 01d4 4023     		movs	r3, #64
+ 351 01d6 FB71     		strb	r3, [r7, #7]
+ 274:../source/CAN_SPI.c **** 	SPI_SendData(data, 4, 0);
+ 352              		.loc 1 274 0
+ 353 01d8 3B1D     		adds	r3, r7, #4
+ 354 01da 0022     		movs	r2, #0
+ 355 01dc 0421     		movs	r1, #4
+ 356 01de 1846     		mov	r0, r3
+ 357 01e0 FFF7FEFF 		bl	SPI_SendData
+ 275:../source/CAN_SPI.c **** 	while(SPI_Transmission_In_Process());
+ 358              		.loc 1 275 0
+ 359 01e4 00BF     		nop
+ 360              	.L14:
+ 361              		.loc 1 275 0 is_stmt 0 discriminator 1
+ 362 01e6 FFF7FEFF 		bl	SPI_Transmission_In_Process
+ 363 01ea 0346     		mov	r3, r0
+ 364 01ec 002B     		cmp	r3, #0
+ 365 01ee FAD1     		bne	.L14
+ 276:../source/CAN_SPI.c **** 
+ 277:../source/CAN_SPI.c **** }
+ 366              		.loc 1 277 0 is_stmt 1
+ 367 01f0 00BF     		nop
+ 368 01f2 1037     		adds	r7, r7, #16
+ 369              		.cfi_def_cfa_offset 8
+ 370 01f4 BD46     		mov	sp, r7
+ 371              		.cfi_def_cfa_register 13
+ 372              		@ sp needed
+ 373 01f6 80BD     		pop	{r7, pc}
+ 374              		.cfi_endproc
+ 375              	.LFE123:
+ 377              		.section	.text.CAN_SPI_Is_Read_Ready,"ax",%progbits
+ 378              		.align	1
+ 379              		.global	CAN_SPI_Is_Read_Ready
+ 380              		.syntax unified
+ 381              		.thumb
+ 382              		.thumb_func
+ 383              		.fpu fpv4-sp-d16
+ 385              	CAN_SPI_Is_Read_Ready:
+ 386              	.LFB124:
+ 278:../source/CAN_SPI.c **** 
+ 279:../source/CAN_SPI.c **** 
+ 280:../source/CAN_SPI.c **** /**
+ 281:../source/CAN_SPI.c ****  * @brief
+ 282:../source/CAN_SPI.c ****  * @param
+ 283:../source/CAN_SPI.c ****  * @return
+ 284:../source/CAN_SPI.c ****  */
+ 285:../source/CAN_SPI.c **** 
+ 286:../source/CAN_SPI.c **** uint8_t CAN_SPI_Is_Read_Ready(void)
+ 287:../source/CAN_SPI.c **** {
+ 387              		.loc 1 287 0
+ 388              		.cfi_startproc
+ 389              		@ args = 0, pretend = 0, frame = 0
+ 390              		@ frame_needed = 1, uses_anonymous_args = 0
+ 391 0000 80B5     		push	{r7, lr}
+ 392              		.cfi_def_cfa_offset 8
+ 393              		.cfi_offset 7, -8
+ 394              		.cfi_offset 14, -4
+ 395 0002 00AF     		add	r7, sp, #0
+ 396              		.cfi_def_cfa_register 7
+ 288:../source/CAN_SPI.c **** 	return(!receiving && get_Queue_Status(0));
+ 397              		.loc 1 288 0
+ 398 0004 074B     		ldr	r3, .L19
+ 399 0006 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 400 0008 002B     		cmp	r3, #0
+ 401 000a 07D1     		bne	.L16
+ 402              		.loc 1 288 0 is_stmt 0 discriminator 1
+ 403 000c 0020     		movs	r0, #0
+ 404 000e FFF7FEFF 		bl	get_Queue_Status
+ 405 0012 0346     		mov	r3, r0
+ 406 0014 002B     		cmp	r3, #0
+ 407 0016 01D0     		beq	.L16
+ 408              		.loc 1 288 0 discriminator 3
+ 409 0018 0123     		movs	r3, #1
+ 410 001a 00E0     		b	.L17
+ 411              	.L16:
+ 412              		.loc 1 288 0 discriminator 4
+ 413 001c 0023     		movs	r3, #0
+ 414              	.L17:
+ 415              		.loc 1 288 0 discriminator 6
+ 416 001e DBB2     		uxtb	r3, r3
+ 289:../source/CAN_SPI.c **** }
+ 417              		.loc 1 289 0 is_stmt 1 discriminator 6
+ 418 0020 1846     		mov	r0, r3
+ 419 0022 80BD     		pop	{r7, pc}
+ 420              	.L20:
+ 421              		.align	2
+ 422              	.L19:
+ 423 0024 00000000 		.word	receiving
+ 424              		.cfi_endproc
+ 425              	.LFE124:
+ 427              		.section	.text.CAN_SPI_Get_Data,"ax",%progbits
+ 428              		.align	1
+ 429              		.global	CAN_SPI_Get_Data
+ 430              		.syntax unified
+ 431              		.thumb
+ 432              		.thumb_func
+ 433              		.fpu fpv4-sp-d16
+ 435              	CAN_SPI_Get_Data:
+ 436              	.LFB125:
+ 290:../source/CAN_SPI.c **** 
+ 291:../source/CAN_SPI.c **** /**
+ 292:../source/CAN_SPI.c ****  * @brief
+ 293:../source/CAN_SPI.c ****  * @param
+ 294:../source/CAN_SPI.c ****  * @return
+ 295:../source/CAN_SPI.c ****  */
+ 296:../source/CAN_SPI.c **** 
+ 297:../source/CAN_SPI.c **** RXB_RAWDATA_t CAN_SPI_Get_Data(void)
+ 298:../source/CAN_SPI.c **** {
+ 437              		.loc 1 298 0
+ 438              		.cfi_startproc
+ 439              		@ args = 0, pretend = 0, frame = 8
+ 440              		@ frame_needed = 1, uses_anonymous_args = 0
+ 441 0000 80B5     		push	{r7, lr}
+ 442              		.cfi_def_cfa_offset 8
+ 443              		.cfi_offset 7, -8
+ 444              		.cfi_offset 14, -4
+ 445 0002 82B0     		sub	sp, sp, #8
+ 446              		.cfi_def_cfa_offset 16
+ 447 0004 00AF     		add	r7, sp, #0
+ 448              		.cfi_def_cfa_register 7
+ 449 0006 7860     		str	r0, [r7, #4]
+ 299:../source/CAN_SPI.c **** 	return(pull_Queue_Element(0));
+ 450              		.loc 1 299 0
+ 451 0008 7B68     		ldr	r3, [r7, #4]
+ 452 000a 0021     		movs	r1, #0
+ 453 000c 1846     		mov	r0, r3
+ 454 000e FFF7FEFF 		bl	pull_Queue_Element
+ 300:../source/CAN_SPI.c **** }
+ 455              		.loc 1 300 0
+ 456 0012 7868     		ldr	r0, [r7, #4]
+ 457 0014 0837     		adds	r7, r7, #8
+ 458              		.cfi_def_cfa_offset 8
+ 459 0016 BD46     		mov	sp, r7
+ 460              		.cfi_def_cfa_register 13
+ 461              		@ sp needed
+ 462 0018 80BD     		pop	{r7, pc}
+ 463              		.cfi_endproc
+ 464              	.LFE125:
+ 466              		.section	.text.CAN_SPI_ReceiveInfo,"ax",%progbits
+ 467              		.align	1
+ 468              		.global	CAN_SPI_ReceiveInfo
+ 469              		.syntax unified
+ 470              		.thumb
+ 471              		.thumb_func
+ 472              		.fpu fpv4-sp-d16
+ 474              	CAN_SPI_ReceiveInfo:
+ 475              	.LFB126:
+ 301:../source/CAN_SPI.c **** 
+ 302:../source/CAN_SPI.c **** 
+ 303:../source/CAN_SPI.c **** /**
+ 304:../source/CAN_SPI.c ****  * @brief
+ 305:../source/CAN_SPI.c ****  * @param
+ 306:../source/CAN_SPI.c ****  * @return
+ 307:../source/CAN_SPI.c ****  */
+ 308:../source/CAN_SPI.c **** 
+ 309:../source/CAN_SPI.c **** void CAN_SPI_ReceiveInfo(void)
+ 310:../source/CAN_SPI.c **** {
+ 476              		.loc 1 310 0
+ 477              		.cfi_startproc
+ 478              		@ args = 0, pretend = 0, frame = 0
+ 479              		@ frame_needed = 1, uses_anonymous_args = 0
+ 480 0000 80B5     		push	{r7, lr}
+ 481              		.cfi_def_cfa_offset 8
+ 482              		.cfi_offset 7, -8
+ 483              		.cfi_offset 14, -4
+ 484 0002 00AF     		add	r7, sp, #0
+ 485              		.cfi_def_cfa_register 7
+ 311:../source/CAN_SPI.c **** 	static uint8_t receiveState = 0;
+ 312:../source/CAN_SPI.c **** 	static uint8_t aux[16];
+ 313:../source/CAN_SPI.c **** 	static uint8_t intStatus = 0;
+ 314:../source/CAN_SPI.c **** 
+ 315:../source/CAN_SPI.c **** 
+ 316:../source/CAN_SPI.c **** 	switch(receiveState)
+ 486              		.loc 1 316 0
+ 487 0004 3D4B     		ldr	r3, .L36
+ 488 0006 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 489 0008 042B     		cmp	r3, #4
+ 490 000a 6DD8     		bhi	.L24
+ 491 000c 01A2     		adr	r2, .L26
+ 492 000e 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 493 0012 00BF     		.p2align 2
+ 494              	.L26:
+ 495 0014 29000000 		.word	.L25+1
+ 496 0018 41000000 		.word	.L27+1
+ 497 001c 6B000000 		.word	.L28+1
+ 498 0020 C5000000 		.word	.L29+1
+ 499 0024 D7000000 		.word	.L30+1
+ 500              		.p2align 1
+ 501              	.L25:
+ 317:../source/CAN_SPI.c **** 	{
+ 318:../source/CAN_SPI.c **** 	case 0:
+ 319:../source/CAN_SPI.c **** 		receiving = 1;
+ 502              		.loc 1 319 0
+ 503 0028 354B     		ldr	r3, .L36+4
+ 504 002a 0122     		movs	r2, #1
+ 505 002c 1A70     		strb	r2, [r3]
+ 320:../source/CAN_SPI.c **** 		read_SPICAN(CANINTF, 1, &CAN_SPI_ReceiveInfo);
+ 506              		.loc 1 320 0
+ 507 002e 354A     		ldr	r2, .L36+8
+ 508 0030 0121     		movs	r1, #1
+ 509 0032 2C20     		movs	r0, #44
+ 510 0034 FFF7FEFF 		bl	read_SPICAN
+ 321:../source/CAN_SPI.c **** 		receiveState = 1;
+ 511              		.loc 1 321 0
+ 512 0038 304B     		ldr	r3, .L36
+ 513 003a 0122     		movs	r2, #1
+ 514 003c 1A70     		strb	r2, [r3]
+ 322:../source/CAN_SPI.c **** 		break;
+ 515              		.loc 1 322 0
+ 516 003e 5BE0     		b	.L31
+ 517              	.L27:
+ 323:../source/CAN_SPI.c **** 
+ 324:../source/CAN_SPI.c **** 	case 1:
+ 325:../source/CAN_SPI.c **** 		SPI_Get_DataBytes(aux, 3);
+ 518              		.loc 1 325 0
+ 519 0040 0321     		movs	r1, #3
+ 520 0042 3148     		ldr	r0, .L36+12
+ 521 0044 FFF7FEFF 		bl	SPI_Get_DataBytes
+ 326:../source/CAN_SPI.c **** 		intStatus = aux[2];
+ 522              		.loc 1 326 0
+ 523 0048 2F4B     		ldr	r3, .L36+12
+ 524 004a 9A78     		ldrb	r2, [r3, #2]	@ zero_extendqisi2
+ 525 004c 2F4B     		ldr	r3, .L36+16
+ 526 004e 1A70     		strb	r2, [r3]
+ 327:../source/CAN_SPI.c **** 		aux[0] = 0;
+ 527              		.loc 1 327 0
+ 528 0050 2D4B     		ldr	r3, .L36+12
+ 529 0052 0022     		movs	r2, #0
+ 530 0054 1A70     		strb	r2, [r3]
+ 328:../source/CAN_SPI.c **** 
+ 329:../source/CAN_SPI.c **** 		write_SPICAN(CANINTF, aux, 1, &CAN_SPI_ReceiveInfo);
+ 531              		.loc 1 329 0
+ 532 0056 2B4B     		ldr	r3, .L36+8
+ 533 0058 0122     		movs	r2, #1
+ 534 005a 2B49     		ldr	r1, .L36+12
+ 535 005c 2C20     		movs	r0, #44
+ 536 005e FFF7FEFF 		bl	write_SPICAN
+ 330:../source/CAN_SPI.c **** 		// clear interrupt flags
+ 331:../source/CAN_SPI.c **** 		receiveState = 2;
+ 537              		.loc 1 331 0
+ 538 0062 264B     		ldr	r3, .L36
+ 539 0064 0222     		movs	r2, #2
+ 540 0066 1A70     		strb	r2, [r3]
+ 332:../source/CAN_SPI.c **** 		break;
+ 541              		.loc 1 332 0
+ 542 0068 46E0     		b	.L31
+ 543              	.L28:
+ 333:../source/CAN_SPI.c **** 
+ 334:../source/CAN_SPI.c **** 	case 2:
+ 335:../source/CAN_SPI.c **** 		// Check which RX received data
+ 336:../source/CAN_SPI.c **** 		if((intStatus & 0b11) == 0b11)
+ 544              		.loc 1 336 0
+ 545 006a 284B     		ldr	r3, .L36+16
+ 546 006c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 547 006e 03F00303 		and	r3, r3, #3
+ 548 0072 032B     		cmp	r3, #3
+ 549 0074 08D1     		bne	.L32
+ 337:../source/CAN_SPI.c **** 		{
+ 338:../source/CAN_SPI.c **** 			// Read RX 0 first, then RX1
+ 339:../source/CAN_SPI.c **** 			read_RX_buffer(0b00, 13, &CAN_SPI_ReceiveInfo);
+ 550              		.loc 1 339 0
+ 551 0076 234A     		ldr	r2, .L36+8
+ 552 0078 0D21     		movs	r1, #13
+ 553 007a 0020     		movs	r0, #0
+ 554 007c FFF7FEFF 		bl	read_RX_buffer
+ 340:../source/CAN_SPI.c **** 			receiveState = 4;
+ 555              		.loc 1 340 0
+ 556 0080 1E4B     		ldr	r3, .L36
+ 557 0082 0422     		movs	r2, #4
+ 558 0084 1A70     		strb	r2, [r3]
+ 341:../source/CAN_SPI.c **** 		}
+ 342:../source/CAN_SPI.c **** 		else if((intStatus & 0b11) == 0b01)
+ 343:../source/CAN_SPI.c **** 		{
+ 344:../source/CAN_SPI.c **** 			// Read RX 0
+ 345:../source/CAN_SPI.c **** 			read_RX_buffer(0b00, 13, &CAN_SPI_ReceiveInfo);
+ 346:../source/CAN_SPI.c **** 			receiveState = 3;
+ 347:../source/CAN_SPI.c **** 		}
+ 348:../source/CAN_SPI.c **** 		else if((intStatus & 0b11) == 0b10)
+ 349:../source/CAN_SPI.c **** 		{
+ 350:../source/CAN_SPI.c **** 			// Read RX 1
+ 351:../source/CAN_SPI.c **** 			read_RX_buffer(0b10, 13, &CAN_SPI_ReceiveInfo);
+ 352:../source/CAN_SPI.c **** 			receiveState = 3;
+ 353:../source/CAN_SPI.c **** 		}
+ 354:../source/CAN_SPI.c **** 		break;
+ 559              		.loc 1 354 0
+ 560 0086 36E0     		b	.L35
+ 561              	.L32:
+ 342:../source/CAN_SPI.c **** 		{
+ 562              		.loc 1 342 0
+ 563 0088 204B     		ldr	r3, .L36+16
+ 564 008a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 565 008c 03F00303 		and	r3, r3, #3
+ 566 0090 012B     		cmp	r3, #1
+ 567 0092 08D1     		bne	.L34
+ 345:../source/CAN_SPI.c **** 			receiveState = 3;
+ 568              		.loc 1 345 0
+ 569 0094 1B4A     		ldr	r2, .L36+8
+ 570 0096 0D21     		movs	r1, #13
+ 571 0098 0020     		movs	r0, #0
+ 572 009a FFF7FEFF 		bl	read_RX_buffer
+ 346:../source/CAN_SPI.c **** 		}
+ 573              		.loc 1 346 0
+ 574 009e 174B     		ldr	r3, .L36
+ 575 00a0 0322     		movs	r2, #3
+ 576 00a2 1A70     		strb	r2, [r3]
+ 577              		.loc 1 354 0
+ 578 00a4 27E0     		b	.L35
+ 579              	.L34:
+ 348:../source/CAN_SPI.c **** 		{
+ 580              		.loc 1 348 0
+ 581 00a6 194B     		ldr	r3, .L36+16
+ 582 00a8 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 583 00aa 03F00303 		and	r3, r3, #3
+ 584 00ae 022B     		cmp	r3, #2
+ 585 00b0 21D1     		bne	.L35
+ 351:../source/CAN_SPI.c **** 			receiveState = 3;
+ 586              		.loc 1 351 0
+ 587 00b2 144A     		ldr	r2, .L36+8
+ 588 00b4 0D21     		movs	r1, #13
+ 589 00b6 0220     		movs	r0, #2
+ 590 00b8 FFF7FEFF 		bl	read_RX_buffer
+ 352:../source/CAN_SPI.c **** 		}
+ 591              		.loc 1 352 0
+ 592 00bc 0F4B     		ldr	r3, .L36
+ 593 00be 0322     		movs	r2, #3
+ 594 00c0 1A70     		strb	r2, [r3]
+ 595              		.loc 1 354 0
+ 596 00c2 18E0     		b	.L35
+ 597              	.L29:
+ 355:../source/CAN_SPI.c **** 
+ 356:../source/CAN_SPI.c **** 
+ 357:../source/CAN_SPI.c **** 	case 3:
+ 358:../source/CAN_SPI.c **** 		checkDoubleBuffers();
+ 598              		.loc 1 358 0
+ 599 00c4 FFF7FEFF 		bl	checkDoubleBuffers
+ 359:../source/CAN_SPI.c **** 		// Can data started to be sent
+ 360:../source/CAN_SPI.c **** 		receiveState = 0;
+ 600              		.loc 1 360 0
+ 601 00c8 0C4B     		ldr	r3, .L36
+ 602 00ca 0022     		movs	r2, #0
+ 603 00cc 1A70     		strb	r2, [r3]
+ 361:../source/CAN_SPI.c **** 		receiving = 0;
+ 604              		.loc 1 361 0
+ 605 00ce 0C4B     		ldr	r3, .L36+4
+ 606 00d0 0022     		movs	r2, #0
+ 607 00d2 1A70     		strb	r2, [r3]
+ 362:../source/CAN_SPI.c **** 		break;
+ 608              		.loc 1 362 0
+ 609 00d4 10E0     		b	.L31
+ 610              	.L30:
+ 363:../source/CAN_SPI.c **** 
+ 364:../source/CAN_SPI.c **** 	case 4:
+ 365:../source/CAN_SPI.c **** 		// read RX1, after reading RX1, if both flags on
+ 366:../source/CAN_SPI.c **** 		read_RX_buffer(0b10, 13, &CAN_SPI_ReceiveInfo);
+ 611              		.loc 1 366 0
+ 612 00d6 0B4A     		ldr	r2, .L36+8
+ 613 00d8 0D21     		movs	r1, #13
+ 614 00da 0220     		movs	r0, #2
+ 615 00dc FFF7FEFF 		bl	read_RX_buffer
+ 367:../source/CAN_SPI.c **** 		receiveState = 3;
+ 616              		.loc 1 367 0
+ 617 00e0 064B     		ldr	r3, .L36
+ 618 00e2 0322     		movs	r2, #3
+ 619 00e4 1A70     		strb	r2, [r3]
+ 368:../source/CAN_SPI.c **** 		break;
+ 620              		.loc 1 368 0
+ 621 00e6 07E0     		b	.L31
+ 622              	.L24:
+ 369:../source/CAN_SPI.c **** 
+ 370:../source/CAN_SPI.c **** 	default:
+ 371:../source/CAN_SPI.c **** 		receiveState = 0;
+ 623              		.loc 1 371 0
+ 624 00e8 044B     		ldr	r3, .L36
+ 625 00ea 0022     		movs	r2, #0
+ 626 00ec 1A70     		strb	r2, [r3]
+ 372:../source/CAN_SPI.c **** 		receiving = 0;
+ 627              		.loc 1 372 0
+ 628 00ee 044B     		ldr	r3, .L36+4
+ 629 00f0 0022     		movs	r2, #0
+ 630 00f2 1A70     		strb	r2, [r3]
+ 373:../source/CAN_SPI.c **** 		break;
+ 631              		.loc 1 373 0
+ 632 00f4 00E0     		b	.L31
+ 633              	.L35:
+ 354:../source/CAN_SPI.c **** 
+ 634              		.loc 1 354 0
+ 635 00f6 00BF     		nop
+ 636              	.L31:
+ 374:../source/CAN_SPI.c **** 
+ 375:../source/CAN_SPI.c **** 
+ 376:../source/CAN_SPI.c **** 	}
+ 377:../source/CAN_SPI.c **** 
+ 378:../source/CAN_SPI.c **** }
+ 637              		.loc 1 378 0
+ 638 00f8 00BF     		nop
+ 639 00fa 80BD     		pop	{r7, pc}
+ 640              	.L37:
+ 641              		.align	2
+ 642              	.L36:
+ 643 00fc 00000000 		.word	receiveState.7071
+ 644 0100 00000000 		.word	receiving
+ 645 0104 00000000 		.word	CAN_SPI_ReceiveInfo
+ 646 0108 00000000 		.word	aux.7072
+ 647 010c 00000000 		.word	intStatus.7073
+ 648              		.cfi_endproc
+ 649              	.LFE126:
+ 651              		.section	.text.CAN_SPI_SendInfo,"ax",%progbits
+ 652              		.align	1
+ 653              		.global	CAN_SPI_SendInfo
+ 654              		.syntax unified
+ 655              		.thumb
+ 656              		.thumb_func
+ 657              		.fpu fpv4-sp-d16
+ 659              	CAN_SPI_SendInfo:
+ 660              	.LFB127:
+ 379:../source/CAN_SPI.c **** 
+ 380:../source/CAN_SPI.c **** 
+ 381:../source/CAN_SPI.c **** /**
+ 382:../source/CAN_SPI.c ****  * @brief
+ 383:../source/CAN_SPI.c ****  * @param
+ 384:../source/CAN_SPI.c ****  * @return
+ 385:../source/CAN_SPI.c ****  */
+ 386:../source/CAN_SPI.c **** 
+ 387:../source/CAN_SPI.c **** void CAN_SPI_SendInfo(RXB_RAWDATA_t * rawdata)
+ 388:../source/CAN_SPI.c **** {
+ 661              		.loc 1 388 0
+ 662              		.cfi_startproc
+ 663              		@ args = 0, pretend = 0, frame = 8
+ 664              		@ frame_needed = 1, uses_anonymous_args = 0
+ 665 0000 80B5     		push	{r7, lr}
+ 666              		.cfi_def_cfa_offset 8
+ 667              		.cfi_offset 7, -8
+ 668              		.cfi_offset 14, -4
+ 669 0002 82B0     		sub	sp, sp, #8
+ 670              		.cfi_def_cfa_offset 16
+ 671 0004 00AF     		add	r7, sp, #0
+ 672              		.cfi_def_cfa_register 7
+ 673 0006 7860     		str	r0, [r7, #4]
+ 389:../source/CAN_SPI.c **** 	// Initial Send Info state
+ 390:../source/CAN_SPI.c **** 	static uint8_t sendState = 0;
+ 391:../source/CAN_SPI.c **** 	static uint8_t aux[16];
+ 392:../source/CAN_SPI.c **** 	static uint8_t data_to_send[16];
+ 393:../source/CAN_SPI.c **** 	static uint8_t number_buffer = 0;
+ 394:../source/CAN_SPI.c **** 	static uint8_t rxStatus;
+ 395:../source/CAN_SPI.c **** 
+ 396:../source/CAN_SPI.c **** 	switch(sendState)
+ 674              		.loc 1 396 0
+ 675 0008 404B     		ldr	r3, .L50
+ 676 000a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 677 000c 032B     		cmp	r3, #3
+ 678 000e 72D8     		bhi	.L39
+ 679 0010 01A2     		adr	r2, .L41
+ 680 0012 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 681 0016 00BF     		.p2align 2
+ 682              	.L41:
+ 683 0018 29000000 		.word	.L40+1
+ 684 001c 45000000 		.word	.L42+1
+ 685 0020 D5000000 		.word	.L43+1
+ 686 0024 E9000000 		.word	.L44+1
+ 687              		.p2align 1
+ 688              	.L40:
+ 397:../source/CAN_SPI.c **** 	{
+ 398:../source/CAN_SPI.c **** 	case 0:
+ 399:../source/CAN_SPI.c **** 		transmitting = 1;
+ 689              		.loc 1 399 0
+ 690 0028 394B     		ldr	r3, .L50+4
+ 691 002a 0122     		movs	r2, #1
+ 692 002c 1A70     		strb	r2, [r3]
+ 400:../source/CAN_SPI.c **** 		sendState = 1;
+ 693              		.loc 1 400 0
+ 694 002e 374B     		ldr	r3, .L50
+ 695 0030 0122     		movs	r2, #1
+ 696 0032 1A70     		strb	r2, [r3]
+ 401:../source/CAN_SPI.c **** 		parseData(rawdata, data_to_send);
+ 697              		.loc 1 401 0
+ 698 0034 3749     		ldr	r1, .L50+8
+ 699 0036 7868     		ldr	r0, [r7, #4]
+ 700 0038 FFF7FEFF 		bl	parseData
+ 402:../source/CAN_SPI.c **** 		read_status(&CAN_SPI_SendInfo);
+ 701              		.loc 1 402 0
+ 702 003c 3648     		ldr	r0, .L50+12
+ 703 003e FFF7FEFF 		bl	read_status
+ 403:../source/CAN_SPI.c **** 		break;
+ 704              		.loc 1 403 0
+ 705 0042 5FE0     		b	.L45
+ 706              	.L42:
+ 404:../source/CAN_SPI.c **** 
+ 405:../source/CAN_SPI.c **** 	case 1:
+ 406:../source/CAN_SPI.c **** 		SPI_Get_DataBytes(aux, 3);
+ 707              		.loc 1 406 0
+ 708 0044 0321     		movs	r1, #3
+ 709 0046 3548     		ldr	r0, .L50+16
+ 710 0048 FFF7FEFF 		bl	SPI_Get_DataBytes
+ 407:../source/CAN_SPI.c **** 		rxStatus = aux[1];
+ 711              		.loc 1 407 0
+ 712 004c 334B     		ldr	r3, .L50+16
+ 713 004e 5A78     		ldrb	r2, [r3, #1]	@ zero_extendqisi2
+ 714 0050 334B     		ldr	r3, .L50+20
+ 715 0052 1A70     		strb	r2, [r3]
+ 408:../source/CAN_SPI.c **** 
+ 409:../source/CAN_SPI.c **** 		if(!(rxStatus & 0b00000100))	// if TX
+ 716              		.loc 1 409 0
+ 717 0054 324B     		ldr	r3, .L50+20
+ 718 0056 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 719 0058 03F00403 		and	r3, r3, #4
+ 720 005c 002B     		cmp	r3, #0
+ 721 005e 0CD1     		bne	.L46
+ 410:../source/CAN_SPI.c **** 		{
+ 411:../source/CAN_SPI.c **** 			sendState = 2;
+ 722              		.loc 1 411 0
+ 723 0060 2A4B     		ldr	r3, .L50
+ 724 0062 0222     		movs	r2, #2
+ 725 0064 1A70     		strb	r2, [r3]
+ 412:../source/CAN_SPI.c **** 			load_TX_buffer(0b000000000, data_to_send, 13, &CAN_SPI_SendInfo);
+ 726              		.loc 1 412 0
+ 727 0066 2C4B     		ldr	r3, .L50+12
+ 728 0068 0D22     		movs	r2, #13
+ 729 006a 2A49     		ldr	r1, .L50+8
+ 730 006c 0020     		movs	r0, #0
+ 731 006e FFF7FEFF 		bl	load_TX_buffer
+ 413:../source/CAN_SPI.c **** 			number_buffer = 0;
+ 732              		.loc 1 413 0
+ 733 0072 2C4B     		ldr	r3, .L50+24
+ 734 0074 0022     		movs	r2, #0
+ 735 0076 1A70     		strb	r2, [r3]
+ 414:../source/CAN_SPI.c **** 		}
+ 415:../source/CAN_SPI.c **** 		else if(!(rxStatus & 0b00010000))
+ 416:../source/CAN_SPI.c **** 		{
+ 417:../source/CAN_SPI.c **** 			sendState = 2;
+ 418:../source/CAN_SPI.c **** 			load_TX_buffer(0b000000010, data_to_send, 13, &CAN_SPI_SendInfo);
+ 419:../source/CAN_SPI.c **** 			number_buffer = 1;
+ 420:../source/CAN_SPI.c **** 		}
+ 421:../source/CAN_SPI.c **** 		else if(!(rxStatus & 0b01000000))
+ 422:../source/CAN_SPI.c **** 		{
+ 423:../source/CAN_SPI.c **** 			sendState = 2;
+ 424:../source/CAN_SPI.c **** 			load_TX_buffer(0b000000100, data_to_send, 13, &CAN_SPI_SendInfo);
+ 425:../source/CAN_SPI.c **** 			number_buffer = 2;
+ 426:../source/CAN_SPI.c **** 		}
+ 427:../source/CAN_SPI.c **** 		else
+ 428:../source/CAN_SPI.c **** 		{
+ 429:../source/CAN_SPI.c **** 			sendState = 0;
+ 430:../source/CAN_SPI.c **** 			transmitting = 0;
+ 431:../source/CAN_SPI.c **** 		}
+ 432:../source/CAN_SPI.c **** 
+ 433:../source/CAN_SPI.c **** 		break;
+ 736              		.loc 1 433 0
+ 737 0078 44E0     		b	.L45
+ 738              	.L46:
+ 415:../source/CAN_SPI.c **** 		{
+ 739              		.loc 1 415 0
+ 740 007a 294B     		ldr	r3, .L50+20
+ 741 007c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 742 007e 03F01003 		and	r3, r3, #16
+ 743 0082 002B     		cmp	r3, #0
+ 744 0084 0CD1     		bne	.L48
+ 417:../source/CAN_SPI.c **** 			load_TX_buffer(0b000000010, data_to_send, 13, &CAN_SPI_SendInfo);
+ 745              		.loc 1 417 0
+ 746 0086 214B     		ldr	r3, .L50
+ 747 0088 0222     		movs	r2, #2
+ 748 008a 1A70     		strb	r2, [r3]
+ 418:../source/CAN_SPI.c **** 			number_buffer = 1;
+ 749              		.loc 1 418 0
+ 750 008c 224B     		ldr	r3, .L50+12
+ 751 008e 0D22     		movs	r2, #13
+ 752 0090 2049     		ldr	r1, .L50+8
+ 753 0092 0220     		movs	r0, #2
+ 754 0094 FFF7FEFF 		bl	load_TX_buffer
+ 419:../source/CAN_SPI.c **** 		}
+ 755              		.loc 1 419 0
+ 756 0098 224B     		ldr	r3, .L50+24
+ 757 009a 0122     		movs	r2, #1
+ 758 009c 1A70     		strb	r2, [r3]
+ 759              		.loc 1 433 0
+ 760 009e 31E0     		b	.L45
+ 761              	.L48:
+ 421:../source/CAN_SPI.c **** 		{
+ 762              		.loc 1 421 0
+ 763 00a0 1F4B     		ldr	r3, .L50+20
+ 764 00a2 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 765 00a4 03F04003 		and	r3, r3, #64
+ 766 00a8 002B     		cmp	r3, #0
+ 767 00aa 0CD1     		bne	.L49
+ 423:../source/CAN_SPI.c **** 			load_TX_buffer(0b000000100, data_to_send, 13, &CAN_SPI_SendInfo);
+ 768              		.loc 1 423 0
+ 769 00ac 174B     		ldr	r3, .L50
+ 770 00ae 0222     		movs	r2, #2
+ 771 00b0 1A70     		strb	r2, [r3]
+ 424:../source/CAN_SPI.c **** 			number_buffer = 2;
+ 772              		.loc 1 424 0
+ 773 00b2 194B     		ldr	r3, .L50+12
+ 774 00b4 0D22     		movs	r2, #13
+ 775 00b6 1749     		ldr	r1, .L50+8
+ 776 00b8 0420     		movs	r0, #4
+ 777 00ba FFF7FEFF 		bl	load_TX_buffer
+ 425:../source/CAN_SPI.c **** 		}
+ 778              		.loc 1 425 0
+ 779 00be 194B     		ldr	r3, .L50+24
+ 780 00c0 0222     		movs	r2, #2
+ 781 00c2 1A70     		strb	r2, [r3]
+ 782              		.loc 1 433 0
+ 783 00c4 1EE0     		b	.L45
+ 784              	.L49:
+ 429:../source/CAN_SPI.c **** 			transmitting = 0;
+ 785              		.loc 1 429 0
+ 786 00c6 114B     		ldr	r3, .L50
+ 787 00c8 0022     		movs	r2, #0
+ 788 00ca 1A70     		strb	r2, [r3]
+ 430:../source/CAN_SPI.c **** 		}
+ 789              		.loc 1 430 0
+ 790 00cc 104B     		ldr	r3, .L50+4
+ 791 00ce 0022     		movs	r2, #0
+ 792 00d0 1A70     		strb	r2, [r3]
+ 793              		.loc 1 433 0
+ 794 00d2 17E0     		b	.L45
+ 795              	.L43:
+ 434:../source/CAN_SPI.c **** 
+ 435:../source/CAN_SPI.c **** 	case 2:
+ 436:../source/CAN_SPI.c **** 		sendState = 3;
+ 796              		.loc 1 436 0
+ 797 00d4 0D4B     		ldr	r3, .L50
+ 798 00d6 0322     		movs	r2, #3
+ 799 00d8 1A70     		strb	r2, [r3]
+ 437:../source/CAN_SPI.c **** 		RTS(number_buffer, &CAN_SPI_SendInfo);
+ 800              		.loc 1 437 0
+ 801 00da 124B     		ldr	r3, .L50+24
+ 802 00dc 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 803 00de 0E49     		ldr	r1, .L50+12
+ 804 00e0 1846     		mov	r0, r3
+ 805 00e2 FFF7FEFF 		bl	RTS
+ 438:../source/CAN_SPI.c **** 		break;
+ 806              		.loc 1 438 0
+ 807 00e6 0DE0     		b	.L45
+ 808              	.L44:
+ 439:../source/CAN_SPI.c **** 
+ 440:../source/CAN_SPI.c **** 	case 3:
+ 441:../source/CAN_SPI.c **** 		// Can data started to be sent
+ 442:../source/CAN_SPI.c **** 		sendState = 0;
+ 809              		.loc 1 442 0
+ 810 00e8 084B     		ldr	r3, .L50
+ 811 00ea 0022     		movs	r2, #0
+ 812 00ec 1A70     		strb	r2, [r3]
+ 443:../source/CAN_SPI.c **** 		transmitting = 0;
+ 813              		.loc 1 443 0
+ 814 00ee 084B     		ldr	r3, .L50+4
+ 815 00f0 0022     		movs	r2, #0
+ 816 00f2 1A70     		strb	r2, [r3]
+ 444:../source/CAN_SPI.c **** 		break;
+ 817              		.loc 1 444 0
+ 818 00f4 06E0     		b	.L45
+ 819              	.L39:
+ 445:../source/CAN_SPI.c **** 
+ 446:../source/CAN_SPI.c **** 	default:
+ 447:../source/CAN_SPI.c **** 		sendState = 0;
+ 820              		.loc 1 447 0
+ 821 00f6 054B     		ldr	r3, .L50
+ 822 00f8 0022     		movs	r2, #0
+ 823 00fa 1A70     		strb	r2, [r3]
+ 448:../source/CAN_SPI.c **** 		transmitting = 0;
+ 824              		.loc 1 448 0
+ 825 00fc 044B     		ldr	r3, .L50+4
+ 826 00fe 0022     		movs	r2, #0
+ 827 0100 1A70     		strb	r2, [r3]
+ 449:../source/CAN_SPI.c **** 		break;
+ 828              		.loc 1 449 0
+ 829 0102 00BF     		nop
+ 830              	.L45:
+ 450:../source/CAN_SPI.c **** 
+ 451:../source/CAN_SPI.c **** 
+ 452:../source/CAN_SPI.c **** 	}
+ 453:../source/CAN_SPI.c **** }
+ 831              		.loc 1 453 0
+ 832 0104 00BF     		nop
+ 833 0106 0837     		adds	r7, r7, #8
+ 834              		.cfi_def_cfa_offset 8
+ 835 0108 BD46     		mov	sp, r7
+ 836              		.cfi_def_cfa_register 13
+ 837              		@ sp needed
+ 838 010a 80BD     		pop	{r7, pc}
+ 839              	.L51:
+ 840              		.align	2
+ 841              	.L50:
+ 842 010c 00000000 		.word	sendState.7084
+ 843 0110 00000000 		.word	transmitting
+ 844 0114 00000000 		.word	data_to_send.7086
+ 845 0118 00000000 		.word	CAN_SPI_SendInfo
+ 846 011c 00000000 		.word	aux.7085
+ 847 0120 00000000 		.word	rxStatus.7088
+ 848 0124 00000000 		.word	number_buffer.7087
+ 849              		.cfi_endproc
+ 850              	.LFE127:
+ 852              		.section	.text.load_TX_buffer,"ax",%progbits
+ 853              		.align	1
+ 854              		.syntax unified
+ 855              		.thumb
+ 856              		.thumb_func
+ 857              		.fpu fpv4-sp-d16
+ 859              	load_TX_buffer:
+ 860              	.LFB128:
+ 454:../source/CAN_SPI.c **** 
+ 455:../source/CAN_SPI.c **** 
+ 456:../source/CAN_SPI.c **** 
+ 457:../source/CAN_SPI.c **** 
+ 458:../source/CAN_SPI.c **** /*******************************************************************************
+ 459:../source/CAN_SPI.c ****  *******************************************************************************
+ 460:../source/CAN_SPI.c ****                         LOCAL FUNCTION DEFINITIONS
+ 461:../source/CAN_SPI.c ****  *******************************************************************************
+ 462:../source/CAN_SPI.c ****  ******************************************************************************/
+ 463:../source/CAN_SPI.c **** /**
+ 464:../source/CAN_SPI.c ****  * @brief
+ 465:../source/CAN_SPI.c ****  * @return
+ 466:../source/CAN_SPI.c ****  */
+ 467:../source/CAN_SPI.c **** static void load_TX_buffer(uint8_t abc, uint8_t * bytes_data, uint8_t num_bytes_data, void (*cb) (v
+ 468:../source/CAN_SPI.c **** {
+ 861              		.loc 1 468 0
+ 862              		.cfi_startproc
+ 863              		@ args = 0, pretend = 0, frame = 40
+ 864              		@ frame_needed = 1, uses_anonymous_args = 0
+ 865 0000 80B5     		push	{r7, lr}
+ 866              		.cfi_def_cfa_offset 8
+ 867              		.cfi_offset 7, -8
+ 868              		.cfi_offset 14, -4
+ 869 0002 8AB0     		sub	sp, sp, #40
+ 870              		.cfi_def_cfa_offset 48
+ 871 0004 00AF     		add	r7, sp, #0
+ 872              		.cfi_def_cfa_register 7
+ 873 0006 B960     		str	r1, [r7, #8]
+ 874 0008 7B60     		str	r3, [r7, #4]
+ 875 000a 0346     		mov	r3, r0
+ 876 000c FB73     		strb	r3, [r7, #15]
+ 877 000e 1346     		mov	r3, r2
+ 878 0010 BB73     		strb	r3, [r7, #14]
+ 469:../source/CAN_SPI.c **** 	uint8_t aux[16];
+ 470:../source/CAN_SPI.c **** 	aux[0] = 0b01000000 | abc;
+ 879              		.loc 1 470 0
+ 880 0012 FB7B     		ldrb	r3, [r7, #15]
+ 881 0014 43F04003 		orr	r3, r3, #64
+ 882 0018 DBB2     		uxtb	r3, r3
+ 883 001a 3B75     		strb	r3, [r7, #20]
+ 471:../source/CAN_SPI.c **** 	uint32_t i;
+ 472:../source/CAN_SPI.c **** 	for(i = 0; i < num_bytes_data; i++)
+ 884              		.loc 1 472 0
+ 885 001c 0023     		movs	r3, #0
+ 886 001e 7B62     		str	r3, [r7, #36]
+ 887 0020 0DE0     		b	.L53
+ 888              	.L54:
+ 473:../source/CAN_SPI.c **** 	{
+ 474:../source/CAN_SPI.c **** 		aux[i+1] = bytes_data[i];
+ 889              		.loc 1 474 0 discriminator 3
+ 890 0022 BA68     		ldr	r2, [r7, #8]
+ 891 0024 7B6A     		ldr	r3, [r7, #36]
+ 892 0026 1A44     		add	r2, r2, r3
+ 893 0028 7B6A     		ldr	r3, [r7, #36]
+ 894 002a 0133     		adds	r3, r3, #1
+ 895 002c 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 896 002e 07F12801 		add	r1, r7, #40
+ 897 0032 0B44     		add	r3, r3, r1
+ 898 0034 03F8142C 		strb	r2, [r3, #-20]
+ 472:../source/CAN_SPI.c **** 	{
+ 899              		.loc 1 472 0 discriminator 3
+ 900 0038 7B6A     		ldr	r3, [r7, #36]
+ 901 003a 0133     		adds	r3, r3, #1
+ 902 003c 7B62     		str	r3, [r7, #36]
+ 903              	.L53:
+ 472:../source/CAN_SPI.c **** 	{
+ 904              		.loc 1 472 0 is_stmt 0 discriminator 1
+ 905 003e BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 906 0040 7A6A     		ldr	r2, [r7, #36]
+ 907 0042 9A42     		cmp	r2, r3
+ 908 0044 EDD3     		bcc	.L54
+ 475:../source/CAN_SPI.c **** 	}
+ 476:../source/CAN_SPI.c **** 	SPI_SendData(aux, num_bytes_data + 1, cb);
+ 909              		.loc 1 476 0 is_stmt 1
+ 910 0046 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 911 0048 0133     		adds	r3, r3, #1
+ 912 004a 1946     		mov	r1, r3
+ 913 004c 07F11403 		add	r3, r7, #20
+ 914 0050 7A68     		ldr	r2, [r7, #4]
+ 915 0052 1846     		mov	r0, r3
+ 916 0054 FFF7FEFF 		bl	SPI_SendData
+ 477:../source/CAN_SPI.c **** }
+ 917              		.loc 1 477 0
+ 918 0058 00BF     		nop
+ 919 005a 2837     		adds	r7, r7, #40
+ 920              		.cfi_def_cfa_offset 8
+ 921 005c BD46     		mov	sp, r7
+ 922              		.cfi_def_cfa_register 13
+ 923              		@ sp needed
+ 924 005e 80BD     		pop	{r7, pc}
+ 925              		.cfi_endproc
+ 926              	.LFE128:
+ 928              		.section	.text.write_SPICAN,"ax",%progbits
+ 929              		.align	1
+ 930              		.syntax unified
+ 931              		.thumb
+ 932              		.thumb_func
+ 933              		.fpu fpv4-sp-d16
+ 935              	write_SPICAN:
+ 936              	.LFB129:
+ 478:../source/CAN_SPI.c **** 
+ 479:../source/CAN_SPI.c **** /**
+ 480:../source/CAN_SPI.c ****  * @brief
+ 481:../source/CAN_SPI.c ****  * @return
+ 482:../source/CAN_SPI.c ****  */
+ 483:../source/CAN_SPI.c **** static void write_SPICAN(uint8_t address, uint8_t * bytes_data, uint8_t num_bytes_data, void (*cb) 
+ 484:../source/CAN_SPI.c **** {
+ 937              		.loc 1 484 0
+ 938              		.cfi_startproc
+ 939              		@ args = 0, pretend = 0, frame = 40
+ 940              		@ frame_needed = 1, uses_anonymous_args = 0
+ 941 0000 80B5     		push	{r7, lr}
+ 942              		.cfi_def_cfa_offset 8
+ 943              		.cfi_offset 7, -8
+ 944              		.cfi_offset 14, -4
+ 945 0002 8AB0     		sub	sp, sp, #40
+ 946              		.cfi_def_cfa_offset 48
+ 947 0004 00AF     		add	r7, sp, #0
+ 948              		.cfi_def_cfa_register 7
+ 949 0006 B960     		str	r1, [r7, #8]
+ 950 0008 7B60     		str	r3, [r7, #4]
+ 951 000a 0346     		mov	r3, r0
+ 952 000c FB73     		strb	r3, [r7, #15]
+ 953 000e 1346     		mov	r3, r2
+ 954 0010 BB73     		strb	r3, [r7, #14]
+ 485:../source/CAN_SPI.c **** 	uint8_t aux[16];
+ 486:../source/CAN_SPI.c **** 	aux[0] = WRITE_INSTRUCTION;
+ 955              		.loc 1 486 0
+ 956 0012 0223     		movs	r3, #2
+ 957 0014 3B75     		strb	r3, [r7, #20]
+ 487:../source/CAN_SPI.c **** 	aux[1] = address;
+ 958              		.loc 1 487 0
+ 959 0016 FB7B     		ldrb	r3, [r7, #15]
+ 960 0018 7B75     		strb	r3, [r7, #21]
+ 488:../source/CAN_SPI.c **** 	uint32_t i;
+ 489:../source/CAN_SPI.c **** 	for(i = 0; i < num_bytes_data; i++)
+ 961              		.loc 1 489 0
+ 962 001a 0023     		movs	r3, #0
+ 963 001c 7B62     		str	r3, [r7, #36]
+ 964 001e 0DE0     		b	.L56
+ 965              	.L57:
+ 490:../source/CAN_SPI.c **** 	{
+ 491:../source/CAN_SPI.c **** 		aux[i+2] = bytes_data[i];
+ 966              		.loc 1 491 0 discriminator 3
+ 967 0020 BA68     		ldr	r2, [r7, #8]
+ 968 0022 7B6A     		ldr	r3, [r7, #36]
+ 969 0024 1A44     		add	r2, r2, r3
+ 970 0026 7B6A     		ldr	r3, [r7, #36]
+ 971 0028 0233     		adds	r3, r3, #2
+ 972 002a 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 973 002c 07F12801 		add	r1, r7, #40
+ 974 0030 0B44     		add	r3, r3, r1
+ 975 0032 03F8142C 		strb	r2, [r3, #-20]
+ 489:../source/CAN_SPI.c **** 	{
+ 976              		.loc 1 489 0 discriminator 3
+ 977 0036 7B6A     		ldr	r3, [r7, #36]
+ 978 0038 0133     		adds	r3, r3, #1
+ 979 003a 7B62     		str	r3, [r7, #36]
+ 980              	.L56:
+ 489:../source/CAN_SPI.c **** 	{
+ 981              		.loc 1 489 0 is_stmt 0 discriminator 1
+ 982 003c BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 983 003e 7A6A     		ldr	r2, [r7, #36]
+ 984 0040 9A42     		cmp	r2, r3
+ 985 0042 EDD3     		bcc	.L57
+ 492:../source/CAN_SPI.c **** 	}
+ 493:../source/CAN_SPI.c **** 	SPI_SendData(aux, num_bytes_data + 2, cb);
+ 986              		.loc 1 493 0 is_stmt 1
+ 987 0044 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 988 0046 0233     		adds	r3, r3, #2
+ 989 0048 1946     		mov	r1, r3
+ 990 004a 07F11403 		add	r3, r7, #20
+ 991 004e 7A68     		ldr	r2, [r7, #4]
+ 992 0050 1846     		mov	r0, r3
+ 993 0052 FFF7FEFF 		bl	SPI_SendData
+ 494:../source/CAN_SPI.c **** }
+ 994              		.loc 1 494 0
+ 995 0056 00BF     		nop
+ 996 0058 2837     		adds	r7, r7, #40
+ 997              		.cfi_def_cfa_offset 8
+ 998 005a BD46     		mov	sp, r7
+ 999              		.cfi_def_cfa_register 13
+ 1000              		@ sp needed
+ 1001 005c 80BD     		pop	{r7, pc}
+ 1002              		.cfi_endproc
+ 1003              	.LFE129:
+ 1005              		.section	.text.read_SPICAN,"ax",%progbits
+ 1006              		.align	1
+ 1007              		.syntax unified
+ 1008              		.thumb
+ 1009              		.thumb_func
+ 1010              		.fpu fpv4-sp-d16
+ 1012              	read_SPICAN:
+ 1013              	.LFB130:
+ 495:../source/CAN_SPI.c **** 
+ 496:../source/CAN_SPI.c **** /**
+ 497:../source/CAN_SPI.c ****  * @brief
+ 498:../source/CAN_SPI.c ****  * @return
+ 499:../source/CAN_SPI.c ****  */
+ 500:../source/CAN_SPI.c **** static void read_SPICAN(uint8_t address, uint8_t num_bytes_to_read, void (*cb) (void))
+ 501:../source/CAN_SPI.c **** {
+ 1014              		.loc 1 501 0
+ 1015              		.cfi_startproc
+ 1016              		@ args = 0, pretend = 0, frame = 32
+ 1017              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1018 0000 80B5     		push	{r7, lr}
+ 1019              		.cfi_def_cfa_offset 8
+ 1020              		.cfi_offset 7, -8
+ 1021              		.cfi_offset 14, -4
+ 1022 0002 88B0     		sub	sp, sp, #32
+ 1023              		.cfi_def_cfa_offset 40
+ 1024 0004 00AF     		add	r7, sp, #0
+ 1025              		.cfi_def_cfa_register 7
+ 1026 0006 0346     		mov	r3, r0
+ 1027 0008 3A60     		str	r2, [r7]
+ 1028 000a FB71     		strb	r3, [r7, #7]
+ 1029 000c 0B46     		mov	r3, r1
+ 1030 000e BB71     		strb	r3, [r7, #6]
+ 502:../source/CAN_SPI.c **** 	uint8_t aux[16];
+ 503:../source/CAN_SPI.c **** 	aux[0] = READ_INSTRUCTION;
+ 1031              		.loc 1 503 0
+ 1032 0010 0323     		movs	r3, #3
+ 1033 0012 3B73     		strb	r3, [r7, #12]
+ 504:../source/CAN_SPI.c **** 	aux[1] = address;
+ 1034              		.loc 1 504 0
+ 1035 0014 FB79     		ldrb	r3, [r7, #7]
+ 1036 0016 7B73     		strb	r3, [r7, #13]
+ 505:../source/CAN_SPI.c **** 	uint32_t i;
+ 506:../source/CAN_SPI.c **** 	for(i = 0; i < num_bytes_to_read; i++)
+ 1037              		.loc 1 506 0
+ 1038 0018 0023     		movs	r3, #0
+ 1039 001a FB61     		str	r3, [r7, #28]
+ 1040 001c 0AE0     		b	.L59
+ 1041              	.L60:
+ 507:../source/CAN_SPI.c **** 	{
+ 508:../source/CAN_SPI.c **** 		aux[i+2] = 0;
+ 1042              		.loc 1 508 0 discriminator 3
+ 1043 001e FB69     		ldr	r3, [r7, #28]
+ 1044 0020 0233     		adds	r3, r3, #2
+ 1045 0022 07F12002 		add	r2, r7, #32
+ 1046 0026 1344     		add	r3, r3, r2
+ 1047 0028 0022     		movs	r2, #0
+ 1048 002a 03F8142C 		strb	r2, [r3, #-20]
+ 506:../source/CAN_SPI.c **** 	{
+ 1049              		.loc 1 506 0 discriminator 3
+ 1050 002e FB69     		ldr	r3, [r7, #28]
+ 1051 0030 0133     		adds	r3, r3, #1
+ 1052 0032 FB61     		str	r3, [r7, #28]
+ 1053              	.L59:
+ 506:../source/CAN_SPI.c **** 	{
+ 1054              		.loc 1 506 0 is_stmt 0 discriminator 1
+ 1055 0034 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 1056 0036 FA69     		ldr	r2, [r7, #28]
+ 1057 0038 9A42     		cmp	r2, r3
+ 1058 003a F0D3     		bcc	.L60
+ 509:../source/CAN_SPI.c **** 	}
+ 510:../source/CAN_SPI.c **** 	SPI_SendData(aux, num_bytes_to_read + 2, cb);
+ 1059              		.loc 1 510 0 is_stmt 1
+ 1060 003c BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 1061 003e 0233     		adds	r3, r3, #2
+ 1062 0040 1946     		mov	r1, r3
+ 1063 0042 07F10C03 		add	r3, r7, #12
+ 1064 0046 3A68     		ldr	r2, [r7]
+ 1065 0048 1846     		mov	r0, r3
+ 1066 004a FFF7FEFF 		bl	SPI_SendData
+ 511:../source/CAN_SPI.c **** }
+ 1067              		.loc 1 511 0
+ 1068 004e 00BF     		nop
+ 1069 0050 2037     		adds	r7, r7, #32
+ 1070              		.cfi_def_cfa_offset 8
+ 1071 0052 BD46     		mov	sp, r7
+ 1072              		.cfi_def_cfa_register 13
+ 1073              		@ sp needed
+ 1074 0054 80BD     		pop	{r7, pc}
+ 1075              		.cfi_endproc
+ 1076              	.LFE130:
+ 1078              		.section	.text.read_RX_buffer,"ax",%progbits
+ 1079              		.align	1
+ 1080              		.syntax unified
+ 1081              		.thumb
+ 1082              		.thumb_func
+ 1083              		.fpu fpv4-sp-d16
+ 1085              	read_RX_buffer:
+ 1086              	.LFB131:
+ 512:../source/CAN_SPI.c **** 
+ 513:../source/CAN_SPI.c **** /**
+ 514:../source/CAN_SPI.c ****  * @brief
+ 515:../source/CAN_SPI.c ****  * @return
+ 516:../source/CAN_SPI.c ****  */
+ 517:../source/CAN_SPI.c **** static void read_RX_buffer(uint8_t nm, uint8_t num_bytes_to_read, void (*cb) (void))
+ 518:../source/CAN_SPI.c **** {
+ 1087              		.loc 1 518 0
+ 1088              		.cfi_startproc
+ 1089              		@ args = 0, pretend = 0, frame = 32
+ 1090              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1091 0000 80B5     		push	{r7, lr}
+ 1092              		.cfi_def_cfa_offset 8
+ 1093              		.cfi_offset 7, -8
+ 1094              		.cfi_offset 14, -4
+ 1095 0002 88B0     		sub	sp, sp, #32
+ 1096              		.cfi_def_cfa_offset 40
+ 1097 0004 00AF     		add	r7, sp, #0
+ 1098              		.cfi_def_cfa_register 7
+ 1099 0006 0346     		mov	r3, r0
+ 1100 0008 3A60     		str	r2, [r7]
+ 1101 000a FB71     		strb	r3, [r7, #7]
+ 1102 000c 0B46     		mov	r3, r1
+ 1103 000e BB71     		strb	r3, [r7, #6]
+ 519:../source/CAN_SPI.c **** 	uint8_t aux[16];
+ 520:../source/CAN_SPI.c **** 	aux[0] = 0b10010000 | nm;
+ 1104              		.loc 1 520 0
+ 1105 0010 FB79     		ldrb	r3, [r7, #7]
+ 1106 0012 63F06F03 		orn	r3, r3, #111
+ 1107 0016 DBB2     		uxtb	r3, r3
+ 1108 0018 3B73     		strb	r3, [r7, #12]
+ 521:../source/CAN_SPI.c **** 	uint32_t i;
+ 522:../source/CAN_SPI.c **** 	for(i = 0; i < num_bytes_to_read; i++)
+ 1109              		.loc 1 522 0
+ 1110 001a 0023     		movs	r3, #0
+ 1111 001c FB61     		str	r3, [r7, #28]
+ 1112 001e 0AE0     		b	.L62
+ 1113              	.L63:
+ 523:../source/CAN_SPI.c **** 	{
+ 524:../source/CAN_SPI.c **** 		aux[i+1] = 0;
+ 1114              		.loc 1 524 0 discriminator 3
+ 1115 0020 FB69     		ldr	r3, [r7, #28]
+ 1116 0022 0133     		adds	r3, r3, #1
+ 1117 0024 07F12002 		add	r2, r7, #32
+ 1118 0028 1344     		add	r3, r3, r2
+ 1119 002a 0022     		movs	r2, #0
+ 1120 002c 03F8142C 		strb	r2, [r3, #-20]
+ 522:../source/CAN_SPI.c **** 	{
+ 1121              		.loc 1 522 0 discriminator 3
+ 1122 0030 FB69     		ldr	r3, [r7, #28]
+ 1123 0032 0133     		adds	r3, r3, #1
+ 1124 0034 FB61     		str	r3, [r7, #28]
+ 1125              	.L62:
+ 522:../source/CAN_SPI.c **** 	{
+ 1126              		.loc 1 522 0 is_stmt 0 discriminator 1
+ 1127 0036 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 1128 0038 FA69     		ldr	r2, [r7, #28]
+ 1129 003a 9A42     		cmp	r2, r3
+ 1130 003c F0D3     		bcc	.L63
+ 525:../source/CAN_SPI.c **** 	}
+ 526:../source/CAN_SPI.c **** 	SPI_SendData(aux, num_bytes_to_read + 1, cb);
+ 1131              		.loc 1 526 0 is_stmt 1
+ 1132 003e BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 1133 0040 0133     		adds	r3, r3, #1
+ 1134 0042 1946     		mov	r1, r3
+ 1135 0044 07F10C03 		add	r3, r7, #12
+ 1136 0048 3A68     		ldr	r2, [r7]
+ 1137 004a 1846     		mov	r0, r3
+ 1138 004c FFF7FEFF 		bl	SPI_SendData
+ 527:../source/CAN_SPI.c **** }
+ 1139              		.loc 1 527 0
+ 1140 0050 00BF     		nop
+ 1141 0052 2037     		adds	r7, r7, #32
+ 1142              		.cfi_def_cfa_offset 8
+ 1143 0054 BD46     		mov	sp, r7
+ 1144              		.cfi_def_cfa_register 13
+ 1145              		@ sp needed
+ 1146 0056 80BD     		pop	{r7, pc}
+ 1147              		.cfi_endproc
+ 1148              	.LFE131:
+ 1150              		.section	.text.read_status,"ax",%progbits
+ 1151              		.align	1
+ 1152              		.syntax unified
+ 1153              		.thumb
+ 1154              		.thumb_func
+ 1155              		.fpu fpv4-sp-d16
+ 1157              	read_status:
+ 1158              	.LFB132:
+ 528:../source/CAN_SPI.c **** 
+ 529:../source/CAN_SPI.c **** /**
+ 530:../source/CAN_SPI.c ****  * @brief
+ 531:../source/CAN_SPI.c ****  * @return
+ 532:../source/CAN_SPI.c ****  */
+ 533:../source/CAN_SPI.c **** static void read_status(void (*cb) (void))
+ 534:../source/CAN_SPI.c **** {
+ 1159              		.loc 1 534 0
+ 1160              		.cfi_startproc
+ 1161              		@ args = 0, pretend = 0, frame = 32
+ 1162              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1163 0000 80B5     		push	{r7, lr}
+ 1164              		.cfi_def_cfa_offset 8
+ 1165              		.cfi_offset 7, -8
+ 1166              		.cfi_offset 14, -4
+ 1167 0002 88B0     		sub	sp, sp, #32
+ 1168              		.cfi_def_cfa_offset 40
+ 1169 0004 00AF     		add	r7, sp, #0
+ 1170              		.cfi_def_cfa_register 7
+ 1171 0006 7860     		str	r0, [r7, #4]
+ 535:../source/CAN_SPI.c **** 	uint8_t aux[16];
+ 536:../source/CAN_SPI.c **** 	aux[0] = 0b10100000;
+ 1172              		.loc 1 536 0
+ 1173 0008 A023     		movs	r3, #160
+ 1174 000a 3B73     		strb	r3, [r7, #12]
+ 537:../source/CAN_SPI.c **** 	uint32_t i;
+ 538:../source/CAN_SPI.c **** 	for(i = 0; i < 2; i++)
+ 1175              		.loc 1 538 0
+ 1176 000c 0023     		movs	r3, #0
+ 1177 000e FB61     		str	r3, [r7, #28]
+ 1178 0010 0AE0     		b	.L65
+ 1179              	.L66:
+ 539:../source/CAN_SPI.c **** 	{
+ 540:../source/CAN_SPI.c **** 		aux[i+1] = 0;
+ 1180              		.loc 1 540 0 discriminator 3
+ 1181 0012 FB69     		ldr	r3, [r7, #28]
+ 1182 0014 0133     		adds	r3, r3, #1
+ 1183 0016 07F12002 		add	r2, r7, #32
+ 1184 001a 1344     		add	r3, r3, r2
+ 1185 001c 0022     		movs	r2, #0
+ 1186 001e 03F8142C 		strb	r2, [r3, #-20]
+ 538:../source/CAN_SPI.c **** 	{
+ 1187              		.loc 1 538 0 discriminator 3
+ 1188 0022 FB69     		ldr	r3, [r7, #28]
+ 1189 0024 0133     		adds	r3, r3, #1
+ 1190 0026 FB61     		str	r3, [r7, #28]
+ 1191              	.L65:
+ 538:../source/CAN_SPI.c **** 	{
+ 1192              		.loc 1 538 0 is_stmt 0 discriminator 1
+ 1193 0028 FB69     		ldr	r3, [r7, #28]
+ 1194 002a 012B     		cmp	r3, #1
+ 1195 002c F1D9     		bls	.L66
+ 541:../source/CAN_SPI.c **** 	}
+ 542:../source/CAN_SPI.c **** 	SPI_SendData(aux, 3, cb);
+ 1196              		.loc 1 542 0 is_stmt 1
+ 1197 002e 07F10C03 		add	r3, r7, #12
+ 1198 0032 7A68     		ldr	r2, [r7, #4]
+ 1199 0034 0321     		movs	r1, #3
+ 1200 0036 1846     		mov	r0, r3
+ 1201 0038 FFF7FEFF 		bl	SPI_SendData
+ 543:../source/CAN_SPI.c **** }
+ 1202              		.loc 1 543 0
+ 1203 003c 00BF     		nop
+ 1204 003e 2037     		adds	r7, r7, #32
+ 1205              		.cfi_def_cfa_offset 8
+ 1206 0040 BD46     		mov	sp, r7
+ 1207              		.cfi_def_cfa_register 13
+ 1208              		@ sp needed
+ 1209 0042 80BD     		pop	{r7, pc}
+ 1210              		.cfi_endproc
+ 1211              	.LFE132:
+ 1213              		.section	.text.RTS,"ax",%progbits
+ 1214              		.align	1
+ 1215              		.syntax unified
+ 1216              		.thumb
+ 1217              		.thumb_func
+ 1218              		.fpu fpv4-sp-d16
+ 1220              	RTS:
+ 1221              	.LFB133:
+ 544:../source/CAN_SPI.c **** 
+ 545:../source/CAN_SPI.c **** /**
+ 546:../source/CAN_SPI.c ****  * @brief
+ 547:../source/CAN_SPI.c ****  * @return
+ 548:../source/CAN_SPI.c ****  */
+ 549:../source/CAN_SPI.c **** static void RTS(uint8_t txn, void (*cb) (void))
+ 550:../source/CAN_SPI.c **** {
+ 1222              		.loc 1 550 0
+ 1223              		.cfi_startproc
+ 1224              		@ args = 0, pretend = 0, frame = 24
+ 1225              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1226 0000 80B5     		push	{r7, lr}
+ 1227              		.cfi_def_cfa_offset 8
+ 1228              		.cfi_offset 7, -8
+ 1229              		.cfi_offset 14, -4
+ 1230 0002 86B0     		sub	sp, sp, #24
+ 1231              		.cfi_def_cfa_offset 32
+ 1232 0004 00AF     		add	r7, sp, #0
+ 1233              		.cfi_def_cfa_register 7
+ 1234 0006 0346     		mov	r3, r0
+ 1235 0008 3960     		str	r1, [r7]
+ 1236 000a FB71     		strb	r3, [r7, #7]
+ 551:../source/CAN_SPI.c **** 	uint8_t aux[16];
+ 552:../source/CAN_SPI.c **** 	aux[0] = 0b10000000 | (1 << txn);
+ 1237              		.loc 1 552 0
+ 1238 000c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1239 000e 0122     		movs	r2, #1
+ 1240 0010 02FA03F3 		lsl	r3, r2, r3
+ 1241 0014 5BB2     		sxtb	r3, r3
+ 1242 0016 63F07F03 		orn	r3, r3, #127
+ 1243 001a 5BB2     		sxtb	r3, r3
+ 1244 001c DBB2     		uxtb	r3, r3
+ 1245 001e 3B72     		strb	r3, [r7, #8]
+ 553:../source/CAN_SPI.c **** 	SPI_SendData(aux, 1, cb);
+ 1246              		.loc 1 553 0
+ 1247 0020 07F10803 		add	r3, r7, #8
+ 1248 0024 3A68     		ldr	r2, [r7]
+ 1249 0026 0121     		movs	r1, #1
+ 1250 0028 1846     		mov	r0, r3
+ 1251 002a FFF7FEFF 		bl	SPI_SendData
+ 554:../source/CAN_SPI.c **** }
+ 1252              		.loc 1 554 0
+ 1253 002e 00BF     		nop
+ 1254 0030 1837     		adds	r7, r7, #24
+ 1255              		.cfi_def_cfa_offset 8
+ 1256 0032 BD46     		mov	sp, r7
+ 1257              		.cfi_def_cfa_register 13
+ 1258              		@ sp needed
+ 1259 0034 80BD     		pop	{r7, pc}
+ 1260              		.cfi_endproc
+ 1261              	.LFE133:
+ 1263              		.section	.text.parseData,"ax",%progbits
+ 1264              		.align	1
+ 1265              		.syntax unified
+ 1266              		.thumb
+ 1267              		.thumb_func
+ 1268              		.fpu fpv4-sp-d16
+ 1270              	parseData:
+ 1271              	.LFB134:
+ 555:../source/CAN_SPI.c **** 
+ 556:../source/CAN_SPI.c **** 
+ 557:../source/CAN_SPI.c **** 
+ 558:../source/CAN_SPI.c **** /**
+ 559:../source/CAN_SPI.c ****  * @brief
+ 560:../source/CAN_SPI.c ****  * @return
+ 561:../source/CAN_SPI.c ****  */
+ 562:../source/CAN_SPI.c **** static void parseData(RXB_RAWDATA_t * rawdata, uint8_t *data_to_send)
+ 563:../source/CAN_SPI.c **** {
+ 1272              		.loc 1 563 0
+ 1273              		.cfi_startproc
+ 1274              		@ args = 0, pretend = 0, frame = 16
+ 1275              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1276              		@ link register save eliminated.
+ 1277 0000 80B4     		push	{r7}
+ 1278              		.cfi_def_cfa_offset 4
+ 1279              		.cfi_offset 7, -4
+ 1280 0002 85B0     		sub	sp, sp, #20
+ 1281              		.cfi_def_cfa_offset 24
+ 1282 0004 00AF     		add	r7, sp, #0
+ 1283              		.cfi_def_cfa_register 7
+ 1284 0006 7860     		str	r0, [r7, #4]
+ 1285 0008 3960     		str	r1, [r7]
+ 564:../source/CAN_SPI.c **** 	data_to_send[0] = (rawdata->SID >> 3);
+ 1286              		.loc 1 564 0
+ 1287 000a 7B68     		ldr	r3, [r7, #4]
+ 1288 000c 1B88     		ldrh	r3, [r3]
+ 1289 000e DB08     		lsrs	r3, r3, #3
+ 1290 0010 9BB2     		uxth	r3, r3
+ 1291 0012 DAB2     		uxtb	r2, r3
+ 1292 0014 3B68     		ldr	r3, [r7]
+ 1293 0016 1A70     		strb	r2, [r3]
+ 565:../source/CAN_SPI.c **** 	data_to_send[1] = (rawdata->SID << 5) & 0b11100000;
+ 1294              		.loc 1 565 0
+ 1295 0018 7B68     		ldr	r3, [r7, #4]
+ 1296 001a 1B88     		ldrh	r3, [r3]
+ 1297 001c 5A01     		lsls	r2, r3, #5
+ 1298 001e 3B68     		ldr	r3, [r7]
+ 1299 0020 0133     		adds	r3, r3, #1
+ 1300 0022 D2B2     		uxtb	r2, r2
+ 1301 0024 1A70     		strb	r2, [r3]
+ 566:../source/CAN_SPI.c **** 	data_to_send[2] = 0; // EID not used
+ 1302              		.loc 1 566 0
+ 1303 0026 3B68     		ldr	r3, [r7]
+ 1304 0028 0233     		adds	r3, r3, #2
+ 1305 002a 0022     		movs	r2, #0
+ 1306 002c 1A70     		strb	r2, [r3]
+ 567:../source/CAN_SPI.c **** 	data_to_send[3] = 0;
+ 1307              		.loc 1 567 0
+ 1308 002e 3B68     		ldr	r3, [r7]
+ 1309 0030 0333     		adds	r3, r3, #3
+ 1310 0032 0022     		movs	r2, #0
+ 1311 0034 1A70     		strb	r2, [r3]
+ 568:../source/CAN_SPI.c **** 	data_to_send[4] = rawdata->DLC;
+ 1312              		.loc 1 568 0
+ 1313 0036 3B68     		ldr	r3, [r7]
+ 1314 0038 0433     		adds	r3, r3, #4
+ 1315 003a 7A68     		ldr	r2, [r7, #4]
+ 1316 003c 9278     		ldrb	r2, [r2, #2]	@ zero_extendqisi2
+ 1317 003e 1A70     		strb	r2, [r3]
+ 569:../source/CAN_SPI.c **** 	uint32_t i = 0;
+ 1318              		.loc 1 569 0
+ 1319 0040 0023     		movs	r3, #0
+ 1320 0042 FB60     		str	r3, [r7, #12]
+ 570:../source/CAN_SPI.c **** 	for(i = 0; i < 8; i++)
+ 1321              		.loc 1 570 0
+ 1322 0044 0023     		movs	r3, #0
+ 1323 0046 FB60     		str	r3, [r7, #12]
+ 1324 0048 0CE0     		b	.L69
+ 1325              	.L70:
+ 571:../source/CAN_SPI.c **** 	{
+ 572:../source/CAN_SPI.c **** 		data_to_send[i+5] = rawdata->Dn[i];
+ 1326              		.loc 1 572 0 discriminator 3
+ 1327 004a FB68     		ldr	r3, [r7, #12]
+ 1328 004c 0533     		adds	r3, r3, #5
+ 1329 004e 3A68     		ldr	r2, [r7]
+ 1330 0050 1344     		add	r3, r3, r2
+ 1331 0052 7968     		ldr	r1, [r7, #4]
+ 1332 0054 FA68     		ldr	r2, [r7, #12]
+ 1333 0056 0A44     		add	r2, r2, r1
+ 1334 0058 0332     		adds	r2, r2, #3
+ 1335 005a 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 1336 005c 1A70     		strb	r2, [r3]
+ 570:../source/CAN_SPI.c **** 	for(i = 0; i < 8; i++)
+ 1337              		.loc 1 570 0 discriminator 3
+ 1338 005e FB68     		ldr	r3, [r7, #12]
+ 1339 0060 0133     		adds	r3, r3, #1
+ 1340 0062 FB60     		str	r3, [r7, #12]
+ 1341              	.L69:
+ 570:../source/CAN_SPI.c **** 	for(i = 0; i < 8; i++)
+ 1342              		.loc 1 570 0 is_stmt 0 discriminator 1
+ 1343 0064 FB68     		ldr	r3, [r7, #12]
+ 1344 0066 072B     		cmp	r3, #7
+ 1345 0068 EFD9     		bls	.L70
+ 573:../source/CAN_SPI.c **** 	}
+ 574:../source/CAN_SPI.c **** }
+ 1346              		.loc 1 574 0 is_stmt 1
+ 1347 006a 00BF     		nop
+ 1348 006c 1437     		adds	r7, r7, #20
+ 1349              		.cfi_def_cfa_offset 4
+ 1350 006e BD46     		mov	sp, r7
+ 1351              		.cfi_def_cfa_register 13
+ 1352              		@ sp needed
+ 1353 0070 5DF8047B 		ldr	r7, [sp], #4
+ 1354              		.cfi_restore 7
+ 1355              		.cfi_def_cfa_offset 0
+ 1356 0074 7047     		bx	lr
+ 1357              		.cfi_endproc
+ 1358              	.LFE134:
+ 1360              		.section	.text.checkDoubleBuffers,"ax",%progbits
+ 1361              		.align	1
+ 1362              		.syntax unified
+ 1363              		.thumb
+ 1364              		.thumb_func
+ 1365              		.fpu fpv4-sp-d16
+ 1367              	checkDoubleBuffers:
+ 1368              	.LFB135:
+ 575:../source/CAN_SPI.c **** 
+ 576:../source/CAN_SPI.c **** /**
+ 577:../source/CAN_SPI.c ****  * @brief
+ 578:../source/CAN_SPI.c ****  * @param
+ 579:../source/CAN_SPI.c ****  * @return
+ 580:../source/CAN_SPI.c ****  */
+ 581:../source/CAN_SPI.c **** 
+ 582:../source/CAN_SPI.c **** static void checkDoubleBuffers(void)
+ 583:../source/CAN_SPI.c **** {
+ 1369              		.loc 1 583 0
+ 1370              		.cfi_startproc
+ 1371              		@ args = 0, pretend = 0, frame = 40
+ 1372              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1373 0000 80B5     		push	{r7, lr}
+ 1374              		.cfi_def_cfa_offset 8
+ 1375              		.cfi_offset 7, -8
+ 1376              		.cfi_offset 14, -4
+ 1377 0002 8AB0     		sub	sp, sp, #40
+ 1378              		.cfi_def_cfa_offset 48
+ 1379 0004 00AF     		add	r7, sp, #0
+ 1380              		.cfi_def_cfa_register 7
+ 584:../source/CAN_SPI.c **** 	uint8_t aux[16];
+ 585:../source/CAN_SPI.c **** 	RXB_RAWDATA_t received_data;
+ 586:../source/CAN_SPI.c **** 
+ 587:../source/CAN_SPI.c **** 	uint32_t i = 0;
+ 1381              		.loc 1 587 0
+ 1382 0006 0023     		movs	r3, #0
+ 1383 0008 7B62     		str	r3, [r7, #36]
+ 588:../source/CAN_SPI.c **** 
+ 589:../source/CAN_SPI.c **** 	for(i = 0; i < SPI_Get_Status() / RXLENGTH; i++)
+ 1384              		.loc 1 589 0
+ 1385 000a 0023     		movs	r3, #0
+ 1386 000c 7B62     		str	r3, [r7, #36]
+ 1387 000e 36E0     		b	.L72
+ 1388              	.L75:
+ 1389              	.LBB2:
+ 590:../source/CAN_SPI.c **** 	{
+ 591:../source/CAN_SPI.c **** 		// read
+ 592:../source/CAN_SPI.c **** 		SPI_Get_DataBytes(aux, 14);
+ 1390              		.loc 1 592 0
+ 1391 0010 07F11003 		add	r3, r7, #16
+ 1392 0014 0E21     		movs	r1, #14
+ 1393 0016 1846     		mov	r0, r3
+ 1394 0018 FFF7FEFF 		bl	SPI_Get_DataBytes
+ 593:../source/CAN_SPI.c **** 		//
+ 594:../source/CAN_SPI.c **** 		received_data.SID = (((uint16_t)aux[1]) << 3) | ((aux[2] & 0b11100000)>> 5);
+ 1395              		.loc 1 594 0
+ 1396 001c 7B7C     		ldrb	r3, [r7, #17]	@ zero_extendqisi2
+ 1397 001e DB00     		lsls	r3, r3, #3
+ 1398 0020 1AB2     		sxth	r2, r3
+ 1399 0022 BB7C     		ldrb	r3, [r7, #18]	@ zero_extendqisi2
+ 1400 0024 5B09     		lsrs	r3, r3, #5
+ 1401 0026 DBB2     		uxtb	r3, r3
+ 1402 0028 1BB2     		sxth	r3, r3
+ 1403 002a 1343     		orrs	r3, r3, r2
+ 1404 002c 1BB2     		sxth	r3, r3
+ 1405 002e 9BB2     		uxth	r3, r3
+ 1406 0030 BB80     		strh	r3, [r7, #4]	@ movhi
+ 595:../source/CAN_SPI.c **** 		received_data.DLC = aux[5] & 0b00001111;
+ 1407              		.loc 1 595 0
+ 1408 0032 7B7D     		ldrb	r3, [r7, #21]	@ zero_extendqisi2
+ 1409 0034 03F00F03 		and	r3, r3, #15
+ 1410 0038 DBB2     		uxtb	r3, r3
+ 1411 003a BB71     		strb	r3, [r7, #6]
+ 596:../source/CAN_SPI.c **** 		uint32_t j = 0;
+ 1412              		.loc 1 596 0
+ 1413 003c 0023     		movs	r3, #0
+ 1414 003e 3B62     		str	r3, [r7, #32]
+ 597:../source/CAN_SPI.c **** 		for(j = 0; j < received_data.DLC; j++)
+ 1415              		.loc 1 597 0
+ 1416 0040 0023     		movs	r3, #0
+ 1417 0042 3B62     		str	r3, [r7, #32]
+ 1418 0044 0EE0     		b	.L73
+ 1419              	.L74:
+ 598:../source/CAN_SPI.c **** 		{
+ 599:../source/CAN_SPI.c **** 			received_data.Dn[j] = aux[j + 6];
+ 1420              		.loc 1 599 0 discriminator 3
+ 1421 0046 3B6A     		ldr	r3, [r7, #32]
+ 1422 0048 0633     		adds	r3, r3, #6
+ 1423 004a 07F12802 		add	r2, r7, #40
+ 1424 004e 1344     		add	r3, r3, r2
+ 1425 0050 13F8181C 		ldrb	r1, [r3, #-24]	@ zero_extendqisi2
+ 1426 0054 FA1D     		adds	r2, r7, #7
+ 1427 0056 3B6A     		ldr	r3, [r7, #32]
+ 1428 0058 1344     		add	r3, r3, r2
+ 1429 005a 0A46     		mov	r2, r1
+ 1430 005c 1A70     		strb	r2, [r3]
+ 597:../source/CAN_SPI.c **** 		for(j = 0; j < received_data.DLC; j++)
+ 1431              		.loc 1 597 0 discriminator 3
+ 1432 005e 3B6A     		ldr	r3, [r7, #32]
+ 1433 0060 0133     		adds	r3, r3, #1
+ 1434 0062 3B62     		str	r3, [r7, #32]
+ 1435              	.L73:
+ 597:../source/CAN_SPI.c **** 		for(j = 0; j < received_data.DLC; j++)
+ 1436              		.loc 1 597 0 is_stmt 0 discriminator 1
+ 1437 0064 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 1438 0066 1A46     		mov	r2, r3
+ 1439 0068 3B6A     		ldr	r3, [r7, #32]
+ 1440 006a 9342     		cmp	r3, r2
+ 1441 006c EBD3     		bcc	.L74
+ 600:../source/CAN_SPI.c **** 		}
+ 601:../source/CAN_SPI.c **** 
+ 602:../source/CAN_SPI.c **** 		push_Queue_Element(0, received_data);
+ 1442              		.loc 1 602 0 is_stmt 1 discriminator 2
+ 1443 006e 3B1D     		adds	r3, r7, #4
+ 1444 0070 0ECB     		ldm	r3, {r1, r2, r3}
+ 1445 0072 0020     		movs	r0, #0
+ 1446 0074 FFF7FEFF 		bl	push_Queue_Element
+ 1447              	.LBE2:
+ 589:../source/CAN_SPI.c **** 	{
+ 1448              		.loc 1 589 0 discriminator 2
+ 1449 0078 7B6A     		ldr	r3, [r7, #36]
+ 1450 007a 0133     		adds	r3, r3, #1
+ 1451 007c 7B62     		str	r3, [r7, #36]
+ 1452              	.L72:
+ 589:../source/CAN_SPI.c **** 	{
+ 1453              		.loc 1 589 0 is_stmt 0 discriminator 1
+ 1454 007e FFF7FEFF 		bl	SPI_Get_Status
+ 1455 0082 0346     		mov	r3, r0
+ 1456 0084 1A46     		mov	r2, r3
+ 1457 0086 064B     		ldr	r3, .L76
+ 1458 0088 A3FB0223 		umull	r2, r3, r3, r2
+ 1459 008c 9B08     		lsrs	r3, r3, #2
+ 1460 008e DBB2     		uxtb	r3, r3
+ 1461 0090 1A46     		mov	r2, r3
+ 1462 0092 7B6A     		ldr	r3, [r7, #36]
+ 1463 0094 9342     		cmp	r3, r2
+ 1464 0096 BBD3     		bcc	.L75
+ 603:../source/CAN_SPI.c **** 	}
+ 604:../source/CAN_SPI.c **** 
+ 605:../source/CAN_SPI.c **** }
+ 1465              		.loc 1 605 0 is_stmt 1
+ 1466 0098 00BF     		nop
+ 1467 009a 2837     		adds	r7, r7, #40
+ 1468              		.cfi_def_cfa_offset 8
+ 1469 009c BD46     		mov	sp, r7
+ 1470              		.cfi_def_cfa_register 13
+ 1471              		@ sp needed
+ 1472 009e 80BD     		pop	{r7, pc}
+ 1473              	.L77:
+ 1474              		.align	2
+ 1475              	.L76:
+ 1476 00a0 4FECC44E 		.word	1321528399
+ 1477              		.cfi_endproc
+ 1478              	.LFE135:
+ 1480              		.section	.text.PORTC_IRQHandler,"ax",%progbits
+ 1481              		.align	1
+ 1482              		.global	PORTC_IRQHandler
+ 1483              		.syntax unified
+ 1484              		.thumb
+ 1485              		.thumb_func
+ 1486              		.fpu fpv4-sp-d16
+ 1488              	PORTC_IRQHandler:
+ 1489              	.LFB136:
+ 606:../source/CAN_SPI.c **** 
+ 607:../source/CAN_SPI.c **** 
+ 608:../source/CAN_SPI.c **** __ISR__ PORTC_IRQHandler(void)
+ 609:../source/CAN_SPI.c **** {
+ 1490              		.loc 1 609 0
+ 1491              		.cfi_startproc
+ 1492              		@ Stack Align: May be called with mis-aligned SP.
+ 1493              		@ args = 0, pretend = 0, frame = 0
+ 1494              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1495 0000 6846     		mov	r0, sp
+ 1496              		.cfi_register 13, 0
+ 1497 0002 20F00701 		bic	r1, r0, #7
+ 1498 0006 8D46     		mov	sp, r1
+ 1499 0008 89B5     		push	{r0, r3, r7, lr}
+ 1500              		.cfi_def_cfa_offset 16
+ 1501              		.cfi_offset 13, -16
+ 1502              		.cfi_offset 3, -12
+ 1503              		.cfi_offset 7, -8
+ 1504              		.cfi_offset 14, -4
+ 1505 000a 00AF     		add	r7, sp, #0
+ 1506              		.cfi_def_cfa_register 7
+ 610:../source/CAN_SPI.c **** 	PORTC->PCR[INT_PIN] |= PORT_PCR_ISF_MASK;
+ 1507              		.loc 1 610 0
+ 1508 000c 064B     		ldr	r3, .L79
+ 1509 000e 1B6C     		ldr	r3, [r3, #64]
+ 1510 0010 054A     		ldr	r2, .L79
+ 1511 0012 43F08073 		orr	r3, r3, #16777216
+ 1512 0016 1364     		str	r3, [r2, #64]
+ 611:../source/CAN_SPI.c **** 	CAN_SPI_ReceiveInfo();
+ 1513              		.loc 1 611 0
+ 1514 0018 FFF7FEFF 		bl	CAN_SPI_ReceiveInfo
+ 612:../source/CAN_SPI.c **** }
+ 1515              		.loc 1 612 0
+ 1516 001c 00BF     		nop
+ 1517 001e BD46     		mov	sp, r7
+ 1518              		.cfi_def_cfa_register 13
+ 1519              		@ sp needed
+ 1520 0020 BDE88940 		pop	{r0, r3, r7, lr}
+ 1521              		.cfi_restore 14
+ 1522              		.cfi_restore 7
+ 1523              		.cfi_restore 3
+ 1524              		.cfi_restore 0
+ 1525              		.cfi_def_cfa_offset 0
+ 1526 0024 8546     		mov	sp, r0
+ 1527 0026 7047     		bx	lr
+ 1528              	.L80:
+ 1529              		.align	2
+ 1530              	.L79:
+ 1531 0028 00B00440 		.word	1074049024
+ 1532              		.cfi_endproc
+ 1533              	.LFE136:
+ 1535              		.section	.text.queue_Init,"ax",%progbits
+ 1536              		.align	1
+ 1537              		.syntax unified
+ 1538              		.thumb
+ 1539              		.thumb_func
+ 1540              		.fpu fpv4-sp-d16
+ 1542              	queue_Init:
+ 1543              	.LFB137:
+ 613:../source/CAN_SPI.c **** 
+ 614:../source/CAN_SPI.c **** 
+ 615:../source/CAN_SPI.c **** 
+ 616:../source/CAN_SPI.c **** 
+ 617:../source/CAN_SPI.c **** ///////////////////////////////////////////////////////////////////////////////
+ 618:../source/CAN_SPI.c **** /**
+ 619:../source/CAN_SPI.c ****  * @brief Initializes the circular queue
+ 620:../source/CAN_SPI.c ****  */
+ 621:../source/CAN_SPI.c **** static void queue_Init (uint8_t id)
+ 622:../source/CAN_SPI.c **** {
+ 1544              		.loc 1 622 0
+ 1545              		.cfi_startproc
+ 1546              		@ args = 0, pretend = 0, frame = 8
+ 1547              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1548              		@ link register save eliminated.
+ 1549 0000 80B4     		push	{r7}
+ 1550              		.cfi_def_cfa_offset 4
+ 1551              		.cfi_offset 7, -4
+ 1552 0002 83B0     		sub	sp, sp, #12
+ 1553              		.cfi_def_cfa_offset 16
+ 1554 0004 00AF     		add	r7, sp, #0
+ 1555              		.cfi_def_cfa_register 7
+ 1556 0006 0346     		mov	r3, r0
+ 1557 0008 FB71     		strb	r3, [r7, #7]
+ 623:../source/CAN_SPI.c **** 	can_spi_buffers[id].pin = can_spi_buffers[id].buffer;
+ 1558              		.loc 1 623 0
+ 1559 000a FA79     		ldrb	r2, [r7, #7]	@ zero_extendqisi2
+ 1560 000c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1561 000e 4FF41971 		mov	r1, #612
+ 1562 0012 01FB02F2 		mul	r2, r1, r2
+ 1563 0016 0832     		adds	r2, r2, #8
+ 1564 0018 1549     		ldr	r1, .L82
+ 1565 001a 0A44     		add	r2, r2, r1
+ 1566 001c 1449     		ldr	r1, .L82
+ 1567 001e 4FF41970 		mov	r0, #612
+ 1568 0022 00FB03F3 		mul	r3, r0, r3
+ 1569 0026 0B44     		add	r3, r3, r1
+ 1570 0028 1A60     		str	r2, [r3]
+ 624:../source/CAN_SPI.c **** 	can_spi_buffers[id].pout = can_spi_buffers[id].pin;
+ 1571              		.loc 1 624 0
+ 1572 002a FA79     		ldrb	r2, [r7, #7]	@ zero_extendqisi2
+ 1573 002c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1574 002e 1049     		ldr	r1, .L82
+ 1575 0030 4FF41970 		mov	r0, #612
+ 1576 0034 00FB02F2 		mul	r2, r0, r2
+ 1577 0038 0A44     		add	r2, r2, r1
+ 1578 003a 1268     		ldr	r2, [r2]
+ 1579 003c 0C49     		ldr	r1, .L82
+ 1580 003e 4FF41970 		mov	r0, #612
+ 1581 0042 00FB03F3 		mul	r3, r0, r3
+ 1582 0046 0B44     		add	r3, r3, r1
+ 1583 0048 0433     		adds	r3, r3, #4
+ 1584 004a 1A60     		str	r2, [r3]
+ 625:../source/CAN_SPI.c **** 	can_spi_buffers[id].num_Of_Words = 0;
+ 1585              		.loc 1 625 0
+ 1586 004c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1587 004e 084A     		ldr	r2, .L82
+ 1588 0050 4FF41971 		mov	r1, #612
+ 1589 0054 01FB03F3 		mul	r3, r1, r3
+ 1590 0058 1344     		add	r3, r3, r2
+ 1591 005a 03F51873 		add	r3, r3, #608
+ 1592 005e 0022     		movs	r2, #0
+ 1593 0060 1A70     		strb	r2, [r3]
+ 626:../source/CAN_SPI.c **** }
+ 1594              		.loc 1 626 0
+ 1595 0062 00BF     		nop
+ 1596 0064 0C37     		adds	r7, r7, #12
+ 1597              		.cfi_def_cfa_offset 4
+ 1598 0066 BD46     		mov	sp, r7
+ 1599              		.cfi_def_cfa_register 13
+ 1600              		@ sp needed
+ 1601 0068 5DF8047B 		ldr	r7, [sp], #4
+ 1602              		.cfi_restore 7
+ 1603              		.cfi_def_cfa_offset 0
+ 1604 006c 7047     		bx	lr
+ 1605              	.L83:
+ 1606 006e 00BF     		.align	2
+ 1607              	.L82:
+ 1608 0070 00000000 		.word	can_spi_buffers
+ 1609              		.cfi_endproc
+ 1610              	.LFE137:
+ 1612              		.section	.text.push_Queue_Element,"ax",%progbits
+ 1613              		.align	1
+ 1614              		.syntax unified
+ 1615              		.thumb
+ 1616              		.thumb_func
+ 1617              		.fpu fpv4-sp-d16
+ 1619              	push_Queue_Element:
+ 1620              	.LFB138:
+ 627:../source/CAN_SPI.c **** 
+ 628:../source/CAN_SPI.c **** /**
+ 629:../source/CAN_SPI.c ****  * @brief Pushes an event to the queue
+ 630:../source/CAN_SPI.c ****  * @param event The element to add to the queue
+ 631:../source/CAN_SPI.c ****  * @return Number of pending events. Returns value OVERFLOW if the maximun number of events is reac
+ 632:../source/CAN_SPI.c ****  */
+ 633:../source/CAN_SPI.c **** static int8_t push_Queue_Element(uint8_t id, RXB_RAWDATA_t event)
+ 634:../source/CAN_SPI.c **** {
+ 1621              		.loc 1 634 0
+ 1622              		.cfi_startproc
+ 1623              		@ args = 0, pretend = 0, frame = 16
+ 1624              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1625              		@ link register save eliminated.
+ 1626 0000 90B4     		push	{r4, r7}
+ 1627              		.cfi_def_cfa_offset 8
+ 1628              		.cfi_offset 4, -8
+ 1629              		.cfi_offset 7, -4
+ 1630 0002 84B0     		sub	sp, sp, #16
+ 1631              		.cfi_def_cfa_offset 24
+ 1632 0004 00AF     		add	r7, sp, #0
+ 1633              		.cfi_def_cfa_register 7
+ 1634 0006 0446     		mov	r4, r0
+ 1635 0008 3846     		mov	r0, r7
+ 1636 000a 80E80E00 		stm	r0, {r1, r2, r3}
+ 1637 000e 2346     		mov	r3, r4
+ 1638 0010 FB73     		strb	r3, [r7, #15]
+ 635:../source/CAN_SPI.c **** 	// Check for EventQueue Overflow
+ 636:../source/CAN_SPI.c **** 	if (can_spi_buffers[id].num_Of_Words > BUFFER_SIZE-1)
+ 1639              		.loc 1 636 0
+ 1640 0012 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 1641 0014 374A     		ldr	r2, .L88
+ 1642 0016 4FF41971 		mov	r1, #612
+ 1643 001a 01FB03F3 		mul	r3, r1, r3
+ 1644 001e 1344     		add	r3, r3, r2
+ 1645 0020 03F51873 		add	r3, r3, #608
+ 1646 0024 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1647 0026 312B     		cmp	r3, #49
+ 1648 0028 02D9     		bls	.L85
+ 637:../source/CAN_SPI.c **** 	{
+ 638:../source/CAN_SPI.c **** 		return OVERFLOW;
+ 1649              		.loc 1 638 0
+ 1650 002a 4FF0FF33 		mov	r3, #-1
+ 1651 002e 5BE0     		b	.L86
+ 1652              	.L85:
+ 639:../source/CAN_SPI.c **** 	}
+ 640:../source/CAN_SPI.c **** 
+ 641:../source/CAN_SPI.c **** 	*(can_spi_buffers[id].pin)++ = event;
+ 1653              		.loc 1 641 0
+ 1654 0030 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 1655 0032 3049     		ldr	r1, .L88
+ 1656 0034 4FF41972 		mov	r2, #612
+ 1657 0038 02FB03F2 		mul	r2, r2, r3
+ 1658 003c 0A44     		add	r2, r2, r1
+ 1659 003e 1268     		ldr	r2, [r2]
+ 1660 0040 02F10C01 		add	r1, r2, #12
+ 1661 0044 2B48     		ldr	r0, .L88
+ 1662 0046 4FF41974 		mov	r4, #612
+ 1663 004a 04FB03F3 		mul	r3, r4, r3
+ 1664 004e 0344     		add	r3, r3, r0
+ 1665 0050 1960     		str	r1, [r3]
+ 1666 0052 1446     		mov	r4, r2
+ 1667 0054 3B46     		mov	r3, r7
+ 1668 0056 07CB     		ldmia	r3!, {r0, r1, r2}
+ 1669 0058 2060     		str	r0, [r4]	@ unaligned
+ 1670 005a 6160     		str	r1, [r4, #4]	@ unaligned
+ 1671 005c A260     		str	r2, [r4, #8]	@ unaligned
+ 642:../source/CAN_SPI.c **** 	can_spi_buffers[id].num_Of_Words++;
+ 1672              		.loc 1 642 0
+ 1673 005e FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 1674 0060 2449     		ldr	r1, .L88
+ 1675 0062 4FF41972 		mov	r2, #612
+ 1676 0066 02FB03F2 		mul	r2, r2, r3
+ 1677 006a 0A44     		add	r2, r2, r1
+ 1678 006c 02F51872 		add	r2, r2, #608
+ 1679 0070 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 1680 0072 0132     		adds	r2, r2, #1
+ 1681 0074 D0B2     		uxtb	r0, r2
+ 1682 0076 1F4A     		ldr	r2, .L88
+ 1683 0078 4FF41971 		mov	r1, #612
+ 1684 007c 01FB03F3 		mul	r3, r1, r3
+ 1685 0080 1344     		add	r3, r3, r2
+ 1686 0082 03F51873 		add	r3, r3, #608
+ 1687 0086 0246     		mov	r2, r0
+ 1688 0088 1A70     		strb	r2, [r3]
+ 643:../source/CAN_SPI.c **** 
+ 644:../source/CAN_SPI.c **** 	// Return pointer to the beginning if necessary
+ 645:../source/CAN_SPI.c **** 	if (can_spi_buffers[id].pin == BUFFER_SIZE + can_spi_buffers[id].buffer)
+ 1689              		.loc 1 645 0
+ 1690 008a FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 1691 008c 194A     		ldr	r2, .L88
+ 1692 008e 4FF41971 		mov	r1, #612
+ 1693 0092 01FB03F3 		mul	r3, r1, r3
+ 1694 0096 1344     		add	r3, r3, r2
+ 1695 0098 1A68     		ldr	r2, [r3]
+ 1696 009a FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 1697 009c 4FF41971 		mov	r1, #612
+ 1698 00a0 01FB03F3 		mul	r3, r1, r3
+ 1699 00a4 0833     		adds	r3, r3, #8
+ 1700 00a6 1349     		ldr	r1, .L88
+ 1701 00a8 0B44     		add	r3, r3, r1
+ 1702 00aa 03F51673 		add	r3, r3, #600
+ 1703 00ae 9A42     		cmp	r2, r3
+ 1704 00b0 0FD1     		bne	.L87
+ 646:../source/CAN_SPI.c **** 	{
+ 647:../source/CAN_SPI.c **** 		can_spi_buffers[id].pin = can_spi_buffers[id].buffer;
+ 1705              		.loc 1 647 0
+ 1706 00b2 FA7B     		ldrb	r2, [r7, #15]	@ zero_extendqisi2
+ 1707 00b4 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 1708 00b6 4FF41971 		mov	r1, #612
+ 1709 00ba 01FB02F2 		mul	r2, r1, r2
+ 1710 00be 0832     		adds	r2, r2, #8
+ 1711 00c0 0C49     		ldr	r1, .L88
+ 1712 00c2 0A44     		add	r2, r2, r1
+ 1713 00c4 0B49     		ldr	r1, .L88
+ 1714 00c6 4FF41970 		mov	r0, #612
+ 1715 00ca 00FB03F3 		mul	r3, r0, r3
+ 1716 00ce 0B44     		add	r3, r3, r1
+ 1717 00d0 1A60     		str	r2, [r3]
+ 1718              	.L87:
+ 648:../source/CAN_SPI.c **** 	}
+ 649:../source/CAN_SPI.c **** 
+ 650:../source/CAN_SPI.c **** 	return can_spi_buffers[id].num_Of_Words;
+ 1719              		.loc 1 650 0
+ 1720 00d2 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 1721 00d4 074A     		ldr	r2, .L88
+ 1722 00d6 4FF41971 		mov	r1, #612
+ 1723 00da 01FB03F3 		mul	r3, r1, r3
+ 1724 00de 1344     		add	r3, r3, r2
+ 1725 00e0 03F51873 		add	r3, r3, #608
+ 1726 00e4 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1727 00e6 5BB2     		sxtb	r3, r3
+ 1728              	.L86:
+ 651:../source/CAN_SPI.c **** 
+ 652:../source/CAN_SPI.c **** }
+ 1729              		.loc 1 652 0
+ 1730 00e8 1846     		mov	r0, r3
+ 1731 00ea 1037     		adds	r7, r7, #16
+ 1732              		.cfi_def_cfa_offset 8
+ 1733 00ec BD46     		mov	sp, r7
+ 1734              		.cfi_def_cfa_register 13
+ 1735              		@ sp needed
+ 1736 00ee 90BC     		pop	{r4, r7}
+ 1737              		.cfi_restore 7
+ 1738              		.cfi_restore 4
+ 1739              		.cfi_def_cfa_offset 0
+ 1740 00f0 7047     		bx	lr
+ 1741              	.L89:
+ 1742 00f2 00BF     		.align	2
+ 1743              	.L88:
+ 1744 00f4 00000000 		.word	can_spi_buffers
+ 1745              		.cfi_endproc
+ 1746              	.LFE138:
+ 1748              		.section	.text.pull_Queue_Element,"ax",%progbits
+ 1749              		.align	1
+ 1750              		.syntax unified
+ 1751              		.thumb
+ 1752              		.thumb_func
+ 1753              		.fpu fpv4-sp-d16
+ 1755              	pull_Queue_Element:
+ 1756              	.LFB139:
+ 653:../source/CAN_SPI.c **** 
+ 654:../source/CAN_SPI.c **** /**
+ 655:../source/CAN_SPI.c ****  * @brief Pulls the earliest event from the queue
+ 656:../source/CAN_SPI.c ****  * @return Event_Type variable with the current event if no OVERFLOW is detected.
+ 657:../source/CAN_SPI.c ****  */
+ 658:../source/CAN_SPI.c **** 
+ 659:../source/CAN_SPI.c **** 
+ 660:../source/CAN_SPI.c **** static RXB_RAWDATA_t pull_Queue_Element(uint8_t id)
+ 661:../source/CAN_SPI.c **** {
+ 1757              		.loc 1 661 0
+ 1758              		.cfi_startproc
+ 1759              		@ args = 0, pretend = 0, frame = 32
+ 1760              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1761              		@ link register save eliminated.
+ 1762 0000 90B4     		push	{r4, r7}
+ 1763              		.cfi_def_cfa_offset 8
+ 1764              		.cfi_offset 4, -8
+ 1765              		.cfi_offset 7, -4
+ 1766 0002 88B0     		sub	sp, sp, #32
+ 1767              		.cfi_def_cfa_offset 40
+ 1768 0004 00AF     		add	r7, sp, #0
+ 1769              		.cfi_def_cfa_register 7
+ 1770 0006 7860     		str	r0, [r7, #4]
+ 1771 0008 0B46     		mov	r3, r1
+ 1772 000a FB70     		strb	r3, [r7, #3]
+ 662:../source/CAN_SPI.c **** 	RXB_RAWDATA_t event = *(can_spi_buffers[id].pout);
+ 1773              		.loc 1 662 0
+ 1774 000c FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1775 000e 434A     		ldr	r2, .L95
+ 1776 0010 4FF41971 		mov	r1, #612
+ 1777 0014 01FB03F3 		mul	r3, r1, r3
+ 1778 0018 1344     		add	r3, r3, r2
+ 1779 001a 0433     		adds	r3, r3, #4
+ 1780 001c 1A68     		ldr	r2, [r3]
+ 1781 001e 07F11403 		add	r3, r7, #20
+ 1782 0022 1068     		ldr	r0, [r2]	@ unaligned
+ 1783 0024 5168     		ldr	r1, [r2, #4]	@ unaligned
+ 1784 0026 9268     		ldr	r2, [r2, #8]	@ unaligned
+ 1785 0028 07C3     		stmia	r3!, {r0, r1, r2}
+ 663:../source/CAN_SPI.c **** 
+ 664:../source/CAN_SPI.c **** 	if (can_spi_buffers[id].num_Of_Words == 0)
+ 1786              		.loc 1 664 0
+ 1787 002a FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1788 002c 3B4A     		ldr	r2, .L95
+ 1789 002e 4FF41971 		mov	r1, #612
+ 1790 0032 01FB03F3 		mul	r3, r1, r3
+ 1791 0036 1344     		add	r3, r3, r2
+ 1792 0038 03F51873 		add	r3, r3, #608
+ 1793 003c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1794 003e 002B     		cmp	r3, #0
+ 1795 0040 10D1     		bne	.L91
+ 1796              	.LBB3:
+ 665:../source/CAN_SPI.c **** 	{
+ 666:../source/CAN_SPI.c **** 		RXB_RAWDATA_t event1 = {0,2};
+ 1797              		.loc 1 666 0
+ 1798 0042 07F10803 		add	r3, r7, #8
+ 1799 0046 0022     		movs	r2, #0
+ 1800 0048 1A60     		str	r2, [r3]
+ 1801 004a 5A60     		str	r2, [r3, #4]
+ 1802 004c 9A60     		str	r2, [r3, #8]
+ 1803 004e 0223     		movs	r3, #2
+ 1804 0050 BB72     		strb	r3, [r7, #10]
+ 667:../source/CAN_SPI.c **** 		return event1;
+ 1805              		.loc 1 667 0
+ 1806 0052 7B68     		ldr	r3, [r7, #4]
+ 1807 0054 1C46     		mov	r4, r3
+ 1808 0056 07F10803 		add	r3, r7, #8
+ 1809 005a 07CB     		ldmia	r3!, {r0, r1, r2}
+ 1810 005c 2060     		str	r0, [r4]	@ unaligned
+ 1811 005e 6160     		str	r1, [r4, #4]	@ unaligned
+ 1812 0060 A260     		str	r2, [r4, #8]	@ unaligned
+ 1813 0062 55E0     		b	.L90
+ 1814              	.L91:
+ 1815              	.LBE3:
+ 668:../source/CAN_SPI.c **** 	}
+ 669:../source/CAN_SPI.c **** 
+ 670:../source/CAN_SPI.c **** 	can_spi_buffers[id].num_Of_Words--;
+ 1816              		.loc 1 670 0
+ 1817 0064 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1818 0066 2D49     		ldr	r1, .L95
+ 1819 0068 4FF41972 		mov	r2, #612
+ 1820 006c 02FB03F2 		mul	r2, r2, r3
+ 1821 0070 0A44     		add	r2, r2, r1
+ 1822 0072 02F51872 		add	r2, r2, #608
+ 1823 0076 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 1824 0078 013A     		subs	r2, r2, #1
+ 1825 007a D0B2     		uxtb	r0, r2
+ 1826 007c 274A     		ldr	r2, .L95
+ 1827 007e 4FF41971 		mov	r1, #612
+ 1828 0082 01FB03F3 		mul	r3, r1, r3
+ 1829 0086 1344     		add	r3, r3, r2
+ 1830 0088 03F51873 		add	r3, r3, #608
+ 1831 008c 0246     		mov	r2, r0
+ 1832 008e 1A70     		strb	r2, [r3]
+ 671:../source/CAN_SPI.c **** 	can_spi_buffers[id].pout++;
+ 1833              		.loc 1 671 0
+ 1834 0090 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1835 0092 2249     		ldr	r1, .L95
+ 1836 0094 4FF41972 		mov	r2, #612
+ 1837 0098 02FB03F2 		mul	r2, r2, r3
+ 1838 009c 0A44     		add	r2, r2, r1
+ 1839 009e 0432     		adds	r2, r2, #4
+ 1840 00a0 1268     		ldr	r2, [r2]
+ 1841 00a2 0C32     		adds	r2, r2, #12
+ 1842 00a4 1D49     		ldr	r1, .L95
+ 1843 00a6 4FF41970 		mov	r0, #612
+ 1844 00aa 00FB03F3 		mul	r3, r0, r3
+ 1845 00ae 0B44     		add	r3, r3, r1
+ 1846 00b0 0433     		adds	r3, r3, #4
+ 1847 00b2 1A60     		str	r2, [r3]
+ 672:../source/CAN_SPI.c **** 
+ 673:../source/CAN_SPI.c **** 	if (can_spi_buffers[id].pout == BUFFER_SIZE + can_spi_buffers[id].buffer)
+ 1848              		.loc 1 673 0
+ 1849 00b4 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1850 00b6 194A     		ldr	r2, .L95
+ 1851 00b8 4FF41971 		mov	r1, #612
+ 1852 00bc 01FB03F3 		mul	r3, r1, r3
+ 1853 00c0 1344     		add	r3, r3, r2
+ 1854 00c2 0433     		adds	r3, r3, #4
+ 1855 00c4 1A68     		ldr	r2, [r3]
+ 1856 00c6 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1857 00c8 4FF41971 		mov	r1, #612
+ 1858 00cc 01FB03F3 		mul	r3, r1, r3
+ 1859 00d0 0833     		adds	r3, r3, #8
+ 1860 00d2 1249     		ldr	r1, .L95
+ 1861 00d4 0B44     		add	r3, r3, r1
+ 1862 00d6 03F51673 		add	r3, r3, #600
+ 1863 00da 9A42     		cmp	r2, r3
+ 1864 00dc 10D1     		bne	.L93
+ 674:../source/CAN_SPI.c **** 	{
+ 675:../source/CAN_SPI.c **** 		can_spi_buffers[id].pout = can_spi_buffers[id].buffer;
+ 1865              		.loc 1 675 0
+ 1866 00de FA78     		ldrb	r2, [r7, #3]	@ zero_extendqisi2
+ 1867 00e0 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1868 00e2 4FF41971 		mov	r1, #612
+ 1869 00e6 01FB02F2 		mul	r2, r1, r2
+ 1870 00ea 0832     		adds	r2, r2, #8
+ 1871 00ec 0B49     		ldr	r1, .L95
+ 1872 00ee 0A44     		add	r2, r2, r1
+ 1873 00f0 0A49     		ldr	r1, .L95
+ 1874 00f2 4FF41970 		mov	r0, #612
+ 1875 00f6 00FB03F3 		mul	r3, r0, r3
+ 1876 00fa 0B44     		add	r3, r3, r1
+ 1877 00fc 0433     		adds	r3, r3, #4
+ 1878 00fe 1A60     		str	r2, [r3]
+ 1879              	.L93:
+ 676:../source/CAN_SPI.c **** 	}
+ 677:../source/CAN_SPI.c **** 
+ 678:../source/CAN_SPI.c **** 	return event;
+ 1880              		.loc 1 678 0
+ 1881 0100 7B68     		ldr	r3, [r7, #4]
+ 1882 0102 1C46     		mov	r4, r3
+ 1883 0104 07F11403 		add	r3, r7, #20
+ 1884 0108 07CB     		ldmia	r3!, {r0, r1, r2}
+ 1885 010a 2060     		str	r0, [r4]	@ unaligned
+ 1886 010c 6160     		str	r1, [r4, #4]	@ unaligned
+ 1887 010e A260     		str	r2, [r4, #8]	@ unaligned
+ 1888              	.L90:
+ 679:../source/CAN_SPI.c **** 
+ 680:../source/CAN_SPI.c **** }
+ 1889              		.loc 1 680 0
+ 1890 0110 7868     		ldr	r0, [r7, #4]
+ 1891 0112 2037     		adds	r7, r7, #32
+ 1892              		.cfi_def_cfa_offset 8
+ 1893 0114 BD46     		mov	sp, r7
+ 1894              		.cfi_def_cfa_register 13
+ 1895              		@ sp needed
+ 1896 0116 90BC     		pop	{r4, r7}
+ 1897              		.cfi_restore 7
+ 1898              		.cfi_restore 4
+ 1899              		.cfi_def_cfa_offset 0
+ 1900 0118 7047     		bx	lr
+ 1901              	.L96:
+ 1902 011a 00BF     		.align	2
+ 1903              	.L95:
+ 1904 011c 00000000 		.word	can_spi_buffers
+ 1905              		.cfi_endproc
+ 1906              	.LFE139:
+ 1908              		.section	.text.get_Queue_Status,"ax",%progbits
+ 1909              		.align	1
+ 1910              		.syntax unified
+ 1911              		.thumb
+ 1912              		.thumb_func
+ 1913              		.fpu fpv4-sp-d16
+ 1915              	get_Queue_Status:
+ 1916              	.LFB140:
+ 681:../source/CAN_SPI.c **** 
+ 682:../source/CAN_SPI.c **** 
+ 683:../source/CAN_SPI.c **** /**
+ 684:../source/CAN_SPI.c ****  * @brief Gets the status of the queue
+ 685:../source/CAN_SPI.c ****  * @return Returns the number of pending events in the queue
+ 686:../source/CAN_SPI.c ****  */
+ 687:../source/CAN_SPI.c **** static uint8_t get_Queue_Status(uint8_t id)
+ 688:../source/CAN_SPI.c **** {
+ 1917              		.loc 1 688 0
+ 1918              		.cfi_startproc
+ 1919              		@ args = 0, pretend = 0, frame = 8
+ 1920              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1921              		@ link register save eliminated.
+ 1922 0000 80B4     		push	{r7}
+ 1923              		.cfi_def_cfa_offset 4
+ 1924              		.cfi_offset 7, -4
+ 1925 0002 83B0     		sub	sp, sp, #12
+ 1926              		.cfi_def_cfa_offset 16
+ 1927 0004 00AF     		add	r7, sp, #0
+ 1928              		.cfi_def_cfa_register 7
+ 1929 0006 0346     		mov	r3, r0
+ 1930 0008 FB71     		strb	r3, [r7, #7]
+ 689:../source/CAN_SPI.c **** 	return can_spi_buffers[id].num_Of_Words;
+ 1931              		.loc 1 689 0
+ 1932 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1933 000c 074A     		ldr	r2, .L99
+ 1934 000e 4FF41971 		mov	r1, #612
+ 1935 0012 01FB03F3 		mul	r3, r1, r3
+ 1936 0016 1344     		add	r3, r3, r2
+ 1937 0018 03F51873 		add	r3, r3, #608
+ 1938 001c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 690:../source/CAN_SPI.c **** }
+ 1939              		.loc 1 690 0
+ 1940 001e 1846     		mov	r0, r3
+ 1941 0020 0C37     		adds	r7, r7, #12
+ 1942              		.cfi_def_cfa_offset 4
+ 1943 0022 BD46     		mov	sp, r7
+ 1944              		.cfi_def_cfa_register 13
+ 1945              		@ sp needed
+ 1946 0024 5DF8047B 		ldr	r7, [sp], #4
+ 1947              		.cfi_restore 7
+ 1948              		.cfi_def_cfa_offset 0
+ 1949 0028 7047     		bx	lr
+ 1950              	.L100:
+ 1951 002a 00BF     		.align	2
+ 1952              	.L99:
+ 1953 002c 00000000 		.word	can_spi_buffers
+ 1954              		.cfi_endproc
+ 1955              	.LFE140:
+ 1957              		.section	.text.flush_Queue,"ax",%progbits
+ 1958              		.align	1
+ 1959              		.syntax unified
+ 1960              		.thumb
+ 1961              		.thumb_func
+ 1962              		.fpu fpv4-sp-d16
+ 1964              	flush_Queue:
+ 1965              	.LFB141:
+ 691:../source/CAN_SPI.c **** 
+ 692:../source/CAN_SPI.c **** 
+ 693:../source/CAN_SPI.c **** /**
+ 694:../source/CAN_SPI.c ****  * @brief Pulls the earliest event from the queue
+ 695:../source/CAN_SPI.c ****  * @return Event_Type variable with the current event if no OVERFLOW is detected.
+ 696:../source/CAN_SPI.c ****  */
+ 697:../source/CAN_SPI.c **** 
+ 698:../source/CAN_SPI.c **** 
+ 699:../source/CAN_SPI.c **** static void flush_Queue(uint8_t id)
+ 700:../source/CAN_SPI.c **** {
+ 1966              		.loc 1 700 0
+ 1967              		.cfi_startproc
+ 1968              		@ args = 0, pretend = 0, frame = 8
+ 1969              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1970              		@ link register save eliminated.
+ 1971 0000 80B4     		push	{r7}
+ 1972              		.cfi_def_cfa_offset 4
+ 1973              		.cfi_offset 7, -4
+ 1974 0002 83B0     		sub	sp, sp, #12
+ 1975              		.cfi_def_cfa_offset 16
+ 1976 0004 00AF     		add	r7, sp, #0
+ 1977              		.cfi_def_cfa_register 7
+ 1978 0006 0346     		mov	r3, r0
+ 1979 0008 FB71     		strb	r3, [r7, #7]
+ 701:../source/CAN_SPI.c **** 	can_spi_buffers[id].pout = can_spi_buffers[id].pin;
+ 1980              		.loc 1 701 0
+ 1981 000a FA79     		ldrb	r2, [r7, #7]	@ zero_extendqisi2
+ 1982 000c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1983 000e 1049     		ldr	r1, .L102
+ 1984 0010 4FF41970 		mov	r0, #612
+ 1985 0014 00FB02F2 		mul	r2, r0, r2
+ 1986 0018 0A44     		add	r2, r2, r1
+ 1987 001a 1268     		ldr	r2, [r2]
+ 1988 001c 0C49     		ldr	r1, .L102
+ 1989 001e 4FF41970 		mov	r0, #612
+ 1990 0022 00FB03F3 		mul	r3, r0, r3
+ 1991 0026 0B44     		add	r3, r3, r1
+ 1992 0028 0433     		adds	r3, r3, #4
+ 1993 002a 1A60     		str	r2, [r3]
+ 702:../source/CAN_SPI.c **** 	can_spi_buffers[id].num_Of_Words = 0;
+ 1994              		.loc 1 702 0
+ 1995 002c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1996 002e 084A     		ldr	r2, .L102
+ 1997 0030 4FF41971 		mov	r1, #612
+ 1998 0034 01FB03F3 		mul	r3, r1, r3
+ 1999 0038 1344     		add	r3, r3, r2
+ 2000 003a 03F51873 		add	r3, r3, #608
+ 2001 003e 0022     		movs	r2, #0
+ 2002 0040 1A70     		strb	r2, [r3]
+ 703:../source/CAN_SPI.c **** }
+ 2003              		.loc 1 703 0
+ 2004 0042 00BF     		nop
+ 2005 0044 0C37     		adds	r7, r7, #12
+ 2006              		.cfi_def_cfa_offset 4
+ 2007 0046 BD46     		mov	sp, r7
+ 2008              		.cfi_def_cfa_register 13
+ 2009              		@ sp needed
+ 2010 0048 5DF8047B 		ldr	r7, [sp], #4
+ 2011              		.cfi_restore 7
+ 2012              		.cfi_def_cfa_offset 0
+ 2013 004c 7047     		bx	lr
+ 2014              	.L103:
+ 2015 004e 00BF     		.align	2
+ 2016              	.L102:
+ 2017 0050 00000000 		.word	can_spi_buffers
+ 2018              		.cfi_endproc
+ 2019              	.LFE141:
+ 2021              		.section	.bss.receiveState.7071,"aw",%nobits
+ 2024              	receiveState.7071:
+ 2025 0000 00       		.space	1
+ 2026              		.section	.bss.aux.7072,"aw",%nobits
+ 2027              		.align	2
+ 2030              	aux.7072:
+ 2031 0000 00000000 		.space	16
+ 2031      00000000 
+ 2031      00000000 
+ 2031      00000000 
+ 2032              		.section	.bss.intStatus.7073,"aw",%nobits
+ 2035              	intStatus.7073:
+ 2036 0000 00       		.space	1
+ 2037              		.section	.bss.sendState.7084,"aw",%nobits
+ 2040              	sendState.7084:
+ 2041 0000 00       		.space	1
+ 2042              		.section	.bss.data_to_send.7086,"aw",%nobits
+ 2043              		.align	2
+ 2046              	data_to_send.7086:
+ 2047 0000 00000000 		.space	16
+ 2047      00000000 
+ 2047      00000000 
+ 2047      00000000 
+ 2048              		.section	.bss.aux.7085,"aw",%nobits
+ 2049              		.align	2
+ 2052              	aux.7085:
+ 2053 0000 00000000 		.space	16
+ 2053      00000000 
+ 2053      00000000 
+ 2053      00000000 
+ 2054              		.section	.bss.rxStatus.7088,"aw",%nobits
+ 2057              	rxStatus.7088:
+ 2058 0000 00       		.space	1
+ 2059              		.section	.bss.number_buffer.7087,"aw",%nobits
+ 2062              	number_buffer.7087:
+ 2063 0000 00       		.space	1
+ 2064              		.text
+ 2065              	.Letext0:
+ 2066              		.file 2 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\sys\\libconfig-arm.h"
+ 2067              		.file 3 "c:\\nxp\\mcuxpressoide_10.2.0_759\\ide\\tools\\redlib\\include\\stdint.h"
+ 2068              		.file 4 "C:\\Bruno\\ITBA\\7mo cuatri\\Lab. de Microprocesadores\\Repo\\Micros-Grupo-5\\TPS\\TP2 be
+ 2069              		.file 5 "C:\\Bruno\\ITBA\\7mo cuatri\\Lab. de Microprocesadores\\Repo\\Micros-Grupo-5\\TPS\\TP2 be
+ 2070              		.file 6 "C:\\Bruno\\ITBA\\7mo cuatri\\Lab. de Microprocesadores\\Repo\\Micros-Grupo-5\\TPS\\TP2 be
+ 2071              		.file 7 "../source/CAN_SPI.h"
+ 2072              		.file 8 "../source/gpio.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 CAN_SPI.c
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:22     .bss.can_spi_buffers:00000000 can_spi_buffers
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:19     .bss.can_spi_buffers:00000000 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:27     .bss.transmitting:00000000 transmitting
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:28     .bss.transmitting:00000000 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:32     .bss.receiving:00000000 receiving
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:33     .bss.receiving:00000000 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:35     .text.CAN_SPI_Init:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:42     .text.CAN_SPI_Init:00000000 CAN_SPI_Init
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1542   .text.queue_Init:00000000 queue_Init
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:378    .text.CAN_SPI_Is_Read_Ready:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:385    .text.CAN_SPI_Is_Read_Ready:00000000 CAN_SPI_Is_Read_Ready
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1915   .text.get_Queue_Status:00000000 get_Queue_Status
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:423    .text.CAN_SPI_Is_Read_Ready:00000024 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:428    .text.CAN_SPI_Get_Data:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:435    .text.CAN_SPI_Get_Data:00000000 CAN_SPI_Get_Data
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1755   .text.pull_Queue_Element:00000000 pull_Queue_Element
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:467    .text.CAN_SPI_ReceiveInfo:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:474    .text.CAN_SPI_ReceiveInfo:00000000 CAN_SPI_ReceiveInfo
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:495    .text.CAN_SPI_ReceiveInfo:00000014 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:500    .text.CAN_SPI_ReceiveInfo:00000028 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1012   .text.read_SPICAN:00000000 read_SPICAN
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:935    .text.write_SPICAN:00000000 write_SPICAN
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1085   .text.read_RX_buffer:00000000 read_RX_buffer
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1367   .text.checkDoubleBuffers:00000000 checkDoubleBuffers
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:643    .text.CAN_SPI_ReceiveInfo:000000fc $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2024   .bss.receiveState.7071:00000000 receiveState.7071
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2030   .bss.aux.7072:00000000 aux.7072
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2035   .bss.intStatus.7073:00000000 intStatus.7073
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:652    .text.CAN_SPI_SendInfo:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:659    .text.CAN_SPI_SendInfo:00000000 CAN_SPI_SendInfo
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:683    .text.CAN_SPI_SendInfo:00000018 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:687    .text.CAN_SPI_SendInfo:00000028 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1270   .text.parseData:00000000 parseData
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1157   .text.read_status:00000000 read_status
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:859    .text.load_TX_buffer:00000000 load_TX_buffer
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1220   .text.RTS:00000000 RTS
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:842    .text.CAN_SPI_SendInfo:0000010c $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2040   .bss.sendState.7084:00000000 sendState.7084
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2046   .bss.data_to_send.7086:00000000 data_to_send.7086
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2052   .bss.aux.7085:00000000 aux.7085
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2057   .bss.rxStatus.7088:00000000 rxStatus.7088
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2062   .bss.number_buffer.7087:00000000 number_buffer.7087
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:853    .text.load_TX_buffer:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:929    .text.write_SPICAN:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1006   .text.read_SPICAN:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1079   .text.read_RX_buffer:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1151   .text.read_status:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1214   .text.RTS:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1264   .text.parseData:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1361   .text.checkDoubleBuffers:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1619   .text.push_Queue_Element:00000000 push_Queue_Element
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1476   .text.checkDoubleBuffers:000000a0 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1481   .text.PORTC_IRQHandler:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1488   .text.PORTC_IRQHandler:00000000 PORTC_IRQHandler
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1531   .text.PORTC_IRQHandler:00000028 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1536   .text.queue_Init:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1608   .text.queue_Init:00000070 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1613   .text.push_Queue_Element:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1744   .text.push_Queue_Element:000000f4 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1749   .text.pull_Queue_Element:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1904   .text.pull_Queue_Element:0000011c $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1909   .text.get_Queue_Status:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1953   .text.get_Queue_Status:0000002c $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1958   .text.flush_Queue:00000000 $t
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:1964   .text.flush_Queue:00000000 flush_Queue
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2017   .text.flush_Queue:00000050 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2025   .bss.receiveState.7071:00000000 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2027   .bss.aux.7072:00000000 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2036   .bss.intStatus.7073:00000000 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2041   .bss.sendState.7084:00000000 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2043   .bss.data_to_send.7086:00000000 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2049   .bss.aux.7085:00000000 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2058   .bss.rxStatus.7088:00000000 $d
+C:\Users\bruno\AppData\Local\Temp\cc5WqLO7.s:2063   .bss.number_buffer.7087:00000000 $d
+                           .group:00000000 wm4.0.33db8b643112917ec54934b4f2c2f387
+                           .group:00000000 wm4.redlib_version.h.16.f905717e4b3a91dcbdbb631865150df4
+                           .group:00000000 wm4.libconfigarm.h.18.1ad1d24f96d0dc8c4cf52dc19b0aa2c7
+                           .group:00000000 wm4.stdint.h.30.079ac5d9930c76ab215c1ab68adcbe08
+                           .group:00000000 wm4.stdbool.h.15.fddf1cb2402fd739d8e2516677869231
+                           .group:00000000 wm4.fsl_device_registers.h.32.f10b25a7fd7ad45b9a40904c33f28816
+                           .group:00000000 wm4.MK64F12.h.105.e884e5c80776532d2ec0f5c21e2ea7cb
+                           .group:00000000 wm4.core_cm4.h.42.42f38327ee0970d80f60117e6a3ba2b0
+                           .group:00000000 wm4.cmsis_gcc.h.36.39970cb43ce4b53c82644a1f9bc2eab9
+                           .group:00000000 wm4.core_cm4.h.223.7b48c9958ef5573320c4765074c8b0ce
+                           .group:00000000 wm4.system_MK64F12.h.109.c6d21568e03be21b21c922eb7345d6e3
+                           .group:00000000 wm4.MK64F12.h.475.0d927260271b4d8005bb15983309abd6
+                           .group:00000000 wm4.MK64F12_features.h.92.512cea46d882153168efeec0bc3a9da7
+                           .group:00000000 wm4.hardware.h.27.0531344360c1b4ef1fba1263e2a4c488
+                           .group:00000000 wm4.CAN_SPI.h.8.982c55d67150be3d9eb01d5a0e78a8eb
+                           .group:00000000 wm4.gpio.h.29.42ae391ec54ef4bbe1af26099bd430e3
+
+UNDEFINED SYMBOLS
+SPI_Init
+gpioMode
+gpioIRQ_Config
+SPI_SendData
+SPI_Transmission_In_Process
+SPI_Get_DataBytes
+SPI_Get_Status
