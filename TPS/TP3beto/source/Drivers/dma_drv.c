@@ -27,17 +27,29 @@
  ******************************************************************************/
 
 /**
- * @brief
+ * @brief Initiates a DMA channel with the configuration provided
+ *
+ * @param source_number			Source that generates the DMA request
+ * @param channel				Selects DMA channel
+ * @param source_address		Address of the source of the data
+ * @param dest_address			Address of the destination of the sata
+ * @param soff					Source offset
+ * @param doff					Destination offset
+ * @param sSize					Size of each data transfer at source (should be equal to dSize)
+ * @param nbytes				Number of bytes to be transfered every DMA request (should be multiple of sSize)
+ * @param citer					Number of major loop cycles.
+ * @param sourceBuffer_sizeof	Number of bytes of source buffer (sizeof(sBuffer))
  */
-void dma_init(uint8_t source_number, uint8_t channel, uint32_t * source_address, uint32_t * dest_address,
-			uint8_t soff, uint8_t doff, uint8_t sSize, uint8_t dSize)
+void dma0_init(uint8_t source_number, uint8_t channel, uint32_t * source_address, uint32_t * dest_address,
+			uint8_t soff, uint8_t doff, uint8_t sSize, uint32_t nbytes,
+			uint32_t citer, uint32_t sourceBuffer_sizeof, uint32_t destBuffer_sizeof)
 {
 	/* Enable the clock for the eDMA and the DMAMUX. */
 	SIM->SCGC7 |= SIM_SCGC7_DMA_MASK;
 	SIM->SCGC6 |= SIM_SCGC6_DMAMUX_MASK;
 
 	/* Enable the eDMA channel 0 and set the FTM CH0 as the DMA request source. */
-	DMAMUX->CHCFG[0] |= DMAMUX_CHCFG_ENBL_MASK | DMAMUX_CHCFG_SOURCE(source_number);   // FTM0 CH0 == 20
+	DMAMUX->CHCFG[channel] |= DMAMUX_CHCFG_ENBL_MASK | DMAMUX_CHCFG_SOURCE(source_number);   // FTM0 CH0 == 20
 
 	/* Enable the interrupts for the channel 0. */
 
@@ -48,6 +60,8 @@ void dma_init(uint8_t source_number, uint8_t channel, uint32_t * source_address,
 
 
 	/// ============= INIT TCD0 ===================//
+	DMA0->TCD[channel].CSR |= DMA_CSR_ESG(0);								// No Scatter and Gather
+
 	/* Set memory address for source and destination. */
 	DMA0->TCD[channel].SADDR = (uint32_t)(source_address);				   //List of Duties
 
@@ -60,19 +74,31 @@ void dma_init(uint8_t source_number, uint8_t channel, uint32_t * source_address,
 	DMA0->TCD[channel].DOFF = doff; // Destination address offset is 0. (Siempre al mismo lugar)
 
 	/* Set source and destination data transfer size to 16 bits (CnV is 2 bytes wide). */
-	DMA0->TCD[channel].ATTR = DMA_ATTR_SSIZE(sSize) | DMA_ATTR_DSIZE(dSize);
+	DMA0->TCD[channel].ATTR = DMA_ATTR_SSIZE(sSize) | DMA_ATTR_DSIZE(sSize);
 
 	/*Number of bytes to be transfered in each service request of the channel.*/
-	DMA0->TCD[0].NBYTES_MLNO = 0x02;
+	DMA0->TCD[channel].NBYTES_MLNO = nbytes;
 
-	/* Current major iteration count (5 iteration of 1 byte each one). */
-
-	//DMA_TCD0_CITER_ELINKNO = DMA_CITER_ELINKNO_CITER(0x05);
-	//DMA_TCD0_BITER_ELINKNO = DMA_BITER_ELINKNO_BITER(0x05);
+	/* Current major iteration count. */
 
 	/* Autosize for Current major iteration count */
-	DMA0->TCD[0].CITER_ELINKNO = DMA_CITER_ELINKNO_CITER((sizeof(sourceBuffer)/sizeof(sourceBuffer[0])));
-	DMA0->TCD[0].BITER_ELINKNO = DMA_BITER_ELINKNO_BITER((sizeof(sourceBuffer)/sizeof(sourceBuffer[0])));
+	DMA0->TCD[channel].CITER_ELINKNO = DMA_CITER_ELINKNO_CITER(citer);
+	DMA0->TCD[channel].BITER_ELINKNO = DMA_BITER_ELINKNO_BITER(citer);
+
+
+	/* Autosize SLAST for Wrap Around. This value is added to SADD at the end of Major Loop */
+	DMA0->TCD[channel].SLAST = -sourceBuffer_sizeof;
+
+
+    /* DLASTSGA DLAST Scatter and Gatter */
+     DMA0->TCD[channel].DLAST_SGA = -destBuffer_sizeof;
+
+	/* Setup control and status register. */
+
+	DMA0->TCD[channel].CSR = DMA_CSR_INTMAJOR_MASK;	//Enable Major Interrupt.
+
+	/* Enable request signal for channel 0. */
+	DMA0->ERQ |= 1 << channel;
 
 }
 
