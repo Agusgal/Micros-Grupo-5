@@ -35,7 +35,7 @@
  * @param dest_address			Address of the destination of the sata
  * @param soff					Source offset
  * @param doff					Destination offset
- * @param sSize					Size of each data transfer at source (should be equal to dSize)
+ * @param sSize					Size of each data (number of bytes) transfer at source (should be equal to dSize)
  * @param nbytes				Number of bytes to be transfered every DMA request (should be multiple of sSize)
  * @param citer					Number of major loop cycles.
  * @param sourceBuffer_sizeof	Number of bytes of source buffer (sizeof(sBuffer))
@@ -74,7 +74,15 @@ void dma0_init(uint8_t source_number, uint8_t channel, uint32_t * source_address
 	DMA0->TCD[channel].DOFF = doff; // Destination address offset is 0. (Siempre al mismo lugar)
 
 	/* Set source and destination data transfer size to 16 bits (CnV is 2 bytes wide). */
-	DMA0->TCD[channel].ATTR = DMA_ATTR_SSIZE(sSize) | DMA_ATTR_DSIZE(sSize);
+	if(sSize == 1 || sSize == 2 || sSize == 4)
+	{
+		DMA0->TCD[channel].ATTR = DMA_ATTR_SSIZE(sSize - 1) | DMA_ATTR_DSIZE(sSize - 1);
+	}
+	else
+	{
+		DMA0->TCD[channel].ATTR = DMA_ATTR_SSIZE(0) | DMA_ATTR_DSIZE(0);
+	}
+
 
 	/*Number of bytes to be transfered in each service request of the channel.*/
 	DMA0->TCD[channel].NBYTES_MLNO = nbytes;
