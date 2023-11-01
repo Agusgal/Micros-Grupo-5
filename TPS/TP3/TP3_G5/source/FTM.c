@@ -131,7 +131,7 @@ void FTM_Init(FTM_Module_t module, FTM_PS_t prescaler, uint16_t modulo, FTM_Call
 	FTM_Modules[module]->SC = FTM_SC_PS(prescaler);
 	FTM_Modules[module]->CNTIN = 0;
 	FTM_Modules[module]->CNT=0;
-	FTM_Modules[module]->MOD = module - 1;
+	FTM_Modules[module]->MOD = modulo - 1;
 
 
 	// Enable advanced mode
@@ -186,6 +186,7 @@ void FTM_CH_SetCount(FTM_Module_t module, FTM_Channel_t channel,uint16_t count)
 
 void FTM_CH_AddCallback(FTM_Module_t module, FTM_Channel_t channel, CH_Callback_t callback)
 {
+	FTM_Modules[module]->CONTROLS[channel].CnSC |= FTM_CnSC_CHIE(1);
 
 	if (callback)
 		{
@@ -302,7 +303,7 @@ static void FTM_IRQ_Dispatcher(FTM_Module_t module)
 
 	// Verify if the interruption occurred because of the overflow
 	// or because of a matching process in any of the timer channels
-	if (FTM_Modules[module]->SC & FTM_SC_TOF_MASK)
+	if (FTM_Modules[module]->SC & FTM_SC_TOF_MASK & FTM_SC_TOIE_MASK)
 	{
 		// Clear the interruption flag
 		FTM_Modules[module]->SC &= (~FTM_SC_TOF_MASK);

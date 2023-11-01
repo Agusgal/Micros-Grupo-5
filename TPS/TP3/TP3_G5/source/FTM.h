@@ -155,7 +155,7 @@ void FTM_CH_EnableDMA(FTM_Module_t instance, FTM_Channel_t channel);
 uint16_t FTM_CH_GetCount(FTM_Module_t instance, FTM_Channel_t channel);
 
 void FTM_CH_Init(FTM_Module_t module, FTM_Channel_t channel, uint16_t count, CH_Callback_t callback);
-
+void FTM_CH_AddCallback(FTM_Module_t module, FTM_Channel_t channel, CH_Callback_t callback);
 /*************************************
 *                                    *
 *   INPUT CAPTURE CHANNEL SERVICES   *

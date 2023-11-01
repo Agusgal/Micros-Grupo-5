@@ -11,6 +11,7 @@
 #include "gpio.h"
 #include "port.h"
 #include "FTM.h"
+#define NULL 0
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -20,6 +21,7 @@
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 void changeDuty (void);
+void IC_Fun (uint16_t CnV);
 
 int duty = 0xE66;
 int period = 0x1000;
@@ -35,9 +37,13 @@ void App_Init (void)
 
 	GPIO_Init();
 	PORT_Init();
-	FTM0_Init(2,&changeDuty);
+	FTM0_Init(FTM_PSC_x32,NULL);
+	FTM_Init(FTM_3,FTM_PSC_x32,0xFFFF,NULL);
     FTM_CH_PWM_Init(FTM_0, FTM_CH_0, FTM_PWM_HIGH_PULSES, FTM_PWM_EDGE_ALIGNED, duty, period);		//90% duty cycle (en hexa)
+    FTM_CH_IC_Init(FTM_3, FTM_CH_5,FTM_IC_BOTH_EDGES);
+    FTM_CH_AddCallback(FTM_3, FTM_CH_5,&IC_Fun);
     FTM_Restart(FTM_0);
+    FTM_Restart(FTM_3);
     FTM_PWM_ON(FTM_0,FTM_CH_0, true);
 
 }
@@ -54,6 +60,23 @@ void changeDuty (void)
 	FTM_PWM_SetDuty(FTM_0,FTM_CH_0,(FTM_CH_GetCount(FTM_0,FTM_CH_0)+1)%(period));
 }
 
+void IC_Fun (uint16_t CnV)
+{
+	static uint16_t med1,med2,med;
+	static uint8_t  state=0;
+
+	if(state==0)
+	{
+		med1=CnV;
+		state=1;
+	}
+	else if(state==1)
+	{
+		med2=CnV;
+		med=med2-med1;
+		state=0;					// Set break point here and watch "med" value
+	}
+}
 
 /*******************************************************************************
  *******************************************************************************
