@@ -218,7 +218,7 @@
 								<option id="com.crt.advproject.link.gcc.hdrlib.1067512406" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.codered.nohost_nf" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.gcc.nanofloat.1345316191" name="Enable printf float " superClass="com.crt.advproject.link.gcc.nanofloat"/>
 								<option id="com.crt.advproject.link.gcc.nanofloat.scanf.663098071" name="Enable scanf float " superClass="com.crt.advproject.link.gcc.nanofloat.scanf"/>
-								<option id="com.crt.advproject.link.script.20630350" name="Linker script" superClass="com.crt.advproject.link.script" useByScannerDiscovery="false" value="ccc_Debug.ld" valueType="string"/>
+								<option id="com.crt.advproject.link.script.20630350" name="Linker script" superClass="com.crt.advproject.link.script" useByScannerDiscovery="false" value="FTM_IC_Debug.ld" valueType="string"/>
 								<option id="com.crt.advproject.link.scriptdir.2126128181" name="Script path" superClass="com.crt.advproject.link.scriptdir"/>
 								<option defaultValue="com.crt.advproject.heapAndStack.mcuXpressoStyle" id="com.crt.advproject.link.memory.heapAndStack.style.1670732138" name="Heap and Stack placement" superClass="com.crt.advproject.link.memory.heapAndStack.style" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.gcc.multicore.slave.1872990581" name="Multicore configuration" superClass="com.crt.advproject.link.gcc.multicore.slave"/>
@@ -458,7 +458,7 @@
 								<option id="com.crt.advproject.link.gcc.hdrlib.1739163404" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.codered.nohost_nf" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.gcc.nanofloat.608298608" name="Enable printf float " superClass="com.crt.advproject.link.gcc.nanofloat"/>
 								<option id="com.crt.advproject.link.gcc.nanofloat.scanf.319896678" name="Enable scanf float " superClass="com.crt.advproject.link.gcc.nanofloat.scanf"/>
-								<option id="com.crt.advproject.link.script.22466606" name="Linker script" superClass="com.crt.advproject.link.script" value="ccc_Release.ld" valueType="string"/>
+								<option id="com.crt.advproject.link.script.22466606" name="Linker script" superClass="com.crt.advproject.link.script" value="FTM_IC_Release.ld" valueType="string"/>
 								<option id="com.crt.advproject.link.scriptdir.1843395017" name="Script path" superClass="com.crt.advproject.link.scriptdir"/>
 								<option defaultValue="com.crt.advproject.heapAndStack.mcuXpressoStyle" id="com.crt.advproject.link.memory.heapAndStack.style.772606865" name="Heap and Stack placement" superClass="com.crt.advproject.link.memory.heapAndStack.style" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.gcc.multicore.slave.1361656702" name="Multicore configuration" superClass="com.crt.advproject.link.gcc.multicore.slave"/>
@@ -533,7 +533,7 @@
 	</storageModule>
 	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
 		<sdkName>SDK_2.x_FRDM-K64F</sdkName>
-		<sdkVersion>2.2.0</sdkVersion>
+		<sdkVersion>2.4.1</sdkVersion>
 		<sdkComponents>startup;CMSIS_Include;</sdkComponents>
 		<boardId>frdmk64f</boardId>
 		<core>cm4</core>

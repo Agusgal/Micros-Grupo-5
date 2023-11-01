@@ -102,7 +102,6 @@ void OC_Init (void)
 	FTM_SetInterruptMode (FTM0,FTM_CH_0, true);
 	FTM_StartClock(FTM0); //Select BusClk
 
-
 }
 
 
