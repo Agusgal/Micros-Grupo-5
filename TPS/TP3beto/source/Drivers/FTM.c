@@ -8,10 +8,10 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
-#include <MK64F12.h>
+#include "MK64F12.h"
 #include "FTM.h"
 #include "gpio.h"
-#include <hardware.h>
+#include "hardware.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -182,9 +182,9 @@ uint16_t FTM_CH_GetCount(FTM_Module_t module, FTM_Channel_t channel)
 /**
  * @brief 	Gets CnV pointer, for DMA porpuses
  */
-uint16_t* FTM_CH_GetCnVPointer(FTM_Module_t module, FTM_Channel_t channel)
+uint32_t* FTM_CH_GetCnVPointer(FTM_Module_t module, FTM_Channel_t channel)
 {
-	return &(FTM_Modules[module]->CONTROLS[channel].CnV);
+	return (&FTM_Modules[module]->CONTROLS[channel].CnV);
 }
 
 

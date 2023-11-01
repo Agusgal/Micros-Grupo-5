@@ -144,7 +144,7 @@ void FTM0_OVF_Callback (void);
 /**
  * @brief 	Gets CnV pointer, for DMA porpuses
  */
-uint16_t* FTM_CH_GetCnVPointer(FTM_Module_t module, FTM_Channel_t channel);
+uint32_t* FTM_CH_GetCnVPointer(FTM_Module_t module, FTM_Channel_t channel);
 
 /*
  * @brief Sets the value of the channel's count register. Particularly useful when running

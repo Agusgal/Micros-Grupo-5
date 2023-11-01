@@ -10,6 +10,7 @@
 
 #include "dma_drv.h"
 #include "MK64F12.h"
+#include "hardware.h"
 
 
 /*******************************************************************************
@@ -32,8 +33,8 @@
  *
  * @param source_number			Source that generates the DMA request
  * @param channel				Selects DMA channel
- * @param source_address		Address of the source of the data
- * @param dest_address			Address of the destination of the sata
+ * @param source_address		Address of the source of the data (in uint32_t)
+ * @param dest_address			Address of the destination of the data (in uint32_t)
  * @param soff					Source offset
  * @param doff					Destination offset
  * @param sSize					Size of each data (number of bytes) transfer at source (should be equal to dSize)
@@ -42,7 +43,7 @@
  * @param sourceBuffer_sizeof	Number of bytes of source buffer (sizeof(sBuffer))
  * @param destBuffer_sizeof		Number of bytes of dest buffer (sizeof(dBuffer))
  */
-void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t * source_address, uint32_t * dest_address,
+void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t source_address, uint32_t dest_address,
 			uint8_t soff, uint8_t doff, uint8_t sSize, uint32_t nbytes,
 			uint32_t citer, uint32_t sourceBuffer_sizeof, uint32_t destBuffer_sizeof)
 {
@@ -78,7 +79,7 @@ void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t * source_ad
 	/* Set source and destination data transfer size to 16 bits (CnV is 2 bytes wide). */
 	if(sSize == 1 || sSize == 2 || sSize == 4)
 	{
-		DMA0->TCD[channel].ATTR = DMA_ATTR_SSIZE(sSize - 1) | DMA_ATTR_DSIZE(sSize - 1);
+		DMA0->TCD[channel].ATTR = DMA_ATTR_SSIZE(sSize >> 1) | DMA_ATTR_DSIZE(sSize >> 1);
 	}
 	else
 	{
@@ -105,7 +106,7 @@ void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t * source_ad
 
 	/* Setup control and status register. */
 
-	//DMA0->TCD[channel].CSR = DMA_CSR_INTMAJOR_MASK;	//Enable Major Interrupt.
+	DMA0->TCD[channel].CSR = DMA_CSR_INTMAJOR_MASK;	//Enable Major Interrupt.
 
 	/* Enable request signal for channel 0. */
 	DMA0->ERQ |= 1 << channel;
@@ -120,10 +121,22 @@ void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t * source_ad
  *******************************************************************************
  ******************************************************************************/
 
-/*__ISR__ DMA0_IRQHandler(void)
+__ISR__ DMA0_IRQHandler(void)
 {
+	static uint32_t a = 0;
+	DMA0->CINT |= 0;
+	a++;
+}
 
-}*/
+void DMA_Error_IRQHandler()
+{
+	static uint32_t b = 0;
+	/* Clear the error interrupt flag.*/
+	DMA0->CERR |= 0;
+
+	b++;
+
+}
 
 
 /*******************************************************************************

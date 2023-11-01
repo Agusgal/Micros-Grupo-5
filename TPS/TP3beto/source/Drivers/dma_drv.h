@@ -28,16 +28,17 @@ typedef enum {    FTM0CH0 = 20,     FTM0CH1 = 21, FTM0CH2 = 22, FTM0CH3 = 23,
 *
 * @param source_number			Source that generates the DMA request
 * @param channel				Selects DMA channel
-* @param source_address			Address of the source of the data
-* @param dest_address			Address of the destination of the data
+* @param source_address		Address of the source of the data (in uint32_t)
+* @param dest_address			Address of the destination of the data (in uint32_t)
 * @param soff					Source offset
 * @param doff					Destination offset
 * @param sSize					Size of each data (number of bytes) transfer at source (should be equal to dSize)
-* @param nbytes					Number of bytes to be transfered every DMA request (should be multiple of sSize)
+* @param nbytes				Number of bytes to be transfered every DMA request (should be multiple of sSize)
 * @param citer					Number of major loop cycles.
 * @param sourceBuffer_sizeof	Number of bytes of source buffer (sizeof(sBuffer))
+* @param destBuffer_sizeof		Number of bytes of dest buffer (sizeof(dBuffer))
 */
-void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t * source_address, uint32_t * dest_address,
+void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t source_address, uint32_t dest_address,
 		uint8_t soff, uint8_t doff, uint8_t sSize, uint32_t nbytes,
 		uint32_t citer, uint32_t sourceBuffer_sizeof, uint32_t destBuffer_sizeof);
 
