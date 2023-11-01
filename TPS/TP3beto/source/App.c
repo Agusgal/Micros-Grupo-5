@@ -11,12 +11,12 @@
 #include "MK64F12.h"
 #include "hardware.h"
 
-#include "Drivers/Display.h"
-#include "Drivers/Encoder.h"
 #include "Drivers/board.h"
 #include "Drivers/gpio.h"
-#include "Drivers/BoardLeds.h"
-#include "Drivers/CardReader_DRV.h"
+#include "Drivers/dma_drv.h"
+#include "Drivers/FTM.h"
+#include "Drivers/port.h"
+
 
 #include "EventQueue/queue.h"
 #include "FSM/FSM.h"
@@ -28,25 +28,15 @@
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
-
-
-//TODO: que hace esto aca?????
-void SysTick_Init(void);
-
-/**
- * @brief captures events generated within the drivers and inside states and fills the eventqueue. Gets called continously.
- * @return nothing.
- */
-void fill_queue(void);
+void changeDuty (void);
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
+int duty = 0xE66;
+int period = 0x1000;
 
-//TODO: habra una mejor manera de manejar esto?
-//this variable saves the current state of the FSM
-static state *current_state;
-
+uint16_t sourceBuffer[] = {1000 ,2000,3000,4000,5000,6000,7000,8000};
 
 /*******************************************************************************
  *******************************************************************************
@@ -58,44 +48,28 @@ static state *current_state;
 /* Función que se llama 1 vez, al comienzo del programa */
 void App_Init (void)
 {
-	//Init Queue
-	queue_Init();
 
-	//Init display
-	Display_Init();
+	PORT_Init();
+	FTM0_Init(2, 0);
+    FTM_CH_PWM_Init(FTM_0, FTM_CH_0, FTM_PWM_HIGH_PULSES, FTM_PWM_EDGE_ALIGNED, duty, period);		//90% duty cycle (en hexa)
+    FTM_Restart(FTM_0);
+    FTM_PWM_ON(FTM_0,FTM_CH_0, true);
 
-	//Init Leds
-	BoardLeds_Init();
+    uint16_t * CnV_pointer = FTM_CH_GetCnVPointer(FTM_0, FTM_CH_0);
+    dma0_init(FTM0CH0, 0, sourceBuffer, CnV_pointer, 2, 0, 2, 2, 8, sizeof(sourceBuffer), 0);
 
-	//Init card_reader
-	cardReader_Init();
-
-	//Init Encoder
-	Encoder_Init();
-
-	//Init fsm
-	current_state = get_initial_state();
-	start_fsm();
-
-    hw_DisableInterrupts();
-    SysTick_Init();
-    hw_EnableInterrupts();
 }
-
-
 
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-	fill_queue();
 
-	Event_Type event = pull_Queue_Element();
+}
 
-	if (event != NONE_EV)
-	{
-		current_state = fsm_dispatcher(current_state, event);
-	}
-
+// esta funcion se ejecuta cuando termina un período de FTM, va rotando de duty (solo pa testear)
+void changeDuty (void)
+{
+	FTM_PWM_SetDuty(FTM_0,FTM_CH_0,(FTM_CH_GetCount(FTM_0,FTM_CH_0)+1)%(period));
 }
 
 
@@ -105,60 +79,6 @@ void App_Run (void)
  *******************************************************************************
  ******************************************************************************/
 
-
-/**
- * @brief captures events generated within the drivers and inside states and fills the eventqueue. Gets called continously.
- * @return nothing.
- */
-void fill_queue(void)
-{
-	uint8_t card_var = getCardReader_Status();
-
-
-	//check for encoder turn events
-	int move_enc = getEncoder_State();
-
-	if (move_enc == 1) //move right
-	{
-		push_Queue_Element(ENC_RIGHT_EV);
-	}
-	else if (move_enc == 2)
-	{
-		push_Queue_Element(ENC_LEFT_EV);
-	}
-
-	//Check for Encoder press events
-	int encoder_state = getEncoderSwitch_State();
-
-	if (encoder_state == RELEASED)
-	{
-		push_Queue_Element(ENC_PRESSED_EV);
-	}
-	else if(encoder_state == FIVE_SEC_PRESS)
-	{
-		push_Queue_Element(INCREASE_BRIGHTNESS_EV);
-	}
-
-	//Check for Card Events
-	if (!card_var)
-	{
-		push_Queue_Element(CARD_SWIPE_EV);
-	}
-	else if (card_var == CARD_FAIL)
-	{
-		push_Queue_Element(CARD_MIDSWIPE_EV);
-	}
-
-	//Check for timer events (leds)
-	if (get_green_status())
-	{
-		push_Queue_Element(FIVE_SEC_LAPSE_EV);
-	}
-	else if (get_red_status())
-	{
-		push_Queue_Element(FIVE_SEC_LAPSE_EV);
-	}
-}
 
 
 /*******************************************************************************

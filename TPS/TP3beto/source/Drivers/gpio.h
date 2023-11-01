@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "MK64F12.h"
+#include "port.h"
 
 
 /*******************************************************************************
@@ -52,19 +53,6 @@ enum { PA, PB, PC, PD, PE };
  ******************************************************************************/
 
 typedef uint8_t pin_t;
-
-typedef enum
-{
-	PORT_eDisabled				= 0x00,
-	PORT_eDMARising				= 0x01,
-	PORT_eDMAFalling			= 0x02,
-	PORT_eDMAEither				= 0x03,
-	PORT_eInterruptDisasserted	= 0x08,
-	PORT_eInterruptRising		= 0x09,
-	PORT_eInterruptFalling		= 0x0A,
-	PORT_eInterruptEither		= 0x0B,
-	PORT_eInterruptAsserted		= 0x0C,
-} PORTEvent_t;
 
 
 /*******************************************************************************

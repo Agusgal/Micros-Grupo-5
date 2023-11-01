@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 #include "dma_drv.h"
+#include "MK64F12.h"
 
 
 /*******************************************************************************
@@ -39,8 +40,9 @@
  * @param nbytes				Number of bytes to be transfered every DMA request (should be multiple of sSize)
  * @param citer					Number of major loop cycles.
  * @param sourceBuffer_sizeof	Number of bytes of source buffer (sizeof(sBuffer))
+ * @param destBuffer_sizeof		Number of bytes of dest buffer (sizeof(dBuffer))
  */
-void dma0_init(uint8_t source_number, uint8_t channel, uint32_t * source_address, uint32_t * dest_address,
+void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t * source_address, uint32_t * dest_address,
 			uint8_t soff, uint8_t doff, uint8_t sSize, uint32_t nbytes,
 			uint32_t citer, uint32_t sourceBuffer_sizeof, uint32_t destBuffer_sizeof)
 {
@@ -103,7 +105,7 @@ void dma0_init(uint8_t source_number, uint8_t channel, uint32_t * source_address
 
 	/* Setup control and status register. */
 
-	DMA0->TCD[channel].CSR = DMA_CSR_INTMAJOR_MASK;	//Enable Major Interrupt.
+	//DMA0->TCD[channel].CSR = DMA_CSR_INTMAJOR_MASK;	//Enable Major Interrupt.
 
 	/* Enable request signal for channel 0. */
 	DMA0->ERQ |= 1 << channel;
@@ -118,7 +120,10 @@ void dma0_init(uint8_t source_number, uint8_t channel, uint32_t * source_address
  *******************************************************************************
  ******************************************************************************/
 
+/*__ISR__ DMA0_IRQHandler(void)
+{
 
+}*/
 
 
 /*******************************************************************************

@@ -23,18 +23,6 @@
 
 #define GPIO(p)								((GPIO_Type *) (GPIOA_BASE + (p) * 0x00000040u))
 
-typedef enum
-{
-	PORT_mAnalog,
-	PORT_mGPIO,
-	PORT_mAlt2,
-	PORT_mAlt3,
-	PORT_mAlt4,
-	PORT_mAlt5,
-	PORT_mAlt6,
-	PORT_mAlt7,
-
-} PORTMux_t;
 
 //enum { IDLE=0, PRESSED, RELEASED};
 
