@@ -303,17 +303,20 @@ static void FTM_IRQ_Dispatcher(FTM_Module_t module)
 
 	// Verify if the interruption occurred because of the overflow
 	// or because of a matching process in any of the timer channels
-	if (FTM_Modules[module]->SC & FTM_SC_TOF_MASK & FTM_SC_TOIE_MASK)
+	if (FTM_Modules[module]->SC & FTM_SC_TOF_MASK)
 	{
-		// Clear the interruption flag
-		FTM_Modules[module]->SC &= (~FTM_SC_TOF_MASK);
-		
-		// Calls the callback registered (if any)
-		FTM_Callback_t callback = FTM_OVF_Callbacks[module];
-		if (callback)
+		if (FTM_Modules[module]->SC & FTM_SC_TOIE_MASK)
 		{
-			callback();
-			//FTM_CH_SetCount(FTM_0,FTM_CH_0,FTM_CH_GetCount (FTM_0, FTM_CH_0)+100);
+			// Clear the interruption flag
+			FTM_Modules[module]->SC &= (~FTM_SC_TOF_MASK);
+
+			// Calls the callback registered (if any)
+			FTM_Callback_t callback = FTM_OVF_Callbacks[module];
+			if (callback)
+			{
+				callback();
+				//FTM_CH_SetCount(FTM_0,FTM_CH_0,FTM_CH_GetCount (FTM_0, FTM_CH_0)+100);
+			}
 		}
 	}
 	else
