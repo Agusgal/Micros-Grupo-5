@@ -9,9 +9,9 @@
  ******************************************************************************/
 
 #include <MK64F12.h>
-#include <FTM.h>
-#include <gpio.h>
-#include <hardware.h>
+#include "FTM.h"
+#include "gpio.h"
+#include "hardware.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -21,8 +21,8 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
-static FTM_Callback_t		FTM_OVF_Callbacks[FTM_MOD_COUNT];
-static CH_Callback_t		CH_Callbacks[FTM_MOD_COUNT][FTM_CH_COUNT];
+static FTM_Callback_t		FTM_OVF_Callbacks[FTM_COUNT];
+static CH_Callback_t		CH_Callbacks[FTM_COUNT][FTM_CH_COUNT];
 /*******************************************************************************
  * VARIABLES WITH GLOBAL SCOPE
  ******************************************************************************/
@@ -49,7 +49,7 @@ static const uint8_t FTM_IRQs[] = FTM_IRQS;
 
 // FTM Overflow Callbacks
 
-static const pin_t	FTM_CH_PINS [FTM_MOD_COUNT][FTM_CH_COUNT] = {
+static const pin_t	FTM_CH_PINS [FTM_COUNT][FTM_CH_COUNT] = {
 	//	Channel 0			Channel 1			Channel 2			Channel 3		Channel 4			Channel 5			Channel 6			Channel 7
 	{ PORTNUM2PIN(PC,1),  PORTNUM2PIN(PA,4),  PORTNUM2PIN(PC,3), PORTNUM2PIN(PC,4), PORTNUM2PIN(PD,4), PORTNUM2PIN(PD,5), PORTNUM2PIN(PD,6)	, PORTNUM2PIN(PD,7)  },	// FTM0
 	{ PORTNUM2PIN(PA,12), PORTNUM2PIN(PA,13), 0				   , 0				  , 0				 , 0			   	, 0				   	, 0				     }, // FTM1
@@ -58,7 +58,7 @@ static const pin_t	FTM_CH_PINS [FTM_MOD_COUNT][FTM_CH_COUNT] = {
 };
 
 // FTM Channel Pin MUX Alternatives
-static const uint8_t	FTM_CH_MUX_ALTS[FTM_MOD_COUNT][FTM_CH_COUNT] = {
+static const uint8_t	FTM_CH_MUX_ALTS[FTM_COUNT][FTM_CH_COUNT] = {
 	// Ch0 Ch1 Ch2 Ch3 Ch4 Ch5 Ch6 Ch7
 	{  4,  3,  4,  4,  4,  4,  4,  4  }, // FTM0
 	{  3,  3,  0,  0,  0,  0,  0,  0  }, // FTM1
@@ -76,8 +76,9 @@ static const uint8_t	FTM_CH_MUX_ALTS[FTM_MOD_COUNT][FTM_CH_COUNT] = {
  *******************************************************************************
  ******************************************************************************/
 
-
-/**************************** FTM MODULE FUNCTIONS ****************************/
+/*******************************************************************************
+ *                        FTM MODULE FUNCTIONS
+ ******************************************************************************/
 
 void FTM0_Init(FTM_PS_t prescaler, FTM_Callback_t callback)
 {
@@ -131,7 +132,7 @@ void FTM_Init(FTM_Module_t module, FTM_PS_t prescaler, uint16_t modulo, FTM_Call
 	FTM_Modules[module]->SC = FTM_SC_PS(prescaler);
 	FTM_Modules[module]->CNTIN = 0;
 	FTM_Modules[module]->CNT=0;
-	FTM_Modules[module]->MOD = modulo - 1;
+	FTM_Modules[module]->MOD = modulo;
 
 
 	// Enable advanced mode
@@ -171,8 +172,9 @@ uint16_t FTM_GetCount(FTM_Module_t module)
 	return FTM_Modules[module]->CNT;
 }
 
-/**************************** FTM CHANNEL FUNCTIONS ****************************/
-
+/*******************************************************************************
+ *                        FTM CHANNEL FUNCTIONS
+ ******************************************************************************/
 
 uint16_t FTM_CH_GetCount(FTM_Module_t module, FTM_Channel_t channel)
 {
@@ -189,38 +191,59 @@ void FTM_CH_AddCallback(FTM_Module_t module, FTM_Channel_t channel, CH_Callback_
 	FTM_Modules[module]->CONTROLS[channel].CnSC |= FTM_CnSC_CHIE(1);
 
 	if (callback)
-		{
-			CH_Callbacks[module][channel] = callback;
-		}
+	{
+		CH_Callbacks[module][channel] = callback;
+	}
 }
 
 void FTM_CH_EnableDMA(FTM_Module_t module, FTM_Channel_t channel)
 {
 	FTM_Modules[module]->CONTROLS[channel].CnSC = (	FTM_Modules[module]->CONTROLS[channel].CnSC & ~FTM_CnSC_DMA_MASK) | FTM_CnSC_DMA(1);
-	FTM_Modules[module]->CONTROLS[channel].CnSC = (	FTM_Modules[module]->CONTROLS[channel].CnSC & ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(1);
+	//FTM_Modules[module]->CONTROLS[channel].CnSC = (	FTM_Modules[module]->CONTROLS[channel].CnSC & ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(1);		// desp vemos si queda comentada
 }
 
-void FTM_CH_IC_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_IC_Mode_t mode)
+volatile uint32_t * FTM_CH_GetCnVPointer(FTM_Module_t module, FTM_Channel_t channel)
+{
+	return (&FTM_Modules[module]->CONTROLS[channel].CnV);
+}
+
+/********************* INPUT CAPTURE *********************/
+
+void FTM_CH_IC_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_IC_Mode_t mode,CH_Callback_t callback)
 {
 	// Channel set to input capture on given edge/s
 	FTM_Modules[module]->CONTROLS[channel].CnSC = FTM_CnSC_ELSA(mode == FTM_IC_RISING_EDGE ? 0 : 1) | FTM_CnSC_ELSB(mode == FTM_IC_FALLING_EDGE ? 0 : 1);
 	
 	// Pin MUX alternative
 	FTM_CH_Mux(module, channel);
+
+
+	if (callback)
+	{
+		FTM_Modules[module]->CONTROLS[channel].CnSC |= FTM_CnSC_CHIE(1);
+		CH_Callbacks[module][channel] = callback;
+	}
 }
 
-void FTM_CH_OC_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_OC_Mode_t mode, bool outInit)
+/********************* OUTPUT COMPARE  *********************/
+
+void FTM_CH_OC_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_OC_Mode_t mode, bool outInit,CH_Callback_t callback)
 {
-	// Pin MUX alternative
-	FTM_CH_Mux(module, channel);
-	// Configuration of the channel as output compare
+
 	FTM_Modules[module]->CONTROLS[channel].CnSC = FTM_CnSC_MSB(0) | FTM_CnSC_MSA(1) | FTM_CnSC_ELSB(mode == FTM_OC_TOGGLE ? 0 : 1) | FTM_CnSC_ELSA(mode == FTM_OC_CLEAR ? 0 : 1);
 
 	// Sets the initial value of the output channel
 	uint32_t outputMask = CHANNEL_MASK(channel);
 	FTM_Modules[module]->OUTINIT = outInit ? (FTM_Modules[module]->OUTINIT | outputMask) : (FTM_Modules[module]->OUTINIT & (~outputMask));
 
+	// Pin MUX alternative
+	FTM_CH_Mux(module, channel);
 
+	if (callback)
+	{
+		FTM_Modules[module]->CONTROLS[channel].CnSC |= FTM_CnSC_CHIE(1);
+		CH_Callbacks[module][channel] = callback;
+	}
 }
 
 void FTM_CH_OC_Start(FTM_Module_t module, FTM_Channel_t channel, uint16_t count)
@@ -228,7 +251,6 @@ void FTM_CH_OC_Start(FTM_Module_t module, FTM_Channel_t channel, uint16_t count)
 	// Forces the output channel to its initial value registered during the initialization process
 	FTM_Modules[module]->MODE |= FTM_MODE_INIT(1);
 
-	// Enables the matching process on the selected channel and updates the current count
 	FTM_Modules[module]->CONTROLS[channel].CnV = FTM_Modules[module]->CNT + count;
 	FTM_Modules[module]->PWMLOAD |= CHANNEL_MASK(channel);
 	FTM_Modules[module]->OUTMASK &= (~CHANNEL_MASK(channel));
@@ -236,18 +258,17 @@ void FTM_CH_OC_Start(FTM_Module_t module, FTM_Channel_t channel, uint16_t count)
 
 void FTM_CH_OC_Stop(FTM_Module_t module, FTM_Channel_t channel)
 {
-	// Disables the matching process on the PWMLOAD register
 	FTM_Modules[module]->PWMLOAD &= (~CHANNEL_MASK(channel));
 	FTM_Modules[module]->OUTMASK |= CHANNEL_MASK(channel);
 }
 
-void FTM_CH_PWM_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_PWM_Mode_t mode, FTM_PWM_Align_t alignment, uint16_t duty, uint16_t period)
+/********************* PULSE WIDTH MODULATION  *********************/
+
+void FTM_CH_PWM_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_PWM_Mode_t mode, FTM_PWM_Align_t alignment, uint16_t duty, uint16_t period,CH_Callback_t callback)
 {
 
-	// Configure up or up/down counter 
-	FTM_Modules[module]->SC |= FTM_SC_CPWMS(alignment == FTM_PWM_CENTER_ALIGNED ? 1 : 0);
+	// Configure up or up/down counter	FTM_Modules[module]->SC |= FTM_SC_CPWMS(alignment == FTM_PWM_CENTER_ALIGNED ? 1 : 0);
 
-	// Configure channel to PWM on the given mode and alignment
 	FTM_Modules[module]->CONTROLS[channel].CnSC = FTM_CnSC_MSB(1) | FTM_CnSC_ELSB(1) | FTM_CnSC_ELSA(mode == FTM_PWM_LOW_PULSES ? 1 : 0);
 	
 	// Enable changes on MOD, CNTIN and CnV
@@ -255,42 +276,42 @@ void FTM_CH_PWM_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_PWM_Mode_t 
 
 	// Configure PWM period and duty
 	FTM_Modules[module]->CNTIN = 0;
-	FTM_Modules[module]->MOD = period - 1;
+	FTM_Modules[module]->MOD = period;
 	FTM_Modules[module]->CONTROLS[channel].CnV = duty;
 
 	// Pin MUX alternative
 	FTM_CH_Mux(module, channel);
 
-	// Enable Synchronization
+	// Synchronization
 	FTM_Modules[module]->COMBINE |= (FTM_COMBINE_SYNCEN0_MASK << (8 * (channel / 2)));
-
-	// Advanced synchronization, and enable Software Trigger to change CnV!
 	FTM_Modules[module]->SYNCONF |= FTM_SYNCONF_SYNCMODE_MASK | FTM_SYNCONF_SWWRBUF_MASK;
-
 	// Sync when CNT == MOD - 1
 	FTM_Modules[module]->SYNC |= FTM_SYNC_CNTMAX_MASK;
+
+	if (callback)
+	{
+		FTM_Modules[module]->CONTROLS[channel].CnSC |= FTM_CnSC_CHIE(1);
+		CH_Callbacks[module][channel] = callback;
+	}
 
 }
 
 void FTM_PWM_SetDuty(FTM_Module_t module, FTM_Channel_t channel, uint16_t duty)
 {
-	// Software Trigger
 	FTM_Modules[module]->SYNC |= FTM_SYNC_SWSYNC_MASK;
-
-	// Change Duty
 	FTM_Modules[module]->CONTROLS[channel].CnV = duty;
 }
 
-void FTM_PWM_ON(FTM_Module_t module, FTM_Channel_t channel, bool running)
+void FTM_PWM_ON(FTM_Module_t module, FTM_Channel_t channel)
 {
-	// Software Trigger
 	FTM_Modules[module]->SYNC |= FTM_SYNC_SWSYNC_MASK;
+	FTM_Modules[module]->OUTMASK &= (~CHANNEL_MASK(channel));
+}
 
-	// Change OutMask
-	if (running)
-		FTM_Modules[module]->OUTMASK &= (~CHANNEL_MASK(channel));
-	else
-		FTM_Modules[module]->OUTMASK |= CHANNEL_MASK(channel);
+void FTM_PWM_OFF(FTM_Module_t module, FTM_Channel_t channel)
+{
+	FTM_Modules[module]->SYNC |= FTM_SYNC_SWSYNC_MASK;
+	FTM_Modules[module]->OUTMASK |= CHANNEL_MASK(channel);
 }
 
 /*******************************************************************************
@@ -298,12 +319,10 @@ void FTM_PWM_ON(FTM_Module_t module, FTM_Channel_t channel, bool running)
                         LOCAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
+
 static void FTM_IRQ_Dispatcher(FTM_Module_t module)
 {
-
-	// Verify if the interruption occurred because of the overflow
-	// or because of a matching process in any of the timer channels
-	if (FTM_Modules[module]->SC & FTM_SC_TOF_MASK)
+	if (FTM_Modules[module]->SC & FTM_SC_TOF_MASK)		// Overflow del Free Running Counter
 	{
 		if (FTM_Modules[module]->SC & FTM_SC_TOIE_MASK)
 		{
@@ -315,25 +334,21 @@ static void FTM_IRQ_Dispatcher(FTM_Module_t module)
 			if (callback)
 			{
 				callback();
-				//FTM_CH_SetCount(FTM_0,FTM_CH_0,FTM_CH_GetCount (FTM_0, FTM_CH_0)+100);
 			}
 		}
 	}
-	else
+	else	//Cumple condicion de OC,IC,PWM
 	{
-		// Save current status of the interruption flags for all channels
 		uint32_t status = FTM_Modules[module]->STATUS;
 
-		// Clear flags in the FlexTimer status register
+		// Clear flags
 		FTM_Modules[module]->STATUS = 0;
 
 		for (FTM_Channel_t channel = 0; channel < FTM_CH_COUNT; channel++)
 		{
-			// Fetch channel interruption callback
+			// LLamo al callback si corresponde
 			CH_Callback_t callback = CH_Callbacks[module][channel];
 
-			// If interruption callback registered, verify if flag was active...
-			// laziness will prevent shifting and masking status when no callback registered
 			if (callback && (status & CHANNEL_MASK(channel)))
 				callback(FTM_Modules[module]->CONTROLS[channel].CnV);
 		}
