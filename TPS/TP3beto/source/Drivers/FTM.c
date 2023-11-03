@@ -36,6 +36,8 @@ static void FTM_IRQ_Dispatcher(FTM_Module_t module);
 
 static void FTM_CH_Mux(FTM_Module_t module, FTM_Channel_t channel);
 
+static void FTM_CH_DSE(FTM_Module_t module, FTM_Channel_t channel);
+
 /*******************************************************************************
  * ROM CONST VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
@@ -269,6 +271,9 @@ void FTM_CH_PWM_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_PWM_Mode_t 
 	// Pin MUX alternative
 	FTM_CH_Mux(module, channel);
 
+	//Set Drive Strength Enable
+	FTM_CH_DSE(module, channel);
+
 	// Enable Synchronization
 	FTM_Modules[module]->COMBINE |= (FTM_COMBINE_SYNCEN0_MASK << (8 * (channel / 2)));
 
@@ -373,4 +378,11 @@ static void FTM_CH_Mux(FTM_Module_t module, FTM_Channel_t channel)
 	pin_t 		pin = FTM_CH_PINS[module][channel];
 	uint8_t 	alt = FTM_CH_MUX_ALTS[module][channel];
 	ports[PIN2PORT(pin)]->PCR[PIN2NUM(pin)] |= PORT_PCR_MUX(alt);
+}
+
+static void FTM_CH_DSE(FTM_Module_t module, FTM_Channel_t channel)
+{
+	PORT_Type* 	ports[] = PORT_BASE_PTRS;
+	pin_t 		pin = FTM_CH_PINS[module][channel];
+	ports[PIN2PORT(pin)]->PCR[PIN2NUM(pin)] |= PORT_PCR_DSE(1);
 }

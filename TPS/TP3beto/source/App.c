@@ -133,18 +133,19 @@ uint16_t sine[] = {
 /* Función que se llama 1 vez, al comienzo del programa */
 void App_Init (void)
 {
-
+	hw_DisableInterrupts ();
 	PORT_Init();
+
 	FTM_Init(FTM_0, FTM_PSC_x1, 0xFFFF, 0);
     FTM_CH_PWM_Init(FTM_0, FTM_CH_0, FTM_PWM_HIGH_PULSES, FTM_PWM_EDGE_ALIGNED, duty, period);		//90% duty cycle (en hexa)
     FTM_CH_EnableDMA(FTM_0, FTM_CH_0);
 
     uint32_t * CnV_pointer = FTM_CH_GetCnVPointer(FTM_0, FTM_CH_0);
-	dma0_init(FTM0CH0, 0, (uint32_t)sine, (uint32_t) CnV_pointer, 2, 0, 2, 2, sizeof(sine), sizeof(sine), 0);
-	FTM_CH_EnableDMA(FTM_0, FTM_CH_0);
+	dma0_init(FTM0CH0, 0, (uint32_t)sine, (uint32_t) CnV_pointer, 2, 0, 2, 2, sizeof(sine)/sizeof(sine[0]), sizeof(sine), 0);
 
     FTM_Restart(FTM_0);
     FTM_PWM_ON(FTM_0,FTM_CH_0, true);
+    hw_EnableInterrupts();
 }
 
 /* Función que se llama constantemente en un ciclo infinito */

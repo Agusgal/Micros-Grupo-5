@@ -63,7 +63,7 @@ void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t source_addr
 
 
 	/// ============= INIT TCD0 ===================//
-	DMA0->TCD[channel].CSR |= DMA_CSR_ESG(0);								// No Scatter and Gather
+	DMA0->TCD[channel].CSR &= ~DMA_CSR_ESG(0);								// No Scatter and Gather
 
 	/* Set memory address for source and destination. */
 	DMA0->TCD[channel].SADDR = (uint32_t)(source_address);				   //List of Duties
@@ -102,7 +102,7 @@ void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t source_addr
 
 
     /* DLASTSGA DLAST Scatter and Gatter */
-     DMA0->TCD[channel].DLAST_SGA = -destBuffer_sizeof;
+    DMA0->TCD[channel].DLAST_SGA = -destBuffer_sizeof;
 
 	/* Setup control and status register. */
 
