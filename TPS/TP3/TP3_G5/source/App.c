@@ -37,14 +37,13 @@ void App_Init (void)
 
 	GPIO_Init();
 	PORT_Init();
-	FTM0_Init(FTM_PSC_x32,NULL);
+	FTM0_Init(FTM_PSC_x32,&changeDuty);
 	FTM_Init(FTM_3,FTM_PSC_x32,0xFFFF,NULL);
-    FTM_CH_PWM_Init(FTM_0, FTM_CH_0, FTM_PWM_HIGH_PULSES, FTM_PWM_EDGE_ALIGNED, duty, period);		//90% duty cycle (en hexa)
-    FTM_CH_IC_Init(FTM_3, FTM_CH_5,FTM_IC_BOTH_EDGES);
-    FTM_CH_AddCallback(FTM_3, FTM_CH_5,&IC_Fun);
+    FTM_CH_PWM_Init(FTM_0, FTM_CH_0, FTM_PWM_HIGH_PULSES, FTM_PWM_EDGE_ALIGNED, duty, period,NULL);		//90% duty cycle (en hexa)
+    FTM_CH_IC_Init(FTM_3, FTM_CH_5,FTM_IC_BOTH_EDGES,&IC_Fun);
     FTM_Restart(FTM_0);
     FTM_Restart(FTM_3);
-    FTM_PWM_ON(FTM_0,FTM_CH_0, true);
+    FTM_PWM_ON(FTM_0,FTM_CH_0);
 
 }
 

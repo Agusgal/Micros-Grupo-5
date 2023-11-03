@@ -137,7 +137,7 @@ void App_Init (void)
 	PORT_Init();
 
 	FTM_Init(FTM_0, FTM_PSC_x1, 0xFFFF, 0);
-    FTM_CH_PWM_Init(FTM_0, FTM_CH_0, FTM_PWM_HIGH_PULSES, FTM_PWM_EDGE_ALIGNED, duty, period);		//90% duty cycle (en hexa)
+    FTM_CH_PWM_Init(FTM_0, FTM_CH_0, FTM_PWM_HIGH_PULSES, FTM_PWM_EDGE_ALIGNED, duty, period,NULL);		//90% duty cycle (en hexa)
     FTM_CH_EnableDMA(FTM_0, FTM_CH_0);
 
     uint32_t * CnV_pointer = FTM_CH_GetCnVPointer(FTM_0, FTM_CH_0);
