@@ -137,7 +137,7 @@ void FTM_CH_AddCallback(FTM_Module_t module, FTM_Channel_t channel, CH_Callback_
 void FTM_CH_EnableDMA(FTM_Module_t module, FTM_Channel_t channel);
 
 
-volatile uint32_t * FTM_CH_GetCnVPointer(FTM_Module_t module, FTM_Channel_t channel);
+uint32_t * FTM_CH_GetCnVPointer(FTM_Module_t module, FTM_Channel_t channel);
 
 /***************************************************
  * 				Input Capture Services

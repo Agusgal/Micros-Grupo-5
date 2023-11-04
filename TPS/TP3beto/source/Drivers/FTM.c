@@ -138,7 +138,7 @@ void FTM_Init(FTM_Module_t module, FTM_PS_t prescaler, uint16_t modulo, FTM_Call
 
 
 	// Enable advanced mode
-	FTM_Modules[module]->MODE |= FTM_MODE_FTMEN(1);
+	//FTM_Modules[module]->MODE |= FTM_MODE_FTMEN(1);
 
 	// Add overflow callback
 	if (callback)
@@ -204,7 +204,7 @@ void FTM_CH_EnableDMA(FTM_Module_t module, FTM_Channel_t channel)
 	//FTM_Modules[module]->CONTROLS[channel].CnSC = (	FTM_Modules[module]->CONTROLS[channel].CnSC & ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(1);		// desp vemos si queda comentada
 }
 
-volatile uint32_t * FTM_CH_GetCnVPointer(FTM_Module_t module, FTM_Channel_t channel)
+uint32_t * FTM_CH_GetCnVPointer(FTM_Module_t module, FTM_Channel_t channel)
 {
 	return &(FTM_Modules[module]->CONTROLS[channel].CnV);
 }
@@ -269,12 +269,13 @@ void FTM_CH_OC_Stop(FTM_Module_t module, FTM_Channel_t channel)
 void FTM_CH_PWM_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_PWM_Mode_t mode, FTM_PWM_Align_t alignment, uint16_t duty, uint16_t period,CH_Callback_t callback)
 {
 
-	// Configure up or up/down counter	FTM_Modules[module]->SC |= FTM_SC_CPWMS(alignment == FTM_PWM_CENTER_ALIGNED ? 1 : 0);
+	// Configure up or up/down counter
+	FTM_Modules[module]->SC |= FTM_SC_CPWMS(alignment == FTM_PWM_CENTER_ALIGNED ? 1 : 0);
 
 	FTM_Modules[module]->CONTROLS[channel].CnSC = FTM_CnSC_MSB(1) | FTM_CnSC_ELSB(1) | FTM_CnSC_ELSA(mode == FTM_PWM_LOW_PULSES ? 1 : 0);
 	
 	// Enable changes on MOD, CNTIN and CnV
-	FTM_Modules[module]->PWMLOAD |= FTM_PWMLOAD_LDOK(1) | CHANNEL_MASK(channel);
+	FTM_Modules[module]->PWMLOAD = FTM_PWMLOAD_LDOK(1) | 0x0F;// | CHANNEL_MASK(channel);
 
 	// Configure PWM period and duty
 	FTM_Modules[module]->CNTIN = 0;
@@ -288,10 +289,10 @@ void FTM_CH_PWM_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_PWM_Mode_t 
 	FTM_CH_DSE(module, channel);
 
 	// Enable Synchronization
-	FTM_Modules[module]->COMBINE |= (FTM_COMBINE_SYNCEN0_MASK << (8 * (channel / 2)));
-	FTM_Modules[module]->SYNCONF |= FTM_SYNCONF_SYNCMODE_MASK | FTM_SYNCONF_SWWRBUF_MASK;
+	//FTM_Modules[module]->COMBINE |= (FTM_COMBINE_SYNCEN0_MASK << (8 * (channel / 2)));
+	//FTM_Modules[module]->SYNCONF |= FTM_SYNCONF_SYNCMODE_MASK | FTM_SYNCONF_SWWRBUF_MASK;
 	// Sync when CNT == MOD - 1
-	FTM_Modules[module]->SYNC |= FTM_SYNC_CNTMAX_MASK;
+	//FTM_Modules[module]->SYNC |= FTM_SYNC_CNTMAX_MASK;
 
 	if (callback)
 	{

@@ -34,8 +34,8 @@ void changeDuty (void);
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
-uint32_t duty = 190;
-uint32_t period = 380;
+uint32_t duty = 50;
+uint32_t period = 379;
 
 uint16_t sourceBuffer[] = {1000,2000,3000,4000,5000,6000,7000,8000,9000};
 uint16_t sine[] = {
@@ -149,14 +149,14 @@ void App_Init (void)
 
 	UserPCR.FIELD.DSE=true;
 	UserPCR.FIELD.MUX=PORT_mAlt4;
-	UserPCR.FIELD.IRQC=PORT_eDisabled;
+    UserPCR.FIELD.IRQC=PORT_eDisabled;
 
 	PORT_Configure2 (PORTC,1,UserPCR);
 
-    uint32_t * CnV_pointer = FTM_CH_GetCnVPointer2(FTM0, FTM_0, FTM_CH_0);
-	dma0_init(FTM0CH0, 0, (uint32_t)sine, (uint32_t) CnV_pointer, 2, 0, 2, 2, sizeof(sine)/sizeof(sine[0]), sizeof(sine), 0);
-
     //FTM_Restart(FTM_0);
+
+    uint32_t * CnV_pointer = FTM_CH_GetCnVPointer(FTM_0, FTM_CH_0);
+    dma0_init(FTM0CH0, 0, (uint32_t)sine, (uint32_t) CnV_pointer, 2, 0, 2, 2, sizeof(sine)/sizeof(sine[0]), sizeof(sine), 0);
     //FTM_PWM_ON(FTM_0,FTM_CH_0);
     hw_EnableInterrupts();
 }
