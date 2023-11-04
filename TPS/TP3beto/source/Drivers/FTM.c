@@ -131,10 +131,10 @@ void FTM_Init(FTM_Module_t module, FTM_PS_t prescaler, uint16_t modulo, FTM_Call
 
 
 	// Free-running counter and prescaler
-	FTM_Modules[module]->SC = FTM_SC_PS(prescaler);
+	FTM_Modules[module]->SC = (FTM_Modules[module]->SC & ~FTM_SC_PS_MASK) | FTM_SC_PS(prescaler);
 	FTM_Modules[module]->CNTIN = 0;
 	FTM_Modules[module]->CNT=0;
-	FTM_Modules[module]->MOD = modulo;
+	FTM_Modules[module]->MOD = modulo-1;
 
 
 	// Enable advanced mode
@@ -200,8 +200,8 @@ void FTM_CH_AddCallback(FTM_Module_t module, FTM_Channel_t channel, CH_Callback_
 
 void FTM_CH_EnableDMA(FTM_Module_t module, FTM_Channel_t channel)
 {
-	FTM_Modules[module]->CONTROLS[channel].CnSC = (	FTM_Modules[module]->CONTROLS[channel].CnSC & ~FTM_CnSC_DMA_MASK) | FTM_CnSC_DMA(1);
-	//FTM_Modules[module]->CONTROLS[channel].CnSC = (	FTM_Modules[module]->CONTROLS[channel].CnSC & ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(1);		// desp vemos si queda comentada
+	FTM_Modules[module]->CONTROLS[channel].CnSC = (	FTM_Modules[module]->CONTROLS[channel].CnSC & ~(FTM_CnSC_DMA_MASK)) | (FTM_CnSC_DMA(1));
+	FTM_Modules[module]->CONTROLS[channel].CnSC = (	FTM_Modules[module]->CONTROLS[channel].CnSC & ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(1);		// desp vemos si queda comentada
 }
 
 uint32_t * FTM_CH_GetCnVPointer(FTM_Module_t module, FTM_Channel_t channel)
@@ -270,7 +270,7 @@ void FTM_CH_PWM_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_PWM_Mode_t 
 {
 
 	// Configure up or up/down counter
-	FTM_Modules[module]->SC |= FTM_SC_CPWMS(alignment == FTM_PWM_CENTER_ALIGNED ? 1 : 0);
+	FTM_Modules[module]->SC = (FTM_Modules[module]->SC & FTM_SC_CPWMS_MASK) | FTM_SC_CPWMS(alignment == FTM_PWM_CENTER_ALIGNED ? 1 : 0);
 
 	FTM_Modules[module]->CONTROLS[channel].CnSC = FTM_CnSC_MSB(1) | FTM_CnSC_ELSB(1) | FTM_CnSC_ELSA(mode == FTM_PWM_LOW_PULSES ? 1 : 0);
 	
@@ -278,9 +278,10 @@ void FTM_CH_PWM_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_PWM_Mode_t 
 	FTM_Modules[module]->PWMLOAD = FTM_PWMLOAD_LDOK(1) | 0x0F;// | CHANNEL_MASK(channel);
 
 	// Configure PWM period and duty
-	FTM_Modules[module]->CNTIN = 0;
-	FTM_Modules[module]->MOD = period;
-	FTM_Modules[module]->CONTROLS[channel].CnV = duty;
+	FTM_Modules[module]->CNTIN = 0x00;
+	FTM_Modules[module]->CNT = 0x00;
+	FTM_Modules[module]->MOD = period-1;
+	FTM_Modules[module]->CONTROLS[channel].CnV = FTM_CnV_VAL(duty);
 
 	// Pin MUX alternative
 	FTM_CH_Mux(module, channel);
