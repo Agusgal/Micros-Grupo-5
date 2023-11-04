@@ -3,7 +3,29 @@
 #define SOURCES_FTM_H_
 
 #include "hardware.h"
+#include <stdint.h>
 
+// FlexTimer Channels
+typedef enum {
+	FTM_CH_0,
+	FTM_CH_1,
+	FTM_CH_2,
+	FTM_CH_3,
+	FTM_CH_4,
+	FTM_CH_5,
+	FTM_CH_6,
+	FTM_CH_7,
+	FTM_CH_COUNT
+} FTM_Channel_t;
+
+// FlexTimer Modules
+typedef enum {
+	FTM_0,
+	FTM_1,
+	FTM_2,
+	FTM_3,
+	FTM_COUNT
+} FTM_Module_t;
 
 typedef enum
 {
@@ -72,7 +94,7 @@ typedef uint32_t FTMChannel_t; /* FTM0/FTM3: Channel 1-8; FTM1/FTM2: Channel 1-2
 //__ISR__ 	FTM2_IRQHandler					 (void);
 //__ISR__ 	FTM3_IRQHandler					 (void);
 
-void 		FTM_Init 						 (void);
+void 		FTM_Init2 						 (void);
 
 void        FTM_SetPrescaler 				 (FTM_t, FTM_Prescal_t);
 void     	FTM_SetModulus 					 (FTM_t, FTMData_t);
@@ -101,5 +123,7 @@ void 		FTM_SetInterruptMode   			 (FTM_t, FTMChannel_t, bool);
 bool 		FTM_IsInterruptPending 			 (FTM_t, FTMChannel_t);
 void 		FTM_ClearInterruptFlag 			 (FTM_t, FTMChannel_t);
 void 		FTM_DmaMode						 (FTM_t ftm, FTMChannel_t channel, bool dma_mode);
+
+uint32_t * FTM_CH_GetCnVPointer2(FTM_t ftm, FTM_Module_t module, FTM_Channel_t channel);
 
 #endif

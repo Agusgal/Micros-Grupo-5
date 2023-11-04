@@ -206,7 +206,7 @@ void FTM_CH_EnableDMA(FTM_Module_t module, FTM_Channel_t channel)
 
 volatile uint32_t * FTM_CH_GetCnVPointer(FTM_Module_t module, FTM_Channel_t channel)
 {
-	return (&FTM_Modules[module]->CONTROLS[channel].CnV);
+	return &(FTM_Modules[module]->CONTROLS[channel].CnV);
 }
 
 /********************* INPUT CAPTURE *********************/

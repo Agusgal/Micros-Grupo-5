@@ -7,8 +7,8 @@
 void PWM_Init(void);
 void PWM_ISR(void);
 
-uint16_t PWM_modulus = 10000-1;
-uint16_t PWM_duty    = 5000;//5000-1;
+uint16_t PWM_modulus = 379-1;
+uint16_t PWM_duty    = 190;//5000-1;
 
 /* FTM0 fault, overflow and channels interrupt handler*/
 /*__ISR__ FTM0_IRQHandler(void)
@@ -80,7 +80,7 @@ void PWM_Init (void)
 		GPIO_SetDirection(PTC, 8, GPIO__OUT);
 
 	//  Set FTM configuration
-		FTM_SetPrescaler(FTM0, FTM_PSC_x32);
+		FTM_SetPrescaler(FTM0, FTM_PSC_x1);
 		FTM_SetInterruptMode (FTM0, FTM_CH_0, true); 					// Enable interrupts
 
 	//	Set FTM as PWM mode
@@ -216,6 +216,11 @@ void FTM_DmaMode (FTM_t ftm, FTMChannel_t channel, bool dma_mode)
 {
 	ftm->CONTROLS[channel].CnSC = (ftm->CONTROLS[channel].CnSC & ~(FTM_CnSC_DMA_MASK)) |
 			                      (FTM_CnSC_DMA(dma_mode));
+}
+
+uint32_t * FTM_CH_GetCnVPointer2(FTM_t ftm, FTM_Module_t module, FTM_Channel_t channel)
+{
+	return &(ftm->CONTROLS[channel].CnV);
 }
 
 
