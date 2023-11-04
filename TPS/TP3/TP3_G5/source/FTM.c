@@ -267,7 +267,7 @@ void FTM_CH_OC_Stop(FTM_Module_t module, FTM_Channel_t channel)
 void FTM_CH_PWM_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_PWM_Mode_t mode, FTM_PWM_Align_t alignment, uint16_t duty, uint16_t period,CH_Callback_t callback)
 {
 
-	// Configure up or up/down counter	FTM_Modules[module]->SC |= FTM_SC_CPWMS(alignment == FTM_PWM_CENTER_ALIGNED ? 1 : 0);
+	FTM_Modules[module]->SC |= FTM_SC_CPWMS(alignment == FTM_PWM_CENTER_ALIGNED ? 1 : 0);
 
 	FTM_Modules[module]->CONTROLS[channel].CnSC = FTM_CnSC_MSB(1) | FTM_CnSC_ELSB(1) | FTM_CnSC_ELSA(mode == FTM_PWM_LOW_PULSES ? 1 : 0);
 	
@@ -276,6 +276,7 @@ void FTM_CH_PWM_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_PWM_Mode_t 
 
 	// Configure PWM period and duty
 	FTM_Modules[module]->CNTIN = 0;
+    FTM_Modules[module]->CNT = 0x00;
 	FTM_Modules[module]->MOD = period;
 	FTM_Modules[module]->CONTROLS[channel].CnV = duty;
 

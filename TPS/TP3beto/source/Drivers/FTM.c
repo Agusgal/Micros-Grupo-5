@@ -127,11 +127,11 @@ void FTM_Init(FTM_Module_t module, FTM_PS_t prescaler, uint16_t modulo, FTM_Call
 	NVIC_EnableIRQ(FTM_IRQs[FTM_3]);
 
 	// Enable CNTIN and MOD configuration
-	FTM_Modules[module]->PWMLOAD = FTM_PWMLOAD_LDOK(1) | 0x0F;
+	FTM_Modules[module]->PWMLOAD = FTM_PWMLOAD_LDOK(1) | CHANNEL_MASK(module);
 
 
 	// Free-running counter and prescaler
-	FTM_Modules[module]->SC = (FTM_Modules[module]->SC & ~FTM_SC_PS_MASK) | FTM_SC_PS(prescaler);
+	FTM_Modules[module]->SC = FTM_SC_PS(prescaler);
 	FTM_Modules[module]->CNTIN = 0;
 	FTM_Modules[module]->CNT=0;
 	FTM_Modules[module]->MOD = modulo-1;
@@ -270,8 +270,7 @@ void FTM_CH_PWM_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_PWM_Mode_t 
 {
 
 	// Configure up or up/down counter
-	FTM_Modules[module]->SC = (FTM_Modules[module]->SC & FTM_SC_CPWMS_MASK) | FTM_SC_CPWMS(alignment == FTM_PWM_CENTER_ALIGNED ? 1 : 0);
-
+	FTM_Modules[module]->SC |= FTM_SC_CPWMS(alignment == FTM_PWM_CENTER_ALIGNED ? 1 : 0);
 	FTM_Modules[module]->CONTROLS[channel].CnSC = FTM_CnSC_MSB(1) | FTM_CnSC_ELSB(1) | FTM_CnSC_ELSA(mode == FTM_PWM_LOW_PULSES ? 1 : 0);
 	
 	// Enable changes on MOD, CNTIN and CnV
@@ -305,19 +304,19 @@ void FTM_CH_PWM_Init(FTM_Module_t module, FTM_Channel_t channel, FTM_PWM_Mode_t 
 
 void FTM_PWM_SetDuty(FTM_Module_t module, FTM_Channel_t channel, uint16_t duty)
 {
-	FTM_Modules[module]->SYNC |= FTM_SYNC_SWSYNC_MASK;
+	//FTM_Modules[module]->SYNC |= FTM_SYNC_SWSYNC_MASK;
 	FTM_Modules[module]->CONTROLS[channel].CnV = duty;
 }
 
 void FTM_PWM_ON(FTM_Module_t module, FTM_Channel_t channel)
 {
-	FTM_Modules[module]->SYNC |= FTM_SYNC_SWSYNC_MASK;
+	//FTM_Modules[module]->SYNC |= FTM_SYNC_SWSYNC_MASK;
 	FTM_Modules[module]->OUTMASK &= (~CHANNEL_MASK(channel));
 }
 
 void FTM_PWM_OFF(FTM_Module_t module, FTM_Channel_t channel)
 {
-	FTM_Modules[module]->SYNC |= FTM_SYNC_SWSYNC_MASK;
+	//FTM_Modules[module]->SYNC |= FTM_SYNC_SWSYNC_MASK;
 	FTM_Modules[module]->OUTMASK |= CHANNEL_MASK(channel);
 }
 

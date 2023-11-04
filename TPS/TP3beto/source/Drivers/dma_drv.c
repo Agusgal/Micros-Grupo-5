@@ -52,7 +52,7 @@ void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t source_addr
 	SIM->SCGC6 |= SIM_SCGC6_DMAMUX_MASK;
 
 	/* Enable the eDMA channel 0 and set the FTM CH0 as the DMA request source. */
-	DMAMUX->CHCFG[channel] |= DMAMUX_CHCFG_ENBL_MASK | DMAMUX_CHCFG_SOURCE(source_number);   // FTM0 CH0 == 20
+	DMAMUX->CHCFG[channel] |= DMAMUX_CHCFG_ENBL_MASK | DMAMUX_CHCFG_SOURCE(source_number) | DMAMUX_CHCFG_TRIG(0);   // FTM0 CH0 == 20
 
 	/* Enable the interrupts for the channel 0. */
 
