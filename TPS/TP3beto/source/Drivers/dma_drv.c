@@ -16,6 +16,13 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
+#define NUMBER_OF_CHANNELS	16
+
+/*******************************************************************************
+ * VARIABLES WITH LOCAL SCOPE
+ ******************************************************************************/
+void (*callback[NUMBER_OF_CHANNELS]) (void);
+
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -42,11 +49,18 @@
  * @param citer					Number of major loop cycles.
  * @param sourceBuffer_sizeof	Number of bytes of source buffer (sizeof(sBuffer))
  * @param destBuffer_sizeof		Number of bytes of dest buffer (sizeof(dBuffer))
+ * @param cb					Callback function to be called
  */
 void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t source_address, uint32_t dest_address,
 			uint8_t soff, uint8_t doff, uint8_t sSize, uint32_t nbytes,
-			uint32_t citer, uint32_t sourceBuffer_sizeof, uint32_t destBuffer_sizeof)
+			uint32_t citer, uint32_t sourceBuffer_sizeof, uint32_t destBuffer_sizeof, void (*cb) (void))
 {
+
+	if(cb)
+	{
+		callback[channel] = cb;
+	}
+
 	/* Enable the clock for the eDMA and the DMAMUX. */
 	SIM->SCGC7 |= SIM_SCGC7_DMA_MASK;
 	SIM->SCGC6 |= SIM_SCGC6_DMAMUX_MASK;
@@ -115,7 +129,32 @@ void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t source_addr
 
 }
 
+/**
+ * @brief
+ */
+void set_dma0_source_offset(uint8_t channel, uint8_t soff)
+{
+	DMA0->TCD[channel].SOFF = soff;
+}
 
+/**
+ * @brief
+ */
+void dma0_enable(uint8_t channel)
+{
+	/* Enable request signal for channel 0. */
+	DMA0->ERQ |= 1 << channel;
+	DMAMUX->CHCFG[channel] |= DMAMUX_CHCFG_ENBL_MASK;
+}
+
+/**
+ * @brief
+ */
+void dma0_disable(uint8_t channel)
+{
+	DMA0->ERQ &= ~(1 << channel);
+	DMAMUX->CHCFG[channel] &= ~(DMAMUX_CHCFG_ENBL_MASK);
+}
 
 /*******************************************************************************
  *******************************************************************************
@@ -125,9 +164,23 @@ void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t source_addr
 
 void DMA0_IRQHandler(void)
 {
-	static uint32_t a = 0;
-	DMA0->CINT |= 0;
-	a++;
+	uint32_t status;
+	//DMA0->CINT |= 0;
+	status = DMA0->INT;
+	DMA0->INT |= 0xFFFF;	//clear flags
+
+	uint8_t i = 0;
+	for(i = 0; i < NUMBER_OF_CHANNELS; i++)
+	{
+		if(status & (1 << i))
+		{
+			if(callback[i])
+			{
+				callback[i]();
+			}
+		}
+	}
+
 }
 
 void DMA_Error_IRQHandler()
