@@ -1,41 +1,46 @@
 /*
- * DemodulatorV1.c
+ * DemodulatorV1
  *
- *  Created on: 10 nov. 2023
- *      Author: agus
+ *  Created on: Nov. 2023
+ *      Author: Grupo 5
  */
-
-
-
 
 #include "DemodulatorV1.h"
 #include "ADC.h"
 #include "PIT.h"
 
-//Uso canal 0 del ADC
-#define ADC_CH 0
 
-//Largo de palabra
+#define ADC_CH 0
 #define MSG_LEN 11
 
-//Una mini maquina de estados, determino si estoy recibiendo o en idle
-typedef enum {IDLE, MSG}status_t;
 
+typedef enum {IDLE, MSG}status_t;
 
 void filterSignal (void);
 void updateData();
 
 
+//Data recien salida del adc
+int16_t rawData[DELAY + 1] = {0};  //DELAY+1
 
-int16_t rawData [DELAY + 1] = {0};   //DELAY+1
-float prefilter[FIR_ORDER+1] = {0};
-bool output[10];
-static bool msg[11];
+//Data antes de ser filtrada
+float m_t[FIR_ORDER + 1] = {0};
+
+//Señal a la salida del filtro, luego cuento 1s y 0s y determino nivel reald e la señal de UART
+bool FilterOutput[10];
+
+//Mensjae que el callback le pasa a la aplicacion cuando completo el parseo.
+static bool bitstream[11];
+
+//Variables para determianr casos limites de primeras muestras.
 bool value = true;
 bool firstZero = true;
-static bool dataReady = false;
+
+//Señala si los datos salieron del ADC y por ende se puede procesar.
+static bool ADCoutputready = false;
 
 
+//Callback que se ejecuta cuando debo pasar el mensaje a la aplicacion.
 static myCallback funcioncallback = NULL;
 
 
@@ -45,10 +50,8 @@ int sampleCount = 0;
 static status_t status = IDLE;
 
 
-//Filtros cortesia de Newtonis
 static float firCoef[ ] =
-		{
-		-0.0018693054003477631f,
+		{-0.0018693054003477631f,
 		-0.0063458560700613868f,
 		-0.011803262238256836f,
 		-0.011431063027960632f,
@@ -66,57 +69,60 @@ static float firCoef[ ] =
 		-0.011431063027960632f,
 		-0.011803262238256836f,
 		-0.0063458560700613868f,
-		-0.0018693054003477631f
-		};
+		-0.0018693054003477631f };
 
-void Demodulator_Init(myCallback funcallback)
+
+void Demodulator_Init(myCallback clb)
 {
-
-	funcioncallback = funcallback;
+	funcioncallback = clb;
 	ADC_Init(ADC_CH, updateData);
 	ADC_EnableModule(ADC_CH);
 
-
-	PIT_set_Timer(2, 4167, ADC_startConvertion);  //4166 en saltos de 20ns es 12kHz
-	PIT_Start_Timer(2);
+	PIT_set_Timer(0, 4167, ADC_StartConvertion);   //4166 es 12kHz en tiempos de 20ns.
+	PIT_startTime(0);
 }
 
 
 void demodulate()
 {
-	dataReady = false;
-	//updateData();
+	ADCoutputready = false;
 
 	uint8_t sum = 0;
 
-	for(int i=1; i < (1+ FIR_ORDER); i++)
+	//Shifteo para poder hacer entrar el siguiente dato.
+	for(int i = 1; i < (1+ FIR_ORDER); i++)
 	{
-		prefilter[i-1] = prefilter[i];
+		m_t[i - 1] = m_t[i];
 	}
 
-	prefilter[FIR_ORDER] = rawData[DELAY]*rawData[0];
+	//Actualizo ultimo valor
+	m_t[FIR_ORDER] = rawData[DELAY] * rawData[0];
+
+	//Filtro la señal en el FIR
 	filterSignal();
-	sampleCount = sampleCount + 1;
 
+	sampleCount += 1;
 
+	//Este codigo es el comparador, cuenta unos y ceros paa determinar el nivle de la señal final.
 	if (status == MSG)
 	{
 		if (sampleCount == 10)
 		{
 			sampleCount = 0;
-			for(int j = 0; j<10 ; j++)
+			for(int j = 0; j < 10 ; j++)
 			{
-				sum+= output[j];
+				sum += FilterOutput[j];
 			}
 			if (sum > 5)
 			{
-				msg[outputCount] = true;
+				bitstream[outputCount] = true;
 			}
 			else
 			{
-				msg[outputCount] = false;
+				bitstream[outputCount] = false;
 			}
 
+			//Cuando llego al largo de la palabra de UART ejecuto el callback para pasar el mensaje a la App.
 			outputCount = outputCount + 1;
 			if (outputCount == MSG_LEN)
 			{
@@ -132,9 +138,9 @@ void demodulate()
 		if (sampleCount == 10)
 		{
 			sampleCount = 0;
-			for(int j = 0; j<10 ; j++)
+			for(int j = 0; j < 10 ; j++)
 			{
-				sum+= output[j];
+				sum += FilterOutput[j];
 			}
  			if (sum >= 5)
 			{
@@ -152,7 +158,7 @@ void demodulate()
 					outputCount = 1;
 					sampleCount = 0;
 					status = MSG;
-					msg[0] = false;
+					bitstream[0] = false;
 				}
 				else
 				{
@@ -163,9 +169,9 @@ void demodulate()
 			else
 			{
 				sampleCount = 9;
-				for(int i=1; i < 10; i++)
+				for(int i = 1; i < 10; i++)
 				{
-					output[i-1] = output[i];
+					FilterOutput[i - 1] = FilterOutput[i];
 				}
 
 			}
@@ -175,14 +181,15 @@ void demodulate()
 
 void updateData(void)
 {
-	uint16_t newdata = ADC_getDataResult();
+	uint16_t newdata = ADC_getData();
 
-	for(int i=1; i < (1+ DELAY); i++)
+	for(int i = 1; i < (1 + DELAY); i++)
 	{
-		rawData[i-1] = rawData[i];
+		rawData[i - 1] = rawData[i];
 	}
+
 	rawData[DELAY] = newdata - 2048;
-	dataReady = true;
+	ADCoutputready = true;
 
 }
 
@@ -192,16 +199,16 @@ void filterSignal(void)
 
 	for (int k = 0; k <= FIR_ORDER ; k++ )
 	{
-		aux += firCoef[k] * prefilter[FIR_ORDER - k];
+		aux += firCoef[k] * m_t[FIR_ORDER - k];
 	}
 
 	if (aux < 0)
 	{
-		output[sampleCount] = true;
+		FilterOutput[sampleCount] = true;
 	}
 	else
 	{
-		output[sampleCount] = false;
+		FilterOutput[sampleCount] = false;
 	}
 
 }
@@ -212,7 +219,7 @@ char get_Msg(void)
 
 	for (int k = 1; k < 9;k++ )
 	{
-		retmsg |= (msg[k]<< (8 - k));
+		retmsg |= (bitstream[k]<< (8 - k));
 	}
 
 	return retmsg;
@@ -220,5 +227,5 @@ char get_Msg(void)
 
 bool isDataReady(void)
 {
-	return dataReady;
+	return ADCoutputready;
 }

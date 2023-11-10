@@ -59,7 +59,7 @@ ADCData_t ADC_getData(void);
  * @brief Inicia conversion de datos
  * @return
  */
-void ADC_StartConvertion (void);
+void ADC_StartConvertion(void);
 
 
 

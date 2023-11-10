@@ -52,7 +52,7 @@ void App_Init (void)
 	UART_Init();
 
 	//TODO: configure UART
-	UART_SetBaudRate();
+	//UART_SetBaudRate();
 
 	//TODO: Init timers
 
@@ -67,7 +67,31 @@ void App_Init (void)
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
+	//Codigo
+	/*
+	if (demodulado == 1)
+	{
+		if (contador < 100)
+		{
+			contador ++;
+			gpioWrite(PIN_LED_BLUE, (contador % 5000 >= 5000/2) ? HIGH : LOW );
+		}
+		else
+		{
+			updateWord();
+			gpioWrite(PIN_LED_BLUE, HIGH);
+		}
+	}
+	else
+	{
+		gpioWrite(PIN_LED_BLUE, LOW);
+	}
+	*/
 
+	if(isDataReady() == true)
+	{
+		demodulate();
+	}
 }
 
 
