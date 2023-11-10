@@ -24,10 +24,16 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
+int demodulado = 1;
+long long contador = 0;
+
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
+
+//Callback del demodulador
+void demodulator_clb(void);
 
 
 
@@ -61,13 +67,14 @@ void App_Init (void)
 	//gpioMode(PIN_TP, OUTPUT);
 	//gpioWrite (PIN_TP, false);
 
-	//TODO: Init modulator, demodulator
+	//TODO: Init modulator
+	demodulator_Init(demodulator_clb);
 }
 
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-	//Codigo
+	//Codigo de prueba
 	/*
 	if (demodulado == 1)
 	{
@@ -95,7 +102,22 @@ void App_Run (void)
 }
 
 
+void demodulator_clb(void)
+{
+	//obtendo ultimo mensaje
+	char b = get_Msg();
 
+
+	char str[3];
+	str[0] = b;
+	str[1] = '\0';
+
+	//Envio el mensjae por UART 0, TODO: chequear que canal usar
+	UART_SendMsg(str, 0);
+
+	demodulado = 1;
+	contador = 0;
+}
 
 /*******************************************************************************
  *******************************************************************************
