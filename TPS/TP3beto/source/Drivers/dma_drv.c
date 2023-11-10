@@ -140,6 +140,47 @@ void set_dma0_source_offset(uint8_t channel, uint8_t soff)
 /**
  * @brief
  */
+void set_dma0_citer(uint8_t channel, uint32_t citer)
+{
+	DMA0->TCD[channel].CITER_ELINKNO = DMA_CITER_ELINKNO_CITER(citer);
+}
+
+/**
+ * @brief
+ */
+void set_dma0_biter(uint8_t channel, uint32_t biter)
+{
+	DMA0->TCD[channel].BITER_ELINKNO = DMA_BITER_ELINKNO_BITER(biter);
+}
+
+/**
+ * @brief
+ */
+void set_dma0_saddr(uint8_t channel, uint32_t source_address)
+{
+	DMA0->TCD[channel].SADDR = (uint32_t)(source_address);
+}
+
+/**
+ * @brief
+ */
+void set_dma0_slast(uint8_t channel, uint32_t slast)
+{
+	DMA0->TCD[channel].SLAST = -slast;
+}
+
+/**
+ * @brief
+ */
+uint32_t get_dma0_saddr(uint8_t channel)
+{
+	return DMA0->TCD[channel].SADDR;
+}
+
+
+/**
+ * @brief
+ */
 void dma0_enable(uint8_t channel)
 {
 	/* Enable request signal for channel 0. */

@@ -36,7 +36,7 @@ void PIT_init(void)
 }
 
 
-void PIT_set_Timer(uint8_t id, uint16_t value, void(*clb)(void))
+void PIT_set_Timer(uint8_t id, uint32_t value, void(*clb)(void))
 {
 	//podria ser mejorado...
 	switch (id)

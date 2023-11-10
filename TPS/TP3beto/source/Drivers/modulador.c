@@ -10,6 +10,8 @@
 
 #include "modulador.h"
 #include "dma_drv.h"
+#include "Drivers/FTM.h"
+#include "Drivers/PIT.h"
 
 
 /*******************************************************************************
@@ -23,6 +25,9 @@
 /*******************************************************************************
  * VARIABLES WITH LOCAL SCOPE
  ******************************************************************************/
+static uint32_t duty = 190;
+static uint32_t period = 379;
+
 static uint16_t sine[] = {
 		190 , 191 , 193 , 195 , 197 , 198 , 200 , 202 ,
 		204 , 206 , 207 , 209 , 211 , 213 , 215 , 216 ,
@@ -111,7 +116,7 @@ static uint16_t sine[] = {
 
 
 static uint8_t uartData[UART_LENGTH];
-static uint8_t	char_index = 0;
+static uint8_t	char_index = UART_LENGTH;
 
 
 /*******************************************************************************
@@ -120,13 +125,57 @@ static uint8_t	char_index = 0;
 /**
  * @brief
  */
-static void send_data_to_modulate(uint8_t *uartData);
+static void send_data_to_modulate(void);
+
+/**
+ * @brief
+ */
+static void change_dma(uint8_t soff);
 
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
+/**
+ * @brief
+ */
+void modulador_init(void)
+{
+
+	FTM_Init(FTM_0, FTM_PSC_x1, 0xFFFF, 0);
+    FTM_CH_PWM_Init(FTM_0, FTM_CH_0, FTM_PWM_HIGH_PULSES, FTM_PWM_EDGE_ALIGNED, duty, period, NULL);		//90% duty cycle (en hexa)
+    FTM_CH_EnableDMA(FTM_0, FTM_CH_0);
+    FTM_Start(FTM_0);
+
+    uint32_t * CnV_pointer = FTM_CH_GetCnVPointer(FTM_0, FTM_CH_0);
+
+    DMA_source_t source_number = FTM0CH0;
+	uint8_t channel = 0;
+	uint32_t source_address = (uint32_t)sine;
+	uint32_t dest_address = (uint32_t) CnV_pointer;
+	uint8_t soff = SINE_1200_OFFSET * (sizeof(sine[0]));
+	uint8_t doff = 0;
+	uint8_t sSize = 2;
+	uint32_t nbytes = 2;
+	uint32_t citer = sizeof(sine)/sizeof(sine[0]);
+	uint32_t sourceBuffer_sizeof = sizeof(sine);
+	uint32_t destBuffer_sizeof = 0;
+	void (*cb) (void) = 0;
+
+	dma0_init(source_number, channel, source_address, dest_address,
+			soff, doff, sSize, nbytes,
+			citer, sourceBuffer_sizeof, destBuffer_sizeof, cb);
+
+	char_index = UART_LENGTH;	// no data to be sent
+
+	PIT_init();
+	PIT_set_Timer(1, 41667, send_data_to_modulate);
+	PIT_Start_Timer(1);
+}
+
+
+
 /**
  * @brief
  */
@@ -164,22 +213,44 @@ static void send_data_to_modulate(void)
 {
 	if(char_index < 11)
 	{
-		dma0_disable(0);
 		if(uartData[char_index] == 1)
 		{
-			set_dma0_source_offset(0, SINE_1200_OFFSET);
+			change_dma(SINE_1200_OFFSET);
 		}
 		else if (uartData[char_index] == 0 && char_index < 10)
 		{
-			set_dma0_source_offset(0, SINE_2200_OFFSET);
+			change_dma(SINE_2200_OFFSET);
 		}
 		else
 		{
-			set_dma0_source_offset(0, SINE_1200_OFFSET);	// asegurar bit stop en 1
+			change_dma(SINE_1200_OFFSET);	// asegurar bit stop en 1
 		}
-		dma0_enable(0);
+
 		char_index++;
 	}
+}
+
+/**
+ * @brief
+ */
+static void change_dma(uint8_t step)
+{
+	dma0_disable(0);
+
+	uint8_t channel = 0;
+	uint32_t source_address = get_dma0_saddr(channel);
+	uint32_t biter = (sizeof(sine) / sizeof(sine[0])) / step;
+	uint32_t citer = biter - ( ( (source_address - (uint32_t)sine) / (sizeof(sine[0])) ) / step) ;
+	uint32_t slast = sizeof(sine);
+
+
+	set_dma0_source_offset(channel, step*sizeof(sine[0]));
+	set_dma0_citer(channel, citer);
+	set_dma0_biter(channel, biter);
+	set_dma0_saddr(channel, source_address);
+	set_dma0_slast(channel, slast);
+
+	dma0_enable(0);
 }
 
 

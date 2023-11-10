@@ -46,7 +46,32 @@ void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t source_addr
 /**
  * @brief
  */
-void set_dma0_source_offset(uint8_t channel);
+void set_dma0_source_offset(uint8_t channel, uint8_t soff);
+
+/**
+ * @brief
+ */
+void set_dma0_citer(uint8_t channel, uint32_t citer);
+
+/**
+ * @brief
+ */
+void set_dma0_biter(uint8_t channel, uint32_t biter);
+
+/**
+ * @brief
+ */
+void set_dma0_saddr(uint8_t channel, uint32_t source_address);
+
+/**
+ * @brief
+ */
+void set_dma0_slast(uint8_t channel, uint32_t slast);
+
+/**
+ * @brief
+ */
+uint32_t get_dma0_saddr(uint8_t channel);
 
 /**
  * @brief

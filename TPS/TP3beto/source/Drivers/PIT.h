@@ -23,7 +23,7 @@
  * @param
  * @return
  */
-void PIT_Init(void);
+void PIT_init(void);
 
 
 /**
@@ -32,7 +32,7 @@ void PIT_Init(void);
  * @param clb 		callback a ejecutarse junto al timer.
  * @return
  */
-void PIT_set_Timer(uint8_t id, uint16_t value, void(*clb)(void));
+void PIT_set_Timer(uint8_t id, uint32_t value, void(*clb)(void));
 
 
 /**
