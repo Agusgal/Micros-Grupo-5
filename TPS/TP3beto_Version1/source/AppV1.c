@@ -23,16 +23,8 @@
 #include "Drivers/gpio.h"
 #include "Drivers/port.h"
 #include "Drivers/DemodulatorV1.h"
+#include "Drivers/ModuladorV1.h"
 #include "Drivers/UART.h"
-
-
-
-/*******************************************************************************
- * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
- ******************************************************************************/
-
-int demodulado = 1;
-long long contador = 0;
 
 
 /*******************************************************************************
@@ -46,11 +38,12 @@ void demodulator_clb(void);
 void modulator_clb(void);
 
 
-
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
+int demodulado = 1;
+long long contador = 0;
 
 
 
@@ -80,6 +73,7 @@ void App_Init (void)
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
+	//Testing
 	uint8_t a = 'h';
 	modulator_sendChar(a);
 	modulator_sendChar(0);
@@ -118,7 +112,7 @@ void demodulator_clb(void)
 
 void modulator_clb(void)
 {
-
+	//debuging and measuring code (gpios para testpoints)
 }
 
 
