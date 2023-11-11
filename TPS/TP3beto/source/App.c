@@ -20,6 +20,7 @@
 #include "Drivers/GPIO2.h"
 #include "Drivers/UART.h"
 #include "Drivers/modulador.h"
+#include "Drivers/CMP.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -136,6 +137,7 @@ void App_Init (void)
 {
 	PORT_Init();
 	modulador_init();
+	CMP_init(0);
 
     //uint32_t * CnV_pointer = FTM_CH_GetCnVPointer(FTM_0, FTM_CH_0);
     //dma0_init(FTM0CH0, 0, (uint32_t)sine, (uint32_t) CnV_pointer, 2, 0, 2, 2, sizeof(sine)/sizeof(sine[0]), sizeof(sine), 0, 0);

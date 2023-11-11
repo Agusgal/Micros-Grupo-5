@@ -237,7 +237,7 @@ static void send_data_to_modulate(void)
 		}
 		else
 		{
-			change_dma(SINE_1200_OFFSET);
+			change_dma(SINE_1200_OFFSET); // Idle
 		}
 	}
 	if(char_index < 11)
