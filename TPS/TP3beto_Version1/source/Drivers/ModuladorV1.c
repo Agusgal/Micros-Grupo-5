@@ -7,59 +7,134 @@
 #include "ModuladorV1.h"
 #include "DAC.h"
 #include "PIT.h"
-#include "math.h"
+#include "Queues/queue.h"
+
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-//Cantidad de puntos en la señal senoidal digital.
-#define SIN_VALUES	35
-#define NEXT_SYM	2
-#define START		1
-#define STOP		0
+#define		UART_LENGTH		11
+#define		LSB_BIT			0b00000001
+#define		SINE_2200_OFFSET		11
+#define		SINE_1200_OFFSET		6
 
-#define SIN0		0
-#define SIN1		1
-
-#define ONE_FREC	1200
-#define ZERO_FREC	2200
-
-#define TOBITMASK 		10000000
-
-typedef enum { IDLE, MSG} status_t;
-
-//Función senoidal digital de salida
-static uint16_t sinValues[SIN_VALUES];
-
-static uint16_t cont = 0;
-static uint16_t cycle = 0;
-static uint8_t sinIndex = 0;
-
-static bool bitStream[STAND_LEN];
-static uint8_t msg_ptr = 0;
-static status_t status = IDLE;
-static float aux = 0;
-
-const float ratio = 1.83;//(ZERO_FREC/ONE_FREC);
-
-
-//Funcion de callback que se ejecuta una vez se termino de enviar la señal modulada
 void (*MsgSentClb)(void);
+
+/*******************************************************************************
+ * VARIABLES WITH LOCAL SCOPE
+ ******************************************************************************/
+
+static uint32_t duty = 190;
+static uint32_t period = 379;
+
+static uint16_t sine[] = {
+		190 , 191 , 193 , 195 , 197 , 198 , 200 , 202 ,
+		204 , 206 , 207 , 209 , 211 , 213 , 215 , 216 ,
+		218 , 220 , 222 , 223 , 225 , 227 , 229 , 230 ,
+		232 , 234 , 236 , 237 , 239 , 241 , 243 , 244 ,
+		246 , 248 , 249 , 251 , 253 , 255 , 256 , 258 ,
+		260 , 261 , 263 , 265 , 266 , 268 , 269 , 271 ,
+		273 , 274 , 276 , 277 , 279 , 281 , 282 , 284 ,
+		285 , 287 , 288 , 290 , 291 , 293 , 294 , 296 ,
+		297 , 299 , 300 , 302 , 303 , 305 , 306 , 307 ,
+		309 , 310 , 312 , 313 , 314 , 316 , 317 , 318 ,
+		320 , 321 , 322 , 323 , 325 , 326 , 327 , 328 ,
+		330 , 331 , 332 , 333 , 334 , 335 , 337 , 338 ,
+		339 , 340 , 341 , 342 , 343 , 344 , 345 , 346 ,
+		347 , 348 , 349 , 350 , 351 , 352 , 353 , 354 ,
+		355 , 355 , 356 , 357 , 358 , 359 , 359 , 360 ,
+		361 , 362 , 362 , 363 , 364 , 364 , 365 , 366 ,
+		366 , 367 , 368 , 368 , 369 , 369 , 370 , 370 ,
+		371 , 371 , 372 , 372 , 373 , 373 , 373 , 374 ,
+		374 , 375 , 375 , 375 , 376 , 376 , 376 , 376 ,
+		377 , 377 , 377 , 377 , 377 , 377 , 378 , 378 ,
+		378 , 378 , 378 , 378 , 378 , 378 , 378 , 378 ,
+		378 , 378 , 378 , 378 , 378 , 377 , 377 , 377 ,
+		377 , 377 , 377 , 376 , 376 , 376 , 376 , 375 ,
+		375 , 375 , 374 , 374 , 373 , 373 , 373 , 372 ,
+		372 , 371 , 371 , 370 , 370 , 369 , 369 , 368 ,
+		368 , 367 , 366 , 366 , 365 , 364 , 364 , 363 ,
+		362 , 362 , 361 , 360 , 359 , 359 , 358 , 357 ,
+		356 , 355 , 355 , 354 , 353 , 352 , 351 , 350 ,
+		349 , 348 , 347 , 346 , 345 , 344 , 343 , 342 ,
+		341 , 340 , 339 , 338 , 337 , 335 , 334 , 333 ,
+		332 , 331 , 330 , 328 , 327 , 326 , 325 , 323 ,
+		322 , 321 , 320 , 318 , 317 , 316 , 314 , 313 ,
+		312 , 310 , 309 , 307 , 306 , 305 , 303 , 302 ,
+		300 , 299 , 297 , 296 , 294 , 293 , 291 , 290 ,
+		288 , 287 , 285 , 284 , 282 , 281 , 279 , 277 ,
+		276 , 274 , 273 , 271 , 269 , 268 , 266 , 265 ,
+		263 , 261 , 260 , 258 , 256 , 255 , 253 , 251 ,
+		249 , 248 , 246 , 244 , 243 , 241 , 239 , 237 ,
+		236 , 234 , 232 , 230 , 229 , 227 , 225 , 223 ,
+		222 , 220 , 218 , 216 , 215 , 213 , 211 , 209 ,
+		207 , 206 , 204 , 202 , 200 , 198 , 197 , 195 ,
+		193 , 191 , 190 , 188 , 186 , 184 , 182 , 181 ,
+		179 , 177 , 175 , 173 , 172 , 170 , 168 , 166 ,
+		164 , 163 , 161 , 159 , 157 , 156 , 154 , 152 ,
+		150 , 149 , 147 , 145 , 143 , 142 , 140 , 138 ,
+		136 , 135 , 133 , 131 , 130 , 128 , 126 , 124 ,
+		123 , 121 , 119 , 118 , 116 , 114 , 113 , 111 ,
+		110 , 108 , 106 , 105 , 103 , 102 , 100 , 98 ,
+		97 , 95 , 94 , 92 , 91 , 89 , 88 , 86 ,
+		85 , 83 , 82 , 80 , 79 , 77 , 76 , 74 ,
+		73 , 72 , 70 , 69 , 67 , 66 , 65 , 63 ,
+		62 , 61 , 59 , 58 , 57 , 56 , 54 , 53 ,
+		52 , 51 , 49 , 48 , 47 , 46 , 45 , 44 ,
+		42 , 41 , 40 , 39 , 38 , 37 , 36 , 35 ,
+		34 , 33 , 32 , 31 , 30 , 29 , 28 , 27 ,
+		26 , 25 , 24 , 24 , 23 , 22 , 21 , 20 ,
+		20 , 19 , 18 , 17 , 17 , 16 , 15 , 15 ,
+		14 , 13 , 13 , 12 , 11 , 11 , 10 , 10 ,
+		9 , 9 , 8 , 8 , 7 , 7 , 6 , 6 ,
+		6 , 5 , 5 , 4 , 4 , 4 , 3 , 3 ,
+		3 , 3 , 2 , 2 , 2 , 2 , 2 , 2 ,
+		1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 ,
+		1 , 1 , 1 , 1 , 1 , 1 , 1 , 2 ,
+		2 , 2 , 2 , 2 , 2 , 3 , 3 , 3 ,
+		3 , 4 , 4 , 4 , 5 , 5 , 6 , 6 ,
+		6 , 7 , 7 , 8 , 8 , 9 , 9 , 10 ,
+		10 , 11 , 11 , 12 , 13 , 13 , 14 , 15 ,
+		15 , 16 , 17 , 17 , 18 , 19 , 20 , 20 ,
+		21 , 22 , 23 , 24 , 24 , 25 , 26 , 27 ,
+		28 , 29 , 30 , 31 , 32 , 33 , 34 , 35 ,
+		36 , 37 , 38 , 39 , 40 , 41 , 42 , 44 ,
+		45 , 46 , 47 , 48 , 49 , 51 , 52 , 53 ,
+		54 , 56 , 57 , 58 , 59 , 61 , 62 , 63 ,
+		65 , 66 , 67 , 69 , 70 , 72 , 73 , 74 ,
+		76 , 77 , 79 , 80 , 82 , 83 , 85 , 86 ,
+		88 , 89 , 91 , 92 , 94 , 95 , 97 , 98 ,
+		100 , 102 , 103 , 105 , 106 , 108 , 110 , 111 ,
+		113 , 114 , 116 , 118 , 119 , 121 , 123 , 124 ,
+		126 , 128 , 130 , 131 , 133 , 135 , 136 , 138 ,
+		140 , 142 , 143 , 145 , 147 , 149 , 150 , 152 ,
+		154 , 156 , 157 , 159 , 161 , 163 , 164 , 166 ,
+		168 , 170 , 172 , 173 , 175 , 177 , 179 , 181,
+		182, 184, 186, 188
+};
+
+
+static uint8_t uartData[UART_LENGTH];
+static uint8_t	char_index = UART_LENGTH;
+static queue_uint8_t buffer;
 
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
-void sendBit(void);
 
-void sendSin0(void);
 
-void sendSin1(void);
+/**
+ * @brief
+ */
+static void send_data_to_modulate(void);
 
-void procesBitStream(void); // El comando puede ser START o NEXT_SYM
 
-bool parity (char num);
+/**
+ * @brief
+ */
+static void create_bit_frame(uint8_t data);
 
 
 /*******************************************************************************
@@ -71,163 +146,89 @@ bool parity (char num);
 
 void Modulator_Init(void(*clb)(void))
 {
+	queue_Init_uint8(&buffer);
+	char_index = UART_LENGTH;	// no data to be sent
+
 	MsgSentClb = clb;
 
 	DAC_init();
 
 	PIT_Init();
 
-	PIT_set_Timer(0, 1180, sendBit);  //Se usa una frecuencia más lenta que con el demodulador.
+	PIT_set_Timer(0, 41667, send_data_to_modulate);
+	//PIT_set_Timer(0, 1180, sendBit);  //Se usa una frecuencia más lenta que con el demodulador. sendBit manda bit a bit la palabra.
 
 	PIT_Start_Timer(0);
-
-
-	// Generacion de valores de señal de salida usando libreria math.
-	for(int i = 0; i < SIN_VALUES; i++)
-	{
-		sinValues[i] = 2048*(1 + sin(2*3.141592*i/SIN_VALUES));
-	}
-
-	status = IDLE;
 }
 
 
 
-
-void Modulator_sendChar(char my_char)
+int8_t modulator_sendChar(uint8_t data)
 {
-	status = MSG;
-	msg_ptr = 0;
-	cont = 0;
-
-	char msg = my_char;
-
-	bitStream[0] = false; //START
-	bitStream[STAND_LEN - 1] = true; //STOP
-	bitStream[STAND_LEN - 2] = parity(msg);
-
-	for(int i = 1; i < 9; i++)
-	{
-		bitStream[i] = (msg & TOBITMASK);
-		msg = msg<<1;
-	}
-
-
+	return push_Queue_Element_uint8(&buffer, data);
 }
 
-void procesBitStream(void)
+
+/*******************************************************************************
+ *******************************************************************************
+                        LOCAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
+
+
+static void create_bit_frame(uint8_t data)
 {
+	uartData[0] = 0;
+	uint8_t parity = 1;
+	char_index = 0;
 
-	msg_ptr++;
-	if(msg_ptr == STAND_LEN)
+	uint8_t i;
+	for(i = 1; i < UART_LENGTH - 2; i++)
 	{
-		msg_ptr = 0;
-		status = IDLE;
-		MsgSentClb(); // Avisa que termino de mandar la señal modulada
-
+		uartData[i] = data & LSB_BIT;
+		parity ^= uartData[i];
+		data >>= 1;
 	}
 
+	uartData[UART_LENGTH - 2] = parity;
+	uartData[UART_LENGTH - 1] = 1;
 
 }
 
 
-void sendBit(void)
+static void send_data_to_modulate(void)
 {
-	if(status == MSG)
+	if(char_index > 10)
 	{
-		if (bitStream[msg_ptr] == false) //si tengo que mandar 0 es 1.83 periodos
+		if(get_Queue_Status_uint8(&buffer))
 		{
-			sendSin0();
+			uint8_t data = pull_Queue_Element_uint8(&buffer);
+			create_bit_frame(data);
 		}
 		else
 		{
-			sendSin1();
+			change_dma(SINE_1200_OFFSET);
 		}
 	}
-	else //IDLE
+	if(char_index < 11)
 	{
-		sendSin1();
-	}
-
-}
-
-void sendSin1(void)
-{
-	DAC_SetData(sinValues[sinIndex]);
-
-	sinIndex++;
-	if(sinIndex == SIN_VALUES)
-	{
-		sinIndex = 0;
-	}
-	cont++;
-	if(cont == SIN_VALUES)
-	{
-		cont = 0;
-		if(status == MSG)
+		if(uartData[char_index] == 1)
 		{
-			procesBitStream();
+			change_dma(SINE_1200_OFFSET);
 		}
-	}
-	else
-	{
-		// NO TERMINO DE TRANSMITIR
-	}
-}
-
-void sendSin0(void)
-{
-	if(cont == 0)
-	{
-		aux = sinIndex;
-	}
-
-	DAC_SetData(sinValues[(uint8_t)aux]);
-
-	aux+= ratio;
-	cont++;
-
-	if((uint8_t)aux >= SIN_VALUES)
-	{
-		aux = 0;
-	}
-
-	if(cont == 19)
-	{
-		cont = 0;
-		cycle++;
-	}
-
-	if((cycle == 1) && (cont == 15)) // 1.83 ciclos para el 0
-	{
-		cycle = 0;
-		cont = 0;
-		if(status == MSG)
+		else if (uartData[char_index] == 0 && char_index < 10)
 		{
-			procesBitStream();
-			sinIndex = (uint8_t)aux;
+			change_dma(SINE_2200_OFFSET);
+		}
+		else
+		{
+			change_dma(SINE_1200_OFFSET);	// asegurar bit stop en 1
 		}
 
+		char_index++;
 	}
-	else
-	{
-		// NO TERMINO DE TRANSMITIR
-	}
-
-
 }
 
-
-
-bool parity (char num)
-{
-	bool par = 1;
-	for (int i = 0 ; i < 7; i++)
-	{
-		par ^= ((num & (1<<i))>>i);
-	}
-	return par;
-}
 
 /*******************************************************************************
  ******************************************************************************/
