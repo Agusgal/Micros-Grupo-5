@@ -206,6 +206,7 @@ static void send_data_to_modulate(void)
 		}
 		else
 		{
+			DAC_SetData(SINE_1200_OFFSET * sizeof(sine[0]));
 			//change_dma(SINE_1200_OFFSET);
 		}
 	}
@@ -213,14 +214,17 @@ static void send_data_to_modulate(void)
 	{
 		if(uartData[char_index] == 1)
 		{
+			DAC_SetData(SINE_1200_OFFSET * sizeof(sine[0]));
 			//change_dma(SINE_1200_OFFSET);
 		}
 		else if (uartData[char_index] == 0 && char_index < 10)
 		{
+			DAC_SetData(SINE_2200_OFFSET * sizeof(sine[0]));
 			//change_dma(SINE_2200_OFFSET);
 		}
 		else
 		{
+			DAC_SetData(SINE_1200_OFFSET * sizeof(sine[0]));
 			//change_dma(SINE_1200_OFFSET);	// asegurar bit stop en 1
 		}
 
