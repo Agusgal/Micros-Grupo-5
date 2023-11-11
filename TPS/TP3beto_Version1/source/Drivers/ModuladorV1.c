@@ -156,7 +156,6 @@ void Modulator_Init(void(*clb)(void))
 	PIT_Init();
 
 	PIT_set_Timer(0, 41667, send_data_to_modulate);
-	//PIT_set_Timer(0, 1180, sendBit);  //Se usa una frecuencia más lenta que con el demodulador. sendBit manda bit a bit la palabra.
 
 	PIT_Start_Timer(0);
 }
@@ -195,7 +194,7 @@ static void create_bit_frame(uint8_t data)
 
 }
 
-
+//Todo donde dice dma tendria que cambiarlo, y adaptar este codigo para usar la funcion del DAC DAC_SetData
 static void send_data_to_modulate(void)
 {
 	if(char_index > 10)
@@ -207,22 +206,22 @@ static void send_data_to_modulate(void)
 		}
 		else
 		{
-			change_dma(SINE_1200_OFFSET);
+			//change_dma(SINE_1200_OFFSET);
 		}
 	}
 	if(char_index < 11)
 	{
 		if(uartData[char_index] == 1)
 		{
-			change_dma(SINE_1200_OFFSET);
+			//change_dma(SINE_1200_OFFSET);
 		}
 		else if (uartData[char_index] == 0 && char_index < 10)
 		{
-			change_dma(SINE_2200_OFFSET);
+			//change_dma(SINE_2200_OFFSET);
 		}
 		else
 		{
-			change_dma(SINE_1200_OFFSET);	// asegurar bit stop en 1
+			//change_dma(SINE_1200_OFFSET);	// asegurar bit stop en 1
 		}
 
 		char_index++;

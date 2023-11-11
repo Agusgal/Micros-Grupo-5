@@ -42,6 +42,9 @@ long long contador = 0;
 //Callback del demodulador
 void demodulator_clb(void);
 
+//Callback del modulador
+void modulator_clb(void);
+
 
 
 /*******************************************************************************
@@ -77,6 +80,12 @@ void App_Init (void)
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
+	uint8_t a = 'h';
+	modulator_sendChar(a);
+	modulator_sendChar(0);
+	modulator_sendChar(0);
+
+
 	if(isDataReady() == true)
 	{
 		demodulate();
@@ -105,6 +114,11 @@ void demodulator_clb(void)
 
 	demodulado = 1;
 	contador = 0;
+}
+
+void modulator_clb(void)
+{
+
 }
 
 
