@@ -68,7 +68,7 @@ void App_Init (void)
 	//gpioWrite (PIN_TP, false);
 
 	//TODO: Init modulator
-	demodulator_Init(demodulator_clb);
+	Demodulator_Init(demodulator_clb);
 }
 
 /* Función que se llama constantemente en un ciclo infinito */
