@@ -41,8 +41,9 @@ void modulador_init(void);
 
 /**
  * @brief
+ * @return 	int8_t	-1 if max limit is exceeded
  */
-void modulador_send_char(uint8_t data);
+int8_t modulador_send_char(uint8_t data);
 
 /*******************************************************************************
  ******************************************************************************/

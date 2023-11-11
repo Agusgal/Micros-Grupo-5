@@ -8,6 +8,7 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
+#include <Queues/queue.h>
 #include "MK64F12.h"
 #include "hardware.h"
 
@@ -19,10 +20,6 @@
 #include "Drivers/GPIO2.h"
 #include "Drivers/UART.h"
 #include "Drivers/modulador.h"
-
-
-#include "EventQueue/queue.h"
-#include "FSM/FSM.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -144,19 +141,22 @@ void App_Init (void)
     //dma0_init(FTM0CH0, 0, (uint32_t)sine, (uint32_t) CnV_pointer, 2, 0, 2, 2, sizeof(sine)/sizeof(sine[0]), sizeof(sine), 0, 0);
 
 
-    uint8_t a = 'h';
     /*if(UART_Get_Status(0))
 	{
 		a = UART_Get_Data(0);
 	}*/
 
-    modulador_send_char(a);
+
 
 }
 
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
+	uint8_t a = 'h';
+	modulador_send_char(a);
+	modulador_send_char(0);
+	modulador_send_char(0);
     //change_dma(6);
 
     //change_dma(11);

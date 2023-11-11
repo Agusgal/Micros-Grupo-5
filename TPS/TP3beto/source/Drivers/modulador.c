@@ -12,6 +12,7 @@
 #include "dma_drv.h"
 #include "Drivers/FTM.h"
 #include "Drivers/PIT.h"
+#include "Queues/queue.h"
 
 
 /*******************************************************************************
@@ -25,6 +26,7 @@
 /*******************************************************************************
  * VARIABLES WITH LOCAL SCOPE
  ******************************************************************************/
+
 static uint32_t duty = 190;
 static uint32_t period = 379;
 
@@ -117,7 +119,7 @@ static uint16_t sine[] = {
 
 static uint8_t uartData[UART_LENGTH];
 static uint8_t	char_index = UART_LENGTH;
-
+static queue_uint8_t buffer;
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -132,6 +134,11 @@ static void send_data_to_modulate(void);
  */
 static void change_dma(uint8_t soff);
 
+/**
+ * @brief
+ */
+static void create_bit_frame(uint8_t data);
+
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -143,6 +150,8 @@ static void change_dma(uint8_t soff);
 void modulador_init(void)
 {
 
+	queue_Init_uint8(&buffer);
+
 	FTM_Init(FTM_0, FTM_PSC_x1, 0xFFFF, 0);
     FTM_CH_PWM_Init(FTM_0, FTM_CH_0, FTM_PWM_HIGH_PULSES, FTM_PWM_EDGE_ALIGNED, duty, period, NULL);		//90% duty cycle (en hexa)
     FTM_CH_EnableDMA(FTM_0, FTM_CH_0);
@@ -152,13 +161,14 @@ void modulador_init(void)
 
     DMA_source_t source_number = FTM0CH0;
 	uint8_t channel = 0;
+
 	uint32_t source_address = (uint32_t)sine;
 	uint32_t dest_address = (uint32_t) CnV_pointer;
 	uint8_t soff = SINE_1200_OFFSET * (sizeof(sine[0]));
 	uint8_t doff = 0;
 	uint8_t sSize = 2;
 	uint32_t nbytes = 2;
-	uint32_t citer = sizeof(sine)/sizeof(sine[0]);
+	uint32_t citer = (sizeof(sine) / sizeof(sine[0])) / SINE_1200_OFFSET;
 	uint32_t sourceBuffer_sizeof = sizeof(sine);
 	uint32_t destBuffer_sizeof = 0;
 	void (*cb) (void) = 0;
@@ -178,8 +188,22 @@ void modulador_init(void)
 
 /**
  * @brief
+ * @return 	int8_t	-1 if max limit is exceeded
  */
-void modulador_send_char(uint8_t data)
+int8_t modulador_send_char(uint8_t data)
+{
+	return push_Queue_Element_uint8(&buffer, data);
+}
+
+/*******************************************************************************
+ *******************************************************************************
+                        LOCAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
+/**
+ * @brief
+ */
+static void create_bit_frame(uint8_t data)
 {
 	uartData[0] = 0;
 	uint8_t parity = 1;
@@ -196,21 +220,26 @@ void modulador_send_char(uint8_t data)
 	uartData[UART_LENGTH - 2] = parity;
 	uartData[UART_LENGTH - 1] = 1;
 
-	send_data_to_modulate();
-
 }
 
-/*******************************************************************************
- *******************************************************************************
-                        LOCAL FUNCTION DEFINITIONS
- *******************************************************************************
- ******************************************************************************/
 
 /**
  * @brief
  */
 static void send_data_to_modulate(void)
 {
+	if(char_index > 10)
+	{
+		if(get_Queue_Status_uint8(&buffer))
+		{
+			uint8_t data = pull_Queue_Element_uint8(&buffer);
+			create_bit_frame(data);
+		}
+		else
+		{
+			change_dma(SINE_1200_OFFSET);
+		}
+	}
 	if(char_index < 11)
 	{
 		if(uartData[char_index] == 1)
