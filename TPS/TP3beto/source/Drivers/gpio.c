@@ -142,6 +142,7 @@ void gpio_clear_interrupt_flag(pin_t pin)
 	PORT(PIN2PORT(pin))->PCR[PIN2NUM(pin)] |= PORT_PCR_ISF_MASK;
 }
 
+
 /**
  * @brief
  */
