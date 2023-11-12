@@ -72,13 +72,19 @@ void App_Init (void)
 void App_Run (void)
 {
 	//Testing
-	uint8_t a = 'c';
-	modulator_sendChar(a);
+	//uint8_t a = 'c';
+	//modulator_sendChar(a);
 	//modulator_sendChar(0);
 	//modulator_sendChar(0);
 
 	//UART ---> FSK
+	//TODO ver tipos de datos
+	while(UART_Get_Status(0))
+	{
+		unsigned char data = UART_Get_Data(0);
 
+		modulator_sendChar(data);
+	}
 
 
 	// FSK ---> UART
