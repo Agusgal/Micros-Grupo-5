@@ -32,7 +32,7 @@ void DAC_init(void);
  * @brief Setter data input DAC
  * @return
  */
-void DAC_SetData(DACDATA_t data);
+void DAC_setData(DACDATA_t data);
 
 
 #endif /* DAC_H_ */

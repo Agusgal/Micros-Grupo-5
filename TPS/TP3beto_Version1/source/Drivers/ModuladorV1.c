@@ -98,7 +98,7 @@ void Modulator_Init(void(*clb)(void))
 
 	DAC_init();
 
-	PIT_Init();
+	PIT_init();
 
 	PIT_set_Timer(0, 758, send_data_to_modulate);
 
@@ -163,7 +163,7 @@ static void send_data_to_modulate(void)
 			}
 		}
 
-		DAC_SetData(sine[index]);
+		DAC_setData(sine[index]);
 		counter++;
 		index += step;
 	}
@@ -178,7 +178,7 @@ static void send_data_to_modulate(void)
 		}
 		else //Pasa a estado idle
 		{
-			DAC_SetData(sine[index]);
+			DAC_setData(sine[index]);
 			index += SINE_1200_OFFSET;
 
 			if(index == 660)

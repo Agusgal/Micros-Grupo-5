@@ -63,9 +63,7 @@ void App_Init (void)
 	//TODO: configure UART
 	//UART_SetBaudRate();
 
-	//TODO: Init timers
-
-	//TODO: Init modulator
+	Modulator_Init(modulator_clb);
 	Demodulator_Init(demodulator_clb);
 }
 
