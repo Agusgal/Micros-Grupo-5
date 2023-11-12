@@ -5,6 +5,13 @@
  ******************************************************************************/
 
 /*******************************************************************************
+ * EXPLICACION DE LOGICA DE PROGRAMA
+ ******************************************************************************/
+
+
+
+
+/*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
@@ -16,16 +23,8 @@
 #include "Drivers/gpio.h"
 #include "Drivers/port.h"
 #include "Drivers/DemodulatorV1.h"
+#include "Drivers/ModuladorV1.h"
 #include "Drivers/UART.h"
-
-
-
-/*******************************************************************************
- * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
- ******************************************************************************/
-
-int demodulado = 1;
-long long contador = 0;
 
 
 /*******************************************************************************
@@ -35,12 +34,16 @@ long long contador = 0;
 //Callback del demodulador
 void demodulator_clb(void);
 
+//Callback del modulador
+void modulator_clb(void);
 
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
+int demodulado = 1;
+long long contador = 0;
 
 
 
@@ -62,38 +65,20 @@ void App_Init (void)
 
 	//TODO: Init timers
 
-
-	//gpioMode(PIN_LED_BLUE, OUTPUT);
-	//gpioMode(PIN_TP, OUTPUT);
-	//gpioWrite (PIN_TP, false);
-
 	//TODO: Init modulator
 	Demodulator_Init(demodulator_clb);
 }
 
+
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-	//Codigo de prueba
-	/*
-	if (demodulado == 1)
-	{
-		if (contador < 100)
-		{
-			contador ++;
-			gpioWrite(PIN_LED_BLUE, (contador % 5000 >= 5000/2) ? HIGH : LOW );
-		}
-		else
-		{
-			updateWord();
-			gpioWrite(PIN_LED_BLUE, HIGH);
-		}
-	}
-	else
-	{
-		gpioWrite(PIN_LED_BLUE, LOW);
-	}
-	*/
+	//Testing
+	uint8_t a = 'h';
+	modulator_sendChar(a);
+	modulator_sendChar(0);
+	modulator_sendChar(0);
+
 
 	if(isDataReady() == true)
 	{
@@ -101,6 +86,12 @@ void App_Run (void)
 	}
 }
 
+
+/*******************************************************************************
+ *******************************************************************************
+                        LOCAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
 
 void demodulator_clb(void)
 {
@@ -112,19 +103,17 @@ void demodulator_clb(void)
 	str[0] = b;
 	str[1] = '\0';
 
-	//Envio el mensjae por UART 0, TODO: chequear que canal usar
+	//Envio el mensaje por UART 0, TODO: chequear que canal usar y si esta bien esto.
 	UART_SendMsg(str, 0);
 
 	demodulado = 1;
 	contador = 0;
 }
 
-/*******************************************************************************
- *******************************************************************************
-                        LOCAL FUNCTION DEFINITIONS
- *******************************************************************************
- ******************************************************************************/
-
+void modulator_clb(void)
+{
+	//debuging and measuring code (gpios para testpoints)
+}
 
 
 /*******************************************************************************

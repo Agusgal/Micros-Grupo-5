@@ -26,9 +26,21 @@
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
+
+/**
+ * @brief Inicializa el modulador
+ * @param clb 	funcion de callback que se ejecuta una vex terminada la modulacion (puede servir para debugging por ejemplo)
+ * @return
+ */
 void Modulator_Init(void(*clb)(void));
 
-void Modulator_sendChar(char my_char);
+
+/**
+ * @brief
+ * @param uint8_t data
+ * @return 	int8_t	-1 if max limit is exceeded
+ */
+int8_t modulator_sendChar(uint8_t data);
 
 
 #endif // _MODULADORV1_H_
