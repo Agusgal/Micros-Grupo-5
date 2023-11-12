@@ -78,8 +78,8 @@ void Demodulator_Init(myCallback clb)
 	ADC_Init(ADC_CH, updateData);
 	ADC_EnableModule(ADC_CH);
 
-	PIT_set_Timer(0, 4167, ADC_StartConvertion);   //4166 es 12kHz en tiempos de 20ns.
-	PIT_Start_Timer(0);
+	PIT_set_Timer(1, 4167, ADC_StartConvertion);   //4166 es 12kHz en tiempos de 20ns.
+	PIT_Start_Timer(1);
 }
 
 

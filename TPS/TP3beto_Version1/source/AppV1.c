@@ -63,9 +63,7 @@ void App_Init (void)
 	//TODO: configure UART
 	//UART_SetBaudRate();
 
-	//TODO: Init timers
-
-	//TODO: Init modulator
+	Modulator_Init(modulator_clb);
 	Demodulator_Init(demodulator_clb);
 }
 
@@ -74,16 +72,26 @@ void App_Init (void)
 void App_Run (void)
 {
 	//Testing
-	uint8_t a = 'h';
-	modulator_sendChar(a);
-	modulator_sendChar(0);
-	modulator_sendChar(0);
+	//uint8_t a = 'c';
+	//modulator_sendChar(a);
+	//modulator_sendChar(0);
+	//modulator_sendChar(0);
 
-
-	if(isDataReady() == true)
+	//UART ---> FSK
+	//TODO ver tipos de datos
+	while(UART_Get_Status(0))
 	{
-		demodulate();
+		unsigned char data = UART_Get_Data(0);
+
+		modulator_sendChar(data);
 	}
+
+
+	// FSK ---> UART
+//	if(isDataReady() == true)
+//	{
+//		demodulate();
+//	}
 }
 
 

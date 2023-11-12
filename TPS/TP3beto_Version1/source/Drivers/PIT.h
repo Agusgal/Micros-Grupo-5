@@ -23,7 +23,7 @@
  * @param
  * @return
  */
-void PIT_Init(void);
+void PIT_init(void);
 
 
 /**
