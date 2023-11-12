@@ -77,6 +77,11 @@ uint32_t get_dma0_saddr(uint8_t channel);
 /**
  * @brief
  */
+void set_dma0_daddr(uint8_t channel, uint32_t destination_address);
+
+/**
+ * @brief
+ */
 void dma0_enable(uint8_t channel);
 
 /**

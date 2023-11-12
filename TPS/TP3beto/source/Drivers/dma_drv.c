@@ -164,6 +164,14 @@ void set_dma0_saddr(uint8_t channel, uint32_t source_address)
 /**
  * @brief
  */
+void set_dma0_daddr(uint8_t channel, uint32_t destination_address)
+{
+	DMA0->TCD[channel].DADDR = (uint32_t)(destination_address);
+}
+
+/**
+ * @brief
+ */
 void set_dma0_slast(uint8_t channel, uint32_t slast)
 {
 	DMA0->TCD[channel].SLAST = -slast;
