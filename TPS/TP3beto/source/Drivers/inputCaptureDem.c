@@ -106,9 +106,10 @@ void inputCaptureDem_init(void)
  ******************************************************************************/
 static void IC_Analysis (void)
 {
-	static uint8_t state = IDLE;
+	static uint8_t state = FIRST_READ;
 	uint16_t difBuffer[MAX_NUMBER_OF_STORED_SAMPLES - 1];
 	uint16_t* prev_buffer_pointer = buffer_pointer;
+	static uint8_t error = 0;
 
 	if(buffer_pointer == ic_buffer1)
 	{
@@ -122,13 +123,14 @@ static void IC_Analysis (void)
 	set_dma0_daddr(1, (uint32_t) buffer_pointer);
 	dma0_enable(1);
 
+	// Guardamos la diferencia de los ticks de FTM (CnV)
 	uint8_t i;
 	for(i = 0; i < MAX_NUMBER_OF_STORED_SAMPLES - 1; i++)
 	{
 		difBuffer[i] = prev_buffer_pointer[i+1] - prev_buffer_pointer[i];
 	}
 
-
+	// Analizamos cómo interpretar la información (1200 y 2200 complicaron el proceso, por no ser múltiplos)
 	for(i = 0; i < MAX_NUMBER_OF_STORED_SAMPLES - 1; i++)
 	{
 		switch(state)
@@ -155,7 +157,7 @@ static void IC_Analysis (void)
 			}
 			else
 			{
-				state = ONE_DET_FLANK_OR_ZERO_STRONG;
+				state = FLANK_AFTER_WAIT;
 			}
 
 			break;
@@ -163,7 +165,7 @@ static void IC_Analysis (void)
 		// Cuando se detectó un "1" fuerte en el paso anterior
 		case	ONE_STRONG_DETECTED:
 
-			push_Queue_Element_uint8(out_buffer, 1);
+			push_Queue_Element_uint8(&out_buffer, 1);
 
 			// Si hay otro "1" fuerte, salteo y espero a lo que venga
 			if(difBuffer[i] > H_THRESHOLD)
@@ -193,7 +195,7 @@ static void IC_Analysis (void)
 			else if(difBuffer[i] < L_THRESHOLD)
 			{
 				// Guardamos el 0
-				push_Queue_Element_uint8(out_buffer, 0);
+				push_Queue_Element_uint8(&out_buffer, 0);
 				// Pasamos a saltear 2 LUGARES
 				state = JUMP1;
 			}
@@ -219,13 +221,13 @@ static void IC_Analysis (void)
 			// Si es un "1" fuerte, lo guardamos y pasamos a WAIT
 			if(difBuffer[i] > H_THRESHOLD)
 			{
-				push_Queue_Element_uint8(out_buffer, 1);
+				push_Queue_Element_uint8(&out_buffer, 1);
 				state = WAIT;
 			}
 			else if(difBuffer[i] < L_THRESHOLD)
 			{
 				// Guardamos el 0
-				push_Queue_Element_uint8(out_buffer, 0);
+				push_Queue_Element_uint8(&out_buffer, 0);
 				// Pasamos a saltear 2 LUGARES
 				state = JUMP1;
 			}
@@ -236,7 +238,7 @@ static void IC_Analysis (void)
 			break;
 
 		case	ERROR:
-			uint8_t error = 1;
+			error = 1;
 			break;
 
 		default:
