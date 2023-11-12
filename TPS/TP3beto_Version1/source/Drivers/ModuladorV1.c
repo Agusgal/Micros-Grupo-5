@@ -92,7 +92,7 @@ static void create_bit_frame(uint8_t data);
 void Modulator_Init(void(*clb)(void))
 {
 	queue_Init_uint8(&buffer);
-	counter= MSGLEN + 1;	// no data to be sent
+	counter = MSGLEN + 1;	// no data to be sent
 
 	MsgSentClb = clb;
 
@@ -109,7 +109,6 @@ void Modulator_Init(void(*clb)(void))
 
 int8_t modulator_sendChar(uint8_t data)
 {
-
 	return push_Queue_Element_uint8(&buffer, data);
 }
 

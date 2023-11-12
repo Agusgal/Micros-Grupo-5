@@ -72,16 +72,20 @@ void App_Init (void)
 void App_Run (void)
 {
 	//Testing
-	uint8_t a = 'h';
+	uint8_t a = 'c';
 	modulator_sendChar(a);
-	modulator_sendChar(0);
-	modulator_sendChar(0);
+	//modulator_sendChar(0);
+	//modulator_sendChar(0);
+
+	//UART ---> FSK
 
 
-	if(isDataReady() == true)
-	{
-		demodulate();
-	}
+
+	// FSK ---> UART
+//	if(isDataReady() == true)
+//	{
+//		demodulate();
+//	}
 }
 
 
