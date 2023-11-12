@@ -42,8 +42,7 @@ void modulator_clb(void);
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
-int demodulado = 1;
-long long contador = 0;
+int modulate = 1;
 
 
 
@@ -60,11 +59,11 @@ void App_Init (void)
 	PORT_Init();
 	UART_Init();
 
-	//TODO: configure UART
-	//UART_SetBaudRate();
-
 	Modulator_Init(modulator_clb);
 	Demodulator_Init(demodulator_clb);
+
+	uint8_t a = 'c';
+	modulator_sendChar(a);
 }
 
 
@@ -78,20 +77,25 @@ void App_Run (void)
 	//modulator_sendChar(0);
 
 	//UART ---> FSK
-	//TODO ver tipos de datos
-	while(UART_Get_Status(0))
+
+	/*
+	if (modulate)
 	{
-		unsigned char data = UART_Get_Data(0);
+		while(UART_Get_Status(0))
+		{
+			unsigned char data = UART_Get_Data(0);
 
-		modulator_sendChar(data);
+			modulator_sendChar(data);
+		}
 	}
+	*/
 
 
-	// FSK ---> UART
-//	if(isDataReady() == true)
-//	{
-//		demodulate();
-//	}
+	//FSK ---> UART
+	if(isDataReady() == true)
+	{
+		demodulate();
+	}
 }
 
 
@@ -111,11 +115,11 @@ void demodulator_clb(void)
 	str[0] = b;
 	str[1] = '\0';
 
-	//Envio el mensaje por UART 0, TODO: chequear que canal usar y si esta bien esto.
+	//Envio el mensaje por UART 0,
 	UART_SendMsg(str, 0);
 
-	demodulado = 1;
-	contador = 0;
+
+	modulate = 1;
 }
 
 void modulator_clb(void)

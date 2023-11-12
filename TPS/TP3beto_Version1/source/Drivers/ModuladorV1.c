@@ -151,6 +151,7 @@ static void send_data_to_modulate(void)
 		//Detecta cuando se pasa de un bit a otro, debo determinar si step es 6 u 11 dependiendo de si es 0 o 1 el bit.
 		if (counter % LENXBIT == 0)
 		{
+			//int test = uartData[(int)(counter/LENXBIT)];
 			//Si en uartdata hay un 1 el step queda de 6 en 6
 			if (uartData[(int)(counter/LENXBIT)])
 			{
@@ -162,6 +163,7 @@ static void send_data_to_modulate(void)
 			}
 		}
 
+		uint16_t test2 = sine[index];
 		DAC_setData(sine[index]);
 		counter++;
 		index += step;
