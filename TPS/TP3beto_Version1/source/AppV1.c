@@ -103,7 +103,7 @@ void demodulator_clb(void)
 	str[0] = b;
 	str[1] = '\0';
 
-	//Envio el mensjae por UART 0, TODO: chequear que canal usar
+	//Envio el mensaje por UART 0, TODO: chequear que canal usar y si esta bien esto.
 	UART_SendMsg(str, 0);
 
 	demodulado = 1;
