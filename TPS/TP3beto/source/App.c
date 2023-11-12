@@ -26,11 +26,11 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-
+#define TICKS_PER_SEG (uint32_t) 14286166
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
-
+static void delayLoop(uint32_t veces);
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
@@ -141,6 +141,8 @@ void App_Init (void)
 	CMP_init(0);
 	FTM_Start(FTM_3);
 
+	delayLoop(TICKS_PER_SEG / 150);
+
     /*if(UART_Get_Status(0))
 	{
 		a = UART_Get_Data(0);
@@ -153,21 +155,22 @@ void App_Init (void)
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-	uint8_t a = 0b10101010;
-	modulador_send_char(a);
-	modulador_send_char(0);
-	modulador_send_char(0);
+	uint8_t a = 0b11011000;
+	modulador_send_char('a');
+	modulador_send_char('b');
+	modulador_send_char('h');
 
 }
-
-
 
 /*******************************************************************************
  *******************************************************************************
                         LOCAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
-
+static void delayLoop(uint32_t veces)
+{
+    while (veces--);
+}
 
 /*******************************************************************************
  ******************************************************************************/

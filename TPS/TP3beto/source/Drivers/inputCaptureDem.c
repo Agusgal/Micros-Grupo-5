@@ -19,8 +19,10 @@
  ******************************************************************************/
 #define	MAX_NUMBER_OF_STORED_SAMPLES	64
 
-#define	FTM_CYCLES_1200 	1302
-#define	FTM_CYCLES_2200		710
+#define	FTM_CYCLES_1200 		2600
+
+#define	FTM_CYCLES_1200_SEMI 	1302
+#define	FTM_CYCLES_2200_SEMI	710
 
 #define	L_THRESHOLD		910
 #define	H_THRESHOLD		1102
@@ -34,6 +36,8 @@ enum
 	JUMP1,
 	JUMP2,
 	FLANK_AFTER_WAIT,
+	READING_CEROS,
+	READING_UNOS,
 	ERROR
 
 };
@@ -56,6 +60,8 @@ static uint16_t* buffer_pointer;
 static void IC_Analysis (void);
 
 static void IC_Fun (uint16_t CnV);
+
+uint32_t round_uint32_division(uint32_t numerator, uint32_t denominator);
 
 /*******************************************************************************
  *******************************************************************************
@@ -109,7 +115,12 @@ static void IC_Analysis (void)
 	static uint8_t state = FIRST_READ;
 	uint16_t difBuffer[MAX_NUMBER_OF_STORED_SAMPLES - 1];
 	uint16_t* prev_buffer_pointer = buffer_pointer;
+	static uint32_t counter = 0;
 	static uint8_t error = 0;
+	static uint32_t sum = 0;
+	static uint32_t hubo_flanco = 0;
+
+	counter++;
 
 	if(buffer_pointer == ic_buffer1)
 	{
@@ -134,6 +145,109 @@ static void IC_Analysis (void)
 	for(i = 0; i < MAX_NUMBER_OF_STORED_SAMPLES - 1; i++)
 	{
 		switch(state)
+		{
+		case	FIRST_READ:
+			if(difBuffer[i] > H_THRESHOLD)
+			{
+				state = READING_UNOS;
+				sum = difBuffer[i];
+			}
+			else if(difBuffer[i] < L_THRESHOLD)
+			{
+				state = READING_CEROS;
+				sum = difBuffer[i];
+			}
+			break;
+
+		case	READING_CEROS:
+			if(difBuffer[i] > H_THRESHOLD)
+			{
+				// Si leía 0s y ahora leí un 1 fuerte
+				// Entonces, sum / FTM_CYCLES_1200
+				// Incluso con un flanco inicial
+				// Debería dar la cantidad de 0s leídos
+				uint32_t cant = round_uint32_division(sum, FTM_CYCLES_1200);
+				uint32_t j = 0;
+				for(j = 0; j < cant; j++)
+				{
+					push_Queue_Element_uint8(&out_buffer, 0);
+				}
+				hubo_flanco = 0;
+				sum = difBuffer[i];
+				state = READING_UNOS;
+			}
+			else if(difBuffer[i] < L_THRESHOLD)
+			{
+				sum += difBuffer[i];
+			}
+			else
+			{
+				if(hubo_flanco == 0)
+				{
+					sum += difBuffer[i];
+				}
+
+				uint32_t cant = round_uint32_division(sum, FTM_CYCLES_1200);
+				uint32_t j = 0;
+				for(j = 0; j < cant; j++)
+				{
+					push_Queue_Element_uint8(&out_buffer, 0);
+				}
+				hubo_flanco = 1;
+				sum = difBuffer[i];
+				state = READING_UNOS;
+			}
+
+			break;
+
+		case 	READING_UNOS:
+			if(difBuffer[i] > H_THRESHOLD)
+			{
+				sum += difBuffer[i];
+			}
+			else if(difBuffer[i] < L_THRESHOLD)
+			{
+				// Si leía 0s y ahora leí un 1 fuerte
+				// Entonces, sum / FTM_CYCLES_1200
+				// Incluso con un flanco inicial
+				// Debería dar la cantidad de 0s leídos
+				uint32_t cant = round_uint32_division(sum, FTM_CYCLES_1200);
+				uint32_t j = 0;
+				for(j = 0; j < cant; j++)
+				{
+					push_Queue_Element_uint8(&out_buffer, 1);
+				}
+				hubo_flanco = 0;
+				sum = difBuffer[i];
+				state = READING_CEROS;
+			}
+			else
+			{
+				// Si leía 1s y ahora leí un 0 fuerte
+				// Entonces, sum / FTM_CYCLES_1200
+				// Incluso con un flanco inicial
+				// Debería dar la cantidad de 1s leídos
+				if(hubo_flanco == 0)
+				{
+					sum += difBuffer[i];
+				}
+				uint32_t cant = round_uint32_division(sum, FTM_CYCLES_1200);
+				uint32_t j = 0;
+				for(j = 0; j < cant; j++)
+				{
+					push_Queue_Element_uint8(&out_buffer, 1);
+				}
+				hubo_flanco = 1;
+				sum = difBuffer[i];
+				state = READING_CEROS;
+			}
+			break;
+		}
+
+
+
+
+		/*switch(state)
 		{
 		// En el INIT, el algoritmo se sincroniza con un "1" de IDLE, el resto debería andar a partir de esto
 		case	FIRST_READ:
@@ -187,10 +301,11 @@ static void IC_Analysis (void)
 		// Si se detectó un "1", y después vino un "flanco" o un "0" fuerte.
 		// Ó, se detectó directamente "0" fuerte después de un WAIT
 		case ONE_DET_FLANK_OR_ZERO_STRONG:
-			// Debería aparecer un "0" fuerte, sino, error.
+			// Debería aparecer un "0" fuerte, sino, lo ignoro
+			// Ocurriría si hay un error de sinc por "0"s consecutivos
 			if(difBuffer[i] > H_THRESHOLD)
 			{
-				state = ERROR;
+				state = ONE_STRONG_DETECTED;
 			}
 			else if(difBuffer[i] < L_THRESHOLD)
 			{
@@ -201,7 +316,7 @@ static void IC_Analysis (void)
 			}
 			else
 			{
-				state = ERROR;
+				state = WAIT; // Ocurriría si hay un error de sinc por "0"s consecutivos
 			}
 
 
@@ -244,7 +359,7 @@ static void IC_Analysis (void)
 		default:
 			break;
 
-		}
+		}*/
 	}
 
 
@@ -270,5 +385,25 @@ static void IC_Fun (uint16_t CnV)
 	}
 }
 
+/**
+ * @brief
+ */
+uint32_t round_uint32_division(uint32_t numerator, uint32_t denominator)
+{
+    if (denominator == 0) {
+        // Handle division by zero
+        return 0;  // You can choose an appropriate value or error handling here
+    }
+
+    uint32_t result = numerator / denominator;
+    uint32_t remainder = numerator % denominator;
+
+    // Round to the nearest integer
+    if (2 * remainder >= denominator) {
+        result++;
+    }
+
+    return result;
+}
 /*******************************************************************************
  ******************************************************************************/
