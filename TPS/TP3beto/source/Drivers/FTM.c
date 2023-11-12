@@ -328,9 +328,9 @@ void FTM_PWM_OFF(FTM_Module_t module, FTM_Channel_t channel)
 
 static void FTM_IRQ_Dispatcher(FTM_Module_t module)
 {
-	if (FTM_Modules[module]->SC & FTM_SC_TOF_MASK)		// Overflow del Free Running Counter
+	if (FTM_Modules[module]->SC & FTM_SC_TOIE_MASK)		// Overflow del Free Running Counter
 	{
-		if (FTM_Modules[module]->SC & FTM_SC_TOIE_MASK)
+		if (FTM_Modules[module]->SC & FTM_SC_TOF_MASK)
 		{
 			// Clear the interruption flag
 			FTM_Modules[module]->SC &= (~FTM_SC_TOF_MASK);

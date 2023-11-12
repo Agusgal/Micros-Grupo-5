@@ -18,6 +18,7 @@
 
 typedef enum {    FTM0CH0 = 20,     FTM0CH1 = 21, FTM0CH2 = 22, FTM0CH3 = 23,
                   FTM0CH4 = 24,     FTM0CH5 = 25, FTM0CH6 = 26, FTM0CH7 = 27,
+				  FTM3CH5 = 37,
                   DMADAC0 = 45,    DMADAC1 = 46, DMAALWAYS63 = 63} DMA_source_t;
 
 /*******************************************************************************

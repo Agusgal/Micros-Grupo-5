@@ -23,7 +23,7 @@
 // Queue Status
 #define	OVERFLOW	-1
 
-#define	MAX_NUMBER_OF_ELEMENTS	15
+#define	MAX_NUMBER_OF_ELEMENTS	64
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
