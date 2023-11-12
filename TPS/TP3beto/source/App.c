@@ -21,6 +21,7 @@
 #include "Drivers/UART.h"
 #include "Drivers/modulador.h"
 #include "Drivers/CMP.h"
+#include "Drivers/inputCaptureDem.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -29,8 +30,7 @@
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
-void changeDuty (void);
-static void change_dma(uint8_t soff);
+
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
@@ -136,12 +136,10 @@ uint16_t sine[] = {
 void App_Init (void)
 {
 	PORT_Init();
+	inputCaptureDem_init();
 	modulador_init();
 	CMP_init(0);
-
-    //uint32_t * CnV_pointer = FTM_CH_GetCnVPointer(FTM_0, FTM_CH_0);
-    //dma0_init(FTM0CH0, 0, (uint32_t)sine, (uint32_t) CnV_pointer, 2, 0, 2, 2, sizeof(sine)/sizeof(sine[0]), sizeof(sine), 0, 0);
-
+	FTM_Start(FTM_3);
 
     /*if(UART_Get_Status(0))
 	{
@@ -155,13 +153,11 @@ void App_Init (void)
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-	uint8_t a = 'h';
+	uint8_t a = 0b10101010;
 	modulador_send_char(a);
 	modulador_send_char(0);
 	modulador_send_char(0);
-    //change_dma(6);
 
-    //change_dma(11);
 }
 
 
@@ -171,25 +167,6 @@ void App_Run (void)
                         LOCAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
-static void change_dma(uint8_t step)
-{
-	dma0_disable(0);
-
-	uint8_t channel = 0;
-	uint32_t source_address = get_dma0_saddr(channel);
-	uint32_t biter = (sizeof(sine) / sizeof(sine[0])) / step;
-	uint32_t citer = biter - ( ( (source_address - (uint32_t)sine) / (sizeof(sine[0])) ) / step) ;
-	uint32_t slast = sizeof(sine);
-
-
-	set_dma0_source_offset(channel, step*sizeof(sine[0]));
-	set_dma0_citer(channel, citer);
-	set_dma0_biter(channel, biter);
-	set_dma0_saddr(channel, source_address);
-	set_dma0_slast(channel, slast);
-
-	dma0_enable(0);
-}
 
 
 /*******************************************************************************
