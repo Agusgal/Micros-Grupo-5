@@ -73,10 +73,12 @@ void App_Run (void)
 		modulator_sendChar(data);
 	}
 
-	for(int i = 0; i < 3; i++)
+	/*for(int i = 0; i < 3; i++)
 	{
-		modulator_sendChar(0b11100011);
-	}
+		modulator_sendChar('a');
+		modulator_sendChar('b');
+		modulator_sendChar('c');
+	}*/
 
 	//FSK ---> UART
 	if(isDataReady() == true)
@@ -103,8 +105,8 @@ void demodulator_clb(void)
 	str[1] = '\0';
 
 	//Envio el mensaje por UART 0,
-	UART_SendMsg(str, 0);
-	//UART_SendChar(b ,0);
+	//UART_Send(str, 0);
+	UART_SendChar(b, 0);
 }
 
 void modulator_clb(void)

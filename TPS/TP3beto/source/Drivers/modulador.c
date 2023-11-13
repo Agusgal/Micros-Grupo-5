@@ -19,7 +19,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 #define		UART_LENGTH		11
-#define		LSB_BIT			0b00000001
+#define		LSB_BIT				0b00000001
 #define		SINE_2200_OFFSET		11
 #define		SINE_1200_OFFSET		6
 

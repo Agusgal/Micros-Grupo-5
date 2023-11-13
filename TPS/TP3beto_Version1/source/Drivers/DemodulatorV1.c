@@ -186,7 +186,7 @@ void updateData(void)
 		rawData[i - 1] = rawData[i];
 	}
 
-	rawData[DELAY] = newdata - 2048; //deberia ser 4055??
+	rawData[DELAY] = newdata - 2027; //2027 es la mita de 4055; deberia ser 4055??
 	ADCoutputready = true;
 }
 
@@ -214,9 +214,9 @@ char get_Msg(void)
 {
 	char retmsg = 0;
 
-	for (int k = 1; k < 9;k++ )
+	for (int k = 1; k < 9; k++)
 	{
-		retmsg |= (bitstream[k]<< (8 - k));
+		retmsg |= (bitstream[k]<< (k-1));
 	}
 
 	return retmsg;
