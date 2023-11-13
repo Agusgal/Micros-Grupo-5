@@ -42,7 +42,6 @@ void modulator_clb(void);
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
-int modulate = 1;
 
 
 
@@ -61,35 +60,18 @@ void App_Init (void)
 
 	Modulator_Init(modulator_clb);
 	Demodulator_Init(demodulator_clb);
-
-	uint8_t a = 'c';
-	modulator_sendChar(a);
 }
 
 
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-	//Testing
-	//uint8_t a = 'c';
-	//modulator_sendChar(a);
-	//modulator_sendChar(0);
-	//modulator_sendChar(0);
-
 	//UART ---> FSK
-
-	/*
-	if (modulate)
+	if (UART_Get_Status(0))
 	{
-		while(UART_Get_Status(0))
-		{
-			unsigned char data = UART_Get_Data(0);
-
-			modulator_sendChar(data);
-		}
+		unsigned char data = UART_Get_Data(0);
+		modulator_sendChar(data);
 	}
-	*/
-
 
 	//FSK ---> UART
 	if(isDataReady() == true)
@@ -116,10 +98,8 @@ void demodulator_clb(void)
 	str[1] = '\0';
 
 	//Envio el mensaje por UART 0,
-	UART_SendMsg(str, 0);
-
-
-	modulate = 1;
+	//UART_SendMsg(str, 0);
+	UART_SendChar(b ,0);
 }
 
 void modulator_clb(void)

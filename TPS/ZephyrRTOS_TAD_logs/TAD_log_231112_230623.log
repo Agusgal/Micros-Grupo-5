@@ -1,0 +1,11 @@
+"Task Aware Debugger for GDB" version 11.8.0 (202306131047)
+Copyright 2016-2023 NXP
+==================================
+23:05:51.29 INFO: [ZephyrRTOS] .config file could not be read [/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TP3beto_Version1/Debug/.config (No such file or directory)]
+23:05:51.30 INFO: [TadModel] DSF session ID 51 has started.
+23:05:53.90 INFO: [TadState] TAD state changed: DEBUG_STARTED -> DEBUG_INIT_0 (SUSPENDED, USER_REQUEST)
+23:05:54.617 INFO: [TadState] TAD state changed: DEBUG_INIT_0 -> DEBUG_INIT_1 (RESUMED, USER_REQUEST)
+23:05:54.663 INFO: [TadState] TAD state changed: DEBUG_INIT_1 -> DEBUG_SUSPENDED (SUSPENDED, BREAKPOINT)
+23:06:16.160 INFO: [TadState] TAD state changed: DEBUG_SUSPENDED -> DEBUG_RESUMED (RESUMED, USER_REQUEST)
+23:06:16.209 INFO: [TadState] TAD state changed: DEBUG_RESUMED -> READY (SUSPENDED, BREAKPOINT)
+23:06:23.311 INFO: [TadModel] DSF session ID 51 has ended.
