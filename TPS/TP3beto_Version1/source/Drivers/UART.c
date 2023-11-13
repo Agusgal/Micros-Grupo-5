@@ -160,7 +160,7 @@ void UART_Init (void)
 
 		//UART0->C2=UART_C2_TE_MASK | UART_C2_RE_MASK;
 		UART0->C2=UART_C2_TE_MASK| UART_C2_RE_MASK | UART_C2_RIE_MASK;
-		//UART0->C1=UART_C1_PE_MASK| UART_C1_PT_MASK;
+		UART0->C1=UART_C1_PE_MASK| UART_C1_PT_MASK|UART_C1_M_MASK;
 
 		for (int i = 0; i<12 ; i++) //initializes transmitter and receiver queues for all uarts
 		{
@@ -213,6 +213,15 @@ void UART_rx_tx_irq_handler (UART_Type* uart_p, uint8_t id)
 		if (get_Queue_Status(id))
 		{
 			tx_data =  pull_Queue_Element(id);
+			uint8_t aux = tx_data;
+			uint8_t i;
+			uint8_t parity = 1;
+			for(i = 0; i < 8; i++)
+			{
+				parity ^= (aux & 0b00000001);
+				aux >>= 1;
+			}
+			uart_p->C3 = (uart_p->C3 & ~UART_C3_T8_MASK) | (UART_C3_T8(parity));
 			uart_p->D = tx_data;
 		}
 		else
