@@ -7,6 +7,8 @@
 
 #include "PIT.h"
 #include "hardware.h"
+#include "board.h"
+#include "gpio.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -95,23 +97,30 @@ void PIT_Stop_Timer(uint8_t id)
 
 void PIT0_IRQHandler(void)
 {
+	gpioWrite(TP_PIN, HIGH);
 	callback0();
 
 	PIT_ptr->CHANNEL[0].TFLG = PIT_TFLG_TIF(1);
+	gpioWrite(TP_PIN, LOW);
 }
 
 void PIT1_IRQHandler(void)
 {
+	gpioWrite(TP_PIN, HIGH);
 	callback1();
 
 	PIT_ptr->CHANNEL[1].TFLG = PIT_TFLG_TIF(1);
+	gpioWrite(TP_PIN, LOW);
+
 }
 
 void PIT2_IRQHandler(void)
 {
+	gpioWrite(TP_PIN, HIGH);
 	callback2();
 
 	PIT_ptr->CHANNEL[2].TFLG = PIT_TFLG_TIF(1);
+	gpioWrite(TP_PIN, LOW);
 }
 
 /*******************************************************************************

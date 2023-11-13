@@ -61,6 +61,9 @@
 #define PIN_SW3         PORTNUM2PIN(PA,4)
 #define SW_ACTIVE       LOW
 
+//Testpoints pins
+#define TP_PIN			PORTNUM2PIN(PB, 2)
+
 
 
 /*******************************************************************************

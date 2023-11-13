@@ -58,6 +58,9 @@ void App_Init (void)
 	PORT_Init();
 	UART_Init();
 
+	gpioMode(TP_PIN, OUTPUT);
+	gpioWrite(TP_PIN, LOW);
+
 	Modulator_Init(modulator_clb);
 	Demodulator_Init(demodulator_clb);
 }
@@ -73,12 +76,12 @@ void App_Run (void)
 		modulator_sendChar(data);
 	}
 
-	/*for(int i = 0; i < 3; i++)
-	{
-		modulator_sendChar('a');
-		modulator_sendChar('b');
-		modulator_sendChar('c');
-	}*/
+//	for(int i = 0; i < 3; i++)
+//	{
+//		modulator_sendChar('a');
+//		modulator_sendChar('b');
+//		modulator_sendChar('c');
+	//}
 
 	//FSK ---> UART
 	if(isDataReady() == true)

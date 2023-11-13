@@ -7,6 +7,16 @@
  * See _BASE_PTRS and _IRQS
  */
 
+// Digital values
+#ifndef LOW
+#define LOW     0
+#define HIGH    1
+#endif // LOW
+
+enum { PA, PB, PC, PD, PE };
+#define PORTNUM2PIN(p,n)    (((p)<<5) + (n))
+
+
 #define GPIO_IN(x) 	(0 << x)
 #define GPIO_OUT(x) (1 << x)
 
@@ -15,6 +25,8 @@
 
 #define GPIO__LO 	0x00000000u
 #define GPIO__HI   	0xFFFFFFFFu
+
+#define TP_PIN			PORTNUM2PIN(PB, 18)
 
 
 typedef GPIO_Type *GPIO_t; 		  /* PTA, PTB, PTC, PTD, PTE */

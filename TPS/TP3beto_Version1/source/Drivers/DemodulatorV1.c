@@ -5,6 +5,8 @@
  *      Author: Grupo 5
  */
 
+#include "board.h"
+#include "gpio.h"
 #include "DemodulatorV1.h"
 #include "ADC.h"
 #include "PIT.h"
