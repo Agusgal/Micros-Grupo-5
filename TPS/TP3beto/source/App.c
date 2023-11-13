@@ -136,6 +136,7 @@ uint16_t sine[] = {
 void App_Init (void)
 {
 	PORT_Init();
+	UART_Init ();
 	inputCaptureDem_init();
 	modulador_init();
 	CMP_init(0);
@@ -143,22 +144,20 @@ void App_Init (void)
 
 	delayLoop(TICKS_PER_SEG / 150);
 
-    /*if(UART_Get_Status(0))
+    if(UART_Get_Status(0))
 	{
-		a = UART_Get_Data(0);
-	}*/
-
-
+		uint8_t b = UART_Get_Data(0);
+	}
 
 }
 
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-	uint8_t a = 0b11011000;
-	modulador_send_char('a');
-	modulador_send_char('b');
-	modulador_send_char('h');
+	for(int i = 'a'; i <= 'z'; i++)
+	{
+		modulador_send_char(i);
+	}
 
 }
 
