@@ -154,9 +154,21 @@ void App_Init (void)
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-	for(int i = 'a'; i <= 'z'; i++)
+	/*for(int i = 'a'; i <= 'z'; i++)
 	{
 		modulador_send_char(i);
+	}*/
+
+    if(UART_Get_Status(0))
+	{
+		uint8_t b = UART_Get_Data(0);
+		modulador_send_char(b);
+	}
+
+	if(IC_DEM_Get_Status())
+	{
+		uint8_t element = IC_DEM_Get_Data();
+		UART_SendChar(element, 0);
 	}
 
 }
