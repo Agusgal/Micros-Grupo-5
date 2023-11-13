@@ -151,7 +151,7 @@ static void IC_Analysis (void)
 	static uint32_t saved_numbers = 0;
 	static uint32_t first_time = 1;
 
-	uint16_t difBuffer[MAX_NUMBER_OF_STORED_SAMPLES - 1];
+	uint16_t difBuffer[MAX_NUMBER_OF_STORED_SAMPLES];
 	uint16_t* prev_buffer_pointer = buffer_pointer;
 
 
