@@ -73,6 +73,11 @@ void App_Run (void)
 		modulator_sendChar(data);
 	}
 
+	for(int i = 0; i < 3; i++)
+	{
+		modulator_sendChar(0b11100011);
+	}
+
 	//FSK ---> UART
 	if(isDataReady() == true)
 	{

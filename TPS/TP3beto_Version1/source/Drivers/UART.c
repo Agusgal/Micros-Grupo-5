@@ -153,8 +153,8 @@ void UART_Init (void)
 
 	//UART0 Baudrate Setup
 
-		UART_SetBaudRate (UART0, 9600);
-		UART_SetBaudRate (UART1, 9600);
+		UART_SetBaudRate (UART0, 1200);
+		UART_SetBaudRate (UART1, 1200);
 
 	//Enable UART0 Xmiter and Rcvr
 
