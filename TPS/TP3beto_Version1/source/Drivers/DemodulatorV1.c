@@ -190,7 +190,6 @@ void updateData(void)
 
 	rawData[DELAY] = newdata - 2048;
 	ADCoutputready = true;
-
 }
 
 void filterSignal(void)

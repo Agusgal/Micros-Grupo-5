@@ -20,7 +20,7 @@
 #define		SINE_1200_OFFSET		6
 
 //LENXBIT sale de hacer la cuenta SINSAMPLES/6, es decir representa cuantas loops debo hacer recorriendo con stepsize de 6 en 6.
-#define LENXBIT	110
+#define LENXBIT	55
 #define MSGLEN 	(UART_LENGTH*LENXBIT)
 
 
@@ -167,6 +167,7 @@ static void send_data_to_modulate(void)
 		DAC_setData(sine[index]);
 		counter++;
 		index += step;
+		index %= 660;
 	}
 	else if(counter > MSGLEN) //Proceso la siguiente palabra que viene.
 	{
@@ -175,17 +176,13 @@ static void send_data_to_modulate(void)
 			uint8_t data = pull_Queue_Element_uint8(&buffer);
 			create_bit_frame(data);
 			counter = 0;
-			index = 0; //Creo que va aca.
+			index = 0;
 		}
 		else //Pasa a estado idle
 		{
 			DAC_setData(sine[index]);
 			index += SINE_1200_OFFSET;
-
-			if(index == 660)
-			{
-				index = 0;
-			}
+			index %= 660;
 		}
 	}
 
