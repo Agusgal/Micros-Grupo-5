@@ -129,8 +129,6 @@ void demodulate()
 				funcioncallback();
 				status = IDLE;
 			}
-
-
 		}
 	}
 	else
@@ -162,7 +160,7 @@ void demodulate()
 				}
 				else
 				{
-					firstZero = false; //el primer
+					firstZero = false; //el primero
 				}
 
 			}
@@ -188,7 +186,7 @@ void updateData(void)
 		rawData[i - 1] = rawData[i];
 	}
 
-	rawData[DELAY] = newdata - 2048;
+	rawData[DELAY] = newdata - 2048; //deberia ser 4055??
 	ADCoutputready = true;
 }
 
@@ -211,7 +209,7 @@ void filterSignal(void)
 	}
 
 }
-
+//todo; revisar si hayq eud ar vuelta esto.
 char get_Msg(void)
 {
 	char retmsg = 0;

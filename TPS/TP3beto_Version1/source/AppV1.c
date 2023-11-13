@@ -103,8 +103,8 @@ void demodulator_clb(void)
 	str[1] = '\0';
 
 	//Envio el mensaje por UART 0,
-	//UART_SendMsg(str, 0);
-	UART_SendChar(b ,0);
+	UART_SendMsg(str, 0);
+	//UART_SendChar(b ,0);
 }
 
 void modulator_clb(void)
