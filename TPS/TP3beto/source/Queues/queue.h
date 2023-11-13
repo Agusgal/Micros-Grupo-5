@@ -33,6 +33,7 @@ typedef struct queue_uint8
 	uint8_t queue [MAX_NUMBER_OF_ELEMENTS];
 	uint8_t num_Of_Events;
 	uint8_t *pin, *pout;
+	int var[10];
 
 }queue_uint8_t;
 

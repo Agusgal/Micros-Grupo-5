@@ -122,7 +122,7 @@ void dma0_init(DMA_source_t source_number, uint8_t channel, uint32_t source_addr
 
 	DMA0->TCD[channel].CSR = DMA_CSR_INTMAJOR_MASK;	//Enable Major Interrupt.
 
-	//DMA0->EEI |= DMA_EEI_EEI0(1); //Enable error interrupt
+	DMA0->EEI |= DMA_EEI_EEI0(1); //Enable error interrupt
 
 	/* Enable request signal for channel 0. */
 	DMA0->ERQ |= 1 << channel;

@@ -24,8 +24,8 @@
 #define	FTM_CYCLES_1200_SEMI 	1302
 #define	FTM_CYCLES_2200_SEMI	710
 
-#define	L_THRESHOLD		966		// 910
-#define	H_THRESHOLD		1056	// 1102
+#define	L_THRESHOLD		900		// 910
+#define	H_THRESHOLD		1100	// 1102
 
 enum
 {
@@ -177,9 +177,10 @@ static void IC_Analysis (void)
 		lastValue = buffer_pointer[MAX_NUMBER_OF_STORED_SAMPLES-1];
 	}
 
-
 	dma0_disable(1);
 	set_dma0_daddr(1, (uint32_t) buffer_pointer);
+	set_dma0_biter(1, (sizeof(ic_buffer1)) / (sizeof(ic_buffer1[0])));
+	set_dma0_citer(1, (sizeof(ic_buffer1)) / (sizeof(ic_buffer1[0])));
 	dma0_enable(1);
 
 	// Guardamos la diferencia de los ticks de FTM (CnV)
@@ -194,7 +195,7 @@ static void IC_Analysis (void)
 	// Analizamos cómo interpretar la información (1200 y 2200 complicaron el proceso, por no ser múltiplos)
 	for(i = 0; i < MAX_NUMBER_OF_STORED_SAMPLES; i++)
 	{
-		if(saved_numbers == 40)
+		if(difBuffer[i] < L_THRESHOLD)
 		{
 			uint8_t a = 0;
 		}
