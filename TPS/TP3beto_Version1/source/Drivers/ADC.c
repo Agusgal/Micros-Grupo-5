@@ -8,6 +8,8 @@
 
 #include "ADC.h"
 #include "hardware.h"
+#include "board.h"
+#include "gpio.h"
 
 static ADC_Type* ADC0_ptr = ADC0;
 static SIM_Type* sim_ptr = SIM;
@@ -129,8 +131,11 @@ void ADC_StartConvertion (void)
 
 void ADC0_IRQHandler(void)
 {
+	gpioWrite(TP_PIN, HIGH);
 	ADCdata = ADC0_ptr->R[0];
 	ADCclb();
+	gpioWrite(TP_PIN, LOW);
+
 }
 
 /*******************************************************************************
