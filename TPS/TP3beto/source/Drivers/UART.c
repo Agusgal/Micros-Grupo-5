@@ -202,7 +202,7 @@ void UART_SetBaudRate (UART_Type *uart, uint32_t baudrate)
  * @return
  */
 
-void UART_rx_tx_irq_handler (UART_Type* uart_p, uint8_t id)
+void UART_rx_tx_irq_handler(UART_Type* uart_p, uint8_t id)
 {
 	unsigned char tmp;
 	uint8_t tx_data;
