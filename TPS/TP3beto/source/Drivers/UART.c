@@ -160,6 +160,7 @@ void UART_Init (void)
 
 		//UART0->C2=UART_C2_TE_MASK | UART_C2_RE_MASK;
 		UART0->C2=UART_C2_TE_MASK| UART_C2_RE_MASK | UART_C2_RIE_MASK;
+		//UART0->C1=UART_C1_PE_MASK| UART_C1_PT_MASK;
 
 		for (int i = 0; i<12 ; i++) //initializes transmitter and receiver queues for all uarts
 		{
