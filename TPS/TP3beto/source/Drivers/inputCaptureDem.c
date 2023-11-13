@@ -19,13 +19,13 @@
  ******************************************************************************/
 #define	MAX_NUMBER_OF_STORED_SAMPLES	64
 
-#define	FTM_CYCLES_1200 		2600
+#define	FTM_CYCLES_1200 		2604
 
 #define	FTM_CYCLES_1200_SEMI 	1302
 #define	FTM_CYCLES_2200_SEMI	710
 
-#define	L_THRESHOLD		910
-#define	H_THRESHOLD		1102
+#define	L_THRESHOLD		947		// 910
+#define	H_THRESHOLD		1065	// 1102
 
 enum
 {
