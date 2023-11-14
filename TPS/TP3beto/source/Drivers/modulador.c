@@ -13,6 +13,8 @@
 #include "Drivers/FTM.h"
 #include "Drivers/PIT.h"
 #include "Queues/queue.h"
+#include "Drivers/gpio.h"
+#include "Drivers/board.h"
 
 
 /*******************************************************************************
@@ -228,6 +230,7 @@ static void create_bit_frame(uint8_t data)
  */
 static void send_data_to_modulate(void)
 {
+	//gpioWrite(TP_PIN, HIGH);
 	if(char_index > 10)
 	{
 		if(get_Queue_Status_uint8(&buffer))
@@ -257,6 +260,8 @@ static void send_data_to_modulate(void)
 
 		char_index++;
 	}
+
+	//gpioWrite(TP_PIN, LOW);
 }
 
 /**

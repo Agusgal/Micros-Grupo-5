@@ -141,6 +141,7 @@ static void create_bit_frame(uint8_t data)
 //Todo: configurar bien el tiempo del pit, ver cuando index debe ser igual a 0.
 static void send_data_to_modulate(void)
 {
+	gpioWrite(TP_PIN, HIGH);
 	static uint16_t  index = 0;
 	static uint16_t  step  = 0;
 
@@ -185,7 +186,7 @@ static void send_data_to_modulate(void)
 			index %= 660;
 		}
 	}
-
+	gpioWrite(TP_PIN, LOW);
 
 }
 

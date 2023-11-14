@@ -12,6 +12,8 @@
 #include "FTM.h"
 #include "Queues/Queue.h"
 #include "Drivers/dma_drv.h"
+#include "Drivers/gpio.h"
+#include "Drivers/board.h"
 
 
 /*******************************************************************************
@@ -142,6 +144,7 @@ uint8_t IC_DEM_Get_Data(void)
  ******************************************************************************/
 static void IC_Analysis (void)
 {
+	gpioWrite(TP_PIN, HIGH);
 	static uint8_t state = FIRST_READ;
 	static uint32_t counter = 0;
 	static uint8_t error = 0;
@@ -322,6 +325,8 @@ static void IC_Analysis (void)
 	}
 
 	buildFrames();
+
+	gpioWrite(TP_PIN, LOW);
 
 }
 

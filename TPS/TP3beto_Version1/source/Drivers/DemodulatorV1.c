@@ -87,6 +87,8 @@ void Demodulator_Init(myCallback clb)
 
 void demodulate()
 {
+
+	//gpioWrite(TP_PIN, HIGH);
 	ADCoutputready = false;
 
 	uint8_t sum = 0;
@@ -177,6 +179,7 @@ void demodulate()
 			}
 		}
 	}
+	//gpioWrite(TP_PIN, LOW);
 }
 
 void updateData(void)

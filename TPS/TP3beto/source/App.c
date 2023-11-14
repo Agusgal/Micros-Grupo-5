@@ -1,6 +1,6 @@
 /***************************************************************************//**
   @file     App.c
-  @brief    Application functions
+  @brief    Application functions (VERSIÓN 2)
   @author   Grupo 5
  ******************************************************************************/
 
@@ -137,6 +137,9 @@ void App_Init (void)
 {
 	PORT_Init();
 	UART_Init ();
+	gpioMode(TP_PIN, OUTPUT);
+	gpioWrite(TP_PIN, LOW);
+
 	inputCaptureDem_init();
 	modulador_init();
 	CMP_init(0);

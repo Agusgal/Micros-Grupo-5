@@ -106,21 +106,21 @@ void PIT0_IRQHandler(void)
 
 void PIT1_IRQHandler(void)
 {
-	gpioWrite(TP_PIN, HIGH);
+	//gpioWrite(TP_PIN, HIGH);
 	callback1();
 
 	PIT_ptr->CHANNEL[1].TFLG = PIT_TFLG_TIF(1);
-	gpioWrite(TP_PIN, LOW);
+	//gpioWrite(TP_PIN, LOW);
 
 }
 
 void PIT2_IRQHandler(void)
 {
-	gpioWrite(TP_PIN, HIGH);
+	//gpioWrite(TP_PIN, HIGH);
 	callback2();
 
 	PIT_ptr->CHANNEL[2].TFLG = PIT_TFLG_TIF(1);
-	gpioWrite(TP_PIN, LOW);
+	//gpioWrite(TP_PIN, LOW);
 }
 
 /*******************************************************************************

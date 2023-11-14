@@ -207,7 +207,7 @@ void UART_SetBaudRate (UART_Type *uart, uint32_t baudrate)
 
 void UART_rx_tx_irq_handler (UART_Type* uart_p, uint8_t id)
 {
-	gpioWrite(TP_PIN, HIGH);
+	//gpioWrite(TP_PIN, HIGH);
 	unsigned char tmp;
 	uint8_t tx_data;
 	tmp = uart_p -> S1;// Dummy read to clear status register
@@ -239,7 +239,7 @@ void UART_rx_tx_irq_handler (UART_Type* uart_p, uint8_t id)
 	{
 		push_Queue_Element(id + TOTAL_UARTS, uart_p ->D); //positions itself in the receiver queue
 	}
-	gpioWrite(TP_PIN, LOW);
+	//gpioWrite(TP_PIN, LOW);
 }
 
 /**

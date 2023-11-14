@@ -131,10 +131,10 @@ void ADC_StartConvertion (void)
 
 void ADC0_IRQHandler(void)
 {
-	gpioWrite(TP_PIN, HIGH);
+	//gpioWrite(TP_PIN, HIGH);
 	ADCdata = ADC0_ptr->R[0];
 	ADCclb();
-	gpioWrite(TP_PIN, LOW);
+	//gpioWrite(TP_PIN, LOW);
 
 }
 
