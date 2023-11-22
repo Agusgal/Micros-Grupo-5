@@ -1,0 +1,4 @@
+../source/FSM/States/encoder_entry.c:27:6:up_number	16	static
+../source/FSM/States/encoder_entry.c:41:6:down_number	16	static
+../source/FSM/States/encoder_entry.c:56:6:accept_number	16	static
+../source/FSM/States/encoder_entry.c:96:6:init_id	8	static

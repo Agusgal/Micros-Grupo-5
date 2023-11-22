@@ -1,0 +1,17 @@
+../source/Drivers/Display.c:54:6:Display_Init	8	static
+../source/Drivers/Display.c:76:6:writeMessage	16	static
+../source/Drivers/Display.c:82:6:pauseMessage	8	static
+../source/Drivers/Display.c:86:6:pauseScroll	8	static
+../source/Drivers/Display.c:90:6:continueScroll	16	static
+../source/Drivers/Display.c:97:6:ScrollRightOnce	8	static
+../source/Drivers/Display.c:101:6:ScrollLeftOnce	8	static
+../source/Drivers/Display.c:105:6:toggleScroll	8	static
+../source/Drivers/Display.c:109:6:muxDisplay	8	static
+../source/Drivers/Display.c:113:6:incBrightness	8	static
+../source/Drivers/Display.c:117:6:decBrightness	8	static
+../source/Drivers/Display.c:121:6:blinkDigit	16	static
+../source/Drivers/Display.c:150:6:writeDigit	24	static
+../source/Drivers/Display.c:189:6:sevenSegmentDecoder	16	static
+../source/Drivers/Display.c:202:6:writeScroll	16	static
+../source/Drivers/Display.c:207:6:updateDisplay	24	static
+../source/Drivers/Display.c:356:8:int2str	32	static

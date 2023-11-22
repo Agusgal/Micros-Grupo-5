@@ -1,0 +1,4 @@
+../source/FSM/FSM.c:162:8:fsm_dispatcher	24	static
+../source/FSM/FSM.c:194:8:get_initial_state	4	static
+../source/FSM/FSM.c:204:6:start_fsm	8	static
+../source/FSM/FSM.c:221:13:pass	4	static

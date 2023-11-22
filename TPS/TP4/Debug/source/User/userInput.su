@@ -1,0 +1,9 @@
+../source/User/userInput.c:17:6:reset_array	32	static
+../source/User/userInput.c:27:6:decrease_number	16	static
+../source/User/userInput.c:47:6:increase_number	16	static
+../source/User/userInput.c:67:6:input_number	32	static
+../source/User/userInput.c:90:6:input_pin_number	32	static
+../source/User/userInput.c:120:6:increase_pin_number	16	static
+../source/User/userInput.c:140:6:decrease_pin_number	16	static
+../source/User/userInput.c:169:5:get_used_entries	24	static
+../source/User/userInput.c:189:13:delete_last_entry	24	static

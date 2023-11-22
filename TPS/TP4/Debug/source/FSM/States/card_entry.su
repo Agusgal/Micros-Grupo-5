@@ -1,0 +1,6 @@
+../source/FSM/States/card_entry.c:27:6:init_cardswipe	8	static
+../source/FSM/States/card_entry.c:54:6:init_failed_cardswipe	8	static
+../source/FSM/States/card_entry.c:59:13:initialize_id_array	16	static
+../source/FSM/States/card_entry.c:67:6:msg_fail_card	8	static
+../source/FSM/States/card_entry.c:73:6:msg_ok_card	8	static
+../source/FSM/States/card_entry.c:78:6:msg_error_card	8	static
