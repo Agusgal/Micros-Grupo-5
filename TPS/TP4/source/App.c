@@ -30,9 +30,6 @@
  ******************************************************************************/
 
 
-//TODO: que hace esto aca?????
-void SysTick_Init(void);
-
 /**
  * @brief captures events generated within the drivers and inside states and fills the eventqueue. Gets called continously.
  * @return nothing.
