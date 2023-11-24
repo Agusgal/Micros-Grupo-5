@@ -83,8 +83,10 @@
 *********************************************************************************************************
 */
 
-#include  <cpu_def.h>
-#include  <cpu_cfg.h>                                           /* See Note #3.                                         */
+#include "../../cpu_def.h"
+#include "../../../../../../ucosiii_config/cpu_cfg.h"
+//#include  <cpu_def.h>
+//#include  <cpu_cfg.h>                                           /* See Note #3.                                         */
 
 #ifdef __cplusplus
 extern  "C" {

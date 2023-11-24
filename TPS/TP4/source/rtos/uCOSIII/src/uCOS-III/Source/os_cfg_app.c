@@ -35,7 +35,8 @@
 */
 
 #define  MICRIUM_SOURCE
-#include <os_cfg_app.h>
+//#include <os_cfg_app.h>
+#include "../../../../../ucosiii_config/os_cfg_app.h"
 #include "os.h"
 
 #ifdef VSC_INCLUDE_SOURCE_FILE_NAMES

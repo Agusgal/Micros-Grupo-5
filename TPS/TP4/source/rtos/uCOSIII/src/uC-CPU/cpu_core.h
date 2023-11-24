@@ -102,9 +102,12 @@
 *********************************************************************************************************
 */
 
-#include  <cpu.h>
-#include  <lib_def.h>
-#include  <cpu_cfg.h>
+#include "ARM-Cortex-M4/GNU/cpu.h"
+#include "../uC-LIB/lib_def.h"
+#include "../../../../ucosiii_config/cpu_cfg.h"
+//#include  <cpu.h>
+//#include  <lib_def.h>
+//#include  <cpu_cfg.h>
 
 #if (CPU_CFG_NAME_EN == DEF_ENABLED)
 #include  <lib_mem.h>

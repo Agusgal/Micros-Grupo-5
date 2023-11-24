@@ -51,12 +51,17 @@
 *                                                 INCLUDE HEADER FILES
 ************************************************************************************************************************
 */
+#include "../../../../../ucosiii_config/os_cfg.h"
+#include "../../uC-CPU/cpu_core.h"
+#include "../../uC-LIB/lib_def.h"
+#include "../../uCOS-III/Ports/ARM-Cortex-M4/Generic/GNU/os_cpu.h"
 
-#include <os_cfg.h>
-#include <cpu_core.h>
-#include <lib_def.h>
-#include <os_type.h>
-#include <os_cpu.h>
+//#include <os_cfg.h>
+//#include <cpu_core.h>
+//#include <lib_def.h>
+
+#include "os_type.h"
+//#include "os_cpu.h"
 #if     (defined(TRACE_CFG_EN) && (TRACE_CFG_EN > 0u))
 #include <trace_os.h>
 #endif

@@ -8,6 +8,19 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include source/rtos/uCOSIII/src/uCOS-III/Source/subdir.mk
+-include source/rtos/uCOSIII/src/uCOS-III/Ports/ARM-Cortex-M4/Generic/RealView/subdir.mk
+-include source/rtos/uCOSIII/src/uCOS-III/Ports/ARM-Cortex-M4/Generic/IAR/subdir.mk
+-include source/rtos/uCOSIII/src/uCOS-III/Ports/ARM-Cortex-M4/Generic/GNU/subdir.mk
+-include source/rtos/uCOSIII/src/uC-LIB/Ports/ARM-Cortex-M4/RealView/subdir.mk
+-include source/rtos/uCOSIII/src/uC-LIB/Ports/ARM-Cortex-M4/IAR/subdir.mk
+-include source/rtos/uCOSIII/src/uC-LIB/Ports/ARM-Cortex-M4/GNU/subdir.mk
+-include source/rtos/uCOSIII/src/uC-LIB/subdir.mk
+-include source/rtos/uCOSIII/src/uC-CPU/ARM-Cortex-M4/RealView/subdir.mk
+-include source/rtos/uCOSIII/src/uC-CPU/ARM-Cortex-M4/IAR/subdir.mk
+-include source/rtos/uCOSIII/src/uC-CPU/ARM-Cortex-M4/GNU/subdir.mk
+-include source/rtos/uCOSIII/src/uC-CPU/subdir.mk
+-include source/rtos/uCOSIII/BSP/subdir.mk
 -include source/User/Debug/source/User/subdir.mk
 -include source/User/Debug/source/FSM/States/subdir.mk
 -include source/User/Debug/source/FSM/subdir.mk

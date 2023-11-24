@@ -30,4 +30,17 @@ source/User/Debug/source/FSM \
 source/User/Debug/source/FSM/States \
 source/User/Debug/source/User \
 source/User \
+source/rtos/uCOSIII/BSP \
+source/rtos/uCOSIII/src/uC-CPU/ARM-Cortex-M4/GNU \
+source/rtos/uCOSIII/src/uC-CPU/ARM-Cortex-M4/IAR \
+source/rtos/uCOSIII/src/uC-CPU/ARM-Cortex-M4/RealView \
+source/rtos/uCOSIII/src/uC-CPU \
+source/rtos/uCOSIII/src/uC-LIB/Ports/ARM-Cortex-M4/GNU \
+source/rtos/uCOSIII/src/uC-LIB/Ports/ARM-Cortex-M4/IAR \
+source/rtos/uCOSIII/src/uC-LIB/Ports/ARM-Cortex-M4/RealView \
+source/rtos/uCOSIII/src/uC-LIB \
+source/rtos/uCOSIII/src/uCOS-III/Ports/ARM-Cortex-M4/Generic/GNU \
+source/rtos/uCOSIII/src/uCOS-III/Ports/ARM-Cortex-M4/Generic/IAR \
+source/rtos/uCOSIII/src/uCOS-III/Ports/ARM-Cortex-M4/Generic/RealView \
+source/rtos/uCOSIII/src/uCOS-III/Source \
 

@@ -129,9 +129,10 @@
 *                   (2) '\<CPU-Compiler Directory>\<cpu>\<compiler>\' directory         See Note #2b
 *********************************************************************************************************
 */
-
-#include  <cpu_def.h>
-#include  <cpu.h>
+#include "../uC-CPU/cpu_def.h"
+#include "../uC-CPU/ARM-Cortex-M4/GNU/cpu.h"
+//#include  <cpu_def.h>
+//#include  <cpu.h>
 
 
 /*
