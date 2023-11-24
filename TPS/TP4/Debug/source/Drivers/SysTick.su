@@ -1,3 +1,2 @@
 ../source/Drivers/SysTick.c:79:6:SysTick_Init	8	static
 ../source/Drivers/SysTick.c:95:6:SysTick_Reg_Callback	32	static
-../source/Drivers/SysTick.c:115:9:SysTick_Handler	24	static
