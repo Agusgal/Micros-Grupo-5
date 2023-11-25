@@ -12,9 +12,18 @@ static OS_TCB TaskStartTCB;
 static CPU_STK TaskStartStk[TASKSTART_STK_SIZE];
 
 /* Encoder Task */
-
+#define TASK2_STK_SIZE			100U
+#define TASK2_STK_SIZE_LIMIT	(TASK2_STK_SIZE / 10u)
+#define TASK2_PRIO              3u
+static OS_TCB encoder2EventTask;
+static CPU_STK Task2Stk[TASK2_STK_SIZE];
 
 /* Card Task */
+#define TASK3_STK_SIZE			100u
+#define TASK3_STK_SIZE_LIMIT	(TASK3_STK_SIZE / 10u)
+#define TASK3_PRIO              3u
+static OS_TCB card2EventTask;
+static CPU_STK Task3Stk[TASK3_STK_SIZE];
 
 
 
@@ -70,6 +79,34 @@ static void TaskStart(void *p_arg)
     App_Init();
 
     /* Create Tasks */
+
+    OSTaskCreate(&encoder2EventTask, 		   //tcb
+                 "Encoder2EventTask",		   //name
+                  encoderTask,			       //func
+                  0u,					       //arg
+                  TASK2_PRIO,			       //prio
+                  &Task2Stk[0u],			   //stack
+                  TASK2_STK_SIZE_LIMIT,	       //stack limit
+                  TASK2_STK_SIZE,		       //stack size
+                  0u,
+                  0u,
+                  0u,
+                  (OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR),
+                  &os_err);
+
+    OSTaskCreate(&card2EventTask, 		       //tcb
+                 "Card2EventTask",		       //name
+                 CardTask,			           //func
+                 0u,					       //arg
+                 TASK3_PRIO,			       //prio
+                 &Task3Stk[0u],			       //stack
+                 TASK3_STK_SIZE_LIMIT,	       //stack limit
+                 TASK3_STK_SIZE,		       //stack size
+                 0u,
+                 0u,
+                 0u,
+                 (OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR),
+                 &os_err);
 
 
     while (1) {
