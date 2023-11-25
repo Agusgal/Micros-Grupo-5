@@ -9,13 +9,14 @@
  ******************************************************************************/
 #include "gpio.h"
 #include <stdio.h>
+#include <os.h>
 #include "board.h"
 #include "Encoder.h"
-#include "Systick.h"
+#include "Timers.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-
+#define S_TO_US		1000000
 #define IDLE 0
 #define ENCODER_CALLBACK_PERIOD 20000
 #define FIVE_SECOND_COUNTER 5 * S_TO_US / ENCODER_CALLBACK_PERIOD
@@ -24,6 +25,14 @@
  ******************************************************************************/
 static int encoder = NO_MOVE;
 static int encoder_sw = IDLE_;
+
+//Def del timer
+static tim_id_t encoder_update_timer;
+static tim_id_t encoder_switch_timer;
+
+//Semáforo del encoder
+static OS_SEM semEncoder;
+
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -33,13 +42,33 @@ static int encoder_sw = IDLE_;
 
 void Encoder_Init(void)
 {
+	initTimers();
+	encoder_update_timer = timerGetId();
+	encoder_switch_timer = timerGetId();
+
 	gpioMode(PIN_CH_A,INPUT);
 	gpioMode(PIN_CH_B,INPUT);
 	gpioMode(PIN_DEC_SW,INPUT);
 
-	SysTick_Reg_Callback(Encoder_Update, 5000);
-	SysTick_Reg_Callback(EncoderSwitch_Update, 20000);
+	//Seteo el timer para que llame periodicamente a encoder_callback con 1ms
+	timerStart(encoder_update_timer, TIMER_MS2TICKS(5), TIM_MODE_PERIODIC, Encoder_Update);
+	timerStart(encoder_switch_timer, TIMER_MS2TICKS(20), TIM_MODE_PERIODIC, EncoderSwitch_Update);
+
+
+	//Create semaphore
+	OS_ERR os_err;
+	OSSemCreate(&semEncoder, "Sem Encoder", 0u, &os_err);
+
+
+	//SysTick_Reg_Callback(Encoder_Update, 5000);
+	//SysTick_Reg_Callback(EncoderSwitch_Update, 20000);
 }
+
+OS_SEM* encoderSemPointer()
+{
+	return &semEncoder;
+}
+
 
 void Encoder_Update(void)
 {

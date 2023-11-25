@@ -9,7 +9,7 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
-#include "SysTick.h"
+#include "Timers.h"
 #include "gpio.h"
 #include "CardReader_DRV.h"
 #include "hardware.h"
@@ -69,6 +69,10 @@ static uint8_t aux [32];
 static uint8_t aux_counter = 0;
 #endif
 
+
+//Def del timer
+static tim_id_t card_reader_timer;
+
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
 *******************************************************************************/
@@ -86,6 +90,9 @@ static void cardReader_PISR(void);
  */
 void cardReader_Init(void)
 {
+	initTimers();
+	card_reader_timer = timerGetId();
+
 	// Clock pin
 	gpioMode(PORTNUM2PIN(PORT_CLOCK, PIN_CLOCK), INPUT);
 	gpioIRQ_Config(PORTNUM2PIN(PORT_CLOCK, PIN_CLOCK), PORT_eInterruptFalling);
@@ -96,7 +103,9 @@ void cardReader_Init(void)
 	// Enable pin
 	gpioMode(PORTNUM2PIN(PORT_ENABLE, PIN_ENABLE), INPUT);
 
-	SysTick_Reg_Callback(cardReader_PISR, TIME_CONSTANT);
+
+	timerStart(card_reader_timer, TIMER_MS2TICKS(100), TIM_MODE_PERIODIC, cardReader_PISR);
+	//SysTick_Reg_Callback(cardReader_PISR, TIME_CONSTANT);
 
 	//Test Pin
 	gpioMode(PORTNUM2PIN(TEST_PORT_1, TEST_PIN_1), OUTPUT);

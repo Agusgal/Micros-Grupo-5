@@ -11,7 +11,7 @@
 #include "gpio.h"
 #include "board.h"
 #include <string.h>
-#include "Systick.h"
+#include "Timers.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -45,6 +45,9 @@ const unsigned char sevseg_digits_code[75]= {
 
 void sevenSegmentDecoder (uint8_t code);
 
+//Def del timer
+static tim_id_t display_timer;
+
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -53,6 +56,9 @@ void sevenSegmentDecoder (uint8_t code);
 
 void Display_Init(void)
 {
+	initTimers();
+	display_timer = timerGetId();
+
 	gpioMode(PIN_SEG_A,OUTPUT);
 	gpioMode(PIN_SEG_B,OUTPUT);
 	gpioMode(PIN_SEG_C,OUTPUT);
@@ -69,7 +75,9 @@ void Display_Init(void)
 	writeDigit(-1,1);
 	writeDigit(-1,2);
 	writeDigit(-1,3);
-	SysTick_Reg_Callback(muxDisplay,700);
+
+	timerStart(display_timer, TIMER_MS2TICKS(1), TIM_MODE_PERIODIC, muxDisplay);
+	//SysTick_Reg_Callback(muxDisplay,700);
 
 }
 

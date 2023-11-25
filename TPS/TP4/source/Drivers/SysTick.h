@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     SysTick.h
   @brief    SysTick driver
-  @author   Nicol�s Magliola
+  @author   Grupo 5
  ******************************************************************************/
 
 #ifndef _SYSTICK_H_
@@ -12,16 +12,14 @@
  ******************************************************************************/
 
 #include <stdbool.h>
-#include <stdint.h>
 
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define TOTAL_NUM_CALLBACK_FUNCTIONS	15	// Total number of callback functions
-#define SYSTICK_ISR_PERIOD_US 500U		// Period of SysTick in microseconds
-#define S_TO_US		1000000
-#define MS_TO_US	1000
+
+#define SYSTICK_ISR_FREQUENCY_HZ 1000U
+
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -36,18 +34,12 @@
 
 /**
  * @brief Initialize SysTic driver
- * @return Initialization and registration succeed
- */
-void SysTick_Init ();
-
-/**
- * @brief Initialize SysTic driver
  * @param funcallback Function to be call every SysTick
- * @param period Period in which the function will be called in microseconds (us)
  * @return Initialization and registration succeed
  */
-bool SysTick_Reg_Callback (void (*funCallback)(void), uint32_t period);
+bool SysTick_Init (void (*funcallback)(void));
 
+void App_OS_TimeTickHook(void);
 
 /*******************************************************************************
  ******************************************************************************/

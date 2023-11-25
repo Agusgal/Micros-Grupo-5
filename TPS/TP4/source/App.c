@@ -10,6 +10,7 @@
 
 #include "MK64F12.h"
 #include "hardware.h"
+#include <os.h>
 
 #include "Drivers/Display.h"
 #include "Drivers/Encoder.h"

@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include "board.h"
 #include "Encoder.h"
-#include "Systick.h"
+#include "Timers.h"
 #include "BoardLeds.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -22,7 +22,7 @@
 
 #define IDLE 0
 #define RISING_FLANK 2
-
+#define SYSTICK_ISR_PERIOD_US 500U
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -37,6 +37,10 @@ static bool red_turned_off = false;
 static void green_led_timer_pisr(void);
 static void red_led_timer_pisr(void);
 
+//Def del timer
+static tim_id_t green_led_timer;
+static tim_id_t red_led_timer;
+
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -46,6 +50,10 @@ static void red_led_timer_pisr(void);
 
 void BoardLeds_Init(void)
 {
+	initTimers();
+	green_led_timer = timerGetId();
+	red_led_timer = timerGetId();
+
 	gpioMode(PIN_ST_0,OUTPUT);
 	gpioMode(PIN_ST_1,OUTPUT);
 
@@ -61,9 +69,9 @@ void BoardLeds_Init(void)
 	gpioWrite(PIN_LED_GREEN,1);
 	gpioWrite(PIN_LED_BLUE,1);
 
-	SysTick_Reg_Callback(green_led_timer_pisr, SYSTICK_ISR_PERIOD_US);
-	SysTick_Reg_Callback(red_led_timer_pisr, SYSTICK_ISR_PERIOD_US);
 
+	timerStart(green_led_timer, TIMER_MS2TICKS(1), TIM_MODE_PERIODIC, green_led_timer_pisr);
+	timerStart(red_led_timer, TIMER_MS2TICKS(1), TIM_MODE_PERIODIC, red_led_timer_pisr);
 }
 
 void led1On()

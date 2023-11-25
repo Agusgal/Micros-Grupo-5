@@ -11,51 +11,47 @@
 static OS_TCB TaskStartTCB;
 static CPU_STK TaskStartStk[TASKSTART_STK_SIZE];
 
-/* Encoder Task */
-#define TASK2_STK_SIZE			100U
+/* Task 2 */
+#define TASK2_STK_SIZE			256u
 #define TASK2_STK_SIZE_LIMIT	(TASK2_STK_SIZE / 10u)
 #define TASK2_PRIO              3u
-static OS_TCB encoder2EventTask;
+static OS_TCB Task2TCB;
 static CPU_STK Task2Stk[TASK2_STK_SIZE];
 
-/* Card Task */
-#define TASK3_STK_SIZE			100u
+/* Task 3 */
+#define TASK3_STK_SIZE			256u
 #define TASK3_STK_SIZE_LIMIT	(TASK3_STK_SIZE / 10u)
 #define TASK3_PRIO              3u
-static OS_TCB card2EventTask;
+static OS_TCB Task3TCB;
 static CPU_STK Task3Stk[TASK3_STK_SIZE];
 
+static OS_Q floorMsgQueue;
 
 
 void App_Init (void);
 void App_Run (void);
 
+void Transmission_Init (OS_Q*);
+void Transmission_Run (void);
+void KeepAlive_Run (void);
 
-static void encoderTask(void *p_arg)
-{
-	(void)p_arg;
-	OS_ERR os_err;
 
-    OS_MSG_SIZE size;
+static void TaskTransmission(void *p_arg) {
+    (void)p_arg;
+
     while(1)
     {
-		//Encoder things...
+    	//Transmission_Run();
     }
-
 }
 
-static void CardTask(void *p_arg)
-{
-	(void)p_arg;
-	OS_ERR os_err;
-
-    OS_MSG_SIZE size;
+static void TaskKeepAlive(void *p_arg) {
+    (void)p_arg;
 
     while(1)
     {
-		//CaardReader things...
-	}
-
+    	//KeepAlive_Run();
+    }
 }
 
 
@@ -76,40 +72,42 @@ static void TaskStart(void *p_arg)
     CPU_IntDisMeasMaxCurReset();
 #endif
 
-    App_Init();
+    	/* Create message queue */
+        OSQCreate(&floorMsgQueue, "Floor Msg Queue", 32, &os_err);
 
-    /* Create Tasks */
+        /* Create Task2 */
+    	OSTaskCreate(&Task2TCB, 			//tcb
+    				 "Task Transmission",	//name
+    				 TaskTransmission,		//func
+    				  0u,					//arg
+    				  TASK2_PRIO,			//prio
+    				 &Task2Stk[0u],			//stack
+    				  TASK2_STK_SIZE_LIMIT,	//stack limit
+    				  TASK2_STK_SIZE,		//stack size
+    				  0u,
+    				  0u,
+    				  0u,
+    				 (OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR),
+    				 &os_err);
 
-    OSTaskCreate(&encoder2EventTask, 		   //tcb
-                 "Encoder2EventTask",		   //name
-                  encoderTask,			       //func
-                  0u,					       //arg
-                  TASK2_PRIO,			       //prio
-                  &Task2Stk[0u],			   //stack
-                  TASK2_STK_SIZE_LIMIT,	       //stack limit
-                  TASK2_STK_SIZE,		       //stack size
-                  0u,
-                  0u,
-                  0u,
-                  (OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR),
-                  &os_err);
-
-    OSTaskCreate(&card2EventTask, 		       //tcb
-                 "Card2EventTask",		       //name
-                 CardTask,			           //func
-                 0u,					       //arg
-                 TASK3_PRIO,			       //prio
-                 &Task3Stk[0u],			       //stack
-                 TASK3_STK_SIZE_LIMIT,	       //stack limit
-                 TASK3_STK_SIZE,		       //stack size
-                 0u,
-                 0u,
-                 0u,
-                 (OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR),
-                 &os_err);
+    	/* Create Task3 */
+    	OSTaskCreate(&Task3TCB, 			//tcb
+    				 "Task KeepAlive",		//name
+    				 TaskKeepAlive,			//func
+    				  0u,					//arg
+    				  TASK3_PRIO,			//prio
+    				 &Task3Stk[0u],			//stack
+    				  TASK3_STK_SIZE_LIMIT,	//stack limit
+    				  TASK3_STK_SIZE,		//stack size
+    				  0u,
+    				  0u,
+    				  0u,
+    				 (OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR),
+    				 &os_err);
 
 
-    while (1) {
+    while(1)
+    {
         App_Run();
     }
 }
@@ -125,6 +123,12 @@ int main(void)
     hw_Init();
 
     OSInit(&err);
+
+    hw_DisableInterrupts();
+	App_Init();
+	//Transmission_Init(&floorMsgQueue);
+	hw_EnableInterrupts();
+
  #if OS_CFG_SCHED_ROUND_ROBIN_EN > 0u
 	 /* Enable task round robin. */
 	 OSSchedRoundRobinCfg((CPU_BOOLEAN)1, 0, &err);
@@ -132,7 +136,7 @@ int main(void)
     OS_CPU_SysTickInit(SystemCoreClock / (uint32_t)OSCfg_TickRate_Hz);
 
    OSTaskCreate(&TaskStartTCB,
-                "App Task Start",
+                "Main App Task",
                  TaskStart,
                  0u,
                 TASKSTART_PRIO,

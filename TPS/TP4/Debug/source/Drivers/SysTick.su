@@ -1,2 +1,2 @@
-../source/Drivers/SysTick.c:79:6:SysTick_Init	8	static
-../source/Drivers/SysTick.c:95:6:SysTick_Reg_Callback	32	static
+../source/Drivers/SysTick.c:70:6:SysTick_Init	16	static
+../source/Drivers/SysTick.c:91:6:App_OS_TimeTickHook	8	static
