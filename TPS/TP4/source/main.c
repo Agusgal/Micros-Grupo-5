@@ -24,11 +24,28 @@ void App_Run (void);
 
 static void encoderTask(void *p_arg)
 {
+	(void)p_arg;
+	OS_ERR os_err;
+
+    OS_MSG_SIZE size;
+    while(1)
+    {
+		//Encoder things...
+    }
 
 }
 
 static void CardTask(void *p_arg)
 {
+	(void)p_arg;
+	OS_ERR os_err;
+
+    OS_MSG_SIZE size;
+
+    while(1)
+    {
+		//CaardReader things...
+	}
 
 }
 
