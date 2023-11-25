@@ -40,9 +40,10 @@ void fill_queue(void);
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
-//TODO: habra una mejor manera de manejar esto?
 //this variable saves the current state of the FSM
 static state *current_state;
+
+static OS_PEND_DATA event_pend_tbl[2];
 
 
 /*******************************************************************************
@@ -84,6 +85,10 @@ void App_Init (void)
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
+	OS_ERR os_err;
+	OSPendMulti(&event_pend_tbl[0], 2, 0, OS_OPT_PEND_BLOCKING, &os_err);
+
+
 	fill_queue();
 
 	Event_Type event = pull_Queue_Element();

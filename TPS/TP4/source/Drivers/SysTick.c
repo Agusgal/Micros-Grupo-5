@@ -112,6 +112,7 @@ bool SysTick_Reg_Callback (void (*funCallback)(void), uint32_t period)
                         LOCAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
+
 /*
 __ISR__ SysTick_Handler(void)
 {

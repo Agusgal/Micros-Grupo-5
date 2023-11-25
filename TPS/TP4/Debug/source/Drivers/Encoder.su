@@ -1,5 +1,5 @@
 ../source/Drivers/Encoder.c:34:6:Encoder_Init	8	static
-../source/Drivers/Encoder.c:43:6:Encoder_Update	16	static
-../source/Drivers/Encoder.c:123:6:EncoderSwitch_Update	16	static
-../source/Drivers/Encoder.c:158:5:getEncoderSwitch_State	16	static
-../source/Drivers/Encoder.c:165:5:getEncoder_State	16	static
+../source/Drivers/Encoder.c:44:6:Encoder_Update	16	static
+../source/Drivers/Encoder.c:124:6:EncoderSwitch_Update	16	static
+../source/Drivers/Encoder.c:159:5:getEncoderSwitch_State	16	static
+../source/Drivers/Encoder.c:166:5:getEncoder_State	16	static

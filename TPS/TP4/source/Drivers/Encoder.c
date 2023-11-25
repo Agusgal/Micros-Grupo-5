@@ -22,8 +22,8 @@
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
-static int encoder=NO_MOVE;
-static int encoder_sw=IDLE_;
+static int encoder = NO_MOVE;
+static int encoder_sw = IDLE_;
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -36,16 +36,17 @@ void Encoder_Init(void)
 	gpioMode(PIN_CH_A,INPUT);
 	gpioMode(PIN_CH_B,INPUT);
 	gpioMode(PIN_DEC_SW,INPUT);
-	SysTick_Reg_Callback(Encoder_Update,5000);
-	SysTick_Reg_Callback(EncoderSwitch_Update,20000);
+
+	SysTick_Reg_Callback(Encoder_Update, 5000);
+	SysTick_Reg_Callback(EncoderSwitch_Update, 20000);
 }
 
 void Encoder_Update(void)
 {
 
-	static int state=IDLE;
-	bool CH_A=gpioRead(PIN_CH_A);
-	bool CH_B=gpioRead(PIN_CH_B);
+	static int state = IDLE;
+	bool CH_A = gpioRead(PIN_CH_A);
+	bool CH_B = gpioRead(PIN_CH_B);
 	encoder= IDLE;
 	/*****************************************/
 	// Máquina de Estados
@@ -124,7 +125,7 @@ void EncoderSwitch_Update(void)
 {
 	static int sw_state = LOW;
 	static int duration_counter=0;
-	bool sw_Read=gpioRead(PIN_DEC_SW);
+	bool sw_Read = gpioRead(PIN_DEC_SW);
 	if ((sw_state==LOW) && (sw_Read == LOW))
 	{
 		sw_state = HIGH;
