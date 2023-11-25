@@ -73,7 +73,7 @@ void App_Init (void)
 	//Init fsm
 	current_state = get_initial_state();
 	start_fsm();
-
+	//Todo: borrar systick init
     hw_DisableInterrupts();
     SysTick_Init();
     hw_EnableInterrupts();

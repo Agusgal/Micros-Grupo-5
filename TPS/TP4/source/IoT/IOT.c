@@ -103,9 +103,10 @@ static uint16_t floors[FLOOR_COUNT];
 /**
  * @brief Initialize IOT functionality
 */
-void IOTInit () {
+void IoT_Init()
+{
 
-	uart_cfg_t uartConfig = {.MSBF = false, .baudrate = UART_BAUDRATE, .parity = NO_PARITY};
+	//uart_cfg_t uartConfig = {.MSBF = false, .baudrate = UART_BAUDRATE, .parity = NO_PARITY};
 
 	gpioMode(KEEPALIVE_LED, OUTPUT);
 	gpioWrite(KEEPALIVE_LED, HIGH);
@@ -113,7 +114,7 @@ void IOTInit () {
 	OSSemCreate(&floorSem, "Floor Sem", 0U, &os_err);
 	OSMutexCreate(&uartMutex, "UART Mutex", &os_err);
 
-	uartOSInit(UART_ID, uartConfig);
+	//uartOSInit(UART_ID, uartConfig);
 
 	// keep Alive task
     OSTaskCreate(&keepAliveT, 		//tcb
@@ -151,7 +152,8 @@ void IOTInit () {
  * @brief Update floor state
  * @param f_i: Number of people in the i-th floor
 */
-void IOTUpdate(uint16_t f1, uint16_t f2, uint16_t f3) {
+void IoT_Update(uint16_t f1, uint16_t f2, uint16_t f3)
+{
 	floors[0] = f1;
 	floors[1] = f2;
 	floors[2] = f3;
@@ -165,7 +167,8 @@ void IOTUpdate(uint16_t f1, uint16_t f2, uint16_t f3) {
  *******************************************************************************
  ******************************************************************************/
 
-static void IOTThread() {
+static void IOTThread()
+{
 
 	char msg[2 + 2*FLOOR_COUNT] = {0x07, 0x01};
 
@@ -200,7 +203,8 @@ static void IOTThread() {
 
 
 
-static void keepAliveTask() {
+static void keepAliveTask()
+{
 
 	while (1) {
 
@@ -234,7 +238,8 @@ static void keepAliveTask() {
 }
 
 
-static MSG_TYPE readMsg() {
+static MSG_TYPE readMsg()
+{
 
 	// Wait response
 	do {
@@ -278,7 +283,8 @@ static MSG_TYPE readMsg() {
 }
 
 
-static void toLittleEndian(uint16_t num, uint8_t little[2]) {
+static void toLittleEndian(uint16_t num, uint8_t little[2])
+{
 	little[0] = (uint8_t)num;
 	little[1] = (uint8_t)(num >> 8);
 }

@@ -21,6 +21,7 @@ source/Drivers \
 source/EventQueue \
 source/FSM \
 source/FSM/States \
+source/IoT \
 source/User/Debug/SDK/CMSIS \
 source/User/Debug/SDK/startup \
 source/User/Debug/source \
