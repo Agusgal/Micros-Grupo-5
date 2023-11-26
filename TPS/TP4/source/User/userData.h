@@ -18,6 +18,9 @@ bool check_encoder_id(char *id);
 bool check_card_id (uint8_t *id);
 bool check_pin(char *pin);
 
+int getSelectedUSer(void);
+
+int getFloor(int user);
 
 void init_data_base(void);
 
@@ -25,6 +28,7 @@ typedef struct User
 {
 	char *id;
 	char *pin;
+	int floor;
 	uint8_t card_id[19];
 }User;
 

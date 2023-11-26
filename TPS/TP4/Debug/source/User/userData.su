@@ -1,3 +1,5 @@
-../source/User/userData.c:20:6:check_encoder_id	24	static
-../source/User/userData.c:35:6:check_card_id	32	static
-../source/User/userData.c:63:6:check_pin	16	static
+../source/User/userData.c:23:6:check_encoder_id	24	static
+../source/User/userData.c:38:6:check_card_id	32	static
+../source/User/userData.c:66:6:check_pin	16	static
+../source/User/userData.c:83:5:getSelectedUSer	4	static
+../source/User/userData.c:88:5:getFloor	16	static

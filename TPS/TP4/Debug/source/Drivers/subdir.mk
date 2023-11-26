@@ -6,8 +6,10 @@
 C_SRCS += \
 ../source/Drivers/BoardLeds.c \
 ../source/Drivers/CardReader_DRV.c \
+../source/Drivers/DataTransmissionDRV.c \
 ../source/Drivers/Display.c \
 ../source/Drivers/Encoder.c \
+../source/Drivers/PDRV_UART.c \
 ../source/Drivers/SysTick.c \
 ../source/Drivers/Timers.c \
 ../source/Drivers/gpio.c 
@@ -15,8 +17,10 @@ C_SRCS += \
 C_DEPS += \
 ./source/Drivers/BoardLeds.d \
 ./source/Drivers/CardReader_DRV.d \
+./source/Drivers/DataTransmissionDRV.d \
 ./source/Drivers/Display.d \
 ./source/Drivers/Encoder.d \
+./source/Drivers/PDRV_UART.d \
 ./source/Drivers/SysTick.d \
 ./source/Drivers/Timers.d \
 ./source/Drivers/gpio.d 
@@ -24,8 +28,10 @@ C_DEPS += \
 OBJS += \
 ./source/Drivers/BoardLeds.o \
 ./source/Drivers/CardReader_DRV.o \
+./source/Drivers/DataTransmissionDRV.o \
 ./source/Drivers/Display.o \
 ./source/Drivers/Encoder.o \
+./source/Drivers/PDRV_UART.o \
 ./source/Drivers/SysTick.o \
 ./source/Drivers/Timers.o \
 ./source/Drivers/gpio.o 
@@ -43,7 +49,7 @@ source/Drivers/%.o: ../source/Drivers/%.c source/Drivers/subdir.mk
 clean: clean-source-2f-Drivers
 
 clean-source-2f-Drivers:
-	-$(RM) ./source/Drivers/BoardLeds.d ./source/Drivers/BoardLeds.o ./source/Drivers/CardReader_DRV.d ./source/Drivers/CardReader_DRV.o ./source/Drivers/Display.d ./source/Drivers/Display.o ./source/Drivers/Encoder.d ./source/Drivers/Encoder.o ./source/Drivers/SysTick.d ./source/Drivers/SysTick.o ./source/Drivers/Timers.d ./source/Drivers/Timers.o ./source/Drivers/gpio.d ./source/Drivers/gpio.o
+	-$(RM) ./source/Drivers/BoardLeds.d ./source/Drivers/BoardLeds.o ./source/Drivers/CardReader_DRV.d ./source/Drivers/CardReader_DRV.o ./source/Drivers/DataTransmissionDRV.d ./source/Drivers/DataTransmissionDRV.o ./source/Drivers/Display.d ./source/Drivers/Display.o ./source/Drivers/Encoder.d ./source/Drivers/Encoder.o ./source/Drivers/PDRV_UART.d ./source/Drivers/PDRV_UART.o ./source/Drivers/SysTick.d ./source/Drivers/SysTick.o ./source/Drivers/Timers.d ./source/Drivers/Timers.o ./source/Drivers/gpio.d ./source/Drivers/gpio.o
 
 .PHONY: clean-source-2f-Drivers
 

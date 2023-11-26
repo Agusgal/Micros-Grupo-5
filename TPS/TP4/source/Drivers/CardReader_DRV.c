@@ -335,8 +335,6 @@ __ISR__ PORTB_IRQHandler(void)
  */
 static void cardReader_PISR(void)
 {
-	//OS_ERR os_err;
-	//OSSemPost(&semReader, OS_OPT_POST_1, &os_err);
 	// Mistake counter
 	if(counter && counter_enable)
 	{

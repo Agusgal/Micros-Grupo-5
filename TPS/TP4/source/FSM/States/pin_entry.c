@@ -4,6 +4,7 @@
  *  Created on: 30 ago. 2023
  *      Author: Agustin Galdeman
  */
+#include <os.h>
 
 #include "encoder_entry.h"
 
@@ -19,6 +20,8 @@
 
 #include "pin_entry.h"
 
+#include "../FloorManagement/Floor.h"
+
 #define PIN_SIZE 6
 
 //Variables to keep track of user PIN input
@@ -26,6 +29,9 @@ static int8_t pin[PIN_SIZE];
 static uint8_t curr_pos = 0;
 
 static int strike3 = 0;
+
+
+static OS_Q* floorMsgQPointer;
 
 static void write_hidden(void);
 
@@ -124,6 +130,7 @@ void msg_pin_3_times(void)
 void msg_ok_pin(void)
 {
 	writeMessage("Pin ok", true);
+	update_floor_information();
 	led_green_on_time(5000000U);
 }
 
@@ -164,5 +171,26 @@ static void write_hidden()
 	}
 
 	writeMessage(pin_copy, false);
+}
+
+void update_floor_information()
+{
+	int floor = getFloor(getSelectedUSer());
+
+	/*
+	if(dbToggleInsideBuilding(u))
+	{
+		floor_occupancy[u->office_floor] += 1;
+	}
+	else
+	{
+		floor_occupancy[u->office_floor] -= 1;
+	}
+	*/
+
+	floor_occupancy[floor] += 1;
+
+    OS_ERR os_err;
+	OSQPost(floorMsgQPointer, (void*)(&floor_occupancy), sizeof(void*), OS_OPT_POST_FIFO, &os_err);
 }
 

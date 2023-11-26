@@ -17,5 +17,8 @@ void msg_ok_encoder(void);
 
 void init_pin(void);
 
+void update_floor_information();
+
+
 #endif /* PIN_ENTRY_H_ */
 

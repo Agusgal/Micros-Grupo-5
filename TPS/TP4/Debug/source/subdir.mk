@@ -5,14 +5,17 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../source/App.c \
+../source/DataTransmission.c \
 ../source/main.c 
 
 C_DEPS += \
 ./source/App.d \
+./source/DataTransmission.d \
 ./source/main.d 
 
 OBJS += \
 ./source/App.o \
+./source/DataTransmission.o \
 ./source/main.o 
 
 
@@ -28,7 +31,7 @@ source/%.o: ../source/%.c source/subdir.mk
 clean: clean-source
 
 clean-source:
-	-$(RM) ./source/App.d ./source/App.o ./source/main.d ./source/main.o
+	-$(RM) ./source/App.d ./source/App.o ./source/DataTransmission.d ./source/DataTransmission.o ./source/main.d ./source/main.o
 
 .PHONY: clean-source
 

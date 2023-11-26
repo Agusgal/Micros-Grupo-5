@@ -27,7 +27,6 @@ static OS_Q floorMsgQueue;
 static OS_TCB Task3TCB;
 static CPU_STK Task3Stk[TASK3_STK_SIZE];
 
-static OS_Q floorMsgQueue;
 
 
 void App_Init (OS_Q* msgq);
@@ -43,7 +42,7 @@ static void TaskTransmission(void *p_arg) {
 
     while(1)
     {
-    	//Transmission_Run();
+    	Transmission_Run();
     }
 }
 

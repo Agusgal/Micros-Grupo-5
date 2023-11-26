@@ -22,7 +22,6 @@ RM := rm -rf
 -include source/User/Debug/SDK/startup/subdir.mk
 -include source/User/Debug/SDK/CMSIS/subdir.mk
 -include source/User/subdir.mk
--include source/IoT/subdir.mk
 -include source/FSM/States/subdir.mk
 -include source/FSM/subdir.mk
 -include source/EventQueue/subdir.mk
