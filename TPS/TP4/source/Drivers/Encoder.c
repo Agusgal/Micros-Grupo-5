@@ -51,8 +51,8 @@ void Encoder_Init(void)
 	gpioMode(PIN_DEC_SW,INPUT);
 
 	//Seteo el timer para que llame periodicamente a encoder_callback con 1ms
-	timerStart(encoder_update_timer, TIMER_MS2TICKS(5), TIM_MODE_PERIODIC, Encoder_Update);
-	timerStart(encoder_switch_timer, TIMER_MS2TICKS(20), TIM_MODE_PERIODIC, EncoderSwitch_Update);
+	timerStart(encoder_update_timer, TIMER_MS2TICKS(5), TIM_MODE_PERIODIC, Encoder_Update);           //5
+	timerStart(encoder_switch_timer, TIMER_MS2TICKS(20), TIM_MODE_PERIODIC, EncoderSwitch_Update);    //20
 
 
 	//Create semaphore

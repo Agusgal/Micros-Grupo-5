@@ -155,15 +155,19 @@ void timerDelay(ttick_t ticks)
 static void timer_isr(void)
 {
     // decremento los timers activos
-	for(tim_id_t id = 0; id < TIMERS_MAX_CANT; id++){
+	for(tim_id_t id = 0; id < TIMERS_MAX_CANT; id++)
+	{
 
 		// si hubo timeout!
-		if(timers[id].running){
-			if(--timers[id].cnt == 0){
+		if(timers[id].running)
+		{
+			if(--timers[id].cnt == 0)
+			{
 				// 1) execute action: callback or set flag
 				timers[id].expired = true;
 
-				if(timers[id].callback != NULL) {
+				if(timers[id].callback != NULL)
+				{
 					(*timers[id].callback)();
 				}
 

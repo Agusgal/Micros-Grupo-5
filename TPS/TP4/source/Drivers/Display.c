@@ -76,7 +76,7 @@ void Display_Init(void)
 	writeDigit(-1,2);
 	writeDigit(-1,3);
 
-	timerStart(display_timer, TIMER_MS2TICKS(1), TIM_MODE_PERIODIC, muxDisplay);
+	timerStart(display_timer, 1, TIM_MODE_PERIODIC, muxDisplay);
 	//SysTick_Reg_Callback(muxDisplay,700);
 
 }
@@ -91,10 +91,12 @@ void pauseMessage()
 {
 	updateDisplay("");
 }
+
 void pauseScroll()
 {
 	updateDisplay("PAUSE_SCR");
 }
+
 void continueScroll(char scroll)
 {
 	if ((scroll=='R') | (scroll=='r') )
@@ -102,30 +104,37 @@ void continueScroll(char scroll)
 	if ((scroll=='L') | (scroll=='l') )
 		updateDisplay("CONT_SCR_l");
 }
+
 void ScrollRightOnce()
 {
 	updateDisplay("SCR_R");
 }
+
 void ScrollLeftOnce()
 {
 	updateDisplay("SCR_L");
 }
+
 void toggleScroll()
 {
 	updateDisplay("TOGGLE_SCR");
 }
+
 void muxDisplay()
 {
 	updateDisplay("MUX");
 }
+
 void incBrightness()
 {
 	updateDisplay("+B");
 }
+
 void decBrightness()
 {
 	updateDisplay("-B");
 }
+
 void blinkDigit(uint8_t digit)
 {
 	switch (digit)
