@@ -119,7 +119,7 @@ void Transmission_Run (void)
 	while(send_data_ok == false)
 	{
 		current_transmission = SEND_DATA;
-		sendData(((uint16_t*)p_msg)[0], ((uint16_t*)p_msg)[1], ((uint16_t*)p_msg)[2]);
+		sendData(((int*)p_msg)[0], ((int*)p_msg)[1], ((int*)p_msg)[2]);
 		timerStart(sd_timeout_tim_id, SEND_DATA_TIMEOUT_TICKS, TIM_MODE_SINGLESHOT, sd_timeout_callback);
 		OSSemPend(&semSendDataResponse, 0, OS_OPT_PEND_BLOCKING, NULL, &os_err);
 	}

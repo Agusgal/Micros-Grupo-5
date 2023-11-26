@@ -1,6 +1,8 @@
 #ifndef PIN_ENTRY_H_
 #define PIN_ENTRY_H_
 
+#include <os.h>
+
 void pin_accept_number(void);
 void pin_down_number(void);
 void pin_up_number(void);
@@ -18,6 +20,8 @@ void msg_ok_encoder(void);
 void init_pin(void);
 
 void update_floor_information();
+
+void assignQueuePointer(OS_Q* msgq);
 
 
 #endif /* PIN_ENTRY_H_ */

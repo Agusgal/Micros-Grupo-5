@@ -37,7 +37,8 @@ void Transmission_Run (void);
 void KeepAlive_Run (void);
 
 
-static void TaskTransmission(void *p_arg) {
+static void TaskTransmission(void *p_arg)
+{
     (void)p_arg;
 
     while(1)
@@ -127,7 +128,7 @@ int main(void)
 
     hw_DisableInterrupts();
     App_Init(&floorMsgQueue);
-    //Transmission_Init(&floorMsgQueue);
+    Transmission_Init(&floorMsgQueue);
 	hw_EnableInterrupts();
 
  #if OS_CFG_SCHED_ROUND_ROBIN_EN > 0u

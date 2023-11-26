@@ -19,6 +19,8 @@
 #include "Drivers/BoardLeds.h"
 #include "Drivers/CardReader_DRV.h"
 
+#include "FSM/States/pin_entry.h"
+
 #include "EventQueue/queue.h"
 #include "FSM/FSM.h"
 
@@ -45,6 +47,8 @@ void fill_queue(void);
 static state *current_state;
 
 static OS_PEND_DATA event_pend_tbl[2];
+
+
 
 
 /*******************************************************************************
@@ -78,6 +82,9 @@ void App_Init (OS_Q* msgq)
 
 	event_pend_tbl[0].PendObjPtr = (OS_PEND_OBJ*) encoderSemPointer();
 	event_pend_tbl[1].PendObjPtr = (OS_PEND_OBJ*) readerSemPointer();
+
+	assignQueuePointer(msgq);
+	//floorMsgQPointer = msgq;
 }
 
 

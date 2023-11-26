@@ -24,11 +24,18 @@ int getFloor(int user);
 
 void init_data_base(void);
 
+bool isInside(int user);
+
+void enterBuilding(int user);
+
+void exitBuilding(int user);
+
 typedef struct User
 {
 	char *id;
 	char *pin;
 	int floor;
+	bool inBuilding;
 	uint8_t card_id[19];
 }User;
 

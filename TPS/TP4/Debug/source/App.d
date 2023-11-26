@@ -17,8 +17,8 @@ source/App.o source/App.d: ../source/App.c ../SDK/CMSIS/MK64F12.h \
  ../source/Drivers/board.h ../source/Drivers/gpio.h \
  ../source/Drivers/gpio.h ../source/Drivers/BoardLeds.h \
  ../source/Drivers/board.h ../source/Drivers/CardReader_DRV.h \
- ../source/EventQueue/queue.h ../source/FSM/FSM.h \
- ../source/FSM/../EventQueue/queue.h
+ ../source/FSM/States/pin_entry.h ../source/EventQueue/queue.h \
+ ../source/FSM/FSM.h ../source/FSM/../EventQueue/queue.h
 ../SDK/CMSIS/MK64F12.h:
 ../SDK/CMSIS/core_cm4.h:
 ../SDK/CMSIS/cmsis_version.h:
@@ -47,6 +47,7 @@ source/App.o source/App.d: ../source/App.c ../SDK/CMSIS/MK64F12.h \
 ../source/Drivers/BoardLeds.h:
 ../source/Drivers/board.h:
 ../source/Drivers/CardReader_DRV.h:
+../source/FSM/States/pin_entry.h:
 ../source/EventQueue/queue.h:
 ../source/FSM/FSM.h:
 ../source/FSM/../EventQueue/queue.h:

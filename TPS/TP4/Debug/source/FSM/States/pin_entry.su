@@ -9,4 +9,5 @@
 ../source/FSM/States/pin_entry.c:144:6:msg_fail_encoder	8	static
 ../source/FSM/States/pin_entry.c:150:6:msg_ok_encoder	8	static
 ../source/FSM/States/pin_entry.c:157:13:write_hidden	24	static
-../source/FSM/States/pin_entry.c:176:6:update_floor_information	24	static
+../source/FSM/States/pin_entry.c:176:6:update_floor_information	32	static
+../source/FSM/States/pin_entry.c:197:6:assignQueuePointer	16	static

@@ -1,8 +1,8 @@
 /*******************************************************************/
 /*** Configuration ***/
 /*******************************************************************/
-var serialPortName = "COM8";
-var thingSpeakAPIKey = "7DHOYBR5D1SRDRSM";
+var serialPortName = "/dev/tty.usbmodemSDA9E5FDE6F1";
+var thingSpeakAPIKey = "ZPWDR5M3IAJ21LYU";
 
 // process cmd arguments
 process.argv.forEach(function (val, index, array) {

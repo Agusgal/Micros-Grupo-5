@@ -175,22 +175,27 @@ static void write_hidden()
 
 void update_floor_information()
 {
+	int user = 	getSelectedUSer();
 	int floor = getFloor(getSelectedUSer());
 
-	/*
-	if(dbToggleInsideBuilding(u))
+	if (isInside(user))
 	{
-		floor_occupancy[u->office_floor] += 1;
+		floor_occupancy[floor - 1] -= 1;
+		exitBuilding(user);
 	}
 	else
 	{
-		floor_occupancy[u->office_floor] -= 1;
+		floor_occupancy[floor - 1] += 1;
+		enterBuilding(user);
 	}
-	*/
 
-	floor_occupancy[floor] += 1;
 
     OS_ERR os_err;
 	OSQPost(floorMsgQPointer, (void*)(&floor_occupancy), sizeof(void*), OS_OPT_POST_FIFO, &os_err);
+}
+
+void assignQueuePointer(OS_Q* msgq)
+{
+	floorMsgQPointer = msgq;
 }
 
