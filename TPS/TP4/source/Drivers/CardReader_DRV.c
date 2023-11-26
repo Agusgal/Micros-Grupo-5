@@ -62,6 +62,8 @@ static bool finish_timer_enable = false;
 
 static uint8_t data_ready = CARD_IDLE;
 
+
+
 // For debugging
 //#define	DEBUG_CARD
 #ifdef	DEBUG_CARD
@@ -72,6 +74,9 @@ static uint8_t aux_counter = 0;
 
 //Def del timer
 static tim_id_t card_reader_timer;
+
+//Semáforo del lector
+static OS_SEM semReader;
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -103,9 +108,11 @@ void cardReader_Init(void)
 	// Enable pin
 	gpioMode(PORTNUM2PIN(PORT_ENABLE, PIN_ENABLE), INPUT);
 
-
 	timerStart(card_reader_timer, TIMER_MS2TICKS(100), TIM_MODE_PERIODIC, cardReader_PISR);
 	//SysTick_Reg_Callback(cardReader_PISR, TIME_CONSTANT);
+
+	OS_ERR os_err;
+	OSSemCreate(&semReader, "Sem Reader", 0u, &os_err);
 
 	//Test Pin
 	gpioMode(PORTNUM2PIN(TEST_PORT_1, TEST_PIN_1), OUTPUT);
