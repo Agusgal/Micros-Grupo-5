@@ -58,10 +58,6 @@ void Encoder_Init(void)
 	//Create semaphore
 	OS_ERR os_err;
 	OSSemCreate(&semEncoder, "Sem Encoder", 0u, &os_err);
-
-
-	//SysTick_Reg_Callback(Encoder_Update, 5000);
-	//SysTick_Reg_Callback(EncoderSwitch_Update, 20000);
 }
 
 
@@ -159,6 +155,9 @@ void EncoderSwitch_Update(void)
 {
 	OS_ERR os_err;
 
+	//Puse este post aca porque sno nunca avanza al evento, Todo: ervisar donde ponerlo para señalar mejor eventos encoder.
+	//OSSemPost(&semEncoder, OS_OPT_POST_1, &os_err);
+
 	static int sw_state = LOW;
 	static int duration_counter=0;
 	bool sw_Read = gpioRead(PIN_DEC_SW);
@@ -185,7 +184,7 @@ void EncoderSwitch_Update(void)
 		else
 		{
 			encoder_sw = PRESSED;
-			//OSSemPost(&semEncoder, OS_OPT_POST_1, &os_err);
+			OSSemPost(&semEncoder, OS_OPT_POST_1, &os_err);
 		}
 	}
 	else if (sw_state == HIGH)

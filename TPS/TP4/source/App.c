@@ -55,7 +55,7 @@ static OS_PEND_DATA event_pend_tbl[2];
 
 
 /* Función que se llama 1 vez, al comienzo del programa */
-void App_Init (void)
+void App_Init (OS_Q* msgq)
 {
 	//Init Queue
 	queue_Init();
@@ -75,6 +75,9 @@ void App_Init (void)
 	//Init fsm
 	current_state = get_initial_state();
 	start_fsm();
+
+	event_pend_tbl[0].PendObjPtr = (OS_PEND_OBJ*) encoderSemPointer();
+	event_pend_tbl[1].PendObjPtr = (OS_PEND_OBJ*) readerSemPointer();
 }
 
 

@@ -45,6 +45,12 @@ void EncoderSwitch_Update(void);
 int getEncoderSwitch_State(void);
 int getEncoder_State(void);
 
+
+/**
+ * @brief Get pointer to Encoder semaphore
+ * @return pointer to semaphore
+ */
+OS_SEM* encoderSemPointer();
 /*******************************************************************************
  ******************************************************************************/
 

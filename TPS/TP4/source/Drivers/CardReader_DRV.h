@@ -79,6 +79,12 @@ bool checkLRC_CardReader_Data(uint8_t *data_buffer, uint8_t number_of_characters
  */
 bool getCard_ID(uint8_t *data_buffer, uint8_t number_of_characters, uint8_t *ID_buffer);
 
+
+/**
+ * @brief Get pointer to Card Reader semaphore
+ * @return pointer to semaphore
+ */
+OS_SEM* readerSemPointer();
 /*******************************************************************************
  ******************************************************************************/
 

@@ -18,6 +18,8 @@ static CPU_STK TaskStartStk[TASKSTART_STK_SIZE];
 static OS_TCB Task2TCB;
 static CPU_STK Task2Stk[TASK2_STK_SIZE];
 
+static OS_Q floorMsgQueue;
+
 /* Task 3 */
 #define TASK3_STK_SIZE			256u
 #define TASK3_STK_SIZE_LIMIT	(TASK3_STK_SIZE / 10u)
@@ -28,7 +30,7 @@ static CPU_STK Task3Stk[TASK3_STK_SIZE];
 static OS_Q floorMsgQueue;
 
 
-void App_Init (void);
+void App_Init (OS_Q* msgq);
 void App_Run (void);
 
 void Transmission_Init (OS_Q*);
@@ -125,8 +127,8 @@ int main(void)
     OSInit(&err);
 
     hw_DisableInterrupts();
-	App_Init();
-	//Transmission_Init(&floorMsgQueue);
+    App_Init(&floorMsgQueue);
+    //Transmission_Init(&floorMsgQueue);
 	hw_EnableInterrupts();
 
  #if OS_CFG_SCHED_ROUND_ROBIN_EN > 0u

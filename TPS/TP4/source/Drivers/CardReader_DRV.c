@@ -111,14 +111,20 @@ void cardReader_Init(void)
 	timerStart(card_reader_timer, TIMER_MS2TICKS(100), TIM_MODE_PERIODIC, cardReader_PISR);
 	//SysTick_Reg_Callback(cardReader_PISR, TIME_CONSTANT);
 
+	//Create semaphore
 	OS_ERR os_err;
 	OSSemCreate(&semReader, "Sem Reader", 0u, &os_err);
 
 	//Test Pin
 	gpioMode(PORTNUM2PIN(TEST_PORT_1, TEST_PIN_1), OUTPUT);
-
-
 }
+
+OS_SEM* readerSemPointer()
+{
+	return &semReader;
+}
+
+
 
 /**
  * @brief Initialize CardReader driver
@@ -233,6 +239,9 @@ bool getCard_ID(uint8_t *data_buffer, uint8_t number_of_characters, uint8_t *ID_
  ******************************************************************************/
 __ISR__ PORTB_IRQHandler(void)
 {
+	OS_ERR os_err;
+	OSSemPost(&semReader, OS_OPT_POST_1, &os_err);
+
 	//test pin high
 	gpioWrite(PORTNUM2PIN(TEST_PORT_1, TEST_PIN_1), HIGH);
 
@@ -326,6 +335,8 @@ __ISR__ PORTB_IRQHandler(void)
  */
 static void cardReader_PISR(void)
 {
+	//OS_ERR os_err;
+	//OSSemPost(&semReader, OS_OPT_POST_1, &os_err);
 	// Mistake counter
 	if(counter && counter_enable)
 	{
