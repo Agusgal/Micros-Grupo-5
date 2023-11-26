@@ -155,8 +155,8 @@ void EncoderSwitch_Update(void)
 {
 	OS_ERR os_err;
 
-	//Puse este post aca porque sno nunca avanza al evento, Todo: ervisar donde ponerlo para señalar mejor eventos encoder.
-	//OSSemPost(&semEncoder, OS_OPT_POST_1, &os_err);
+	//Puse este post aca porque sno nunca avanza al evento, Todo: revisar donde ponerlo para señalar mejor eventos encoder.
+	OSSemPost(&semEncoder, OS_OPT_POST_1, &os_err);
 
 	static int sw_state = LOW;
 	static int duration_counter=0;
