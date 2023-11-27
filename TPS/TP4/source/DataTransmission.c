@@ -1,6 +1,6 @@
 /***************************************************************************//**
-  @file     DataTrnasmission
-  @brief    data transmission services
+  @file     DataTransmission
+  @brief    data transmission services (Serial Out)
   @author   Grupo 5
  ******************************************************************************/
 

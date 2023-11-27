@@ -1,7 +1,7 @@
 /***************************************************************************//**
-  @file     DRV_UART.h
-  @brief    UART driver with package's functionality
-  @author   Grupo 1
+  @file     DataTransmissionDRV
+  @brief    Serial comunication driver
+  @author   Grupo 5
  ******************************************************************************/
 
 #ifndef _DRV_DATATRANSMISSION_H_

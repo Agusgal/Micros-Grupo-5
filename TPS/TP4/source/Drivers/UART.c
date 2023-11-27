@@ -1,7 +1,7 @@
 /***************************************************************************//**
-  @file     UART_DRV.c
+  @file     UART.c
   @brief    Driver para el manejo del periférico de comunicación UART
-  @author   Grupo 1
+  @author   Grupo 5
  ******************************************************************************/
 
 /*******************************************************************************
@@ -36,7 +36,8 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
-typedef struct {
+typedef struct
+{
 	char buffer[BUFFER_SIZE];
 	char* buffer_ptr;
 	union {
@@ -75,7 +76,6 @@ void uart_irq_handler(uint8_t id);
 //Init
 static PORT_Type* const PORT_PTRS[6] = {PORTB,PORTA,PORTD,PORTC,PORTA,PORTA};
 static UART_Type* const UART_PTRS[6] = UART_BASE_PTRS;
-//static uint8_t const PORT_INDEX[] = {PA, PE, PD, PC, PE, PE};
 static const IRQn_Type IRQn[] = {UART0_RX_TX_IRQn, UART1_RX_TX_IRQn, UART2_RX_TX_IRQn, UART3_RX_TX_IRQn, UART4_RX_TX_IRQn, UART5_RX_TX_IRQn};
 
 //
@@ -91,7 +91,8 @@ static uart_callback_t uart_callbacks[6];
  *******************************************************************************
  ******************************************************************************/
 
-void initUart (uint8_t id, uart_cfg_t config) {
+void initUart (uint8_t id, uart_cfg_t config)
+{
 
 	PORT_Type* const PORTX = PORT_PTRS[id];
 	UART_Type* const UARTX = UART_PTRS[id];
@@ -141,26 +142,31 @@ void initUart (uint8_t id, uart_cfg_t config) {
 
 }
 
-uint8_t uartIsRxMsg(uint8_t id) {
+uint8_t uartIsRxMsg(uint8_t id)
+{
 	return rx[id].read;
 }
 
-uint32_t uartGetRxMsgLength(uint8_t id) {
+uint32_t uartGetRxMsgLength(uint8_t id)
+{
 	return rx[id].len;
 }
 
-uint8_t uartReadMsg(uint8_t id, char* msg, uint8_t cant) {
-	//rx[id].read = false;
-	if (rx[id].read == false) {
+uint8_t uartReadMsg(uint8_t id, char* msg, uint8_t cant)
+{
+	if (rx[id].read == false)
+	{
 		return 0;
 	}
 	uint32_t len = rx[id].len;
 
-	for(int i=0 ; i<cant && i<len; i++) {
+	for(int i=0 ; i<cant && i<len; i++)
+	{
 		*(msg+i) = *rx[id].reader_ptr;
 		rx[id].reader_ptr++;
 		rx[id].len--;
-		if(rx[id].reader_ptr - rx[id].buffer >= BUFFER_SIZE) {
+		if(rx[id].reader_ptr - rx[id].buffer >= BUFFER_SIZE)
+		{
 			rx[id].reader_ptr = rx[id].buffer;
 		}
 	}
@@ -169,21 +175,24 @@ uint8_t uartReadMsg(uint8_t id, char* msg, uint8_t cant) {
 
 
 
-uint8_t uartWriteMsg(uint8_t id, const char* msg, uint8_t cant) {
+uint8_t uartWriteMsg(uint8_t id, const char* msg, uint8_t cant)
+{
 
-	if(cant > BUFFER_SIZE || id >= UART_CANT_IDS) {
+	if(cant > BUFFER_SIZE || id >= UART_CANT_IDS)
+	{
 		return 1;
 	}
 
 	tx[id].done = false;
 
 	//copy message
-	for(uint32_t i = 0; i < cant && i<(BUFFER_SIZE-tx[id].len); i++) {
-		//tx[id].buffer[i] = *(msg+i);
+	for(uint32_t i = 0; i < cant && i<(BUFFER_SIZE-tx[id].len); i++)
+	{
 		*tx[id].writer_ptr = *(msg+i);
 		tx[id].writer_ptr++;
 		tx[id].len++;
-		if(tx[id].writer_ptr - tx[id].buffer >= BUFFER_SIZE) {
+		if(tx[id].writer_ptr - tx[id].buffer >= BUFFER_SIZE)
+		{
 			tx[id].writer_ptr = tx[id].buffer;
 		}
 	}
@@ -195,12 +204,14 @@ uint8_t uartWriteMsg(uint8_t id, const char* msg, uint8_t cant) {
 	return 0;
 }
 
-bool uartIsTxMsgComplete(uint8_t id) {
+bool uartIsTxMsgComplete(uint8_t id)
+{
 	return tx[id].done;
 }
 
 
-void uartSetCallback(uint8_t id, uart_callback_t callback_fn){
+void uartSetCallback(uint8_t id, uart_callback_t callback_fn)
+{
 	uart_callbacks[id] = callback_fn;
 }
 
@@ -210,7 +221,8 @@ void uartSetCallback(uint8_t id, uart_callback_t callback_fn){
  *******************************************************************************
  ******************************************************************************/
 
-static void UART_SetBaudRate (UART_Type* uart, uint32_t baudrate) {
+static void UART_SetBaudRate (UART_Type* uart, uint32_t baudrate)
+{
 	uint16_t sbr, brfa;
 	uint32_t clock;
 	clock = ((uart==UART0 || uart==UART1))?(__CORE_CLOCK__):(__CORE_CLOCK__>>1);
@@ -223,7 +235,8 @@ static void UART_SetBaudRate (UART_Type* uart, uint32_t baudrate) {
 	uart->C4 = (uart->C4 & ~UART_C4_BRFA_MASK) | UART_C4_BRFA(brfa);
 }
 
-void uart_irq_handler(uint8_t id) {
+void uart_irq_handler(uint8_t id)
+{
 	CPU_SR_ALLOC();
 
 	CPU_CRITICAL_ENTER();
@@ -262,7 +275,6 @@ void uart_irq_handler(uint8_t id) {
 			rx[id].buffer_ptr = rx[id].buffer;
 		}
 		rx[id].read = true;
-		//UARTX->C2 &= ~UART_C2_RIE_MASK;
 	}
 
 	// Make call to callback function

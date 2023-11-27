@@ -47,7 +47,8 @@ static void TaskTransmission(void *p_arg)
     }
 }
 
-static void TaskKeepAlive(void *p_arg) {
+static void TaskKeepAlive(void *p_arg)
+{
     (void)p_arg;
 
     while(1)
