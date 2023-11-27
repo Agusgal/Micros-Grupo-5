@@ -52,7 +52,7 @@ static void TaskKeepAlive(void *p_arg) {
 
     while(1)
     {
-    	//KeepAlive_Run();
+    	KeepAlive_Run();
     }
 }
 
