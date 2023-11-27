@@ -131,7 +131,7 @@ void Transmission_Run (void)
 	// OSTimeDlyHMSM(0, 0, 16, 0, OS_OPT_TIME_HMSM_STRICT, &os_err);
 }
 
-
+/* Función que se llama 1 vez, al comienzo del programa */
 static void KeepAlive_Init (void)
 {
 	ka_timeout_tim_id = timerGetId();
@@ -144,6 +144,8 @@ static void KeepAlive_Init (void)
 	OSSemCreate(&semKeepAliveResponse, "Sem Keep Alive Response", 0u, &os_err);
 }
 
+
+/* Función que se llama constantemente en un ciclo infinito */
 void KeepAlive_Run (void)
 {
 	OS_ERR os_err;
