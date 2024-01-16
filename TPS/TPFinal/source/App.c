@@ -16,7 +16,6 @@
 #include "Drivers/board.h"
 #include "Drivers/gpio.h"
 #include "Drivers/BoardLeds.h"
-#include "Drivers/CardReader_DRV.h"
 
 #include "EventQueue/queue.h"
 #include "FSM/FSM.h"
@@ -43,7 +42,7 @@ void fill_queue(void);
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
-//TODO: habra una mejor manera de manejar esto?
+
 //this variable saves the current state of the FSM
 static state *current_state;
 
@@ -67,9 +66,6 @@ void App_Init (void)
 	//Init Leds
 	BoardLeds_Init();
 
-	//Init card_reader
-	cardReader_Init();
-
 	//Init Encoder
 	Encoder_Init();
 
@@ -77,6 +73,7 @@ void App_Init (void)
 	current_state = get_initial_state();
 	start_fsm();
 
+	//TODO: cambiar
     hw_DisableInterrupts();
     SysTick_Init();
     hw_EnableInterrupts();
@@ -112,8 +109,6 @@ void App_Run (void)
  */
 void fill_queue(void)
 {
-	uint8_t card_var = getCardReader_Status();
-
 
 	//check for encoder turn events
 	int move_enc = getEncoder_State();
@@ -139,15 +134,6 @@ void fill_queue(void)
 		push_Queue_Element(INCREASE_BRIGHTNESS_EV);
 	}
 
-	//Check for Card Events
-	if (!card_var)
-	{
-		push_Queue_Element(CARD_SWIPE_EV);
-	}
-	else if (card_var == CARD_FAIL)
-	{
-		push_Queue_Element(CARD_MIDSWIPE_EV);
-	}
 
 	//Check for timer events (leds)
 	if (get_green_status())
