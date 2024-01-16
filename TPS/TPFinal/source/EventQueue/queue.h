@@ -46,7 +46,9 @@ typedef enum {
 			PIN_3_TIMES_EV,
 
 			FIVE_SEC_LAPSE_EV,
-			MIN_LAPSE_EV
+			MIN_LAPSE_EV,
+
+			FILL_BUFFER_EV
 
 			}Event_Type;
 

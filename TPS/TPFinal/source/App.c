@@ -67,6 +67,7 @@ void App_Init (void)
 	//MP3 decoder Init
 
 	//Audio PLayer Init
+	AudioPlayer_Init();
 
 	//Vumeter/FFT Init
 	//Equalizer Init
@@ -133,6 +134,10 @@ void fill_queue(void)
 
 
 	//Check for AudioPLayer Events
+	if (AudioPlayer_IsBackBufferFree())
+	{
+		push_Queue_Element(FILL_BUFFER_EV);
+	}
 
 
 	//Check for memory events

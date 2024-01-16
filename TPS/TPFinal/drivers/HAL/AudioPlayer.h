@@ -1,6 +1,6 @@
 /***************************************************************************//**
  @file     AudioPlayer.h
- @brief    Audio Reproductor using the DAC with PDB.
+ @brief    Audio Reproductor using the DAC with PDB. (Se usan en Audio Manager)
  @author   Grupo 5
 ******************************************************************************/
 
