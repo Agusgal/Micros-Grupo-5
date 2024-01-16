@@ -42,7 +42,5 @@ source/audio_manager \
 source/equalizer \
 source/fft \
 source/file_manager \
-source/fsm/States \
-source/fsm \
 startup \
 

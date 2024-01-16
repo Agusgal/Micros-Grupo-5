@@ -13,8 +13,10 @@
 #include "hardware.h"
 
 #include "Drivers/HAL/Encoder.h"
-#include "../board//board.h"
+#include "board.h"
 #include "Drivers/MCAL/gpio.h"
+
+#include "AudioPlayer.h"
 
 #include "EventQueue/queue.h"
 
