@@ -29,15 +29,6 @@ source \
 source/EventQueue \
 source/FSM_1 \
 source/FSM_1/States \
-source/User/Debug/SDK/CMSIS \
-source/User/Debug/SDK/startup \
-source/User/Debug/source \
-source/User/Debug/source/Drivers \
-source/User/Debug/source/EventQueue \
-source/User/Debug/source/FSM \
-source/User/Debug/source/FSM/States \
-source/User/Debug/source/User \
-source/User \
 source/audio_manager \
 source/equalizer \
 source/fft \

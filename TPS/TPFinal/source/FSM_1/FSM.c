@@ -14,7 +14,6 @@
 #include <FSM_1/States/encoder_entry.h>
 #include <FSM_1/States/id_entry.h>
 #include <FSM_1/States/open.h>
-#include <FSM_1/States/pin_entry.h>
 
 
 /*******************************************************************************
@@ -74,9 +73,9 @@ state ENCODER_ENTRY[]=
 
 		{accept_number, ENC_PRESSED_EV, ENCODER_ENTRY},
 
-		{msg_fail_encoder, ID_FAIL_ENC_EV, RED_LED_ON},
+		//{msg_fail_encoder, ID_FAIL_ENC_EV, RED_LED_ON},
 
-		{msg_ok_encoder, ID_OK_ENC_EV, PIN_ENTRY},
+		//{msg_ok_encoder, ID_OK_ENC_EV, PIN_ENTRY},
 
 		{bri_message, INCREASE_BRIGHTNESS_EV, BRIGHTNESS},
 
@@ -87,19 +86,19 @@ state ENCODER_ENTRY[]=
 
 state PIN_ENTRY[]=
 {
-		{pin_down_number, ENC_LEFT_EV, PIN_ENTRY},
+		//{pin_down_number, ENC_LEFT_EV, PIN_ENTRY},
 
-		{pin_up_number, ENC_RIGHT_EV, PIN_ENTRY},
+		//{pin_up_number, ENC_RIGHT_EV, PIN_ENTRY},
 
-		{pin_accept_number, ENC_PRESSED_EV, PIN_ENTRY},
+		//{pin_accept_number, ENC_PRESSED_EV, PIN_ENTRY},
 
-		{msg_fail_pin, PIN_FAIL_EV, PIN_ENTRY},
+		//{msg_fail_pin, PIN_FAIL_EV, PIN_ENTRY},
 
-		{msg_pin_3_times, PIN_3_TIMES_EV, RED_LED_ON},
+		//{msg_pin_3_times, PIN_3_TIMES_EV, RED_LED_ON},
 
-		{msg_ok_pin, PIN_OK_EV, GREEN_LED_ON},
+		//{msg_ok_pin, PIN_OK_EV, GREEN_LED_ON},
 
-		{msg_pin_short, PIN_SHORT_EV, PIN_ENTRY},
+		//{msg_pin_short, PIN_SHORT_EV, PIN_ENTRY},
 
 		{welcome_animation, RETURN_EV, ID_ENTRY},
 

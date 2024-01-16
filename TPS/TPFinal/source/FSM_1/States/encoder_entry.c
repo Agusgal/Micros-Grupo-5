@@ -8,11 +8,9 @@
 #include <FSM_1/States/encoder_entry.h>
 #include "Drivers/HAL/Encoder.h"
 
-#include "User/userInput.h"
 
 #include "EventQueue/queue.h"
 
-#include "User/userData.h"
 
 #define ID_SIZE 9
 
@@ -24,7 +22,7 @@ static uint8_t curr_pos = 0;
 void up_number(void)
 {
 	//increase user input array
-	increase_number(id, curr_pos);
+	//increase_number(id, curr_pos);
 
 	//update display
 	for(int i = 0; i < curr_pos - 3; i++)
@@ -35,7 +33,7 @@ void up_number(void)
 void down_number(void)
 {
 	//decrease user input array
-	decrease_number(id, curr_pos);
+	//decrease_number(id, curr_pos);
 
 	//update display
 	for(int i = 0; i < curr_pos-3; i++)
@@ -46,7 +44,7 @@ void down_number(void)
 
 void accept_number(void)
 {
-	input_number(id, &curr_pos,ID_SIZE);
+	//input_number(id, &curr_pos,ID_SIZE);
 
 	for(int i = 0; i < curr_pos - 3; i++)
 	{
@@ -88,7 +86,7 @@ void init_id()
 
 
 	//reset user input array
-	reset_array(id, &curr_pos, ID_SIZE);
+	//reset_array(id, &curr_pos, ID_SIZE);
 
 	//erase screen
 
