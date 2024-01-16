@@ -8,7 +8,7 @@
 #include "encoder_entry.h"
 
 #include "Drivers/Display.h"
-#include "Drivers/Encoder.h"
+#include "Drivers/HAL/Encoder.h"
 
 #include "User/userInput.h"
 #include "Drivers/BoardLeds.h"

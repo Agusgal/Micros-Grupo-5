@@ -12,7 +12,7 @@
 #include "hardware.h"
 
 #include "Drivers/Display.h"
-#include "Drivers/Encoder.h"
+#include "Drivers/HAL/Encoder.h"
 #include "Drivers/board.h"
 #include "Drivers/gpio.h"
 #include "Drivers/BoardLeds.h"

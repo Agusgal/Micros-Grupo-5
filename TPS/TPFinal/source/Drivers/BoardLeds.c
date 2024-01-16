@@ -13,7 +13,7 @@
 #include "gpio.h"
 #include <stdio.h>
 #include "board.h"
-#include "Encoder.h"
+#include "HAL/Encoder.h"
 #include "Systick.h"
 #include "BoardLeds.h"
 /*******************************************************************************
