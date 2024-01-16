@@ -1,0 +1,12 @@
+../drivers/MCAL/gpio.c:37:6:gpioMode	4	static
+../drivers/MCAL/gpio.c:75:6:gpioToggle	0	static
+../drivers/MCAL/gpio.c:82:6:gpioRead	0	static
+../drivers/MCAL/gpio.c:90:6:gpioWrite	4	static
+../drivers/MCAL/gpio.c:97:6:gpioIRQ	8	static
+../drivers/MCAL/gpio.c:110:6:PORT_ClearInterruptFlag	0	static
+../drivers/MCAL/gpio.c:122:6:interruptHandler	16	static
+../drivers/MCAL/gpio.c:143:9:PORTA_IRQHandler	8	static
+../drivers/MCAL/gpio.c:148:9:PORTB_IRQHandler	8	static
+../drivers/MCAL/gpio.c:153:9:PORTC_IRQHandler	8	static
+../drivers/MCAL/gpio.c:158:9:PORTD_IRQHandler	8	static
+../drivers/MCAL/gpio.c:163:9:PORTE_IRQHandler	8	static

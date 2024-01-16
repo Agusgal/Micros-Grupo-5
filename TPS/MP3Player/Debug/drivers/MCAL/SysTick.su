@@ -1,0 +1,10 @@
+../drivers/MCAL/SysTick.c:231:12:getArrayEffectiveLength	0	static
+../drivers/MCAL/SysTick.c:58:6:SysTick_Init	8	static
+../drivers/MCAL/SysTick.c:74:6:SysTick_UpdateClk	16	static
+../drivers/MCAL/SysTick.c:90:5:SysTick_AddCallback	24	static
+../drivers/MCAL/SysTick.c:102:14:Systick_ClrCallback	24	static
+../drivers/MCAL/SysTick.c:139:14:Systick_PauseCallback	8	static
+../drivers/MCAL/SysTick.c:160:14:Systick_ResumeCallback	8	static
+../drivers/MCAL/SysTick.c:181:14:Systick_ChangeCallbackPeriod	32	static
+../drivers/MCAL/SysTick.c:208:6:Systick_GetStatus	8	static
+../drivers/MCAL/SysTick.c:245:9:SysTick_Handler	32	static
