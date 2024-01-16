@@ -7,11 +7,11 @@
 
 #include "encoder_entry.h"
 
-#include "Drivers/Display.h"
+#include "Drivers/Legacy/Display.h"
 #include "Drivers/HAL/Encoder.h"
 
 #include "User/userInput.h"
-#include "Drivers/BoardLeds.h"
+#include "Drivers/Legacy/BoardLeds.h"
 
 #include "EventQueue/queue.h"
 

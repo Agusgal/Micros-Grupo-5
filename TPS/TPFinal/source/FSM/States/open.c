@@ -6,7 +6,7 @@
  */
 
 #include "open.h"
-#include "Drivers/BoardLeds.h"
+#include "Drivers/Legacy/BoardLeds.h"
 
 void five_sec_elapsed_green()
 {

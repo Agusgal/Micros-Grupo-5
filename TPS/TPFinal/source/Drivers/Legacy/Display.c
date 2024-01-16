@@ -8,10 +8,10 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 #include "Display.h"
-#include "gpio.h"
-#include "board.h"
+#include "../MCAL/gpio.h"
+#include "../board.h"
 #include <string.h>
-#include "Systick.h"
+#include "../MCAL/Systick.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/

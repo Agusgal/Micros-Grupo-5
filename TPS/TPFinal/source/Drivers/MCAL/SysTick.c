@@ -10,7 +10,7 @@
 
 #include "SysTick.h"
 #include "hardware.h"
-#include "Drivers/Display.h"
+#include "Drivers/Legacy/Display.h"
 #include "gpio.h"
 
 /*******************************************************************************

@@ -9,7 +9,7 @@
  ******************************************************************************/
 
 #include "Timers.h"
-#include "../SysTick.h"
+#include "../MCAL/SysTick.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE

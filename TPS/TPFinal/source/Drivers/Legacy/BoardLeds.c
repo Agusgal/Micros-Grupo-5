@@ -10,11 +10,11 @@
 
 
 
-#include "gpio.h"
+#include "../MCAL/gpio.h"
 #include <stdio.h>
-#include "board.h"
-#include "HAL/Encoder.h"
-#include "Systick.h"
+#include "../board.h"
+#include "../HAL/Encoder.h"
+#include "../MCAL/Systick.h"
 #include "BoardLeds.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE

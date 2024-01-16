@@ -6,7 +6,7 @@
  */
 
 #include "brightness.h"
-#include "Drivers/Display.h"
+#include "Drivers/Legacy/Display.h"
 
 
 

@@ -11,11 +11,11 @@
 #include "MK64F12.h"
 #include "hardware.h"
 
-#include "Drivers/Display.h"
+#include "Drivers/Legacy/Display.h"
 #include "Drivers/HAL/Encoder.h"
 #include "Drivers/board.h"
-#include "Drivers/gpio.h"
-#include "Drivers/BoardLeds.h"
+#include "Drivers/MCAL/gpio.h"
+#include "Drivers/Legacy/BoardLeds.h"
 
 #include "EventQueue/queue.h"
 #include "FSM/FSM.h"

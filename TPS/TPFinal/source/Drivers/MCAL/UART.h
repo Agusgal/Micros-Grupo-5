@@ -1,11 +1,11 @@
 /***************************************************************************//**
-  @file     gpio.h
-  @brief    Simple GPIO Pin services, similar to Arduino
-  @author   Nicolás Magliola
+  @file     UART.h
+  @brief    UART driver
+  @author   Grupo 5
  ******************************************************************************/
 
-#ifndef _BOARDLEDS_H_
-#define _BOARDLEDS_H_
+#ifndef UART_H_
+#define UART_H_
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
@@ -13,9 +13,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-
-#include "board.h"
-
+#include "MK64F12.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -26,8 +24,6 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
-typedef enum ledID {RED_LED = PIN_LED_RED , BLUE_LED = PIN_LED_BLUE, GREEN_LED = PIN_LED_GREEN} ledID;
-
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
@@ -36,28 +32,45 @@ typedef enum ledID {RED_LED = PIN_LED_RED , BLUE_LED = PIN_LED_BLUE, GREEN_LED =
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
+/**
+ * @brief
+ * @return
+ */
+void UART_Init (void);
 
-void BoardLeds_Init(void);
+/**
+ * @brief
+ * @return
+ */
+void UART_SetBaudRate (UART_Type *uart, uint32_t baudrate);
 
-void led1On ();
-void led2On ();
-void led3On ();
+/**
+ * @brief
+ * @return
+ */
+unsigned char UART_Get_Status(uint8_t id);
 
-void ledOff ();
+/**
+ * @brief
+ * @return
+ */
+unsigned char UART_Get_Data(uint8_t id);
 
-void led_blue_on();
-void led_green_on();
-void led_red_on();
 
-void led_toggle(ledID ledId);
+/**
+ * @brief
+ * @return
+ */
+void UART_SendMsg(char* msg, uint8_t id);
 
-void led_green_on_time(uint32_t time);
-bool get_green_status(void);
+/**
+ * @brief
+ * @return
+ */
+void UART_SendChar(char msg, uint8_t id);
 
-void led_red_on_time(uint32_t time);
-bool get_red_status(void);
 
 /*******************************************************************************
  ******************************************************************************/
 
-#endif // _BOARDLEDS_H_
+#endif /* UART_H_ */

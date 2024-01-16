@@ -7,9 +7,9 @@
 
 #include "id_entry.h"
 
-#include "Drivers/Display.h"
+#include "Drivers/Legacy/Display.h"
 #include "Drivers/HAL/Encoder.h"
-#include "Drivers/BoardLeds.h"
+#include "Drivers/Legacy/BoardLeds.h"
 
 #include "User/userInput.h"
 #include "User/userData.h"
