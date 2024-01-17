@@ -3,6 +3,8 @@
  *
  * */
 
+/*
+
 #include <stdio.h>
 #include "board.h"
 #include "pin_mux.h"
@@ -15,17 +17,14 @@
 #include <fsl_SSD1306_I2C.h>
 
 
-/*******************************************************************************
- * Variables
- ******************************************************************************/
+//   Variables
 uint32_t baudRate = 400000;
 uint32_t frecuency = 12000000;
-/*******************************************************************************
- * Code
- ******************************************************************************/
 
-int main(void) {
 
+int main(void)
+{
+	//TODO configurar gpio pines y puerto para I2C
 	BOARD_InitDebugConsole();                                         // not necessary, only to use the console if needed
 
 	i2c_master_config_t  i2config;                                    // config. variable. i2c
@@ -33,7 +32,11 @@ int main(void) {
 	CLOCK_Select(kI2C1_Clk_From_MainClk);
 
 	CLOCK_EnableClock(kCLOCK_Swm);
+
+	//Setear SDA en puerto y pin
 	SWM_SetMovablePinSelect(SWM0, kSWM_I2C1_SDA, kSWM_PortPin_P0_28);  // SDA to PIO0_28
+
+	//Setear SDA en puerto y pin
 	SWM_SetMovablePinSelect(SWM0, kSWM_I2C1_SCL, kSWM_PortPin_P0_27);  // SCL to PIO0_27
 	CLOCK_DisableClock(kCLOCK_Swm);
 
@@ -49,12 +52,12 @@ int main(void) {
 
 	I2C_MasterInit(I2C1, &i2config, frecuency);                        //initialization
 
-    /* Initialize the SSD1306 display*/
+    // Initialize the SSD1306 display
     OLED_Init();
     OLED_Refresh();
     OLED_Clear();
 
-    /*Print welcome message*/
+    //Print welcome message
     OLED_Copy_Image(&logo_nxp[0], sizeof(logo_nxp));
     OLED_Refresh();
 
@@ -67,3 +70,4 @@ int main(void) {
     }
     return 0 ;
 }
+*/

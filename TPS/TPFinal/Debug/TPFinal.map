@@ -2674,6 +2674,21 @@ Discarded input sections
  .comment       0x0000000000000000       0x41 ./drivers/HAL/I2CWrapper.o
  .ARM.attributes
                 0x0000000000000000       0x34 ./drivers/HAL/I2CWrapper.o
+ .group         0x0000000000000000        0xc ./drivers/HAL/LPC845_SSD1306_OLED.o
+ .text          0x0000000000000000        0x0 ./drivers/HAL/LPC845_SSD1306_OLED.o
+ .data          0x0000000000000000        0x0 ./drivers/HAL/LPC845_SSD1306_OLED.o
+ .bss           0x0000000000000000        0x0 ./drivers/HAL/LPC845_SSD1306_OLED.o
+ .debug_info    0x0000000000000000       0x22 ./drivers/HAL/LPC845_SSD1306_OLED.o
+ .debug_abbrev  0x0000000000000000       0x12 ./drivers/HAL/LPC845_SSD1306_OLED.o
+ .debug_aranges
+                0x0000000000000000       0x18 ./drivers/HAL/LPC845_SSD1306_OLED.o
+ .debug_macro   0x0000000000000000       0x11 ./drivers/HAL/LPC845_SSD1306_OLED.o
+ .debug_macro   0x0000000000000000      0xaf0 ./drivers/HAL/LPC845_SSD1306_OLED.o
+ .debug_line    0x0000000000000000       0x45 ./drivers/HAL/LPC845_SSD1306_OLED.o
+ .debug_str     0x0000000000000000     0x2eb0 ./drivers/HAL/LPC845_SSD1306_OLED.o
+ .comment       0x0000000000000000       0x41 ./drivers/HAL/LPC845_SSD1306_OLED.o
+ .ARM.attributes
+                0x0000000000000000       0x34 ./drivers/HAL/LPC845_SSD1306_OLED.o
  .group         0x0000000000000000        0xc ./drivers/HAL/OLEDdisplay.o
  .group         0x0000000000000000        0xc ./drivers/HAL/OLEDdisplay.o
  .group         0x0000000000000000        0xc ./drivers/HAL/OLEDdisplay.o
@@ -4724,6 +4739,7 @@ LOAD ./drivers/MCAL/gpio.o
 LOAD ./drivers/MCAL/uart.o
 LOAD ./drivers/HAL/AudioPlayer.o
 LOAD ./drivers/HAL/I2CWrapper.o
+LOAD ./drivers/HAL/LPC845_SSD1306_OLED.o
 LOAD ./drivers/HAL/OLEDdisplay.o
 LOAD ./drivers/HAL/SPI_wrapper.o
 LOAD ./drivers/HAL/Timer.o

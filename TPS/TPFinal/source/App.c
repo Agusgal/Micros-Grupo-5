@@ -150,6 +150,7 @@ void fill_queue(void)
  *
  * */
 
+/*
 
 #include <stdio.h>
 #include "board.h"
@@ -187,12 +188,12 @@ int testFunc(void)
 
 	I2C_MasterInit(I2C1, &i2config, frecuency);                        //initialization
 
-    /* Initialize the SSD1306 display*/
+    // Initialize the SSD1306 display
     OLED_Init();
     OLED_Refresh();
     OLED_Clear();
 
-    /*Print welcome message*/
+    // Print welcome message
     OLED_Copy_Image(&logo_nxp[0], sizeof(logo_nxp));
     OLED_Refresh();
 
@@ -206,4 +207,4 @@ int testFunc(void)
     return 0 ;
 }
 
-
+*/
