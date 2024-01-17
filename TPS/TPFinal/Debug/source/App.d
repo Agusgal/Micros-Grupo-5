@@ -16,7 +16,14 @@ source/App.o source/App.d: ../source/App.c \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/gpio.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/Drivers/MCAL/gpio.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/AudioPlayer.h \
- ../source/EventQueue/queue.h
+ ../source/EventQueue/queue.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/clock_config.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_clock.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_i2c.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/OLEDdisplay.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/fsl_Font5x7.h
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/source/FSM_1/FSM.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/source/FSM_1/../EventQueue/queue.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/MK64F12.h:
@@ -35,3 +42,10 @@ source/App.o source/App.d: ../source/App.c \
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/Drivers/MCAL/gpio.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/AudioPlayer.h:
 ../source/EventQueue/queue.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/clock_config.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_clock.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_i2c.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/OLEDdisplay.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/fsl_Font5x7.h:

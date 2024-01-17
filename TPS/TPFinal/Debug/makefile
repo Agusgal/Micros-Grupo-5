@@ -60,7 +60,7 @@ main-build: TPFinal.axf
 TPFinal.axf: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Linker'
-	arm-none-eabi-gcc -nostdlib -L"/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/libs" -Xlinker -Map="TPFinal.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T MP3Player_Debug.ld -o "TPFinal.axf" $(OBJS) $(USER_OBJS) $(LIBS) -larm_cortexM4lf_math
+	arm-none-eabi-gcc -nostdlib -L"/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/libs" -Xlinker -Map="TPFinal.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T TPFinal_Debug.ld -o "TPFinal.axf" $(OBJS) $(USER_OBJS) $(LIBS) -larm_cortexM4lf_math
 	@echo 'Finished building target: $@'
 	@echo ' '
 

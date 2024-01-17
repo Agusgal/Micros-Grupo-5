@@ -6,6 +6,7 @@
 C_SRCS += \
 ../drivers/HAL/AudioPlayer.c \
 ../drivers/HAL/I2CWrapper.c \
+../drivers/HAL/LPC845_SSD1306_OLED.c \
 ../drivers/HAL/OLEDdisplay.c \
 ../drivers/HAL/SPI_wrapper.c \
 ../drivers/HAL/Timer.c \
@@ -19,6 +20,7 @@ C_SRCS += \
 C_DEPS += \
 ./drivers/HAL/AudioPlayer.d \
 ./drivers/HAL/I2CWrapper.d \
+./drivers/HAL/LPC845_SSD1306_OLED.d \
 ./drivers/HAL/OLEDdisplay.d \
 ./drivers/HAL/SPI_wrapper.d \
 ./drivers/HAL/Timer.d \
@@ -32,6 +34,7 @@ C_DEPS += \
 OBJS += \
 ./drivers/HAL/AudioPlayer.o \
 ./drivers/HAL/I2CWrapper.o \
+./drivers/HAL/LPC845_SSD1306_OLED.o \
 ./drivers/HAL/OLEDdisplay.o \
 ./drivers/HAL/SPI_wrapper.o \
 ./drivers/HAL/Timer.o \
@@ -55,7 +58,7 @@ drivers/HAL/%.o: ../drivers/HAL/%.c drivers/HAL/subdir.mk
 clean: clean-drivers-2f-HAL
 
 clean-drivers-2f-HAL:
-	-$(RM) ./drivers/HAL/AudioPlayer.d ./drivers/HAL/AudioPlayer.o ./drivers/HAL/I2CWrapper.d ./drivers/HAL/I2CWrapper.o ./drivers/HAL/OLEDdisplay.d ./drivers/HAL/OLEDdisplay.o ./drivers/HAL/SPI_wrapper.d ./drivers/HAL/SPI_wrapper.o ./drivers/HAL/Timer.d ./drivers/HAL/Timer.o ./drivers/HAL/button.d ./drivers/HAL/button.o ./drivers/HAL/daytime.d ./drivers/HAL/daytime.o ./drivers/HAL/decoder.d ./drivers/HAL/decoder.o ./drivers/HAL/encoder.d ./drivers/HAL/encoder.o ./drivers/HAL/matrix_display.d ./drivers/HAL/matrix_display.o ./drivers/HAL/memory_manager.d ./drivers/HAL/memory_manager.o
+	-$(RM) ./drivers/HAL/AudioPlayer.d ./drivers/HAL/AudioPlayer.o ./drivers/HAL/I2CWrapper.d ./drivers/HAL/I2CWrapper.o ./drivers/HAL/LPC845_SSD1306_OLED.d ./drivers/HAL/LPC845_SSD1306_OLED.o ./drivers/HAL/OLEDdisplay.d ./drivers/HAL/OLEDdisplay.o ./drivers/HAL/SPI_wrapper.d ./drivers/HAL/SPI_wrapper.o ./drivers/HAL/Timer.d ./drivers/HAL/Timer.o ./drivers/HAL/button.d ./drivers/HAL/button.o ./drivers/HAL/daytime.d ./drivers/HAL/daytime.o ./drivers/HAL/decoder.d ./drivers/HAL/decoder.o ./drivers/HAL/encoder.d ./drivers/HAL/encoder.o ./drivers/HAL/matrix_display.d ./drivers/HAL/matrix_display.o ./drivers/HAL/memory_manager.d ./drivers/HAL/memory_manager.o
 
 .PHONY: clean-drivers-2f-HAL
 

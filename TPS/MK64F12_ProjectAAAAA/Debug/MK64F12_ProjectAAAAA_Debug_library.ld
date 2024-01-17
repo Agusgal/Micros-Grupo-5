@@ -5,11 +5,11 @@
  * Generated linker script file for MK64FN1M0xxx12
  * Created from library.ldt by FMCreateLinkLibraries
  * Using Freemarker v2.3.30
- * MCUXpresso IDE v11.8.0 [Build 1165] [2023-07-26] on 16 ene. 2024 22:07:49
+ * MCUXpresso IDE v11.8.0 [Build 1165] [2023-07-26] on 16 ene. 2024 22:23:46
  */
 
 GROUP (
-  "libcr_semihost_nf.a"
+  "libcr_nohost_nf.a"
   "libcr_c.a"
   "libcr_eabihelpers.a"
   "libgcc.a"

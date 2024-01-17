@@ -1,6 +1,5 @@
-drivers/HAL/OLEDdisplay.o drivers/HAL/OLEDdisplay.d: \
- ../drivers/HAL/OLEDdisplay.c ../drivers/HAL/OLEDdisplay.h \
- /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h \
+drivers/SDK/fsl_i2c.o drivers/SDK/fsl_i2c.d: ../drivers/SDK/fsl_i2c.c \
+ ../drivers/SDK/fsl_i2c.h ../drivers/SDK/fsl_common.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/fsl_device_registers.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/MK64F12.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/CMSIS/core_cm4.h \
@@ -9,12 +8,9 @@ drivers/HAL/OLEDdisplay.o drivers/HAL/OLEDdisplay.d: \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/CMSIS/cmsis_gcc.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/system_MK64F12.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/MK64F12_features.h \
- /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_clock.h \
- /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h \
- ../drivers/HAL/fsl_Font5x7.h \
- /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_i2c.h
-../drivers/HAL/OLEDdisplay.h:
-/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h:
+ ../drivers/SDK/fsl_clock.h
+../drivers/SDK/fsl_i2c.h:
+../drivers/SDK/fsl_common.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/fsl_device_registers.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/MK64F12.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/CMSIS/core_cm4.h:
@@ -23,7 +19,4 @@ drivers/HAL/OLEDdisplay.o drivers/HAL/OLEDdisplay.d: \
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/CMSIS/cmsis_gcc.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/system_MK64F12.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/MK64F12_features.h:
-/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_clock.h:
-/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h:
-../drivers/HAL/fsl_Font5x7.h:
-/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_i2c.h:
+../drivers/SDK/fsl_clock.h:

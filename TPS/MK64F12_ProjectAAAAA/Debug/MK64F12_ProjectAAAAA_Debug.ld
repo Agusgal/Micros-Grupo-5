@@ -5,11 +5,11 @@
  * Generated linker script file for MK64FN1M0xxx12
  * Created from linkscript.ldt by FMCreateLinkLibraries
  * Using Freemarker v2.3.30
- * MCUXpresso IDE v11.8.0 [Build 1165] [2023-07-26] on 16 ene. 2024 22:07:49
+ * MCUXpresso IDE v11.8.0 [Build 1165] [2023-07-26] on 16 ene. 2024 22:23:46
  */
 
-INCLUDE "MP3Player_Debug_library.ld"
-INCLUDE "MP3Player_Debug_memory.ld"
+INCLUDE "MK64F12_ProjectAAAAA_Debug_library.ld"
+INCLUDE "MK64F12_ProjectAAAAA_Debug_memory.ld"
 
 ENTRY(ResetISR)
 

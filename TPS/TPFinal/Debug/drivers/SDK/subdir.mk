@@ -11,6 +11,7 @@ C_SRCS += \
 ../drivers/SDK/fsl_dmamux.c \
 ../drivers/SDK/fsl_dspi.c \
 ../drivers/SDK/fsl_edma.c \
+../drivers/SDK/fsl_i2c.c \
 ../drivers/SDK/fsl_pdb.c \
 ../drivers/SDK/fsl_pmc.c \
 ../drivers/SDK/fsl_rcm.c \
@@ -27,6 +28,7 @@ C_DEPS += \
 ./drivers/SDK/fsl_dmamux.d \
 ./drivers/SDK/fsl_dspi.d \
 ./drivers/SDK/fsl_edma.d \
+./drivers/SDK/fsl_i2c.d \
 ./drivers/SDK/fsl_pdb.d \
 ./drivers/SDK/fsl_pmc.d \
 ./drivers/SDK/fsl_rcm.d \
@@ -43,6 +45,7 @@ OBJS += \
 ./drivers/SDK/fsl_dmamux.o \
 ./drivers/SDK/fsl_dspi.o \
 ./drivers/SDK/fsl_edma.o \
+./drivers/SDK/fsl_i2c.o \
 ./drivers/SDK/fsl_pdb.o \
 ./drivers/SDK/fsl_pmc.o \
 ./drivers/SDK/fsl_rcm.o \
@@ -64,7 +67,7 @@ drivers/SDK/%.o: ../drivers/SDK/%.c drivers/SDK/subdir.mk
 clean: clean-drivers-2f-SDK
 
 clean-drivers-2f-SDK:
-	-$(RM) ./drivers/SDK/clock_config.d ./drivers/SDK/clock_config.o ./drivers/SDK/fsl_clock.d ./drivers/SDK/fsl_clock.o ./drivers/SDK/fsl_common.d ./drivers/SDK/fsl_common.o ./drivers/SDK/fsl_dac.d ./drivers/SDK/fsl_dac.o ./drivers/SDK/fsl_dmamux.d ./drivers/SDK/fsl_dmamux.o ./drivers/SDK/fsl_dspi.d ./drivers/SDK/fsl_dspi.o ./drivers/SDK/fsl_edma.d ./drivers/SDK/fsl_edma.o ./drivers/SDK/fsl_pdb.d ./drivers/SDK/fsl_pdb.o ./drivers/SDK/fsl_pmc.d ./drivers/SDK/fsl_pmc.o ./drivers/SDK/fsl_rcm.d ./drivers/SDK/fsl_rcm.o ./drivers/SDK/fsl_rtc.d ./drivers/SDK/fsl_rtc.o ./drivers/SDK/fsl_smc.d ./drivers/SDK/fsl_smc.o ./drivers/SDK/fsl_sysmpu.d ./drivers/SDK/fsl_sysmpu.o ./drivers/SDK/power_mode_switch.d ./drivers/SDK/power_mode_switch.o
+	-$(RM) ./drivers/SDK/clock_config.d ./drivers/SDK/clock_config.o ./drivers/SDK/fsl_clock.d ./drivers/SDK/fsl_clock.o ./drivers/SDK/fsl_common.d ./drivers/SDK/fsl_common.o ./drivers/SDK/fsl_dac.d ./drivers/SDK/fsl_dac.o ./drivers/SDK/fsl_dmamux.d ./drivers/SDK/fsl_dmamux.o ./drivers/SDK/fsl_dspi.d ./drivers/SDK/fsl_dspi.o ./drivers/SDK/fsl_edma.d ./drivers/SDK/fsl_edma.o ./drivers/SDK/fsl_i2c.d ./drivers/SDK/fsl_i2c.o ./drivers/SDK/fsl_pdb.d ./drivers/SDK/fsl_pdb.o ./drivers/SDK/fsl_pmc.d ./drivers/SDK/fsl_pmc.o ./drivers/SDK/fsl_rcm.d ./drivers/SDK/fsl_rcm.o ./drivers/SDK/fsl_rtc.d ./drivers/SDK/fsl_rtc.o ./drivers/SDK/fsl_smc.d ./drivers/SDK/fsl_smc.o ./drivers/SDK/fsl_sysmpu.d ./drivers/SDK/fsl_sysmpu.o ./drivers/SDK/power_mode_switch.d ./drivers/SDK/power_mode_switch.o
 
 .PHONY: clean-drivers-2f-SDK
 
