@@ -1,6 +1,4 @@
-../source/App.c:67:6:App_Init	8	static
-../source/App.c:130:6:fill_queue	8	static
-../source/App.c:198:6:BOARD_InitPins	0	static
-../source/App.c:209:6:BOARD_I2C_ConfigurePins	0	static
-../source/App.c:250:5:testFunc	32	static
-../source/App.c:103:6:App_Run	8	static
+../source/App.c:69:6:App_Init	8	static
+../source/App.c:137:6:fill_queue	8	static
+../source/App.c:168:5:testFunc	16	static
+../source/App.c:110:6:App_Run	8	static

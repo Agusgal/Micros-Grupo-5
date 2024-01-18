@@ -1,40 +1,17 @@
-/*
- * Copyright 2019 NXP
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * o Redistributions of source code must retain the above copyright notice, this list
- *   of conditions and the following disclaimer.
- *
- * o Redistributions in binary form must reproduce the above copyright notice, this
- *   list of conditions and the following disclaimer in the documentation and/or
- *   other materials provided with the distribution.
- *
- * o Neither the name of copyright holder nor the names of its
- *   contributors may be used to endorse or promote products derived from this
- *   software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/***************************************************************************//**
+  @file     OLEDdisplay.c
+  @brief    OLED display functions
+  @author   Grupo 5
+ ******************************************************************************/
 
 /*----esta modificada para usar el I2C0, en caso de utilizar otro cambiar todo lo que diga I2C1 por la base del I2C usado--- */
 /*---- BASADO EN fsl_SSD1306.h para SPI de NXP ------*/
 
 #include "OLEDdisplay.h"
-//#include "fsl_gpio.h"
+#include "I2CWrapper.h"
 #include "fsl_i2c.h"
-//#include "fsl_Systick_Delay.h"
+
+
 
 /*******************************************************************************
  * Definitions
@@ -198,6 +175,14 @@ static int OLED_Render_Char (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, int8_t 
 
 void OLED_Init(void)
 {
+	//Initialize I2C module
+	BOARD_InitPins();
+	BOARD_InitBootClocks();
+
+	BOARD_I2C_ConfigurePins();
+
+	I2C_InitModule();
+
 
 	/*Give the display a reset*/
 	OLED_Reset();
@@ -285,9 +270,10 @@ void OLED_Set_Text (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, ui
 		else
 		{
 
-			for (Cont = 0; String[Cont] != '\0'; Cont++) {
+			for (Cont = 0; String[Cont] != '\0'; Cont++)
+			{
 				// Catch overflow when scaling!
-				xscaled = X_axis+(Cont*5*Scale);
+				xscaled = X_axis + (Cont * 5 * Scale);
 				if (xscaled > OLED_WIDTH)
 				{
 					//Do nothing
@@ -296,7 +282,6 @@ void OLED_Set_Text (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, ui
 				else
 				{
 					OLED_Render_Char(xscaled, Y_axis, SC, String[Cont], Scale);
-
 				}
 			}
 		}
