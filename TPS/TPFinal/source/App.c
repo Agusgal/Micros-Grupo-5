@@ -135,11 +135,28 @@ void App_Run (void)
  */
 void fill_queue(void)
 {
+	//If OLED Init worked... begin.
 	if(OLEDisInit())
 	{
 		emitEvent(START_EV);
 	}
 
+	//Check for memory events
+	if(Mm_SDConnection())
+	{
+		push_Queue_Element(SD_IN_EV);
+	}
+
+	if(Mm_SDDesconnection())
+	{
+		push_Queue_Element(SD_OUT_EV);
+	}
+
+	//Check for AudioPLayer Events
+	if (AudioPlayer_IsBackBufferFree())
+	{
+		push_Queue_Element(FILL_BUFFER_EV);
+	}
 
 	//check for encoder events
 
@@ -151,15 +168,6 @@ void fill_queue(void)
 
 
 	//Check for OLED events
-
-
-	//Check for AudioPLayer Events
-	if (AudioPlayer_IsBackBufferFree())
-	{
-		push_Queue_Element(FILL_BUFFER_EV);
-	}
-
-	//Check for memory events
 }
 
 

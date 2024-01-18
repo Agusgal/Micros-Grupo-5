@@ -7,8 +7,8 @@
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-#include "idle_state.h"
-#include "queue.h"
+#include "idle.h"
+#include "../../EventQueue/queue.h"
 #include "power_mode_switch.h"
 #include "LCD_GDM1602A.h"
 

@@ -8,7 +8,7 @@
 #include "idle.h"
 
 
-#include "queue.h"
+#include "../../EventQueue/queue.h"
 #include "memory_manager.h"
 #include "power_mode_switch.h"
 
