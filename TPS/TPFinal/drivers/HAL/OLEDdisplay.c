@@ -22,11 +22,17 @@
 /*******************************************************************************
  * Variables
  ******************************************************************************/
+
 /*! @brief OLED buffer */
 static uint8_t OLED_Buffer[(OLED_WIDTH * OLED_HEIGHT) / 8];
+
 static bool isInit = false;
 int OLEDtimerClbID = -1;
 
+static bool roll = false;
+static char* screenString;
+
+static void rollCLB(void);
 
 /*******************************************************************************
  * Code
@@ -197,8 +203,9 @@ void OLED_Init(void)
 	OLED_Config_Display();
 
 	isInit = true;
+	screenString = "WELCOME!";
 
-	OLEDtimerClbID = Timer_AddCallback(OLED_Refresh, 80, false); //Delay until clock stabilizes
+	OLEDtimerClbID = Timer_AddCallback(rollCLB, 100, false);
 }
 
 void OLED_Refresh(void)
@@ -265,34 +272,20 @@ void OLED_Set_Text (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, ui
 	uint16_t Cont;
 	uint16_t xscaled;
 
-	if ((X_axis >= OLED_WIDTH) || (Y_axis >= OLED_HEIGHT)) {
-		//Do nothing
-	}
-	else
+	for (Cont = 0; String[Cont] != '\0'; Cont++)
 	{
-		if (Scale > 3) {
+		// Catch overflow when scaling!
+		xscaled = X_axis + (Cont * 5 * Scale);
+
+		if (xscaled > OLED_WIDTH)
+		{
 			//Do nothing
 		}
 		else
 		{
-
-			for (Cont = 0; String[Cont] != '\0'; Cont++)
-			{
-				// Catch overflow when scaling!
-				xscaled = X_axis + (Cont * 5 * Scale);
-				if (xscaled > OLED_WIDTH)
-				{
-					//Do nothing
-				}
-
-				else
-				{
-					OLED_Render_Char(xscaled, Y_axis, SC, String[Cont], Scale);
-				}
-			}
+			OLED_Render_Char(xscaled, Y_axis, SC, String[Cont], Scale);
 		}
 	}
-
 }
 
 void OLED_Copy_Image(const uint8_t *Img, uint16_t size)
@@ -312,3 +305,31 @@ bool OLEDisInit()
 {
 	return isInit;
 }
+
+void OLED_write_Text(char* String)
+{
+	int strLength = strlen(String);
+
+	if (strLength > 12)
+	{
+		roll = true;
+	}
+
+	screenString = String;
+}
+
+static void rollCLB(void)
+{
+	if (!roll)
+	{
+		OLED_Set_Text(20, 32, kOLED_Pixel_Set, screenString, 2);
+		OLED_Refresh();
+	}
+	else
+	{
+
+	}
+}
+
+
+
