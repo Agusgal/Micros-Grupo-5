@@ -26,6 +26,12 @@
 #include "fsl_common.h"
 
 
+#include "ftm.h"
+#include "board.h"
+#include "MK64F12.h"
+
+
+
 /*******************************************************************************
 * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
 ******************************************************************************/
@@ -87,6 +93,8 @@ static bool backBufferFree = false;
 static bool pause = false, stop = false;
 static int16_t mute[DAC_DATL_COUNT] = {2048U};
 
+#define DMA_CHANEL (0U)
+
 
 /*******************************************************************************
 *******************************************************************************
@@ -101,6 +109,14 @@ void AudioPlayer_DEMOMode(void)
 
 void AudioPlayer_Init(void)
 {
+	//Todo el Init de DMA está en matrix, sin ese Init no corre el codigo.
+
+	//Sin esto aca se cuelga el programa xd
+	//DMAMUX_Init(DMAMUX);
+	//DMAMUX_SetSource(DMAMUX, DMA_CHANEL, FTM_DMA_SOURCE);
+	//DMAMUX_EnableChannel(DMAMUX, DMA_CHANEL);
+
+
 	for(uint8_t i = 0; i < DAC_DATL_COUNT; i++)
 	{
 		mute[i] = 0;

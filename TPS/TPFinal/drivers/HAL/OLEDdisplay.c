@@ -28,7 +28,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*----esta modificada para usar el I2C1, en caso de utilizar otro cambiar todo lo que diga I2C1 por la base del I2C usado--- */
+/*----esta modificada para usar el I2C0, en caso de utilizar otro cambiar todo lo que diga I2C1 por la base del I2C usado--- */
 /*---- BASADO EN fsl_SSD1306.h para SPI de NXP ------*/
 
 #include "OLEDdisplay.h"
@@ -54,9 +54,9 @@ static uint8_t OLED_Buffer[(OLED_WIDTH * OLED_HEIGHT) / 8];
 
 static void OLED_Command (uint8_t Cmd)
 {
-	i2c_master_transfer_t xfer = {0};
+	i2c_master_transfer_t xfer;
 
-	xfer.data = (uint8_t *)&Cmd;
+	xfer.data = &Cmd;
 	xfer.dataSize = sizeof(Cmd);
 	xfer.flags = kI2C_TransferDefaultFlag;
 	xfer.slaveAddress = SSD1306_ADDRESS_1;
@@ -64,7 +64,7 @@ static void OLED_Command (uint8_t Cmd)
 	xfer.subaddress = 0x0;
 	xfer.subaddressSize = 1;
 
-	I2C_MasterTransferBlocking(I2C1, &xfer);
+	I2C_MasterTransferBlocking(I2C0, &xfer);
 
 }
 
@@ -81,7 +81,7 @@ static void OLED_Data (uint8_t *Data)
 	xfer.subaddress = 0x40;
 	xfer.subaddressSize = 1;
 
-	I2C_MasterTransferBlocking(I2C1, &xfer);
+	I2C_MasterTransferBlocking(I2C0, &xfer);
 
 }
 

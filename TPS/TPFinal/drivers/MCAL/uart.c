@@ -9,9 +9,9 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
-#include <startup/hardware.h>
 #include "uart.h"
 #include "MK64F12.h"
+#include "hardware.h"
 #include "fsl_clock.h"
 
 #include "gpio.h"

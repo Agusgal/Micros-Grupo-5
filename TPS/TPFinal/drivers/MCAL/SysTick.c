@@ -3,17 +3,15 @@
   @brief    SysTick Driver
   @author   Grupo 5 - Lab de Micros
  ******************************************************************************/
-
-
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-#include <startup/hardware.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include "SysTick.h"
+#include "hardware.h"
 #include "fsl_clock.h"
 
 #include "board.h"

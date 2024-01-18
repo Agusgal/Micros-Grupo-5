@@ -14,7 +14,11 @@ drivers/HAL/AudioPlayer.o drivers/HAL/AudioPlayer.d: \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_edma.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_pdb.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_dmamux.h \
- /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/ftm.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/board/board.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/gpio.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/MK64F12.h
 ../drivers/HAL/AudioPlayer.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_dac.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h:
@@ -31,3 +35,7 @@ drivers/HAL/AudioPlayer.o drivers/HAL/AudioPlayer.d: \
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_pdb.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_dmamux.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/ftm.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/board/board.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/gpio.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/MK64F12.h:

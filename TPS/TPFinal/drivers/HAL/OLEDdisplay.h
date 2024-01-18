@@ -73,10 +73,9 @@
 //-----el display puede responder a alguna de estas 2 direcciones.
 //-----Si con una no funciona cambiar a la otra:
 #define SSD1306_ADDRESS_1							(0x3C)
-#define SSD1306_ADDRESS_2							(0x3D)
+#define SSD1306_ADDRESS_4							(0x3D)
 
-#define SSD1306_ADDRESS_3							(0x78)
-#define SSD1306_ADDRESS_4							(0x7A)
+
 
 
 /* OLED Data/Command PIN. */
