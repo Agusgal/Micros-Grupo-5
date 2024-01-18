@@ -11,16 +11,15 @@
 #include "../../EventQueue/queue.h"
 
 #include "power_mode_switch.h"
-#include "LCD_GDM1602A.h"
+//#include "LCD_GDM1602A.h"
 
 #include "OLEDdisplay.h"
 
-#include "time_service.h"
+//#include "time_service.h"
 #include "Timer.h"
-#include "memory_manager.h"
-#include "SysTick.h"
-#include "audio_manager.h"
-#include "LCD_GDM1602A.h"
+//#include "memory_manager.h"
+//#include "audio_manager.h"
+//#include "LCD_GDM1602A.h"
 
 
 
@@ -46,7 +45,7 @@ int timeCallbackId = -1;
 /**
  * @brief Shows the current time on the display.
  */
-static void showTime(void);
+//static void showTime(void);
 
 /**
  * @brief Changes the energy consumption mode of the device.
@@ -63,7 +62,7 @@ static void changePowerMode(void);
 /*
  *@brief Callback after changing to high power mode
  */
-static void emitStartEv(void);
+//static void emitStartEv(void);
 
 /*******************************************************************************
  *******************************************************************************
@@ -74,7 +73,7 @@ static void emitStartEv(void);
 void Idle_InitState(void)
 {
 	//DeInit some modules for Initialization
-	Audio_deinit();
+	//Audio_deinit();
 
 
 	OLED_Clear();
@@ -87,6 +86,8 @@ void Idle_InitState(void)
 
 void Idle_OnUserInteraction(void)
 {
+	//Memory stuff
+	/*
 	if (!Mm_IsSDPresent())
 		return;
 	setEnergyConsumptionMode(HIGH_CONSUMPTION);
@@ -96,13 +97,15 @@ void Idle_OnUserInteraction(void)
 		Timer_Delete(timeCallbackId);
 		timeCallbackId = -1;
 	}
-	TimeService_Disable();
+	*/
+	//TimeService_Disable();
 
 
-	timeCallbackId = Timer_AddCallback(emitStartEv, 3000, true); //Delay until clock stabilizes
+	//timeCallbackId = Timer_AddCallback(emitStartEv, 3000, true); //Delay until clock stabilizes
 
 }
 
+/*
 void Idle_UpdateTime()
 {
 	TimeServiceDate_t date = TimeService_GetCurrentDateTime();
@@ -116,7 +119,7 @@ void Idle_UpdateTime()
 	LCD_writeStrInPos(timeString, 15, 0, 0);
 	LCD_writeStrInPos(dateString, 15, 1, 0);
 }
-
+*/
 
 /*******************************************************************************
  *******************************************************************************
@@ -134,6 +137,7 @@ static void changePowerMode(void)
 	SysTick_UpdateClk();
 }
 
+/*
 static void emitStartEv(void)
 {
 	timeCallbackId = -1;
@@ -141,6 +145,7 @@ static void emitStartEv(void)
 	SysTick_UpdateClk();
 	emitEvent(START_EV);
 }
+*/
 
 static void setEnergyConsumptionMode(EnergyConsumptionMode_t energyConsumptionMode)
 {

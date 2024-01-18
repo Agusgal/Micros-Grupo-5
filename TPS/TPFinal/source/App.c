@@ -134,9 +134,11 @@ void App_Run (void)
  */
 void fill_queue(void)
 {
-	//If OLED Init worked... begin.
-	if(OLEDisInit())
+	//If OLED Init worked... begin. (only emits event one time)
+	static bool OLEDdone = false;
+	if(!OLEDdone && OLEDisInit())
 	{
+		OLEDdone = true;
 		push_Queue_Element(START_EV);
 	}
 

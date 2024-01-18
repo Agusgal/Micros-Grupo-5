@@ -28,6 +28,19 @@ typedef enum {
 			NONE_EV,
 			START_EV,
 
+			/* BUTTON EVENTS */
+	        PP_EV, //play pausa
+			STOP_EV,
+			NEXT_EV,
+		    PREV_EV,
+
+			/* ENCODER EVENTS */
+			ENCODER_RIGHT_EV,
+			ENCODER_LEFT_EV,
+			ENCODER_PRESS_EV,
+			ENCODER_LKP_EV,
+
+
 			CHANGE_MODE_EV,
 		    EFF_SELECTED_EV,
 

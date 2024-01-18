@@ -11,6 +11,7 @@
 #include "I2CWrapper.h"
 #include "fsl_i2c.h"
 
+#include "timer.h"
 
 
 /*******************************************************************************
@@ -24,6 +25,7 @@
 /*! @brief OLED buffer */
 static uint8_t OLED_Buffer[(OLED_WIDTH * OLED_HEIGHT) / 8];
 static bool isInit = false;
+int OLEDtimerClbID = -1;
 
 
 /*******************************************************************************
@@ -195,6 +197,8 @@ void OLED_Init(void)
 	OLED_Config_Display();
 
 	isInit = true;
+
+	OLEDtimerClbID = Timer_AddCallback(OLED_Refresh, 80, false); //Delay until clock stabilizes
 }
 
 void OLED_Refresh(void)

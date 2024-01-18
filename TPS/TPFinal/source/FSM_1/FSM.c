@@ -11,6 +11,7 @@
 
 #include "FSM.h"
 #include "States/Init.h"
+#include "States/idle.h"
 
 
 /*******************************************************************************
@@ -42,14 +43,29 @@ state INIT_STATE[] =
 
 state IDLE_STATE[] =
 {
-		{},
-		{},
-		{}
+		//Buttons
+		{Idle_OnUserInteraction, PP_EV, IDLE_STATE},
+		{Idle_OnUserInteraction, NEXT_EV, IDLE_STATE},
+		{Idle_OnUserInteraction, PREV_EV, IDLE_STATE},
+		{Idle_OnUserInteraction, STOP_EV, IDLE_STATE},
+
+		//Encoder
+		{Idle_OnUserInteraction, ENCODER_PRESS_EV, IDLE_STATE},
+		{Idle_OnUserInteraction, ENCODER_RIGHT_EV, IDLE_STATE},
+		{Idle_OnUserInteraction, ENCODER_LEFT_EV, IDLE_STATE},
+
+		//Misc
+		//{FileSelection_InitState, START_EV, FILE_SELECT_STATE},
+		//{Idle_OnUserInteraction,  SD_IN_EV, IDLE_STATE},
+		{pass, END_TABLE, INIT_STATE}
 };
 
 
 
+state FILE_SELECT_STATE[] =
+{
 
+};
 
 
 
@@ -108,7 +124,7 @@ state* get_initial_state()
  */
 void start_fsm()
 {
-	welcome_animation();
+	//welcome_animation();
 }
 
 

@@ -16,7 +16,8 @@ drivers/HAL/OLEDdisplay.o drivers/HAL/OLEDdisplay.d: \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/gpio.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/clock_config.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_i2c.h \
- /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_port.h
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_port.h \
+ ../drivers/HAL/timer.h
 ../drivers/HAL/OLEDdisplay.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/fsl_device_registers.h:
@@ -36,3 +37,4 @@ drivers/HAL/OLEDdisplay.o drivers/HAL/OLEDdisplay.d: \
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/clock_config.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_i2c.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_port.h:
+../drivers/HAL/timer.h:
