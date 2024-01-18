@@ -52,6 +52,12 @@ extern state PIN_ENTRY[];
 extern state RED_LED_ON[];
 extern state GREEN_LED_ON[];
 
+extern state INIT_STATE[];
+extern state IDLE_STATE[];
+extern state FILE_SELECT_STATE[];
+extern state AUDIO_PLAYER_STATE[];
+
+
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE

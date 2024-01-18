@@ -48,7 +48,10 @@ typedef enum {
 			FIVE_SEC_LAPSE_EV,
 			MIN_LAPSE_EV,
 
-			FILL_BUFFER_EV
+			FILL_BUFFER_EV,
+
+			SD_IN_EV,
+
 
 			}Event_Type;
 

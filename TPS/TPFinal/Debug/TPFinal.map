@@ -4650,14 +4650,14 @@ END GROUP
  .text.pull_Queue_Element
                 0x0000000000001048       0x3c ./source/EventQueue/queue.o
                 0x0000000000001048                pull_Queue_Element
- .text.App_Init
-                0x0000000000001084       0x3c ./source/App.o
-                0x0000000000001084                App_Init
+ .text.App_Run  0x0000000000001084       0x20 ./source/App.o
+                0x0000000000001084                App_Run
  .text.testFunc
-                0x00000000000010c0       0x38 ./source/App.o
-                0x00000000000010c0                testFunc
- .text.App_Run  0x00000000000010f8       0x24 ./source/App.o
-                0x00000000000010f8                App_Run
+                0x00000000000010a4       0x38 ./source/App.o
+                0x00000000000010a4                testFunc
+ .text.App_Init
+                0x00000000000010dc       0x40 ./source/App.o
+                0x00000000000010dc                App_Init
  .text.SDHC_DriverIRQHandler
                 0x000000000000111c       0x2c ./drivers/SDK/SD/fsl_sdhc.o
                 0x000000000000111c                SDHC_DriverIRQHandler
@@ -5945,7 +5945,7 @@ END GROUP
 OUTPUT(TPFinal.axf elf32-littlearm)
 LOAD linker stubs
 
-.debug_info     0x0000000000000000    0x20eec
+.debug_info     0x0000000000000000    0x20ecd
  .debug_info    0x0000000000000000      0x68c ./startup/hardware.o
  .debug_info    0x000000000000068c       0xd8 ./startup/main.o
  .debug_info    0x0000000000000764       0x3d ./startup/semihost_hardfault.o
@@ -5955,31 +5955,31 @@ LOAD linker stubs
  .debug_info    0x0000000000001694       0x83 ./source/FSM_1/States/id_entry.o
  .debug_info    0x0000000000001717      0x30e ./source/FSM_1/FSM.o
  .debug_info    0x0000000000001a25      0x1f5 ./source/EventQueue/queue.o
- .debug_info    0x0000000000001c1a      0x7fc ./source/App.o
- .debug_info    0x0000000000002416     0x2e98 ./drivers/SDK/SD/fsl_sdhc.o
- .debug_info    0x00000000000052ae      0xd71 ./drivers/SDK/clock_config.o
- .debug_info    0x000000000000601f     0x269c ./drivers/SDK/fsl_clock.o
- .debug_info    0x00000000000086bb      0xc09 ./drivers/SDK/fsl_dac.o
- .debug_info    0x00000000000092c4      0x486 ./drivers/SDK/fsl_dmamux.o
- .debug_info    0x000000000000974a     0x4139 ./drivers/SDK/fsl_dspi.o
- .debug_info    0x000000000000d883     0x2c48 ./drivers/SDK/fsl_edma.o
- .debug_info    0x00000000000104cb     0x29e8 ./drivers/SDK/fsl_i2c.o
- .debug_info    0x0000000000012eb3      0x98e ./drivers/SDK/fsl_pdb.o
- .debug_info    0x0000000000013841     0x1fd0 ./drivers/SDK/power_mode_switch.o
- .debug_info    0x0000000000015811      0x934 ./drivers/MCAL/SysTick.o
- .debug_info    0x0000000000016145     0x14cd ./drivers/MCAL/ftm.o
- .debug_info    0x0000000000017612      0xbeb ./drivers/MCAL/gpio.o
- .debug_info    0x00000000000181fd     0x1384 ./drivers/MCAL/uart.o
- .debug_info    0x0000000000019581     0x208d ./drivers/HAL/AudioPlayer.o
- .debug_info    0x000000000001b60e      0x99b ./drivers/HAL/I2CWrapper.o
- .debug_info    0x000000000001bfa9     0x11e0 ./drivers/HAL/OLEDdisplay.o
- .debug_info    0x000000000001d189     0x1a24 ./drivers/HAL/SPI_wrapper.o
- .debug_info    0x000000000001ebad      0x59f ./drivers/HAL/Timer.o
- .debug_info    0x000000000001f14c      0x28b ./drivers/HAL/encoder.o
- .debug_info    0x000000000001f3d7     0x14d6 ./drivers/HAL/matrix_display.o
- .debug_info    0x00000000000208ad      0x63f ./device/system_MK64F12.o
+ .debug_info    0x0000000000001c1a      0x7dd ./source/App.o
+ .debug_info    0x00000000000023f7     0x2e98 ./drivers/SDK/SD/fsl_sdhc.o
+ .debug_info    0x000000000000528f      0xd71 ./drivers/SDK/clock_config.o
+ .debug_info    0x0000000000006000     0x269c ./drivers/SDK/fsl_clock.o
+ .debug_info    0x000000000000869c      0xc09 ./drivers/SDK/fsl_dac.o
+ .debug_info    0x00000000000092a5      0x486 ./drivers/SDK/fsl_dmamux.o
+ .debug_info    0x000000000000972b     0x4139 ./drivers/SDK/fsl_dspi.o
+ .debug_info    0x000000000000d864     0x2c48 ./drivers/SDK/fsl_edma.o
+ .debug_info    0x00000000000104ac     0x29e8 ./drivers/SDK/fsl_i2c.o
+ .debug_info    0x0000000000012e94      0x98e ./drivers/SDK/fsl_pdb.o
+ .debug_info    0x0000000000013822     0x1fd0 ./drivers/SDK/power_mode_switch.o
+ .debug_info    0x00000000000157f2      0x934 ./drivers/MCAL/SysTick.o
+ .debug_info    0x0000000000016126     0x14cd ./drivers/MCAL/ftm.o
+ .debug_info    0x00000000000175f3      0xbeb ./drivers/MCAL/gpio.o
+ .debug_info    0x00000000000181de     0x1384 ./drivers/MCAL/uart.o
+ .debug_info    0x0000000000019562     0x208d ./drivers/HAL/AudioPlayer.o
+ .debug_info    0x000000000001b5ef      0x99b ./drivers/HAL/I2CWrapper.o
+ .debug_info    0x000000000001bf8a     0x11e0 ./drivers/HAL/OLEDdisplay.o
+ .debug_info    0x000000000001d16a     0x1a24 ./drivers/HAL/SPI_wrapper.o
+ .debug_info    0x000000000001eb8e      0x59f ./drivers/HAL/Timer.o
+ .debug_info    0x000000000001f12d      0x28b ./drivers/HAL/encoder.o
+ .debug_info    0x000000000001f3b8     0x14d6 ./drivers/HAL/matrix_display.o
+ .debug_info    0x000000000002088e      0x63f ./device/system_MK64F12.o
 
-.debug_abbrev   0x0000000000000000     0x511d
+.debug_abbrev   0x0000000000000000     0x50e4
  .debug_abbrev  0x0000000000000000      0x13a ./startup/hardware.o
  .debug_abbrev  0x000000000000013a       0x64 ./startup/main.o
  .debug_abbrev  0x000000000000019e       0x2f ./startup/semihost_hardfault.o
@@ -5989,29 +5989,29 @@ LOAD linker stubs
  .debug_abbrev  0x00000000000004b1       0x45 ./source/FSM_1/States/id_entry.o
  .debug_abbrev  0x00000000000004f6      0x18d ./source/FSM_1/FSM.o
  .debug_abbrev  0x0000000000000683      0x10d ./source/EventQueue/queue.o
- .debug_abbrev  0x0000000000000790      0x1f4 ./source/App.o
- .debug_abbrev  0x0000000000000984      0x428 ./drivers/SDK/SD/fsl_sdhc.o
- .debug_abbrev  0x0000000000000dac      0x2e3 ./drivers/SDK/clock_config.o
- .debug_abbrev  0x000000000000108f      0x48a ./drivers/SDK/fsl_clock.o
- .debug_abbrev  0x0000000000001519      0x2f5 ./drivers/SDK/fsl_dac.o
- .debug_abbrev  0x000000000000180e      0x1d8 ./drivers/SDK/fsl_dmamux.o
- .debug_abbrev  0x00000000000019e6      0x4f7 ./drivers/SDK/fsl_dspi.o
- .debug_abbrev  0x0000000000001edd      0x4c7 ./drivers/SDK/fsl_edma.o
- .debug_abbrev  0x00000000000023a4      0x47f ./drivers/SDK/fsl_i2c.o
- .debug_abbrev  0x0000000000002823      0x288 ./drivers/SDK/fsl_pdb.o
- .debug_abbrev  0x0000000000002aab      0x4c2 ./drivers/SDK/power_mode_switch.o
- .debug_abbrev  0x0000000000002f6d      0x293 ./drivers/MCAL/SysTick.o
- .debug_abbrev  0x0000000000003200      0x2d2 ./drivers/MCAL/ftm.o
- .debug_abbrev  0x00000000000034d2      0x284 ./drivers/MCAL/gpio.o
- .debug_abbrev  0x0000000000003756      0x34c ./drivers/MCAL/uart.o
- .debug_abbrev  0x0000000000003aa2      0x456 ./drivers/HAL/AudioPlayer.o
- .debug_abbrev  0x0000000000003ef8      0x2ca ./drivers/HAL/I2CWrapper.o
- .debug_abbrev  0x00000000000041c2      0x335 ./drivers/HAL/OLEDdisplay.o
- .debug_abbrev  0x00000000000044f7      0x3be ./drivers/HAL/SPI_wrapper.o
- .debug_abbrev  0x00000000000048b5      0x1e4 ./drivers/HAL/Timer.o
- .debug_abbrev  0x0000000000004a99      0x154 ./drivers/HAL/encoder.o
- .debug_abbrev  0x0000000000004bed      0x3db ./drivers/HAL/matrix_display.o
- .debug_abbrev  0x0000000000004fc8      0x155 ./device/system_MK64F12.o
+ .debug_abbrev  0x0000000000000790      0x1bb ./source/App.o
+ .debug_abbrev  0x000000000000094b      0x428 ./drivers/SDK/SD/fsl_sdhc.o
+ .debug_abbrev  0x0000000000000d73      0x2e3 ./drivers/SDK/clock_config.o
+ .debug_abbrev  0x0000000000001056      0x48a ./drivers/SDK/fsl_clock.o
+ .debug_abbrev  0x00000000000014e0      0x2f5 ./drivers/SDK/fsl_dac.o
+ .debug_abbrev  0x00000000000017d5      0x1d8 ./drivers/SDK/fsl_dmamux.o
+ .debug_abbrev  0x00000000000019ad      0x4f7 ./drivers/SDK/fsl_dspi.o
+ .debug_abbrev  0x0000000000001ea4      0x4c7 ./drivers/SDK/fsl_edma.o
+ .debug_abbrev  0x000000000000236b      0x47f ./drivers/SDK/fsl_i2c.o
+ .debug_abbrev  0x00000000000027ea      0x288 ./drivers/SDK/fsl_pdb.o
+ .debug_abbrev  0x0000000000002a72      0x4c2 ./drivers/SDK/power_mode_switch.o
+ .debug_abbrev  0x0000000000002f34      0x293 ./drivers/MCAL/SysTick.o
+ .debug_abbrev  0x00000000000031c7      0x2d2 ./drivers/MCAL/ftm.o
+ .debug_abbrev  0x0000000000003499      0x284 ./drivers/MCAL/gpio.o
+ .debug_abbrev  0x000000000000371d      0x34c ./drivers/MCAL/uart.o
+ .debug_abbrev  0x0000000000003a69      0x456 ./drivers/HAL/AudioPlayer.o
+ .debug_abbrev  0x0000000000003ebf      0x2ca ./drivers/HAL/I2CWrapper.o
+ .debug_abbrev  0x0000000000004189      0x335 ./drivers/HAL/OLEDdisplay.o
+ .debug_abbrev  0x00000000000044be      0x3be ./drivers/HAL/SPI_wrapper.o
+ .debug_abbrev  0x000000000000487c      0x1e4 ./drivers/HAL/Timer.o
+ .debug_abbrev  0x0000000000004a60      0x154 ./drivers/HAL/encoder.o
+ .debug_abbrev  0x0000000000004bb4      0x3db ./drivers/HAL/matrix_display.o
+ .debug_abbrev  0x0000000000004f8f      0x155 ./device/system_MK64F12.o
 
 .debug_aranges  0x0000000000000000     0x1198
  .debug_aranges
@@ -6146,7 +6146,7 @@ LOAD linker stubs
  .debug_rnglists
                 0x000000000000117e       0x20 ./device/system_MK64F12.o
 
-.debug_macro    0x0000000000000000    0x14633
+.debug_macro    0x0000000000000000    0x14641
  .debug_macro   0x0000000000000000       0xb4 ./startup/hardware.o
  .debug_macro   0x00000000000000b4      0xaf0 ./startup/hardware.o
  .debug_macro   0x0000000000000ba4       0x10 ./startup/hardware.o
@@ -6171,63 +6171,63 @@ LOAD linker stubs
  .debug_macro   0x000000000001215f       0x59 ./source/FSM_1/States/id_entry.o
  .debug_macro   0x00000000000121b8       0xe3 ./source/FSM_1/FSM.o
  .debug_macro   0x000000000001229b       0xa5 ./source/EventQueue/queue.o
- .debug_macro   0x0000000000012340      0x183 ./source/App.o
- .debug_macro   0x00000000000124c3       0xd8 ./source/App.o
- .debug_macro   0x000000000001259b       0x16 ./source/App.o
- .debug_macro   0x00000000000125b1       0x22 ./source/App.o
- .debug_macro   0x00000000000125d3       0xd7 ./source/App.o
- .debug_macro   0x00000000000126aa      0x174 ./source/App.o
- .debug_macro   0x000000000001281e       0x40 ./source/App.o
- .debug_macro   0x000000000001285e       0x70 ./source/App.o
- .debug_macro   0x00000000000128ce       0x16 ./source/App.o
- .debug_macro   0x00000000000128e4      0x112 ./source/App.o
- .debug_macro   0x00000000000129f6       0x10 ./source/App.o
- .debug_macro   0x0000000000012a06       0x10 ./source/App.o
- .debug_macro   0x0000000000012a16      0x121 ./drivers/SDK/SD/fsl_sdhc.o
- .debug_macro   0x0000000000012b37       0x64 ./drivers/SDK/SD/fsl_sdhc.o
- .debug_macro   0x0000000000012b9b      0x12b ./drivers/SDK/clock_config.o
- .debug_macro   0x0000000000012cc6       0x1c ./drivers/SDK/clock_config.o
- .debug_macro   0x0000000000012ce2      0x1ba ./drivers/SDK/fsl_clock.o
- .debug_macro   0x0000000000012e9c      0x104 ./drivers/SDK/fsl_dac.o
- .debug_macro   0x0000000000012fa0      0x104 ./drivers/SDK/fsl_dmamux.o
- .debug_macro   0x00000000000130a4      0x117 ./drivers/SDK/fsl_dspi.o
- .debug_macro   0x00000000000131bb       0x3a ./drivers/SDK/fsl_dspi.o
- .debug_macro   0x00000000000131f5      0x11d ./drivers/SDK/fsl_edma.o
- .debug_macro   0x0000000000013312       0x10 ./drivers/SDK/fsl_edma.o
- .debug_macro   0x0000000000013322      0x103 ./drivers/SDK/fsl_i2c.o
- .debug_macro   0x0000000000013425       0x1c ./drivers/SDK/fsl_i2c.o
- .debug_macro   0x0000000000013441      0x104 ./drivers/SDK/fsl_pdb.o
- .debug_macro   0x0000000000013545      0x132 ./drivers/SDK/power_mode_switch.o
- .debug_macro   0x0000000000013677       0x10 ./drivers/SDK/power_mode_switch.o
- .debug_macro   0x0000000000013687       0x10 ./drivers/SDK/power_mode_switch.o
- .debug_macro   0x0000000000013697       0x10 ./drivers/SDK/power_mode_switch.o
- .debug_macro   0x00000000000136a7      0x15b ./drivers/MCAL/SysTick.o
- .debug_macro   0x0000000000013802       0x16 ./drivers/MCAL/SysTick.o
- .debug_macro   0x0000000000013818       0x1c ./drivers/MCAL/SysTick.o
- .debug_macro   0x0000000000013834       0xd2 ./drivers/MCAL/SysTick.o
- .debug_macro   0x0000000000013906       0x6a ./drivers/MCAL/SysTick.o
- .debug_macro   0x0000000000013970       0x9f ./drivers/MCAL/ftm.o
- .debug_macro   0x0000000000013a0f       0xe4 ./drivers/MCAL/gpio.o
- .debug_macro   0x0000000000013af3       0x3a ./drivers/MCAL/gpio.o
- .debug_macro   0x0000000000013b2d      0x185 ./drivers/MCAL/uart.o
- .debug_macro   0x0000000000013cb2      0x1a6 ./drivers/HAL/AudioPlayer.o
- .debug_macro   0x0000000000013e58       0x16 ./drivers/HAL/AudioPlayer.o
- .debug_macro   0x0000000000013e6e       0x10 ./drivers/HAL/AudioPlayer.o
- .debug_macro   0x0000000000013e7e       0x10 ./drivers/HAL/AudioPlayer.o
- .debug_macro   0x0000000000013e8e       0x10 ./drivers/HAL/AudioPlayer.o
- .debug_macro   0x0000000000013e9e      0x14f ./drivers/HAL/I2CWrapper.o
- .debug_macro   0x0000000000013fed       0x16 ./drivers/HAL/I2CWrapper.o
- .debug_macro   0x0000000000014003       0x22 ./drivers/HAL/I2CWrapper.o
- .debug_macro   0x0000000000014025       0x16 ./drivers/HAL/I2CWrapper.o
- .debug_macro   0x000000000001403b      0x15c ./drivers/HAL/OLEDdisplay.o
- .debug_macro   0x0000000000014197      0x149 ./drivers/HAL/SPI_wrapper.o
- .debug_macro   0x00000000000142e0       0x40 ./drivers/HAL/SPI_wrapper.o
- .debug_macro   0x0000000000014320       0x7e ./drivers/HAL/Timer.o
- .debug_macro   0x000000000001439e       0x6b ./drivers/HAL/encoder.o
- .debug_macro   0x0000000000014409      0x192 ./drivers/HAL/matrix_display.o
- .debug_macro   0x000000000001459b       0x98 ./device/system_MK64F12.o
+ .debug_macro   0x0000000000012340      0x191 ./source/App.o
+ .debug_macro   0x00000000000124d1       0xd8 ./source/App.o
+ .debug_macro   0x00000000000125a9       0x16 ./source/App.o
+ .debug_macro   0x00000000000125bf       0x22 ./source/App.o
+ .debug_macro   0x00000000000125e1       0xd7 ./source/App.o
+ .debug_macro   0x00000000000126b8      0x174 ./source/App.o
+ .debug_macro   0x000000000001282c       0x40 ./source/App.o
+ .debug_macro   0x000000000001286c       0x70 ./source/App.o
+ .debug_macro   0x00000000000128dc       0x16 ./source/App.o
+ .debug_macro   0x00000000000128f2      0x112 ./source/App.o
+ .debug_macro   0x0000000000012a04       0x10 ./source/App.o
+ .debug_macro   0x0000000000012a14       0x10 ./source/App.o
+ .debug_macro   0x0000000000012a24      0x121 ./drivers/SDK/SD/fsl_sdhc.o
+ .debug_macro   0x0000000000012b45       0x64 ./drivers/SDK/SD/fsl_sdhc.o
+ .debug_macro   0x0000000000012ba9      0x12b ./drivers/SDK/clock_config.o
+ .debug_macro   0x0000000000012cd4       0x1c ./drivers/SDK/clock_config.o
+ .debug_macro   0x0000000000012cf0      0x1ba ./drivers/SDK/fsl_clock.o
+ .debug_macro   0x0000000000012eaa      0x104 ./drivers/SDK/fsl_dac.o
+ .debug_macro   0x0000000000012fae      0x104 ./drivers/SDK/fsl_dmamux.o
+ .debug_macro   0x00000000000130b2      0x117 ./drivers/SDK/fsl_dspi.o
+ .debug_macro   0x00000000000131c9       0x3a ./drivers/SDK/fsl_dspi.o
+ .debug_macro   0x0000000000013203      0x11d ./drivers/SDK/fsl_edma.o
+ .debug_macro   0x0000000000013320       0x10 ./drivers/SDK/fsl_edma.o
+ .debug_macro   0x0000000000013330      0x103 ./drivers/SDK/fsl_i2c.o
+ .debug_macro   0x0000000000013433       0x1c ./drivers/SDK/fsl_i2c.o
+ .debug_macro   0x000000000001344f      0x104 ./drivers/SDK/fsl_pdb.o
+ .debug_macro   0x0000000000013553      0x132 ./drivers/SDK/power_mode_switch.o
+ .debug_macro   0x0000000000013685       0x10 ./drivers/SDK/power_mode_switch.o
+ .debug_macro   0x0000000000013695       0x10 ./drivers/SDK/power_mode_switch.o
+ .debug_macro   0x00000000000136a5       0x10 ./drivers/SDK/power_mode_switch.o
+ .debug_macro   0x00000000000136b5      0x15b ./drivers/MCAL/SysTick.o
+ .debug_macro   0x0000000000013810       0x16 ./drivers/MCAL/SysTick.o
+ .debug_macro   0x0000000000013826       0x1c ./drivers/MCAL/SysTick.o
+ .debug_macro   0x0000000000013842       0xd2 ./drivers/MCAL/SysTick.o
+ .debug_macro   0x0000000000013914       0x6a ./drivers/MCAL/SysTick.o
+ .debug_macro   0x000000000001397e       0x9f ./drivers/MCAL/ftm.o
+ .debug_macro   0x0000000000013a1d       0xe4 ./drivers/MCAL/gpio.o
+ .debug_macro   0x0000000000013b01       0x3a ./drivers/MCAL/gpio.o
+ .debug_macro   0x0000000000013b3b      0x185 ./drivers/MCAL/uart.o
+ .debug_macro   0x0000000000013cc0      0x1a6 ./drivers/HAL/AudioPlayer.o
+ .debug_macro   0x0000000000013e66       0x16 ./drivers/HAL/AudioPlayer.o
+ .debug_macro   0x0000000000013e7c       0x10 ./drivers/HAL/AudioPlayer.o
+ .debug_macro   0x0000000000013e8c       0x10 ./drivers/HAL/AudioPlayer.o
+ .debug_macro   0x0000000000013e9c       0x10 ./drivers/HAL/AudioPlayer.o
+ .debug_macro   0x0000000000013eac      0x14f ./drivers/HAL/I2CWrapper.o
+ .debug_macro   0x0000000000013ffb       0x16 ./drivers/HAL/I2CWrapper.o
+ .debug_macro   0x0000000000014011       0x22 ./drivers/HAL/I2CWrapper.o
+ .debug_macro   0x0000000000014033       0x16 ./drivers/HAL/I2CWrapper.o
+ .debug_macro   0x0000000000014049      0x15c ./drivers/HAL/OLEDdisplay.o
+ .debug_macro   0x00000000000141a5      0x149 ./drivers/HAL/SPI_wrapper.o
+ .debug_macro   0x00000000000142ee       0x40 ./drivers/HAL/SPI_wrapper.o
+ .debug_macro   0x000000000001432e       0x7e ./drivers/HAL/Timer.o
+ .debug_macro   0x00000000000143ac       0x6b ./drivers/HAL/encoder.o
+ .debug_macro   0x0000000000014417      0x192 ./drivers/HAL/matrix_display.o
+ .debug_macro   0x00000000000145a9       0x98 ./device/system_MK64F12.o
 
-.debug_line     0x0000000000000000    0x12d95
+.debug_line     0x0000000000000000    0x12e06
  .debug_line    0x0000000000000000      0x410 ./startup/hardware.o
  .debug_line    0x0000000000000410      0x2c3 ./startup/main.o
  .debug_line    0x00000000000006d3       0x5a ./startup/semihost_hardfault.o
@@ -6237,29 +6237,29 @@ LOAD linker stubs
  .debug_line    0x00000000000016bd      0x246 ./source/FSM_1/States/id_entry.o
  .debug_line    0x0000000000001903      0x441 ./source/FSM_1/FSM.o
  .debug_line    0x0000000000001d44      0x353 ./source/EventQueue/queue.o
- .debug_line    0x0000000000002097      0x5c7 ./source/App.o
- .debug_line    0x000000000000265e     0x164f ./drivers/SDK/SD/fsl_sdhc.o
- .debug_line    0x0000000000003cad      0x415 ./drivers/SDK/clock_config.o
- .debug_line    0x00000000000040c2     0x1b15 ./drivers/SDK/fsl_clock.o
- .debug_line    0x0000000000005bd7      0x663 ./drivers/SDK/fsl_dac.o
- .debug_line    0x000000000000623a      0x39f ./drivers/SDK/fsl_dmamux.o
- .debug_line    0x00000000000065d9     0x29b5 ./drivers/SDK/fsl_dspi.o
- .debug_line    0x0000000000008f8e     0x19ae ./drivers/SDK/fsl_edma.o
- .debug_line    0x000000000000a93c     0x1d2f ./drivers/SDK/fsl_i2c.o
- .debug_line    0x000000000000c66b      0x4d7 ./drivers/SDK/fsl_pdb.o
- .debug_line    0x000000000000cb42      0x9e8 ./drivers/SDK/power_mode_switch.o
- .debug_line    0x000000000000d52a      0x8a3 ./drivers/MCAL/SysTick.o
- .debug_line    0x000000000000ddcd      0x7e0 ./drivers/MCAL/ftm.o
- .debug_line    0x000000000000e5ad      0x670 ./drivers/MCAL/gpio.o
- .debug_line    0x000000000000ec1d      0x9cc ./drivers/MCAL/uart.o
- .debug_line    0x000000000000f5e9      0xb0e ./drivers/HAL/AudioPlayer.o
- .debug_line    0x00000000000100f7      0x4ff ./drivers/HAL/I2CWrapper.o
- .debug_line    0x00000000000105f6      0x738 ./drivers/HAL/OLEDdisplay.o
- .debug_line    0x0000000000010d2e      0xac4 ./drivers/HAL/SPI_wrapper.o
- .debug_line    0x00000000000117f2      0x6af ./drivers/HAL/Timer.o
- .debug_line    0x0000000000011ea1      0x365 ./drivers/HAL/encoder.o
- .debug_line    0x0000000000012206      0x736 ./drivers/HAL/matrix_display.o
- .debug_line    0x000000000001293c      0x459 ./device/system_MK64F12.o
+ .debug_line    0x0000000000002097      0x638 ./source/App.o
+ .debug_line    0x00000000000026cf     0x164f ./drivers/SDK/SD/fsl_sdhc.o
+ .debug_line    0x0000000000003d1e      0x415 ./drivers/SDK/clock_config.o
+ .debug_line    0x0000000000004133     0x1b15 ./drivers/SDK/fsl_clock.o
+ .debug_line    0x0000000000005c48      0x663 ./drivers/SDK/fsl_dac.o
+ .debug_line    0x00000000000062ab      0x39f ./drivers/SDK/fsl_dmamux.o
+ .debug_line    0x000000000000664a     0x29b5 ./drivers/SDK/fsl_dspi.o
+ .debug_line    0x0000000000008fff     0x19ae ./drivers/SDK/fsl_edma.o
+ .debug_line    0x000000000000a9ad     0x1d2f ./drivers/SDK/fsl_i2c.o
+ .debug_line    0x000000000000c6dc      0x4d7 ./drivers/SDK/fsl_pdb.o
+ .debug_line    0x000000000000cbb3      0x9e8 ./drivers/SDK/power_mode_switch.o
+ .debug_line    0x000000000000d59b      0x8a3 ./drivers/MCAL/SysTick.o
+ .debug_line    0x000000000000de3e      0x7e0 ./drivers/MCAL/ftm.o
+ .debug_line    0x000000000000e61e      0x670 ./drivers/MCAL/gpio.o
+ .debug_line    0x000000000000ec8e      0x9cc ./drivers/MCAL/uart.o
+ .debug_line    0x000000000000f65a      0xb0e ./drivers/HAL/AudioPlayer.o
+ .debug_line    0x0000000000010168      0x4ff ./drivers/HAL/I2CWrapper.o
+ .debug_line    0x0000000000010667      0x738 ./drivers/HAL/OLEDdisplay.o
+ .debug_line    0x0000000000010d9f      0xac4 ./drivers/HAL/SPI_wrapper.o
+ .debug_line    0x0000000000011863      0x6af ./drivers/HAL/Timer.o
+ .debug_line    0x0000000000011f12      0x365 ./drivers/HAL/encoder.o
+ .debug_line    0x0000000000012277      0x736 ./drivers/HAL/matrix_display.o
+ .debug_line    0x00000000000129ad      0x459 ./device/system_MK64F12.o
 
 .debug_str      0x0000000000000000    0x855de
  .debug_str     0x0000000000000000    0x78361 ./startup/hardware.o
@@ -6280,27 +6280,27 @@ LOAD linker stubs
                                       0x7162a (size before relaxing)
  .debug_str     0x0000000000078f2e       0x77 ./source/EventQueue/queue.o
                                       0x71540 (size before relaxing)
- .debug_str     0x0000000000078fa5     0x1be5 ./source/App.o
-                                      0x79f2a (size before relaxing)
- .debug_str     0x000000000007ab8a     0x2919 ./drivers/SDK/SD/fsl_sdhc.o
+ .debug_str     0x0000000000078fa5     0x1bfc ./source/App.o
+                                      0x79f41 (size before relaxing)
+ .debug_str     0x000000000007aba1     0x2919 ./drivers/SDK/SD/fsl_sdhc.o
                                       0x7bbbf (size before relaxing)
- .debug_str     0x000000000007d4a3      0x832 ./drivers/SDK/clock_config.o
+ .debug_str     0x000000000007d4ba      0x832 ./drivers/SDK/clock_config.o
                                       0x7a2e3 (size before relaxing)
- .debug_str     0x000000000007dcd5     0x16c5 ./drivers/SDK/fsl_clock.o
+ .debug_str     0x000000000007dcec     0x16c5 ./drivers/SDK/fsl_clock.o
                                       0x7b8e1 (size before relaxing)
- .debug_str     0x000000000007f39a      0x44b ./drivers/SDK/fsl_dac.o
+ .debug_str     0x000000000007f3b1      0x44b ./drivers/SDK/fsl_dac.o
                                       0x7a0ff (size before relaxing)
- .debug_str     0x000000000007f7e5       0xe8 ./drivers/SDK/fsl_dmamux.o
+ .debug_str     0x000000000007f7fc       0xe8 ./drivers/SDK/fsl_dmamux.o
                                       0x79543 (size before relaxing)
- .debug_str     0x000000000007f8cd     0x140e ./drivers/SDK/fsl_dspi.o
+ .debug_str     0x000000000007f8e4     0x140e ./drivers/SDK/fsl_dspi.o
                                       0x7b9d7 (size before relaxing)
- .debug_str     0x0000000000080cdb     0x10d7 ./drivers/SDK/fsl_edma.o
+ .debug_str     0x0000000000080cf2     0x10d7 ./drivers/SDK/fsl_edma.o
                                       0x7ae96 (size before relaxing)
- .debug_str     0x0000000000081db2      0xc6c ./drivers/SDK/fsl_i2c.o
+ .debug_str     0x0000000000081dc9      0xc6c ./drivers/SDK/fsl_i2c.o
                                       0x7afd7 (size before relaxing)
- .debug_str     0x0000000000082a1e      0x617 ./drivers/SDK/fsl_pdb.o
+ .debug_str     0x0000000000082a35      0x617 ./drivers/SDK/fsl_pdb.o
                                       0x79aca (size before relaxing)
- .debug_str     0x0000000000083035      0x7d4 ./drivers/SDK/power_mode_switch.o
+ .debug_str     0x000000000008304c      0x7bd ./drivers/SDK/power_mode_switch.o
                                       0x7b018 (size before relaxing)
  .debug_str     0x0000000000083809      0x2af ./drivers/MCAL/SysTick.o
                                       0x7a3b9 (size before relaxing)

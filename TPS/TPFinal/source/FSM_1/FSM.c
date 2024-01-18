@@ -15,6 +15,8 @@
 #include <FSM_1/States/id_entry.h>
 #include <FSM_1/States/open.h>
 
+#include "Init.h"
+
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -35,6 +37,21 @@ static void pass(void);
 /*******************************************************************************
  * FSM TABLE
  ******************************************************************************/
+
+state INIT_STATE[] =
+{
+		{startProgram, START_EV, IDLE_STATE},
+		{pass, END_TABLE, INIT_STATE}
+};
+
+
+state IDLE_STATE[] =
+{
+		{},
+		{},
+		{}
+};
+
 
 state BRIGHTNESS[]=
 {
@@ -174,7 +191,7 @@ state* fsm_dispatcher(state* p_state, Event_Type curr_event)
  */
 state* get_initial_state()
 {
-	return ID_ENTRY;
+	return IDLE_STATE;
 }
 
 

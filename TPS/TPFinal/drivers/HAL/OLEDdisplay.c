@@ -23,6 +23,7 @@
  ******************************************************************************/
 /*! @brief OLED buffer */
 static uint8_t OLED_Buffer[(OLED_WIDTH * OLED_HEIGHT) / 8];
+static bool isInit = false;
 
 
 /*******************************************************************************
@@ -193,6 +194,7 @@ void OLED_Init(void)
 	/*Configure the OLED display controller*/
 	OLED_Config_Display();
 
+	isInit = true;
 }
 
 void OLED_Refresh(void)
@@ -300,4 +302,9 @@ void OLED_Copy_Image(const uint8_t *Img, uint16_t size)
 	{
 		OLED_Buffer[CpyBuffer] = *(Img + CpyBuffer);
 	}
+}
+
+bool OLEDisInit()
+{
+	return isInit;
 }

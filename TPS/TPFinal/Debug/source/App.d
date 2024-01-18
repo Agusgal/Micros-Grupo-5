@@ -14,6 +14,8 @@ source/App.o source/App.d: ../source/App.c \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/MK64F12_features.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_clock.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/power_mode_switch.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/CMSIS/../drivers/SDK/fsl_common.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/gpio.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/board/board.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/SysTick.h \
@@ -38,6 +40,8 @@ source/App.o source/App.d: ../source/App.c \
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/MK64F12_features.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_clock.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/power_mode_switch.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/CMSIS/../drivers/SDK/fsl_common.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/gpio.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/board/board.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/SysTick.h:

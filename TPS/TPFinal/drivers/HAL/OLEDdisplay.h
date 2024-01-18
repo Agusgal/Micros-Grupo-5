@@ -196,4 +196,6 @@ void OLED_Fill_Rect (uint8_t X_axis, uint8_t Y_axis, uint8_t Width, uint8_t Heig
 
 void OLED_Copy_Image(const uint8_t *Img, uint16_t size);
 
+bool OLEDisInit(void);
+
 #endif /* FSL_SSD1306_I2C_H_ */

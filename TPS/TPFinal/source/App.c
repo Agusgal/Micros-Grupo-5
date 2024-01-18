@@ -18,6 +18,7 @@
 #include "Drivers/HAL/Encoder.h"
 
 #include "fsl_common.h"
+#include "power_mode_switch.h"
 
 #include "gpio.h"
 #include "board.h"
@@ -31,16 +32,12 @@
 #include "AudioPlayer.h"
 
 #include "EventQueue/queue.h"
-/*******************************************************************************
- * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
- ******************************************************************************/
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
-int testFunc(void);
-
+void testFunc(void);
 
 
 /**
@@ -102,6 +99,8 @@ void App_Init (void)
 	//Init fsm
 	current_state = get_initial_state();
 	start_fsm();
+
+	testFunc();
 }
 
 
@@ -109,7 +108,7 @@ void App_Init (void)
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-	testFunc();
+	//testFunc();
 
 	fill_queue();
 
@@ -136,6 +135,11 @@ void App_Run (void)
  */
 void fill_queue(void)
 {
+	if(OLEDisInit())
+	{
+		emitEvent(START_EV);
+	}
+
 
 	//check for encoder events
 
@@ -146,7 +150,7 @@ void fill_queue(void)
 	//Check for button events
 
 
-	//Check for OLEd events
+	//Check for OLED events
 
 
 	//Check for AudioPLayer Events
@@ -165,7 +169,7 @@ void fill_queue(void)
  *
  * */
 
-int testFunc(void)
+void testFunc(void)
 {
     // Print welcome message
     OLED_Copy_Image(&logo_nxp[0], sizeof(logo_nxp));
@@ -175,6 +179,7 @@ int testFunc(void)
     OLED_Set_Text(0, 52, kOLED_Pixel_Set, "ABCDEFGHIJKLMNOPQ", 2);
     OLED_Refresh();
 }
+
 
 
 

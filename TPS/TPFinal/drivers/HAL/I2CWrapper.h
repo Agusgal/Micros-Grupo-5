@@ -15,7 +15,6 @@
 #include "fsl_i2c.h"
 #include "fsl_port.h"
 
-//#include "OLEDdisplay.h"
 
 
 #define ACCEL_I2C_CLK_SRC     I2C0_CLK_SRC
