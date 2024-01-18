@@ -9,6 +9,7 @@
  ******************************************************************************/
 #include "idle.h"
 #include "../../EventQueue/queue.h"
+
 #include "power_mode_switch.h"
 #include "LCD_GDM1602A.h"
 
@@ -21,6 +22,8 @@
 #include "audio_manager.h"
 #include "LCD_GDM1602A.h"
 
+
+
 /*********************************************************
  * 		LOCAL STRUCTS AND ENUMS
  ********************************************************/
@@ -29,6 +32,8 @@ typedef enum
   LOW_CONSUMPTION,
   HIGH_CONSUMPTION,
 } EnergyConsumptionMode_t;
+
+
 
 /*******************************************************************************
  * PRIVATE VARIABLES WITH FILE LEVEL SCOPE

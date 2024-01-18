@@ -71,8 +71,9 @@ void App_Init (void)
 	Timer_Init();
 
 	//Memory Init
-	//OLED Init
-	// Initialize the SSD1306 display
+
+
+	// Initialize the SSD1306 OLED display
 	OLED_Init();
 	OLED_Refresh();
 	OLED_Clear();
@@ -108,8 +109,6 @@ void App_Init (void)
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-	//testFunc();
-
 	fill_queue();
 
 	Event_Type event = pull_Queue_Element();
@@ -138,10 +137,11 @@ void fill_queue(void)
 	//If OLED Init worked... begin.
 	if(OLEDisInit())
 	{
-		emitEvent(START_EV);
+		push_Queue_Element(START_EV);
 	}
 
 	//Check for memory events
+	/*
 	if(Mm_SDConnection())
 	{
 		push_Queue_Element(SD_IN_EV);
@@ -151,6 +151,7 @@ void fill_queue(void)
 	{
 		push_Queue_Element(SD_OUT_EV);
 	}
+	*/
 
 	//Check for AudioPLayer Events
 	if (AudioPlayer_IsBackBufferFree())
