@@ -95,7 +95,10 @@ state FILE_SELECT_STATE[] =
 		{pass, END_TABLE, FILE_SELECT_STATE}
 };
 
+state AUDIO_PLAYER_STATE[] =
+{
 
+};
 
 
 

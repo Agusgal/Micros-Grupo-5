@@ -8,6 +8,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
+//todo: tambien vuela.
 #define TITLE_TIME 5000
 
 /*******************************************************************************
@@ -17,11 +18,11 @@
 #include <string.h>
 
 #include "audio_manager.h"
+//#include "AudioPlayer.h"
 
 #include "file_selection.h"
 #include "../../EventQueue/queue.h"
 
-//#include "AudioPlayer.h"
 
 #include "Timer.h"
 #include "OLEDdisplay.h"
@@ -29,6 +30,7 @@
 //#include "memory_manager.h"
 //#include "file_system_manager.h"
 //#include "decoder.h"
+
 #include "power_mode_switch.h"
 
 /*******************************************************************************
@@ -40,10 +42,14 @@ static int titleTimerID = -1;
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
+
+
 /**
  * @brief Show the title of the state on the display. If the user interacts with the system, the title will stop showing.
  */
 static void showTitle(void);
+
+
 /**
  * @brief Stops showing the title of the state on the display.
  */
@@ -51,14 +57,10 @@ static void stopShowingTitle(void);
 
 
 /**
- * @brief Fetches the files that exist in the current SD.
- */
-static void initialFileFetching(void);
-
-/**
  * @brief Prints the file's name and artist
  */
 static void printFileInfo(void);
+
 
 /*******************************************************************************
  *******************************************************************************
@@ -76,34 +78,34 @@ void FileSelection_InitState(void)
 
 void FileSelection_NextFile(void)
 {
-	Audio_nextFile();
-	printFileInfo();
+	//Audio_nextFile();
+	//printFileInfo();
 }
 
 void FileSelection_PreviousFile(void)
 {
-	Audio_prevFile();
-	printFileInfo();
+	//Audio_prevFile();
+	//printFileInfo();
 }
 
 void FileSelection_SelectFile(void)
 {
 	/* Start decoding the file and play the audio player */
-	Audio_selectFile();
-	Audio_play();
-	emitEvent(FILE_SELECTED_EV);
+	//Audio_selectFile();
+	//Audio_play();
+	push_Queue_Element(FILE_SELECTED_EV);
 }
 
 void FileSelection_PlayNextSong(void)
 {
-	Audio_playNextFile();
-	Audio_play();
+	//Audio_playNextFile();
+	//Audio_play();
 }
 
 void FileSelection_PlayPrevSong(void)
 {
-	Audio_playPrevFile();
-	Audio_play();
+	//Audio_playPrevFile();
+	//Audio_play();
 }
 
 
@@ -121,6 +123,7 @@ static void showTitle(void)
 	//titleTimerID = Timer_AddCallback(&stopShowingTitle, TITLE_TIME, true);
 }
 
+//todo esto vuela me parece
 static void stopShowingTitle(void)
 {
 	showingTitle = false;
