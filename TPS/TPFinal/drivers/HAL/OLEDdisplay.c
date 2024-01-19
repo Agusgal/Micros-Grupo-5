@@ -34,12 +34,10 @@ static bool roll = false;
 static char* screenString;
 
 static void rollCLB(void);
-static void shiftLeft();
-static void shiftPixelsLeftPage();
-static void shiftPageLeft(uint8_t page);
-static void updateScrollBuffer();
-static int OLED_Render_Scroll_Char (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, int8_t String, uint8_t Scale);
 
+static void shiftPageLeft(uint8_t page);
+static int OLED_Render_Scroll_Char (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, int8_t String, uint8_t Scale);
+static toggleRoll(void);
 
 
 /*******************************************************************************
@@ -219,10 +217,12 @@ void OLED_Init(void)
 	/*Configure the OLED display controller*/
 	OLED_Config_Display();
 
+	//Configure start message with roll ON
 	isInit = true;
-	screenString = "HELLO WORLD! 123456789";
+	screenString = "WELCOME!";
+	toggleRoll();
 
-	OLEDtimerClbID = Timer_AddCallback(rollCLB, 15, false);
+	OLEDtimerClbID = Timer_AddCallback(rollCLB, 15, false); // 15 es bastante rapido.
 }
 
 void OLED_Refresh(void)
@@ -453,28 +453,16 @@ static void shiftPageLeft(uint8_t page)
 
 	int strLength = strlen(screenString);
 
-	if (index > 5 * scale * strLength)
+	if (index > (5 * scale * strLength))
 	{
 		index = 0;
 	}
-
 }
 
-
-
-static void shiftPixelsLeftPage()
+static toggleRoll()
 {
-    for (int page = 0; page < OLED_HEIGHT / 8; page++)
-    {
-        int startIndex = page * OLED_WIDTH;
-
-
-        for (int i = startIndex; i < startIndex + OLED_WIDTH; i++)
-        {
-        	uint8_t nextByte = OLED_Buffer[i + 1];
-            OLED_Buffer[i] = nextByte;
-        }
-    }
+	roll = !roll;
 }
+
 
 
