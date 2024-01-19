@@ -5966,7 +5966,7 @@ END GROUP
 OUTPUT(TPFinal.axf elf32-littlearm)
 LOAD linker stubs
 
-.debug_info     0x0000000000000000    0x21a72
+.debug_info     0x0000000000000000    0x21a71
  .debug_info    0x0000000000000000      0x68c ./startup/hardware.o
  .debug_info    0x000000000000068c       0xd8 ./startup/main.o
  .debug_info    0x0000000000000764       0x3d ./startup/semihost_hardfault.o
@@ -5992,12 +5992,12 @@ LOAD linker stubs
  .debug_info    0x00000000000187bf     0x1384 ./drivers/MCAL/uart.o
  .debug_info    0x0000000000019b43     0x208d ./drivers/HAL/AudioPlayer.o
  .debug_info    0x000000000001bbd0      0x99b ./drivers/HAL/I2CWrapper.o
- .debug_info    0x000000000001c56b     0x17a5 ./drivers/HAL/OLEDdisplay.o
- .debug_info    0x000000000001dd10     0x1a24 ./drivers/HAL/SPI_wrapper.o
- .debug_info    0x000000000001f734      0x59e ./drivers/HAL/Timer.o
- .debug_info    0x000000000001fcd2      0x28b ./drivers/HAL/encoder.o
- .debug_info    0x000000000001ff5d     0x14d6 ./drivers/HAL/matrix_display.o
- .debug_info    0x0000000000021433      0x63f ./device/system_MK64F12.o
+ .debug_info    0x000000000001c56b     0x17a4 ./drivers/HAL/OLEDdisplay.o
+ .debug_info    0x000000000001dd0f     0x1a24 ./drivers/HAL/SPI_wrapper.o
+ .debug_info    0x000000000001f733      0x59e ./drivers/HAL/Timer.o
+ .debug_info    0x000000000001fcd1      0x28b ./drivers/HAL/encoder.o
+ .debug_info    0x000000000001ff5c     0x14d6 ./drivers/HAL/matrix_display.o
+ .debug_info    0x0000000000021432      0x63f ./device/system_MK64F12.o
 
 .debug_abbrev   0x0000000000000000     0x5130
  .debug_abbrev  0x0000000000000000      0x13a ./startup/hardware.o

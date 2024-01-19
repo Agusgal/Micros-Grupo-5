@@ -222,7 +222,7 @@ void OLED_Init(void)
 	isInit = true;
 	screenString = "HELLO WORLD! 123456789";
 
-	OLEDtimerClbID = Timer_AddCallback(rollCLB, 100, false);
+	OLEDtimerClbID = Timer_AddCallback(rollCLB, 15, false);
 }
 
 void OLED_Refresh(void)
@@ -287,7 +287,7 @@ void OLED_Set_Scroll_Pixel (uint8_t X_axis, uint8_t Y_axis, uint8_t SC)
 {
 	int page = 0;
 
-	if (Y_axis > (8))
+	if (Y_axis >= (8))
 	{
 		page++;
 	}
