@@ -236,6 +236,7 @@ void OLED_Refresh(void)
 
 }
 
+//todo: resetear el buffer temporal tambien.
 void OLED_Clear(void)
 {
 	memset(OLED_Buffer, 0, sizeof(OLED_Buffer));
@@ -401,7 +402,7 @@ bool OLEDisInit()
 	return isInit;
 }
 
-void OLED_write_Text(char* String)
+void OLED_write_Text(uint8_t X_axis, uint8_t Y_axis, char* String)
 {
 	int strLength = strlen(String);
 
@@ -411,6 +412,8 @@ void OLED_write_Text(char* String)
 	}
 
 	screenString = String;
+
+	OLED_Set_Text(X_axis, Y_axis, kOLED_Pixel_Set, screenString, 2);
 }
 
 static void rollCLB(void)

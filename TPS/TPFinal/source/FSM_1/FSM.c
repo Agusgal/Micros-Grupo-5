@@ -12,6 +12,7 @@
 #include "FSM.h"
 #include "States/Init.h"
 #include "States/idle.h"
+#include "States/file_selection.h"
 
 
 /*******************************************************************************
@@ -44,7 +45,7 @@ state INIT_STATE[] =
 state IDLE_STATE[] =
 {
 		//Buttons
-		{Idle_OnUserInteraction, PP_EV, IDLE_STATE},
+		{Idle_OnUserInteraction, PLAYPAUSE_EV, IDLE_STATE},
 		{Idle_OnUserInteraction, NEXT_EV, IDLE_STATE},
 		{Idle_OnUserInteraction, PREV_EV, IDLE_STATE},
 		{Idle_OnUserInteraction, STOP_EV, IDLE_STATE},
@@ -55,16 +56,43 @@ state IDLE_STATE[] =
 		{Idle_OnUserInteraction, ENCODER_LEFT_EV, IDLE_STATE},
 
 		//Misc
-		//{FileSelection_InitState, START_EV, FILE_SELECT_STATE},
+		{FileSelection_InitState, START_EV, FILE_SELECT_STATE},
 		{Idle_OnUserInteraction,  SD_IN_EV, IDLE_STATE},
-		{pass, END_TABLE, INIT_STATE}
+		{pass, END_TABLE, IDLE_STATE}
 };
 
 
 
 state FILE_SELECT_STATE[] =
 {
+		//moving through files
+		{FileSelection_SelectFile, PLAYPAUSE_EV, FILE_SELECT_STATE},
+		{FileSelection_NextFile, NEXT_EV, FILE_SELECT_STATE},
+		{FileSelection_PreviousFile, PREV_EV, FILE_SELECT_STATE},
 
+		//Encoder
+		//{Effects_InitState, ENCODER_PRESS_EV, EFFECTS_STATE},
+		{FileSelection_NextFile, ENCODER_RIGHT_EV, FILE_SELECT_STATE},
+		{FileSelection_PreviousFile, ENCODER_LEFT_EV, FILE_SELECT_STATE},
+
+		//Turn off/Reset
+		{Idle_InitState, ENCODER_LKP_EV, IDLE_STATE},
+
+		//SD
+		{Idle_InitState, SD_OUT_EV, IDLE_STATE},
+		{Idle_InitState, TIMEOUT_EV, IDLE_STATE},
+
+
+		//File Selected
+		//{Player_InitState, FILE_SELECTED_EV, AUDIO_PLAYER_STATE},
+
+		//Audio Player
+		//{Audio_updateAll, FILL_BUFFER_EV, FILE_SELECT_STATE},
+		{FileSelection_PlayNextSong, NEXT_SONG_EV, FILE_SELECT_STATE},
+		{FileSelection_PlayPrevSong, PREV_SONG_EV, FILE_SELECT_STATE},
+
+		//End of Table
+		{pass, END_TABLE, FILE_SELECT_STATE}
 };
 
 

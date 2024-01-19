@@ -215,6 +215,6 @@ void OLED_Copy_Image(const uint8_t *Img, uint16_t size);
 
 bool OLEDisInit(void);
 
-void OLED_write_Text(char* String);
+void OLED_write_Text(uint8_t X_axis, uint8_t Y_axis, char* String);
 
 #endif /* FSL_SSD1306_I2C_H_ */
