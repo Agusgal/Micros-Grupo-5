@@ -76,9 +76,9 @@ void Idle_InitState(void)
 	//Audio_deinit();
 
 
-	OLED_Clear();
-	OLED_Set_Text(12, 42, kOLED_Pixel_Set, "WELCOME!", 2);
-	OLED_Refresh();
+	//OLED_Clear();
+	//OLED_Set_Text(12, 42, kOLED_Pixel_Set, "WELCOME!", 2);
+	//OLED_Refresh();
 
 	//timeCallbackId = Timer_AddCallback(changePowerMode, 1000, true); //Delay until related stuff is finished
 

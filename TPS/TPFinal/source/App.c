@@ -101,7 +101,6 @@ void App_Init (void)
 	current_state = get_initial_state();
 	start_fsm();
 
-	//testFunc();
 }
 
 
@@ -171,24 +170,6 @@ void fill_queue(void)
 
 
 	//Check for OLED events
-}
-
-
-
-/*
- *---------------------PROGRAMA DE PRUEBA PANTALLA SSD1306 - 128*64 ---------------------
- *
- * */
-
-void testFunc(void)
-{
-    // Print welcome message
-    //OLED_Copy_Image(&logo_nxp[0], sizeof(logo_nxp));
-    //OLED_Refresh();
-    //OLED_Clear();
-
-    //OLED_Set_Text(0, 52, kOLED_Pixel_Set, "ABCDEFGHIJKLMNOPQ", 2);
-    //OLED_Refresh();
 }
 
 

@@ -21,6 +21,7 @@
 #define ACCEL_I2C_CLK_FREQ    CLOCK_GetFreq(I2C0_CLK_SRC)
 #define I2C_BAUDRATE          400000
 
+
 void I2C_InitModule(void);
 void BOARD_InitPins(void);
 void BOARD_I2C_ConfigurePins(void);

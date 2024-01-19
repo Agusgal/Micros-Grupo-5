@@ -12,7 +12,7 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define TIMER_ISR_PERIOD 100 //100ms
+#define TIMER_ISR_PERIOD 10 //100ms
 #define INITIAL_TIMER_ELEMENTS_ARRAY_LENGTH 20
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS

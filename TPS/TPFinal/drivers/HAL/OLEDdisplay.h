@@ -47,6 +47,8 @@
 #define OLED_LEFT_HORIZONTAL_SCROLL 				(0x27)
 #define OLED_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL 	(0x29)
 #define OLED_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL 	(0x2A)
+#define OLED_ONE_COLUMN_SCROLL_H_LEFT               (0x2D)
+
 
 //-----el display puede responder a alguna de estas 2 direcciones.
 //-----Si con una no funciona cambiar a la otra:
@@ -167,6 +169,21 @@ void OLED_Display_Mode (uint8_t Mode);
  * @param SC Select between Set or Clear.
  */
 void OLED_Set_Pixel (uint8_t X_axis, uint8_t Y_axis, uint8_t SC);
+
+
+/*!
+ * @brief Set or Clear a pixel in the buffer.
+ *
+ * This function Set or Clear a pixel in the buffer for the Display.
+ *
+ * @param X_axis Coordinate in the x axis.
+ * @param Y_axis Coordinate in the y axis.
+ * @param SC Select between Set or Clear.
+ */
+void OLED_Set_Scroll_Pixel (uint8_t X_axis, uint8_t Y_axis, uint8_t SC);
+
+
+
 
 /*!
  * @brief Set text in the buffer.
