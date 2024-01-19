@@ -1,25 +1,27 @@
 /***************************************************************************/ /**
   @file     idle_state.c
   @brief    Idle state functions.
-  @author   Grupo 2 - Lab de Micros
+  @author   Grupo 5 - Lab de Micros
  ******************************************************************************/
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
+
 #include "idle.h"
 #include "../../EventQueue/queue.h"
 
 #include "power_mode_switch.h"
-//#include "LCD_GDM1602A.h"
 
 #include "OLEDdisplay.h"
 
-//#include "time_service.h"
+#include "Systick.h"
+#include "daytime.h"
 #include "Timer.h"
+
 //#include "memory_manager.h"
 //#include "audio_manager.h"
-//#include "LCD_GDM1602A.h"
+
 
 
 
@@ -62,7 +64,7 @@ static void changePowerMode(void);
 /*
  *@brief Callback after changing to high power mode
  */
-//static void emitStartEv(void);
+static void emitStartEv(void);
 
 /*******************************************************************************
  *******************************************************************************
@@ -75,13 +77,7 @@ void Idle_InitState(void)
 	//DeInit some modules for Initialization
 	//Audio_deinit();
 
-
-	//OLED_Clear();
-	//OLED_Set_Text(12, 42, kOLED_Pixel_Set, "WELCOME!", 2);
-	//OLED_Refresh();
-
-	//timeCallbackId = Timer_AddCallback(changePowerMode, 1000, true); //Delay until related stuff is finished
-
+	timeCallbackId = Timer_AddCallback(changePowerMode, 1000, true); //Delay until related stuff is finished
 }
 
 void Idle_OnUserInteraction(void)
@@ -98,15 +94,17 @@ void Idle_OnUserInteraction(void)
 		timeCallbackId = -1;
 	}
 	*/
-	//TimeService_Disable();
+
+	//Daytime_Disable();
 
 
-	//timeCallbackId = Timer_AddCallback(emitStartEv, 3000, true); //Delay until clock stabilizes
+	timeCallbackId = Timer_AddCallback(emitStartEv, 3000, true); //Delay until clock stabilizes
 
 }
 
+//todo: Se va a usar en app cuando este implementado daytime
 /*
-void Idle_UpdateTime()
+void Idle_UpdateTimeClb()
 {
 	TimeServiceDate_t date = TimeService_GetCurrentDateTime();
 
@@ -132,20 +130,20 @@ static void changePowerMode(void)
 	setEnergyConsumptionMode(LOW_CONSUMPTION);
 	timeCallbackId = -1;
 
-	LCD_UpdateClock();
-	TimeService_Enable();
+	//OLED_UpdateClock();
+	//DayTime_Enable();
 	SysTick_UpdateClk();
 }
 
-/*
+
 static void emitStartEv(void)
 {
 	timeCallbackId = -1;
-	LCD_UpdateClock();
+	//OLED_UpdateClock();
 	SysTick_UpdateClk();
-	emitEvent(START_EV);
+	push_Queue_Element(START_EV);
 }
-*/
+
 
 static void setEnergyConsumptionMode(EnergyConsumptionMode_t energyConsumptionMode)
 {

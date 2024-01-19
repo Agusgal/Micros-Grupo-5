@@ -56,7 +56,7 @@ state IDLE_STATE[] =
 
 		//Misc
 		//{FileSelection_InitState, START_EV, FILE_SELECT_STATE},
-		//{Idle_OnUserInteraction,  SD_IN_EV, IDLE_STATE},
+		{Idle_OnUserInteraction,  SD_IN_EV, IDLE_STATE},
 		{pass, END_TABLE, INIT_STATE}
 };
 
