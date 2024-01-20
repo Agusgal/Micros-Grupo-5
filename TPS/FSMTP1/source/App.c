@@ -13,6 +13,7 @@
 
 #include "Drivers/Display.h"
 #include "Drivers/Encoder.h"
+#include "Drivers/Buttons.h"
 #include "Drivers/board.h"
 #include "Drivers/gpio.h"
 #include "Drivers/BoardLeds.h"
@@ -72,7 +73,7 @@ void App_Init (void)
 
 	//Init Encoder
 	Encoder_Init();
-
+	Buttons_Init();
 	//Init fsm
 	current_state = get_initial_state();
 	start_fsm();
@@ -158,6 +159,23 @@ void fill_queue(void)
 	{
 		push_Queue_Element(FIVE_SEC_LAPSE_EV);
 	}
+
+	Event_Type button_event;
+	for (int button=0;button<BUTTON_SIZE;button++)
+	{
+		button_event=getButtonEvent(button);
+		if(button_event!=NO_BUTTON_PRESS_EV)
+		{
+			push_Queue_Element(button_event);
+		}
+		if (button_event==PLAY_BUTTON_TAP_EV)
+		{
+			static count=0;
+			count++;
+		}
+	}
+
+
 }
 
 

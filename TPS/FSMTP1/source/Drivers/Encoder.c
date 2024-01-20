@@ -33,9 +33,9 @@ static int encoder_sw=IDLE_;
 
 void Encoder_Init(void)
 {
-	gpioMode(PIN_CH_A,INPUT);
-	gpioMode(PIN_CH_B,INPUT);
-	gpioMode(PIN_DEC_SW,INPUT);
+	gpioMode(PIN_CH_A,INPUT_PULLUP);
+	gpioMode(PIN_CH_B,INPUT_PULLUP);
+	gpioMode(PIN_DEC_SW,INPUT_PULLUP);
 	SysTick_Reg_Callback(Encoder_Update,5000);
 	SysTick_Reg_Callback(EncoderSwitch_Update,20000);
 }
