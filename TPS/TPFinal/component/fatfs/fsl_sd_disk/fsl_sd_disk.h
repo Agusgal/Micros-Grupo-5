@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include "ff.h"
 #include "diskio.h"
-#include "fsl_sd.h"
+#include "component/SD/fsl_sd.h"
 
 /*!
  * @addtogroup SD Disk

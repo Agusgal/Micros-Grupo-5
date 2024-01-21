@@ -1,3 +1,0 @@
-../drivers/SDK/fsl_pmc.c:42:6:PMC_ConfigureLowVoltDetect	0	static
-../drivers/SDK/fsl_pmc.c:63:6:PMC_ConfigureLowVoltWarning	0	static
-../drivers/SDK/fsl_pmc.c:106:6:PMC_ConfigureBandgapBuffer	0	static

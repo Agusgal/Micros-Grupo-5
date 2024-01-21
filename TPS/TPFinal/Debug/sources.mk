@@ -2,18 +2,19 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
+OBJ_SRCS := 
+S_SRCS := 
 ASM_SRCS := 
 C_SRCS := 
-OBJ_SRCS := 
-O_SRCS := 
-S_SRCS := 
 S_UPPER_SRCS := 
-C_DEPS := 
+O_SRCS := 
 EXECUTABLES := 
 OBJS := 
+C_DEPS := 
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+component/SD \
 component/fatfs \
 component/fatfs/fsl_sd_disk \
 component/helix \
@@ -23,7 +24,6 @@ component/lists \
 device \
 drivers/HAL \
 drivers/MCAL \
-drivers/SDK/SD \
 drivers/SDK \
 source \
 source/EventQueue \

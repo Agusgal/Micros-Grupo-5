@@ -5,7 +5,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
- * Removing OSA (Grupo 2 Labo de micros 26/01/2021)
+ * Removing OSA (Grupo 5 - Labo de Micros Labo de micros 26/01/2021)
  */
 
 #include "fsl_sdmmc_host.h"

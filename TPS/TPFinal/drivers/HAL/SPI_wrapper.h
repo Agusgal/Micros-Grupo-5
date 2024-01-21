@@ -1,8 +1,8 @@
 /*
  * SPI_wrapper.h
  *
- *  Created on: 16 ene. 2021
- *      Author: Santi
+ *
+ *      Author: Grupo 5
  */
 
 #ifndef SPI_WRAPPER_H_

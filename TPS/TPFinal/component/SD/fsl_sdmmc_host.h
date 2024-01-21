@@ -214,7 +214,7 @@ status_t SDMMCHOST_CardDetectInit(sdmmchost_t *host, void *cd);
  * @retval kStatus_Success detect card insert
  * @retval kStatus_Fail card insert event fail
  *
- *	Removed (grupo 2 labo de micros 26/01/2021
+ *	Removed (Grupo 5 - Labo de Micros labo de micros 26/01/2021
  */
 //status_t SDMMCHOST_PollingCardDetectStatus(sdmmchost_t *host, uint32_t waitCardStatus, uint32_t timeout);
 

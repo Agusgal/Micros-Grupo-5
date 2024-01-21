@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     board.h
   @brief    Board management
-  @author   Grupo 2 - Lab de Micros
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 #ifndef _BOARD_H_
