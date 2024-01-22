@@ -7,11 +7,9 @@
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-
 #include "equalizer.h"
-//#include "LCD_GDM1602A.h"
-
-#include "../../EventQueue/queue.h"
+#include "LCD_GDM1602A.h"
+#include "queue.h"
 #include "Timer.h"
 #include "equalizer.h"
 
@@ -20,9 +18,9 @@
  ******************************************************************************/
 #define TITLE_TIME 2000
 #define OPTIONS_COUNT 6
-//#define OPTION_VALUES_ARRAY_SIZE	NUMBER_OF_BANDS
-//#define MAX_BAND_GAIN	MAX_GAIN
-//#define	MIN_BAND_GAIN	-MAX_GAIN
+#define OPTION_VALUES_ARRAY_SIZE	NUMBER_OF_BANDS
+#define MAX_BAND_GAIN	MAX_GAIN
+#define	MIN_BAND_GAIN	-MAX_GAIN
 
 
 /*******************************************************************************
@@ -37,7 +35,6 @@ typedef enum
 	CLASSIC,
 	CUSTOM
 } options_t;
-
 /*******************************************************************************
  * GLOBAL VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
@@ -56,7 +53,6 @@ static bool settingCustom = false;
 static uint8_t currentBand = 0;
 static int32_t currentBandValue = 0;
 
-/*
 int optionValues[5][OPTION_VALUES_ARRAY_SIZE] =
 	{{0, 0, 0, 0,  0, 0, 0, 0}, 	//default
 	 {0, 0, 1, 3,-10,-2,-1, 3}, 	//rock
@@ -64,8 +60,6 @@ int optionValues[5][OPTION_VALUES_ARRAY_SIZE] =
 	 {0, 0, 0, 0,  2, 2, 3,-3},		//pop
 	 {0, 0,-1,-6,  0, 1, 1, 3}		//classic
 };
-*/
-
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
@@ -105,8 +99,7 @@ void Effects_InitState(void)
 
 void Effects_NextOption(void)
 {
-    /*
-	if (showingTitle)
+    if (showingTitle)
         userInteractionStopsTitle();
     else if (settingCustom)
     {
@@ -127,14 +120,12 @@ void Effects_NextOption(void)
             currentOptionIndex++;
         setCurrentOption();
     }
-    */
 
 }
 
 void Effects_PreviousOption(void)
 {
-   /*
-	if (showingTitle)
+    if (showingTitle)
         userInteractionStopsTitle();
     else if(settingCustom)
     {
@@ -155,13 +146,11 @@ void Effects_PreviousOption(void)
             currentOptionIndex--;
         setCurrentOption();
     }
-    */
 }
 
 void Effects_SelectOption(void)
 {
-	/*
-	if (showingTitle)
+    if (showingTitle)
         userInteractionStopsTitle();
     else if(settingCustom)
     {
@@ -196,7 +185,7 @@ void Effects_SelectOption(void)
         	emitEvent(CHANGE_MODE_EV);
         }
     }
-	*/
+
 }
 
 
@@ -215,13 +204,11 @@ void Effects_Back(void)
 
 void Effects_SetEffect(char option)
 {
-	/*
 	currentOptionIndex = option;
 	for (int i = 0; i < OPTION_VALUES_ARRAY_SIZE; i++)
 	{
 		equalizer_set_band_gain(i+1, optionValues[currentOptionIndex][i]);
 	}
-	*/
 }
 /*******************************************************************************
  *******************************************************************************

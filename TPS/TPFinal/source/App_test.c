@@ -11,7 +11,6 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdint.h>
-#include "memory_manager.h"
 
 
 
@@ -39,7 +38,7 @@
 /* Función que se llama 1 vez, al comienzo del programa */
 void App_Init_test (void)
 {
-	Mm_Init();	  //Memory manager
+
 
 }
 
