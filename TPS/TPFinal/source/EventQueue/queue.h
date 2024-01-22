@@ -38,7 +38,7 @@ typedef enum {
 			ENCODER_RIGHT_EV,
 			ENCODER_LEFT_EV,
 			ENCODER_PRESS_EV,
-			ENCODER_LKP_EV,
+			ENCODER_LKP_EV,    //Encoder long key press event, todo: puede cambiar.
 
 			TIMEOUT_EV,
 

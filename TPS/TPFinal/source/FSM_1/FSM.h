@@ -49,7 +49,8 @@ extern state INIT_STATE[];
 extern state IDLE_STATE[];
 extern state FILE_SELECT_STATE[];
 extern state AUDIO_PLAYER_STATE[];
-extern state EFFECTS_STATE[];
+extern state EQUALIZER_STATE[];
+
 
 
 
