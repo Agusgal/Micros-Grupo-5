@@ -7,18 +7,20 @@
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
+
 #include "gpio.h"
 #include <stdio.h>
 #include "board.h"
 #include "Encoder.h"
 #include "Systick.h"
+
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
 #define IDLE 0
 #define ENCODER_CALLBACK_PERIOD 20000
-#define FIVE_SECOND_COUNTER 5 * 1000 / ENCODER_CALLBACK_PERIOD
+#define FIVE_SECOND_COUNTER 5 * S_TO_US / ENCODER_CALLBACK_PERIOD
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
@@ -30,14 +32,15 @@ static int encoder_sw=IDLE_;
  *******************************************************************************
  ******************************************************************************/
 
-
+//todo ver si el periodo de los callbacks es el correcto
 void Encoder_Init(void)
 {
+
 	gpioMode(PIN_CH_A,INPUT_PULLUP);
 	gpioMode(PIN_CH_B,INPUT_PULLUP);
 	gpioMode(PIN_DEC_SW,INPUT_PULLUP);
-	SysTick_Reg_Callback(Encoder_Update,5000);
-	SysTick_Reg_Callback(EncoderSwitch_Update,20000);
+	SysTick_AddCallback(Encoder_Update, 5000);
+	SysTick_AddCallback(EncoderSwitch_Update, 20000);
 }
 
 void Encoder_Update(void)
@@ -164,8 +167,8 @@ int getEncoderSwitch_State(void)
 
 int getEncoder_State(void)
 {
-	int aux=encoder;
-	encoder=NO_MOVE;
+	int aux = encoder;
+	encoder = NO_MOVE;
 	return aux;
 }
 

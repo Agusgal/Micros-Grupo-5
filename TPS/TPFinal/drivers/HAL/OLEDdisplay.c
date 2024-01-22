@@ -443,6 +443,14 @@ static void shiftPageLeft(uint8_t page, uint8_t scale)
     static int index = 0;
 	int startIndex = page * OLED_WIDTH;
 
+	int strLength = strlen(screenString);
+	//todo: cambiar logica para que el scroll sea completo.
+	if (index > (6 * scale * strLength))
+	{
+		index = 0;
+	}
+
+
 	for (int i = 0; i < OLED_WIDTH; i++)
 	{
 		OLED_Buffer[startIndex + i] = OLED_Scroll_Buffer[0][i + index];
@@ -456,13 +464,6 @@ static void shiftPageLeft(uint8_t page, uint8_t scale)
 
 	index++;
 
-	int strLength = strlen(screenString);
-
-	//todo: cambiar logica para que el scroll sea completo.
-	if (index > (5 * scale * strLength))
-	{
-		index = 0;
-	}
 }
 
 static void toggleRoll()

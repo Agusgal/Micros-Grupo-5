@@ -5,40 +5,40 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../drivers/HAL/AudioPlayer.c \
+../drivers/HAL/Buttons.c \
+../drivers/HAL/Encoder.c \
 ../drivers/HAL/I2CWrapper.c \
 ../drivers/HAL/OLEDdisplay.c \
 ../drivers/HAL/SPI_wrapper.c \
 ../drivers/HAL/Timer.c \
-../drivers/HAL/button.c \
 ../drivers/HAL/daytime.c \
 ../drivers/HAL/decoder.c \
-../drivers/HAL/encoder.c \
 ../drivers/HAL/matrix_display.c \
 ../drivers/HAL/memory_manager.c 
 
 C_DEPS += \
 ./drivers/HAL/AudioPlayer.d \
+./drivers/HAL/Buttons.d \
+./drivers/HAL/Encoder.d \
 ./drivers/HAL/I2CWrapper.d \
 ./drivers/HAL/OLEDdisplay.d \
 ./drivers/HAL/SPI_wrapper.d \
 ./drivers/HAL/Timer.d \
-./drivers/HAL/button.d \
 ./drivers/HAL/daytime.d \
 ./drivers/HAL/decoder.d \
-./drivers/HAL/encoder.d \
 ./drivers/HAL/matrix_display.d \
 ./drivers/HAL/memory_manager.d 
 
 OBJS += \
 ./drivers/HAL/AudioPlayer.o \
+./drivers/HAL/Buttons.o \
+./drivers/HAL/Encoder.o \
 ./drivers/HAL/I2CWrapper.o \
 ./drivers/HAL/OLEDdisplay.o \
 ./drivers/HAL/SPI_wrapper.o \
 ./drivers/HAL/Timer.o \
-./drivers/HAL/button.o \
 ./drivers/HAL/daytime.o \
 ./drivers/HAL/decoder.o \
-./drivers/HAL/encoder.o \
 ./drivers/HAL/matrix_display.o \
 ./drivers/HAL/memory_manager.o 
 
@@ -59,7 +59,7 @@ drivers/HAL/%.o: ../drivers/HAL/%.c drivers/HAL/subdir.mk
 clean: clean-drivers-2f-HAL
 
 clean-drivers-2f-HAL:
-	-$(RM) ./drivers/HAL/AudioPlayer.d ./drivers/HAL/AudioPlayer.o ./drivers/HAL/I2CWrapper.d ./drivers/HAL/I2CWrapper.o ./drivers/HAL/OLEDdisplay.d ./drivers/HAL/OLEDdisplay.o ./drivers/HAL/SPI_wrapper.d ./drivers/HAL/SPI_wrapper.o ./drivers/HAL/Timer.d ./drivers/HAL/Timer.o ./drivers/HAL/button.d ./drivers/HAL/button.o ./drivers/HAL/daytime.d ./drivers/HAL/daytime.o ./drivers/HAL/decoder.d ./drivers/HAL/decoder.o ./drivers/HAL/encoder.d ./drivers/HAL/encoder.o ./drivers/HAL/matrix_display.d ./drivers/HAL/matrix_display.o ./drivers/HAL/memory_manager.d ./drivers/HAL/memory_manager.o
+	-$(RM) ./drivers/HAL/AudioPlayer.d ./drivers/HAL/AudioPlayer.o ./drivers/HAL/Buttons.d ./drivers/HAL/Buttons.o ./drivers/HAL/Encoder.d ./drivers/HAL/Encoder.o ./drivers/HAL/I2CWrapper.d ./drivers/HAL/I2CWrapper.o ./drivers/HAL/OLEDdisplay.d ./drivers/HAL/OLEDdisplay.o ./drivers/HAL/SPI_wrapper.d ./drivers/HAL/SPI_wrapper.o ./drivers/HAL/Timer.d ./drivers/HAL/Timer.o ./drivers/HAL/daytime.d ./drivers/HAL/daytime.o ./drivers/HAL/decoder.d ./drivers/HAL/decoder.o ./drivers/HAL/matrix_display.d ./drivers/HAL/matrix_display.o ./drivers/HAL/memory_manager.d ./drivers/HAL/memory_manager.o
 
 .PHONY: clean-drivers-2f-HAL
 

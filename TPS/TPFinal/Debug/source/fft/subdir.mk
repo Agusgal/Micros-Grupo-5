@@ -4,13 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../source/fft/vumeterRefresh.c 
+../source/fft/vumeter.c 
 
 C_DEPS += \
-./source/fft/vumeterRefresh.d 
+./source/fft/vumeter.d 
 
 OBJS += \
-./source/fft/vumeterRefresh.o 
+./source/fft/vumeter.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -29,7 +29,7 @@ source/fft/%.o: ../source/fft/%.c source/fft/subdir.mk
 clean: clean-source-2f-fft
 
 clean-source-2f-fft:
-	-$(RM) ./source/fft/vumeterRefresh.d ./source/fft/vumeterRefresh.o
+	-$(RM) ./source/fft/vumeter.d ./source/fft/vumeter.o
 
 .PHONY: clean-source-2f-fft
 

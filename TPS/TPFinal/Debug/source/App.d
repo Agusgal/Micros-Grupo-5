@@ -23,6 +23,9 @@ source/App.o source/App.d: ../source/App.c \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/OLEDdisplay.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/fsl_Font5x7.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/matrix_display.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/Buttons.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/source/EventQueue/queue.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/Encoder.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/AudioPlayer.h \
  ../source/EventQueue/queue.h
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/source/FSM_1/FSM.h:
@@ -49,5 +52,8 @@ source/App.o source/App.d: ../source/App.c \
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/OLEDdisplay.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/fsl_Font5x7.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/matrix_display.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/Buttons.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/source/EventQueue/queue.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/Encoder.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/HAL/AudioPlayer.h:
 ../source/EventQueue/queue.h:
