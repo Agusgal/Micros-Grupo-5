@@ -95,6 +95,7 @@ void Player_DecVolume(void)
  ******************************************************************************/
 static void printFileInfo(void)
 {
+	/*
 	char path[50], data[400];
 	memset(data, 0x20, 400);
 	memset(path, 0x20, 50);
@@ -119,7 +120,7 @@ static void printFileInfo(void)
 	}
 	len += (DISPLAY_COLUMNS-(len%DISPLAY_COLUMNS));
 	LCD_writeShiftingStr(data,  len, 1, MIDIUM);
-
+	*/
 }
 
 static void showVolume(void)
