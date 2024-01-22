@@ -55,7 +55,7 @@ void memory_handler_init()
 	SYSMPU->CESR &= ~SYSMPU_CESR_VLD_MASK;
 
 	// Initializes SD pins and detection callback
-	BOARD_SD_Config(&g_sd, Mm_Callback, BOARD_SDMMC_SD_HOST_IRQ_PRIORITY, NULL);
+	//BOARD_SD_Config(&g_sd, Mm_Callback, BOARD_SDMMC_SD_HOST_IRQ_PRIORITY, NULL);
 
 	// Initializes Host
 	if (SD_HostInit(&g_sd) != kStatus_Success)
