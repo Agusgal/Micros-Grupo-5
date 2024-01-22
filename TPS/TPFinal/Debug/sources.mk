@@ -29,9 +29,9 @@ source \
 source/EventQueue \
 source/FSM_1 \
 source/FSM_1/States \
-source/audio_manager \
 source/equalizer \
 source/fft \
 source/file_manager \
+source/mp3_handler \
 startup \
 

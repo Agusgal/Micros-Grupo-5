@@ -35,9 +35,10 @@ enum SD_state{IDLE = 0, CONNECTED, DISCONNECTED};
  ******************************************************************************/
 static bool SD_connected = false;
 static bool SD_error = false;
-static bool SD_HostInitDone = false;
+static bool SD_init_done = false;
 static FATFS g_fileSystem;
 static uint8_t SD_status = 0;
+static const TCHAR driveBuffer[] = {SDDISK + '0', ':', '/'}; 	// Path name
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -55,7 +56,7 @@ void memory_handler_init()
 	SYSMPU->CESR &= ~SYSMPU_CESR_VLD_MASK;
 
 	// Initializes SD pins and detection callback
-	BOARD_SD_Config(&g_sd, Mm_Callback, BOARD_SDMMC_SD_HOST_IRQ_PRIORITY, NULL);
+	BOARD_SD_Config(&g_sd,  memory_handler_insertCB, BOARD_SDMMC_SD_HOST_IRQ_PRIORITY, NULL);
 
 	// Initializes Host
 	if (SD_HostInit(&g_sd) != kStatus_Success)
@@ -63,10 +64,66 @@ void memory_handler_init()
 		SD_error = true;
 	}
 
-	SD_HostInitDone = true;
+	SD_init_done = true;
 
 }
 
+
+bool mh_is_SD_connected(void)
+{
+	return SD_connected;
+}
+
+bool mh_SD_connected(void)
+{
+	bool check = SD_status == CONNECTED;
+	if(check)
+		SD_status = IDLE;
+	return check;
+}
+
+bool mh_SD_disconnected(void)
+{
+	bool check = SD_status == DISCONNECTED;
+	if(check)
+		SD_status = IDLE;
+	return check;
+}
+
+
+void mh_SD_mount(void)
+{
+	FRESULT error;
+
+	if(!SD_init_done)
+	{
+		SD_error = true;
+		return;
+	}
+
+	// Mount SD
+	if (f_mount(&g_fileSystem, driveBuffer, 1U))
+	{
+		SD_error = true;
+		return;
+	}
+
+	// Set current Drive
+    error = f_chdrive((char const *)&driveBuffer[0U]);
+	if (error)
+	{
+		SD_error = true;
+		return;
+	}
+
+}
+
+void mh_SD_disconnect(void)
+{
+
+	f_mount(NULL, driveBuffer, 1U);
+	g_sd.initReady = false;
+}
 
 
 /*******************************************************************************

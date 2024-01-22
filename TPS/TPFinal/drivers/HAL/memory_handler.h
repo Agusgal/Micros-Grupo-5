@@ -28,23 +28,34 @@
  */
 void memory_handler_init(void);
 
-/*
- * SD present or not
+/*!
+ * @brief Checks if SD is connected.
  */
-bool Mm_IsSDPresent(void);
+bool mh_is_SD_connected(void);
 
-/*
- *	SD initialization routine
+/*!
+ * @brief Checks if there was a SD insertion and then SD status turns into IDLE.
+ * @return true if connected event occurred.
  */
-void Mm_OnConnection(void);
+bool mh_SD_connected(void);
 
-/*
- * SD deinit routine
+/*!
+ * @brief Checks if SD card was pulled out and them SD status turns into IDLE.
+ * @return true if disconnected event ocurred.
  */
-void Mm_OnDesconection(void);
+bool mh_SD_disconnected(void);
 
-bool Mm_SDConnection(void);
 
-bool Mm_SDDesconnection(void);
+/*!
+ * @brief Mounts SD and sets current Drive.
+ */
+void mh_SD_mount(void);
+
+
+/*!
+ * @brief Unregisters the registered filesystem object.
+ */
+void mh_SD_disconnect(void);
+
 
 #endif /* MEMORY_HANDLER_H_ */

@@ -9,10 +9,10 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include startup/subdir.mk
+-include source/mp3_handler/subdir.mk
 -include source/file_manager/subdir.mk
 -include source/fft/subdir.mk
 -include source/equalizer/subdir.mk
--include source/audio_manager/subdir.mk
 -include source/FSM_1/States/subdir.mk
 -include source/FSM_1/subdir.mk
 -include source/EventQueue/subdir.mk
