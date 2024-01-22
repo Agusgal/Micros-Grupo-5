@@ -28,6 +28,8 @@
 
 #include "OLEDdisplay.h"
 #include "matrix_display.h"
+#include "Buttons.h"
+#include "Encoder.h"
 
 #include "AudioPlayer.h"
 
@@ -96,6 +98,7 @@ void App_Init (void)
 
 	//Init Encoder
 	Encoder_Init();
+	Buttons_Init();
 
 	//Init fsm
 	current_state = get_initial_state();
@@ -160,14 +163,47 @@ void fill_queue(void)
 		push_Queue_Element(FILL_BUFFER_EV);
 	}
 
-	//check for encoder events
+	//Check for Button Events
+	/*
+	if(wasTap(PIN_SW_A))
+	{
+		emitEvent(PREV_EV);
+	}
+	if(wasTap(PIN_SW_B))
+	{
+		emitEvent(PP_EV);
+	}
+	if(wasTap(PIN_SW_C))
+	{
+		emitEvent(STOP_EV);
+	}
+	if(wasTap(PIN_SW_D))
+	{
+		emitEvent(NEXT_EV);
+	}*/
 
+
+	//check for encoder turn events
+	int move_enc = getEncoder_State();
+	if (move_enc == 1) //move right
+	{
+		push_Queue_Element(ENCODER_RIGHT_EV);
+	}
+	else if (move_enc == 2)
+	{
+		push_Queue_Element(ENCODER_LEFT_EV);
+	}
 
 	//Check for Encoder press events
-
-
-	//Check for button events
-
+	int encoder_state = getEncoderSwitch_State();
+	if (encoder_state == RELEASED)
+	{
+		push_Queue_Element(ENCODER_PRESS_EV);
+	}
+	else if(encoder_state == FIVE_SEC_PRESS)
+	{
+		push_Queue_Element(ENCODER_LKP_EV);
+	}
 
 	//Check for OLED events
 }

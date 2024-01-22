@@ -12,6 +12,8 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
+#define S_TO_US		1000000
+
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
@@ -40,6 +42,7 @@ typedef enum SystickError
 	SystickPeriodError = -1,
 	SystickNoIdFound = -2
 } SystickError;
+
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE

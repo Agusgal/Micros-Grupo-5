@@ -77,7 +77,7 @@ void Idle_InitState(void)
 	//DeInit some modules for Initialization
 	//Audio_deinit();
 
-	timeCallbackId = Timer_AddCallback(changePowerMode, 1000, true); //Delay until related stuff is finished
+	//timeCallbackId = Timer_AddCallback(changePowerMode, 1000, true); //Delay until related stuff is finished
 }
 
 void Idle_OnUserInteraction(void)

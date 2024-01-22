@@ -1,9 +1,9 @@
-drivers/HAL/encoder.o drivers/HAL/encoder.d: ../drivers/HAL/encoder.c \
- ../drivers/HAL/encoder.h \
- /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/SysTick.h \
+drivers/HAL/Encoder.o drivers/HAL/Encoder.d: ../drivers/HAL/Encoder.c \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/gpio.h \
- /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/board/board.h
-../drivers/HAL/encoder.h:
-/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/SysTick.h:
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/board/board.h \
+ ../drivers/HAL/Encoder.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/Systick.h
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/gpio.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/board/board.h:
+../drivers/HAL/Encoder.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/MCAL/Systick.h:
