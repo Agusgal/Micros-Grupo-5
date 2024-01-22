@@ -3,7 +3,7 @@
   @brief    FW main
   @author   Nicolás Magliola
  ******************************************************************************/
-#define TEST_LuyBruno
+//#define TEST_LuyBruno
 #include "hardware.h"
 
 void App_Init_test (void);
@@ -13,8 +13,7 @@ void App_Run (void);
 
 
 int main (void)
-{
-    hw_Init();
+{    hw_Init();
     hw_DisableInterrupts();
 
 	#ifdef TEST_LuyBruno

@@ -16,6 +16,7 @@
 #include "States/audioPLayer.h"
 #include "States/equalizer.h"
 
+
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -202,7 +203,7 @@ state* fsm_dispatcher(state* p_state, Event_Type curr_event)
  */
 state* get_initial_state()
 {
-	return IDLE_STATE;
+	return INIT_STATE;
 }
 
 

@@ -14,6 +14,7 @@ C_SRCS += \
 ../drivers/HAL/decoder.c \
 ../drivers/HAL/encoder.c \
 ../drivers/HAL/matrix_display.c \
+../drivers/HAL/memory_handler.c \
 ../drivers/HAL/memory_manager.c 
 
 C_DEPS += \
@@ -27,6 +28,7 @@ C_DEPS += \
 ./drivers/HAL/decoder.d \
 ./drivers/HAL/encoder.d \
 ./drivers/HAL/matrix_display.d \
+./drivers/HAL/memory_handler.d \
 ./drivers/HAL/memory_manager.d 
 
 OBJS += \
@@ -40,6 +42,7 @@ OBJS += \
 ./drivers/HAL/decoder.o \
 ./drivers/HAL/encoder.o \
 ./drivers/HAL/matrix_display.o \
+./drivers/HAL/memory_handler.o \
 ./drivers/HAL/memory_manager.o 
 
 
@@ -55,7 +58,7 @@ drivers/HAL/%.o: ../drivers/HAL/%.c drivers/HAL/subdir.mk
 clean: clean-drivers-2f-HAL
 
 clean-drivers-2f-HAL:
-	-$(RM) ./drivers/HAL/AudioPlayer.d ./drivers/HAL/AudioPlayer.o ./drivers/HAL/I2CWrapper.d ./drivers/HAL/I2CWrapper.o ./drivers/HAL/OLEDdisplay.d ./drivers/HAL/OLEDdisplay.o ./drivers/HAL/SPI_wrapper.d ./drivers/HAL/SPI_wrapper.o ./drivers/HAL/Timer.d ./drivers/HAL/Timer.o ./drivers/HAL/button.d ./drivers/HAL/button.o ./drivers/HAL/daytime.d ./drivers/HAL/daytime.o ./drivers/HAL/decoder.d ./drivers/HAL/decoder.o ./drivers/HAL/encoder.d ./drivers/HAL/encoder.o ./drivers/HAL/matrix_display.d ./drivers/HAL/matrix_display.o ./drivers/HAL/memory_manager.d ./drivers/HAL/memory_manager.o
+	-$(RM) ./drivers/HAL/AudioPlayer.d ./drivers/HAL/AudioPlayer.o ./drivers/HAL/I2CWrapper.d ./drivers/HAL/I2CWrapper.o ./drivers/HAL/OLEDdisplay.d ./drivers/HAL/OLEDdisplay.o ./drivers/HAL/SPI_wrapper.d ./drivers/HAL/SPI_wrapper.o ./drivers/HAL/Timer.d ./drivers/HAL/Timer.o ./drivers/HAL/button.d ./drivers/HAL/button.o ./drivers/HAL/daytime.d ./drivers/HAL/daytime.o ./drivers/HAL/decoder.d ./drivers/HAL/decoder.o ./drivers/HAL/encoder.d ./drivers/HAL/encoder.o ./drivers/HAL/matrix_display.d ./drivers/HAL/matrix_display.o ./drivers/HAL/memory_handler.d ./drivers/HAL/memory_handler.o ./drivers/HAL/memory_manager.d ./drivers/HAL/memory_manager.o
 
 .PHONY: clean-drivers-2f-HAL
 

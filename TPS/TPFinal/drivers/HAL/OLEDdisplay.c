@@ -4,7 +4,7 @@
   @author   Grupo 5
  ******************************************************************************/
 
-/*----esta modificada para usar el I2C0, en caso de utilizar otro cambiar todo lo que diga I2C1 por la base del I2C usado--- */
+/*----esta modificada para usar el I2C0, en caso de utilizar otro cambiar lo que diga I2C1 por la base del I2C usado--- */
 /*---- BASADO EN fsl_SSD1306.h para SPI de NXP ------*/
 
 #include "OLEDdisplay.h"
@@ -240,6 +240,7 @@ void OLED_Refresh(void)
 void OLED_Clear(void)
 {
 	memset(OLED_Buffer, 0, sizeof(OLED_Buffer));
+	memset(OLED_Scroll_Buffer, 0, sizeof(OLED_Scroll_Buffer));
 }
 
 void OLED_Fill(uint8_t Pattern)

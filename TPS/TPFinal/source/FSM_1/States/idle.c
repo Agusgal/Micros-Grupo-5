@@ -77,7 +77,8 @@ void Idle_InitState(void)
 	//DeInit some modules for Initialization
 	//Audio_deinit();
 
-	timeCallbackId = Timer_AddCallback(changePowerMode, 1000, true); //Delay until related stuff is finished
+
+	//timeCallbackId = Timer_AddCallback(changePowerMode, 1000, true); //Delay until related stuff is finished
 }
 
 void Idle_OnUserInteraction(void)
@@ -96,9 +97,13 @@ void Idle_OnUserInteraction(void)
 	*/
 
 	//Daytime_Disable();
+	int x = 2;
+	if (x == 1)
+	{
+		int w = 10;
+	}
 
-
-	timeCallbackId = Timer_AddCallback(emitStartEv, 3000, true); //Delay until clock stabilizes
+	timeCallbackId = Timer_AddCallback(emitStartEv, 1000, true); //Delay until clock stabilizes
 
 }
 
@@ -140,7 +145,7 @@ static void emitStartEv(void)
 {
 	timeCallbackId = -1;
 	//OLED_UpdateClock();
-	SysTick_UpdateClk();
+	//SysTick_UpdateClk();
 	push_Queue_Element(START_EV);
 }
 
