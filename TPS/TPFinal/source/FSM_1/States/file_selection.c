@@ -117,8 +117,7 @@ void FileSelection_PlayPrevSong(void)
 static void showTitle(void)
 {
 	OLED_Clear();
-	OLED_write_Text(20, 12, "Choose file:");
-
+	OLED_write_Text(20, 22, "Choose file:");
 
 	//showingTitle = true;
 	//titleTimerID = Timer_AddCallback(&stopShowingTitle, TITLE_TIME, true);
@@ -148,5 +147,6 @@ static void printFileInfo(void)
 	//memset(path, 0x20, 50);
 	//memcpy(path, name, strlen(name));
 
-	//OLED_write_Text(20, 42, path);
+	OLED_write_Text(20, 42, path);
+
 }
