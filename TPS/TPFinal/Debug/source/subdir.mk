@@ -7,19 +7,13 @@ C_SRCS += \
 ../source/App.c \
 ../source/App_test.c 
 
-<<<<<<< HEAD
-OBJS += \
-./source/App.o \
-./source/App_test.o 
-
-=======
->>>>>>> 516a446ea5f6eac7c06b427170ec0043fd1c4421
 C_DEPS += \
 ./source/App.d \
 ./source/App_test.d 
 
 OBJS += \
-./source/App.o 
+./source/App.o \
+./source/App_test.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -34,7 +28,7 @@ source/%.o: ../source/%.c source/subdir.mk
 clean: clean-source
 
 clean-source:
-	-$(RM) ./source/App.d ./source/App.o
+	-$(RM) ./source/App.d ./source/App.o ./source/App_test.d ./source/App_test.o
 
 .PHONY: clean-source
 

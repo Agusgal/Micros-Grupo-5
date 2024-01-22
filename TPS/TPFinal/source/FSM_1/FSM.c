@@ -14,6 +14,7 @@
 #include "States/idle.h"
 #include "States/file_selection.h"
 #include "States/audioPLayer.h"
+#include "States/equalizer.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -60,7 +61,6 @@ state IDLE_STATE[] =
 		{Idle_OnUserInteraction,  SD_IN_EV, IDLE_STATE},
 		{pass, END_TABLE, IDLE_STATE}
 };
-
 
 
 state FILE_SELECT_STATE[] =
@@ -128,10 +128,11 @@ state AUDIO_PLAYER_STATE[] =
 		{pass, END_TABLE, AUDIO_PLAYER_STATE}
 };
 
-sttae EQUALIZER_STATE[] =
+
+state EQUALIZER_STATE[] =
 {
 		//Buttons
-		{Effects_SelectOption, PP_EV, EQUALIZER_STATE},
+		{Effects_SelectOption, PLAYPAUSE_EV, EQUALIZER_STATE},
 		{Effects_Back, STOP_EV, EQUALIZER_STATE},
 		{Effects_NextOption, NEXT_EV, EQUALIZER_STATE},
 		{Effects_PreviousOption, PREV_EV, EQUALIZER_STATE},
@@ -150,7 +151,7 @@ sttae EQUALIZER_STATE[] =
 		{Player_InitState, CHANGE_MODE_EV, AUDIO_PLAYER_STATE},
 
 		//Audio
-		{Audio_updateAll, FILL_BUFFER_EV, EQUALIZER_STATE},
+		//{Audio_updateAll, FILL_BUFFER_EV, EQUALIZER_STATE},       el callback viene de audiomanager.
 		{FileSelection_PlayNextSong, NEXT_SONG_EV, EQUALIZER_STATE},
 		{FileSelection_PlayPrevSong, PREV_SONG_EV, EQUALIZER_STATE},
 
