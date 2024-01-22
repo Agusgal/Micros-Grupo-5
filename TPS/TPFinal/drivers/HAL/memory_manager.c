@@ -1,7 +1,7 @@
 /***************************************************************************/ /**
   @file     memory_manager.h
   @brief    Memory System header
-  @author   Grupo 2 - Lab de Micros
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 /*******************************************************************************
@@ -12,12 +12,12 @@
 #include <stdio.h>
 
 #include "fsl_port.h"
-#include "fsl_sd.h"
+#include "component/SD/fsl_sd.h"
 #include "fsl_sd_disk.h"
 
 #include "ff.h"
 #include "diskio.h"
-#include "sdmmc_config.h"
+#include "component/SD/sdmmc_config.h"
 
 #include "memory_manager.h"
 /*******************************************************************************

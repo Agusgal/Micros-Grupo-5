@@ -1,3 +1,0 @@
-../drivers/SDK/clock_config.c:180:6:BOARD_BootClockRUN	8	static
-../drivers/SDK/clock_config.c:89:6:BOARD_InitBootClocks	8	static
-../drivers/SDK/clock_config.c:273:6:BOARD_BootClockVLPR	8	static

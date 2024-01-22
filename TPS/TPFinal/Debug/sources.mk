@@ -14,6 +14,7 @@ OBJS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+component/SD \
 component/fatfs \
 component/fatfs/fsl_sd_disk \
 component/helix \
@@ -23,7 +24,6 @@ component/lists \
 device \
 drivers/HAL \
 drivers/MCAL \
-drivers/SDK/SD \
 drivers/SDK \
 source \
 source/EventQueue \

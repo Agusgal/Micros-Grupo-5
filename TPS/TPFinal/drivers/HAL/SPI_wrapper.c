@@ -1,8 +1,8 @@
 /*
  * SPI_wrapper.c
  *
- *  Created on: 16 ene. 2021
- *      Author: Santi
+ *
+ *      Author: Agus
  */
 
 #include <startup/hardware.h>

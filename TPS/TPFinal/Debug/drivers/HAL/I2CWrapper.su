@@ -1,3 +1,0 @@
-../drivers/HAL/I2CWrapper.c:10:6:I2C_InitModule	24	static
-../drivers/HAL/I2CWrapper.c:21:6:BOARD_InitPins	0	static
-../drivers/HAL/I2CWrapper.c:32:6:BOARD_I2C_ConfigurePins	0	static

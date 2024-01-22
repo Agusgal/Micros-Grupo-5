@@ -4,8 +4,8 @@ component/fatfs/diskio.o component/fatfs/diskio.d: \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/fatfs/fsl_sd_disk/fsl_sd_disk.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/fatfs/ff.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/fatfs/diskio.h \
- /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/SD/fsl_sd.h \
- /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/SD/fsl_sdmmc_common.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/SD/fsl_sd.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/SD/fsl_sdmmc_common.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/fsl_device_registers.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/MK64F12.h \
@@ -17,17 +17,17 @@ component/fatfs/diskio.o component/fatfs/diskio.d: \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/MK64F12_features.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_clock.h \
  /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h \
- /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/SD/fsl_sdmmc_host.h \
- /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/SD/fsl_sdhc.h \
- /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/SD/fsl_sdmmc_spec.h
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/SD/fsl_sdmmc_host.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/SD/fsl_sdhc.h \
+ /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/SD/fsl_sdmmc_spec.h
 ../component/fatfs/ffconf.h:
 ../component/fatfs/ff.h:
 ../component/fatfs/diskio.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/fatfs/fsl_sd_disk/fsl_sd_disk.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/fatfs/ff.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/fatfs/diskio.h:
-/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/SD/fsl_sd.h:
-/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/SD/fsl_sdmmc_common.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/SD/fsl_sd.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/SD/fsl_sdmmc_common.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/fsl_device_registers.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/MK64F12.h:
@@ -39,6 +39,6 @@ component/fatfs/diskio.o component/fatfs/diskio.d: \
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/device/MK64F12_features.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_clock.h:
 /Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/fsl_common.h:
-/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/SD/fsl_sdmmc_host.h:
-/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/SD/fsl_sdhc.h:
-/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/drivers/SDK/SD/fsl_sdmmc_spec.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/SD/fsl_sdmmc_host.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/SD/fsl_sdhc.h:
+/Users/agus/Micros/Github/Micros-Grupo-5/TPS/TPFinal/component/SD/fsl_sdmmc_spec.h:

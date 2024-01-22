@@ -17,7 +17,6 @@ RM := rm -rf
 -include source/FSM_1/subdir.mk
 -include source/EventQueue/subdir.mk
 -include source/subdir.mk
--include drivers/SDK/SD/subdir.mk
 -include drivers/SDK/subdir.mk
 -include drivers/MCAL/subdir.mk
 -include drivers/HAL/subdir.mk
@@ -28,6 +27,7 @@ RM := rm -rf
 -include component/helix/subdir.mk
 -include component/fatfs/fsl_sd_disk/subdir.mk
 -include component/fatfs/subdir.mk
+-include component/SD/subdir.mk
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(strip $(C_DEPS)),)
 -include $(C_DEPS)

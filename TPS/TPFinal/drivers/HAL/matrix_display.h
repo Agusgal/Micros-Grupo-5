@@ -1,7 +1,7 @@
 /***************************************************************************/ /**
   @file     matrix display.h
   @brief    8x8 RGB display hearder
-  @author   Grupo 2 - Lab de Micros
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 #ifndef MATRIX_DISPLAY_H_
