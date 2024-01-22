@@ -13,7 +13,7 @@
 #include "States/Init.h"
 #include "States/idle.h"
 #include "States/file_selection.h"
-
+#include "States/audioPLayer.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -99,34 +99,63 @@ state FILE_SELECT_STATE[] =
 state AUDIO_PLAYER_STATE[] =
 {
 		//Buttons
-		{Player_ToggleMusic, PLAYPAUSE_EV, AUDIO_PLAYER_STATE},
-		{Player_ToggleMusic, PLAYPAUSE_EV, AUDIO_PLAYER_STATE},
-		{Player_ToggleMusic, PLAYPAUSE_EV, AUDIO_PLAYER_STATE},
-		{Player_ToggleMusic, PLAYPAUSE_EV, AUDIO_PLAYER_STATE},
+		{Player_ToggleMusic, PLAYPAUSE_EV, AUDIO_PLAYER_STATE}, //play y pausa.
+		{Player_Stop, STOP_EV, AUDIO_PLAYER_STATE},
+		{Player_PlayNextSong, NEXT_EV, AUDIO_PLAYER_STATE},
+		{Player_PlayPreviousSong, PREV_EV, AUDIO_PLAYER_STATE},
+
+		//Encoder
+		{FileSelection_InitState, ENCODER_PRESS_EV, FILE_SELECT_STATE},
+		{Player_IncVolume, ENCODER_RIGHT_EV, AUDIO_PLAYER_STATE},
+		{Player_DecVolume, ENCODER_LEFT_EV, AUDIO_PLAYER_STATE},
+
+		//Apagar con long key press
+		{Idle_InitState, ENCODER_LKP_EV, IDLE_STATE},
 
 
-		{PP_EV, 				player, 				Player_ToggleMusic}, //play pausa
-		{STOP_EV, 				player, 				Player_Stop},
-		{NEXT_EV, 				player, 				Player_PlayNextSong},
-		{PREV_EV, 				player, 				Player_PlayPreviousSong},
+		//SD
+		{Idle_InitState, SD_OUT_EV, IDLE_STATE},
+		{Idle_InitState, TIMEOUT_EV, IDLE_STATE},
 
-		{ENCODER_PRESS_EV,		file_selection, 		FileSelection_InitState},
-		{ENCODER_RIGHT_EV,		player, 				Player_IncVolume},
-		{ENCODER_LEFT_EV,		player,					Player_DecVolume},
 
-		{ENCODER_LKP_EV,		idle, 					Idle_InitState}, // turn off
+		//Audio
+		//{Audio_updateAll, FILL_BUFFER_EV, AUDIO_PLAYER_STATE},      el callback viene de audiomanager.
+		{Player_PlayNextSong, NEXT_SONG_EV, AUDIO_PLAYER_STATE},
+		{Player_PlayPreviousSong, PREV_SONG_EV, AUDIO_PLAYER_STATE},
 
-		//{CHANGE_MODE_EV, 		file_selection, 		FileSelection_InitState},
-		{SD_OUT_EV, 			idle, 					Idle_InitState},
-		{TIMEOUT_EV,			idle,	 				Idle_InitState},//??
 
-		{FILL_BUFFER_EV, 		player,					Audio_updateAll},
-		{NEXT_SONG_EV, 			player,					Player_PlayNextSong},
-		{PREV_SONG_EV, 			player,					Player_PlayPreviousSong},
-
-		{FIN_TABLA, 			player, 				do_nothing}
+		//End of Table
+		{pass, END_TABLE, AUDIO_PLAYER_STATE}
 };
 
+sttae EQUALIZER_STATE[] =
+{
+		//Buttons
+		{Effects_SelectOption, PP_EV, EQUALIZER_STATE},
+		{Effects_Back, STOP_EV, EQUALIZER_STATE},
+		{Effects_NextOption, NEXT_EV, EQUALIZER_STATE},
+		{Effects_PreviousOption, PREV_EV, EQUALIZER_STATE},
+
+		//Encoder
+		{Player_InitState, ENCODER_PRESS_EV, AUDIO_PLAYER_STATE},
+		{Effects_NextOption, ENCODER_RIGHT_EV, EQUALIZER_STATE},
+		{Effects_PreviousOption, ENCODER_LEFT_EV, EQUALIZER_STATE},
+
+		//Apagar long key press
+		{Idle_InitState, ENCODER_LKP_EV, IDLE_STATE},
+
+		//SD
+		{Idle_InitState, TIMEOUT_EV, IDLE_STATE},
+		{Idle_InitState, SD_OUT_EV, IDLE_STATE},
+		{Player_InitState, CHANGE_MODE_EV, AUDIO_PLAYER_STATE},
+
+		//Audio
+		{Audio_updateAll, FILL_BUFFER_EV, EQUALIZER_STATE},
+		{FileSelection_PlayNextSong, NEXT_SONG_EV, EQUALIZER_STATE},
+		{FileSelection_PlayPrevSong, PREV_SONG_EV, EQUALIZER_STATE},
+
+		{pass, END_TABLE, EQUALIZER_STATE}
+};
 
 
 /*******************************************************************************
