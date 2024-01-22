@@ -95,9 +95,36 @@ state FILE_SELECT_STATE[] =
 		{pass, END_TABLE, FILE_SELECT_STATE}
 };
 
+
 state AUDIO_PLAYER_STATE[] =
 {
+		//Buttons
+		{Player_ToggleMusic, PLAYPAUSE_EV, AUDIO_PLAYER_STATE},
+		{Player_ToggleMusic, PLAYPAUSE_EV, AUDIO_PLAYER_STATE},
+		{Player_ToggleMusic, PLAYPAUSE_EV, AUDIO_PLAYER_STATE},
+		{Player_ToggleMusic, PLAYPAUSE_EV, AUDIO_PLAYER_STATE},
 
+
+		{PP_EV, 				player, 				Player_ToggleMusic}, //play pausa
+		{STOP_EV, 				player, 				Player_Stop},
+		{NEXT_EV, 				player, 				Player_PlayNextSong},
+		{PREV_EV, 				player, 				Player_PlayPreviousSong},
+
+		{ENCODER_PRESS_EV,		file_selection, 		FileSelection_InitState},
+		{ENCODER_RIGHT_EV,		player, 				Player_IncVolume},
+		{ENCODER_LEFT_EV,		player,					Player_DecVolume},
+
+		{ENCODER_LKP_EV,		idle, 					Idle_InitState}, // turn off
+
+		//{CHANGE_MODE_EV, 		file_selection, 		FileSelection_InitState},
+		{SD_OUT_EV, 			idle, 					Idle_InitState},
+		{TIMEOUT_EV,			idle,	 				Idle_InitState},//??
+
+		{FILL_BUFFER_EV, 		player,					Audio_updateAll},
+		{NEXT_SONG_EV, 			player,					Player_PlayNextSong},
+		{PREV_SONG_EV, 			player,					Player_PlayPreviousSong},
+
+		{FIN_TABLA, 			player, 				do_nothing}
 };
 
 
