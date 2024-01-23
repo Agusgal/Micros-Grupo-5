@@ -52,8 +52,8 @@ void Audio_init(void)
 {
 	if(!init)
 	{
-		Mm_OnConnection(); //Init the SD;
-		FileSystem_ScanFiles(); // Build file system tree
+		memory_handler_init(); //Init the SD;
+		mp3Files_Init(); // Build file system tree
 		currFile = FileSystem_GetFirstFile();
 		maxFile = FileSystem_GetFilesCount();
 		init = !init;

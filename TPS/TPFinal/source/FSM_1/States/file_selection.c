@@ -17,7 +17,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "audio_manager.h"
+#include "../../mp3_handler/mp3_handler.h"
 //#include "AudioPlayer.h"
 
 #include "file_selection.h"
@@ -90,10 +90,18 @@ void FileSelection_PreviousFile(void)
 
 void FileSelection_SelectFile(void)
 {
-	/* Start decoding the file and play the audio player */
-	//Audio_selectFile();
-	//Audio_play();
-	push_Queue_Element(FILE_SELECTED_EV);
+	// AGUS PRESTÁ ATENCIÓN, NO DEBERÍA ROMPER NADA, PERO FIJATE
+	// SI NO ES UN MP3 FILE, LA FSM DEBERÍA SEGUIR EN EL MISMO ESTADO, COMO SI NO HUBIERA
+	// PASADO NADA
+
+	// If the file is an MP3 File
+	if(mp3Handler_selectObject())
+	{
+		/* Start decoding the file and play the audio player */
+		//Audio_play();
+		push_Queue_Element(FILE_SELECTED_EV);
+		return;
+	}
 }
 
 void FileSelection_PlayNextSong(void)

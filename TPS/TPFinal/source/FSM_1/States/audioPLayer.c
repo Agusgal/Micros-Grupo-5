@@ -12,14 +12,14 @@
 #include <string.h>
 
 #include "../../EventQueue/queue.h"
-#include "audio_manager.h"
+#include "../../mp3_handler/mp3_handler.h"
 //#include "LCD_GDM1602A.h"
 
 //#include "vumeterRefresh.h"
 
 #include "AudioPlayer.h"
 #include "ff.h"
-#include "file_system_manager.h"
+#include "../../mp3_file_handler/mp3_file_handler.h"
 #include "Timer.h"
 
 #define VOLUME_TIME		(5000U)

@@ -136,14 +136,14 @@ void Mm_OnConnection(void)
 		return;
 	}
 
-	if (f_mount(&g_fileSystem, driverNumberBuffer, 1U))
+	if (f_mount(&g_fileSystem, driverNumberBuffer, 1))
 	{
 		printf("Mount volume failed.\r\n");
 		SD_error = true;
 		return;
 	}
 
-    error = f_chdrive((char const *)&driverNumberBuffer[0U]);
+    error = f_chdrive((char const *)&driverNumberBuffer[0]);
 	if (error)
 	{
 		printf("Change drive failed.\r\n");

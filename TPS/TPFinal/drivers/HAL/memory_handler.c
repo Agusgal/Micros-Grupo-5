@@ -82,6 +82,7 @@ bool mh_SD_connected(void)
 	return check;
 }
 
+
 bool mh_SD_disconnected(void)
 {
 	bool check = SD_status == DISCONNECTED;
@@ -102,14 +103,14 @@ void mh_SD_mount(void)
 	}
 
 	// Mount SD
-	if (f_mount(&g_fileSystem, driveBuffer, 1U))
+	if (f_mount(&g_fileSystem, driveBuffer, 1))
 	{
 		SD_error = true;
 		return;
 	}
 
 	// Set current Drive
-    error = f_chdrive((char const *)&driveBuffer[0U]);
+    error = f_chdrive((char const *)&driveBuffer[0]);
 	if (error)
 	{
 		SD_error = true;
@@ -117,6 +118,7 @@ void mh_SD_mount(void)
 	}
 
 }
+
 
 void mh_SD_disconnect(void)
 {

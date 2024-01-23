@@ -10,10 +10,9 @@
 #include <stdint.h>
 
 #include "mp3_handler.h"
-#include "file_system_manager.h"
+#include "../mp3_file_handler/mp3_file_handler.h"
 #include "memory_handler.h"
 #include "AudioPlayer.h"
-#include "vumeterRefresh.h"
 #include "decoder.h"
 #include "equalizer.h"
 
@@ -34,10 +33,11 @@
 static bool playing = false;
 static bool init = false;
 
-static Mp3File_t currFile;
-static Mp3File_t playingFile;
+static MP3Object_t currObject;
 
-static int maxFile = 0;
+static MP3Object_t playingFile;
+
+static int maxObjectCount = 0;
 
 SDK_ALIGN(static uint16_t g_bufferRead[BUFFER_SIZE] , SD_BUFFER_ALIGN_SIZE);
 SDK_ALIGN(static short decoder_buffer[2*BUFFER_SIZE], SD_BUFFER_ALIGN_SIZE);
@@ -48,15 +48,65 @@ static char vol2send = 15 + 40;
 /******************************************************************************
 
  ******************************************************************************/
-void Audio_init(void)
+void mp3Handler_init(void)
 {
 	if(!init)
 	{
-		Mm_OnConnection(); //Init the SD;
-		FileSystem_ScanFiles(); // Build file system tree
-		currFile = FileSystem_GetFirstFile();
-		maxFile = FileSystem_GetFilesCount();
+		// Mount SD
+		mh_SD_mount();
+
+		// Generates the main directory structure
+		mp3Files_Init();
+
+		// Search for the first object
+		currObject = mp3Files_GetFirstObject();
+
+		// Search for the number of objects in the main directory
+		maxObjectCount = mp3Files_GetObjectsCounter();
+
 		init = !init;
 	}
 }
 
+
+void mp3Handler_nextObject(void)
+{
+	currObject = mp3Files_GetNextObject(currFile);
+}
+
+
+void mp3Handler_prevObject(void)
+{
+	currObject = mp3Files_GetPreviousObject(currFile);
+}
+
+
+bool mp3Handler_selectObject(void)
+{
+	if (!(currObject.object_type == MP3_FILE))
+	{
+		if (currObject.object_type == DIRECTORY)
+		{
+			 mp3Files_Enter_Dir(currObject.path);
+		}
+		else if (currObject.object_type == RETURN_DIR)
+		{
+			mp3Files_Exit_Dir(currObject.path);
+		}
+		return false;
+	}
+
+	// If the file is a MP3 file, load audio
+
+	//playingFile = currFile;
+
+	//decoder_MP3LoadFile(playingFile.path);
+	/* Primeros dos buffer constante, no hay sonido */
+	//memset(g_bufferRead, 0x08, sizeof(g_bufferRead));
+
+	/* Podria buscar el sample rate y mandarlo */
+	//AudioPlayer_LoadSongInfo(g_bufferRead, 44100);
+
+	//Audio_updateBuffer();
+
+}

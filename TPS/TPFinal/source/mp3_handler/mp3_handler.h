@@ -4,18 +4,36 @@
   @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
-#ifndef AUDIO_MANAGER_AUDIO_MANAGER_H_
-#define AUDIO_MANAGER_AUDIO_MANAGER_H_
+#ifndef MP3_HANDLER_H_
+#define MP3_HANDLER_H_
 
-void Audio_init(void);
+
+
+/**
+ * @brief Initializes the mp3 Handler
+ */
+void mp3Handler_init(void);
+
+
+/**
+ * @brief Loads next object
+ */
+void mp3Handler_nextObject(void);
+
+
+/**
+ * @brief Loads previous
+ */
+void mp3Handler_prevObject(void);
+
+/**
+ * @brief Selects the current object
+ * @return bool. True if the object selected is a MP3 File. False otherwise
+ */
+bool mp3Handler_selectObject(void)
 
 void Audio_deinit(void);
 
-void Audio_nextFile(void);
-
-void Audio_prevFile(void);
-
-void Audio_selectFile(void);
 
 void Audio_playPrevFile(void);
 
@@ -50,4 +68,4 @@ char Audio_getVolume(void);
 
 void Audio_setVolume(char value);
 
-#endif /* AUDIO_MANAGER_AUDIO_MANAGER_H_ */
+#endif /* MP3_HANDLER_H_ */
