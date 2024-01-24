@@ -7,7 +7,7 @@
 #ifndef MP3_HANDLER_H_
 #define MP3_HANDLER_H_
 
-
+#include <stdbool.h>
 
 /**
  * @brief Initializes the mp3 Handler
@@ -30,7 +30,7 @@ void mp3Handler_prevObject(void);
  * @brief Selects the current object
  * @return bool. True if the object selected is a MP3 File. False otherwise
  */
-bool mp3Handler_selectObject(void)
+bool mp3Handler_selectObject(void);
 
 void Audio_deinit(void);
 
