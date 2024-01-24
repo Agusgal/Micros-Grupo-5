@@ -94,10 +94,10 @@ static void showCustomBandSetting(void);
 
 void Effects_InitState(void)
 {
-	LCD_clearDisplay();
-	LCD_stopMove(0);
-	showTitle();
-	currentOptionIndex = 0;
+	//LCD_clearDisplay();
+	//LCD_stopMove(0);
+	//showTitle();
+	//currentOptionIndex = 0;
 }
 
 void Effects_NextOption(void)
@@ -202,11 +202,11 @@ void Effects_Back(void)
 	if (settingCustom)
 	{
 		settingCustom = false;
-		LCD_clearRow(1);
+		//LCD_clearRow(1);
 		setCurrentOption();
 	}else
 	{
-		emitEvent(CHANGE_MODE_EV);
+		//emitEvent(CHANGE_MODE_EV);
 	}
 }
 
@@ -227,11 +227,11 @@ void Effects_SetEffect(char option)
  ******************************************************************************/
 static void showTitle(void)
 {
-	LCD_stopMove(0);
-	LCD_stopMove(1);
+	//LCD_stopMove(0);
+	//LCD_stopMove(1);
 	//LCD_clearDisplay();
 	//LCD_clearRow(0);
-	LCD_writeStrInPos("Efectos         ", 16, 0, 0);
+	//LCD_writeStrInPos("Efectos         ", 16, 0, 0);
 	showingTitle = true;
 	titleTimerID = Timer_AddCallback(&stopShowingTitle, TITLE_TIME, true);
 }
@@ -239,7 +239,7 @@ static void showTitle(void)
 static void stopShowingTitle(void)
 {
 	showingTitle = false;
-	LCD_clearDisplay();
+	//LCD_clearDisplay();
 	setCurrentOption();
 }
 
@@ -253,12 +253,12 @@ static void userInteractionStopsTitle(void)
 static void showCustomBandSetting(void)
 {
 	//LCD_clearDisplay();
-	LCD_writeStrInPos(frequencyBandsTitles[currentBand], 16, 0, 0);
+	//LCD_writeStrInPos(frequencyBandsTitles[currentBand], 16, 0, 0);
 
-	char bandGainText[16] = "                ";
-	int writtenChars = sprintf(bandGainText, "%ddB", currentBandValue);
-	bandGainText[writtenChars] = ' ';
-	LCD_writeStrInPos(bandGainText, 16, 1, 0);
+	//char bandGainText[16] = "                ";
+	//int writtenChars = sprintf(bandGainText, "%ddB", currentBandValue);
+	//bandGainText[writtenChars] = ' ';
+	//LCD_writeStrInPos(bandGainText, 16, 1, 0);
 }
 
 static void setCurrentOption(void)
@@ -268,22 +268,22 @@ static void setCurrentOption(void)
     switch (currentOptionIndex)
     {
     case DEFAULT:
-		LCD_writeStrInPos("DEFAULT             ", 16, 0, 0);
+		//LCD_writeStrInPos("DEFAULT             ", 16, 0, 0);
 		break;
     case ROCK:
-    	LCD_writeStrInPos("ROCK                ", 16, 0, 0);
+    	//LCD_writeStrInPos("ROCK                ", 16, 0, 0);
         break;
     case JAZZ:
-    	LCD_writeStrInPos("JAZZ                ", 16, 0, 0);
+    	//LCD_writeStrInPos("JAZZ                ", 16, 0, 0);
         break;
     case POP:
-    	LCD_writeStrInPos("POP                 ", 16, 0, 0);
+    	//LCD_writeStrInPos("POP                 ", 16, 0, 0);
         break;
     case CLASSIC:
-		LCD_writeStrInPos("CLASSIC             ", 16, 0, 0);
+		//LCD_writeStrInPos("CLASSIC             ", 16, 0, 0);
 		break;
     case CUSTOM:
-    	LCD_writeStrInPos("CUSTOM              ", 16, 0, 0);
+    	//LCD_writeStrInPos("CUSTOM              ", 16, 0, 0);
 		break;
     }
 }

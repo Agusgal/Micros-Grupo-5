@@ -76,7 +76,9 @@ static void emitStartEv(void);
 
 void Idle_InitState(void)
 {
+	//todo esto esta aca solo para probar.
 	VU_Clear_Display();
+
 	//DeInit some modules for Initialization
 	//Audio_deinit();
 

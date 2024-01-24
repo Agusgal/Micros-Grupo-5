@@ -127,7 +127,7 @@ static void showVolume(void)
 {
 	if(!showingVolume)
 	{
-		LCD_clearDisplay();
+		//LCD_clearDisplay();
 		volumeTimerID = Timer_AddCallback(stopShowingVolume, VOLUME_TIME, true);
 	}
 	else
@@ -141,7 +141,7 @@ static void showVolume(void)
 	str2wrt[9] = vol/10 != 0? 0x30 + vol/10 : ' ';
 	str2wrt[10] = 0x30 + (char)vol%10;
 
-	LCD_writeStrInPos(str2wrt, sizeof(str2wrt)/sizeof(str2wrt[0]), 0, 0);
+	//LCD_writeStrInPos(str2wrt, sizeof(str2wrt)/sizeof(str2wrt[0]), 0, 0);
 	showingVolume = true;
 }
 

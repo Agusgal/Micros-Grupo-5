@@ -155,6 +155,6 @@ static void printFileInfo(void)
 	//memset(path, 0x20, 50);
 	//memcpy(path, name, strlen(name));
 
-	OLED_write_Text(20, 42, path);
+	//OLED_write_Text(20, 42, path);
 
 }
