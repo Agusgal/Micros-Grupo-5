@@ -202,13 +202,13 @@ static void mp3Files_list_dir(char * path)
 
 				mp3_object_type_t object_type = MP3_FILE;
 
-				if(FileSystem_isMp3File(path))
+				if(mp3Files_isMp3File(path))
 				{
 					mp3Files_AddObject(path, object_type);
 				}
 			}
 		}
-		closedir(&dir);
+		f_closedir(&dir);
 	}
 	else
 	{
@@ -220,7 +220,7 @@ static void mp3Files_list_dir(char * path)
 static void getParentDirectory(char* filePath, char* parentDir)
 {
     // Copy the input path to the result path
-    strncpy(parentDir, filePath, MAX_PATH_LENGTH);
+    strncpy(parentDir, filePath, FILE_NAME_STRING_SIZE);
 
     // Find the last occurrence of the directory separator '/'
     char* lastSlash = strrchr(parentDir, '/');

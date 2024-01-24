@@ -71,13 +71,13 @@ void mp3Handler_init(void)
 
 void mp3Handler_nextObject(void)
 {
-	currObject = mp3Files_GetNextObject(currFile);
+	currObject = mp3Files_GetNextObject(currObject);
 }
 
 
 void mp3Handler_prevObject(void)
 {
-	currObject = mp3Files_GetPreviousObject(currFile);
+	currObject = mp3Files_GetPreviousObject(currObject);
 }
 
 
@@ -87,11 +87,11 @@ bool mp3Handler_selectObject(void)
 	{
 		if (currObject.object_type == DIRECTORY)
 		{
-			 mp3Files_Enter_Dir(currObject.path);
+			 mp3Files_Enter_Dir(currObject);
 		}
 		else if (currObject.object_type == RETURN_DIR)
 		{
-			mp3Files_Exit_Dir(currObject.path);
+			mp3Files_Exit_Dir(currObject);
 		}
 		return false;
 	}
