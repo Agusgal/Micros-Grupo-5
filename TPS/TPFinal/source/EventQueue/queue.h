@@ -51,7 +51,7 @@ typedef enum {
 
 			NEXT_SONG_EV,
 		    PREV_SONG_EV,
-		    FILL_BUFFER_EV
+		    FILL_BUFFER_EV,
 
 
 			}Event_Type;
