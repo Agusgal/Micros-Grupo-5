@@ -127,7 +127,7 @@ void VU_Clear_Display()
     {
     	for(int j = 0; j < VUMETER_HEIGHT; j++)
     	{
-    		Color_Matrix[j*8 + i] = CLEAN;
+    		Color_Matrix[j*8 + i] = YELLOW;
     	}
     	VU_Values[i] = 0;
     }

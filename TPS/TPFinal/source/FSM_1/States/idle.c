@@ -19,6 +19,8 @@
 #include "daytime.h"
 #include "Timer.h"
 
+#include "vumeter.h"
+
 //#include "memory_manager.h"
 //#include "audio_manager.h"
 
@@ -74,6 +76,7 @@ static void emitStartEv(void);
 
 void Idle_InitState(void)
 {
+	VU_Clear_Display();
 	//DeInit some modules for Initialization
 	//Audio_deinit();
 

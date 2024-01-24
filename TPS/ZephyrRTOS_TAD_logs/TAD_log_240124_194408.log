@@ -1,0 +1,11 @@
+"Task Aware Debugger for GDB" version 11.8.0 (202306131047)
+Copyright 2016-2023 NXP
+==================================
+19:43:51.884 INFO: [ZephyrRTOS] .config file could not be read [/Users/agus/Downloads/Labo-Microprocesadores MP3_Player master MP3Player/Debug/.config (No such file or directory)]
+19:43:51.884 INFO: [TadModel] DSF session ID 62 has started.
+19:43:54.904 INFO: [TadState] TAD state changed: DEBUG_STARTED -> DEBUG_INIT_0 (SUSPENDED, USER_REQUEST)
+19:44:00.937 INFO: [TadState] TAD state changed: DEBUG_INIT_0 -> DEBUG_INIT_1 (RESUMED, USER_REQUEST)
+19:44:00.985 INFO: [TadState] TAD state changed: DEBUG_INIT_1 -> DEBUG_SUSPENDED (SUSPENDED, BREAKPOINT)
+19:44:02.578 INFO: [TadState] TAD state changed: DEBUG_SUSPENDED -> DEBUG_RESUMED (RESUMED, USER_REQUEST)
+19:44:04.692 INFO: [TadState] TAD state changed: DEBUG_RESUMED -> READY (SUSPENDED, SIGNAL)
+19:44:08.213 INFO: [TadModel] DSF session ID 62 has ended.

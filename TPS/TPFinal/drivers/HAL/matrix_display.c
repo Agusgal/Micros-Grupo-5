@@ -97,13 +97,15 @@ void md_Init(void)
 		DMAMUX_Init(DMAMUX);
 		DMAMUX_SetSource(DMAMUX, DMA_CHANEL, FTM_DMA_SOURCE);
 		DMAMUX_EnableChannel(DMAMUX, DMA_CHANEL);
+
 		/* EDMA Stuff*/
 		edma_config_t userConfig;
 		EDMA_GetDefaultConfig(&userConfig);
 		EDMA_Init(DMA0, &userConfig);
 		EDMA_CreateHandle(&g_EDMA_Handle, DMA0, DMA_CHANEL);
 		EDMA_SetCallback(&g_EDMA_Handle, md_dmaCallback, NULL);
-		/* FTM Stuff */
+
+		/* FTM Stuff */ //Init in PTC3
 		PWM_Init(0, FTM_CH_0, FTM_PSC_x1, 2, 1, 4, FTM_lAssertedHigh,
 				FTM_MODULO, LOW_DUTY, FTM_DMA_ON);
 

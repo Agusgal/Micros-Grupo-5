@@ -30,6 +30,7 @@
 #include "matrix_display.h"
 #include "Buttons.h"
 #include "Encoder.h"
+#include "vumeter.h"
 
 #include "AudioPlayer.h"
 
@@ -87,7 +88,9 @@ void App_Init (void)
 	//Audio PLayer Init, para poder inicializarlo debe estar inicializado el DMA, sino tira error turbio.
 	AudioPlayer_Init();
 
-	//Vumeter/FFT Init
+	//Vumeter Init
+	VU_Init();
+
 	//Equalizer Init
 
 	//Daytime Init
