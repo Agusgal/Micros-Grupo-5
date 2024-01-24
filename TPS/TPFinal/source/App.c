@@ -163,24 +163,22 @@ void fill_queue(void)
 		push_Queue_Element(FILL_BUFFER_EV);
 	}
 
-	//Check for Button Events
-	/*
-	if(wasTap(PIN_SW_A))
+	Event_Type button_event;
+	for (int button = 0; button < BUTTON_SIZE; button++)
 	{
-		emitEvent(PREV_EV);
+		button_event = getButtonEvent(button);
+
+		if(button_event != NO_BUTTON_PRESS_EV)
+		{
+			push_Queue_Element(button_event);
+		}
+
+		if (button_event == PLAYPAUSE_EV)
+		{
+			static int count = 0;
+			count++;
+		}
 	}
-	if(wasTap(PIN_SW_B))
-	{
-		emitEvent(PP_EV);
-	}
-	if(wasTap(PIN_SW_C))
-	{
-		emitEvent(STOP_EV);
-	}
-	if(wasTap(PIN_SW_D))
-	{
-		emitEvent(NEXT_EV);
-	}*/
 
 
 	//check for encoder turn events

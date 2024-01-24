@@ -108,15 +108,15 @@ void ButtonConfig(void)
 	{
 		gpioMode(pins[i],INPUT_PULLUP);
 		buttons[i].pin=pins[i];
-		buttons[i].state=IDLE;
-		buttons[i].event=IDLE,
-		buttons[i].duration_counter=0;
+		buttons[i].state = IDLE;
+		buttons[i].event = IDLE,
+		buttons[i].duration_counter = 0;
 	}
 }
 
 Event_Type getButtonEvent(uint8_t button)
 {
-	if (buttons[button].event!=IDLE)
+	if (buttons[button].event !=IDLE)
 	{
 		Event_Type aux = (Event_Type) NO_BUTTON_PRESS_EV + 2 * button + buttons[button].event;
 		buttons[button].event=IDLE;

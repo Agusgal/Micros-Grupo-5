@@ -23,9 +23,9 @@
 
 
 // ESTO VA EN BOARD.H
-#define PIN_PREV_BTN		PORTNUM2PIN(PB,18)
+#define PIN_NEXT_BTN		PORTNUM2PIN(PB,18)
 #define PIN_PLAY_BTN		PORTNUM2PIN(PB,19)
-#define PIN_NEXT_BTN		PORTNUM2PIN(PC,1)
+#define PIN_PREV_BTN		PORTNUM2PIN(PC,1)
 #define PIN_STOP_BTN		PORTNUM2PIN(PC,2)
 
 
@@ -43,9 +43,9 @@ typedef  struct
 }Button_t;
 
 Button_t buttons[BUTTON_SIZE];
-pin_t  pins []= { PIN_PLAY_BTN, PIN_STOP_BTN, PIN_PREV_BTN, PIN_NEXT_BTN};
+pin_t  pins []= {PIN_PLAY_BTN, PIN_STOP_BTN, PIN_PREV_BTN, PIN_NEXT_BTN};
 enum {PRESSED_B=1, LK_PRESSING_B=2};
-enum {IDLE,TAP, LKP};
+enum {IDLE, TAP, LKP};
 
 
 
@@ -61,7 +61,7 @@ void ButtonConfig(void);
 void Buttons_Init(void)
 {
 	ButtonConfig();
-	SysTick_AddCallback(Buttons_Update, BUTTON_CALLBACK_PERIOD);
+	SysTick_AddCallback(Buttons_Update, BUTTON_CALLBACK_PERIOD/1000);
 }
 
 void Buttons_Update(void)
@@ -79,7 +79,7 @@ void Buttons_Update(void)
 			buttons[i].event= IDLE;
 			buttons[i].duration_counter++;
 		}
-		else if ((buttons[i].state==IDLE) && (reads[i] == true)) // && sw_Read == HIGH pero no hace falta
+		else if ((buttons[i].state == IDLE) && (reads[i] == true)) // && sw_Read == HIGH pero no hace falta
 		{
 			buttons[i].event = IDLE;
 			buttons[i].duration_counter = 0;
@@ -88,12 +88,12 @@ void Buttons_Update(void)
 		{
 			buttons[i].duration_counter++;
 			if (buttons[i].duration_counter >= LKP_COUNTER)
-				buttons[i].state=LK_PRESSING_B;
+				buttons[i].state = LK_PRESSING_B;
 		}
 		else if (buttons[i].state == PRESSED_B)
 		{
-			buttons[i].state=IDLE;
-			buttons[i].event= TAP;
+			buttons[i].state =IDLE;
+			buttons[i].event = TAP;
 			buttons[i].duration_counter=0;
 		}
 		else if (buttons[i].state == LK_PRESSING_B && (reads[i] == true))
@@ -111,25 +111,24 @@ void ButtonConfig(void)
 	{
 		gpioMode(pins[i],INPUT_PULLUP);
 		buttons[i].pin=pins[i];
-		buttons[i].state=IDLE;
-		buttons[i].event=IDLE,
-		buttons[i].duration_counter=0;
+		buttons[i].state = IDLE;
+		buttons[i].event = IDLE,
+		buttons[i].duration_counter = 0;
 	}
 }
 
 Event_Type getButtonEvent(uint8_t button)
 {
-	/*
-	if (buttons[button].event!=IDLE)
+	if (buttons[button].event != IDLE)
 	{
 		Event_Type aux = (Event_Type) NO_BUTTON_PRESS_EV + 2 * button + buttons[button].event;
-		buttons[button].event=IDLE;
+		buttons[button].event = IDLE;
 		return aux;
 	}
 	else
 		return NO_BUTTON_PRESS_EV;
-	*/
 }
+
 /*******************************************************************************
  *******************************************************************************
                         LOCAL FUNCTION DEFINITIONS

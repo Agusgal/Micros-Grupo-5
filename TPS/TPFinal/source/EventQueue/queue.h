@@ -29,10 +29,17 @@ typedef enum {
 			START_EV,
 
 			/* BUTTON EVENTS */
-	        PLAYPAUSE_EV,
+			NO_BUTTON_PRESS_EV,
+
+			PLAYPAUSE_EV,
+			PLAYPAUSE_LKP_EV,
 			STOP_EV,
+			STOP_LKP_EV,
 			NEXT_EV,
-		    PREV_EV,
+			NEXT_LKP_EV,
+			PREV_EV,
+			PREV_LKP_EV,
+
 
 			/* ENCODER EVENTS */
 			ENCODER_RIGHT_EV,
