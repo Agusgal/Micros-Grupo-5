@@ -39,7 +39,6 @@
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
-void testFunc(void);
 
 
 /**
@@ -163,6 +162,8 @@ void fill_queue(void)
 		push_Queue_Element(FILL_BUFFER_EV);
 	}
 
+
+	//Check for Button Events
 	Event_Type button_event;
 	for (int button = 0; button < BUTTON_SIZE; button++)
 	{
@@ -172,18 +173,12 @@ void fill_queue(void)
 		{
 			push_Queue_Element(button_event);
 		}
-
-		if (button_event == PLAYPAUSE_EV)
-		{
-			static int count = 0;
-			count++;
-		}
 	}
 
 
-	//check for encoder turn events
+	//check for Encoder turn events
 	int move_enc = getEncoder_State();
-	if (move_enc == 1) //move right
+	if (move_enc == 1)
 	{
 		push_Queue_Element(ENCODER_RIGHT_EV);
 	}
@@ -191,6 +186,7 @@ void fill_queue(void)
 	{
 		push_Queue_Element(ENCODER_LEFT_EV);
 	}
+
 
 	//Check for Encoder press events
 	int encoder_state = getEncoderSwitch_State();
@@ -202,10 +198,4 @@ void fill_queue(void)
 	{
 		push_Queue_Element(ENCODER_LKP_EV);
 	}
-
-	//Check for OLED events
 }
-
-
-
-

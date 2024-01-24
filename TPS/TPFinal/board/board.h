@@ -47,8 +47,8 @@
 #define ENCODER_SW  	PORTNUM2PIN(PC,10) // PTC10
 
 //Encoder Pins
-#define PIN_CH_A			PORTNUM2PIN(PC,1)
-#define PIN_CH_B			PORTNUM2PIN(PC,8)
+#define PIN_CH_A			PORTNUM2PIN(PC,0)
+#define PIN_CH_B			PORTNUM2PIN(PC,7)
 #define PIN_DEC_SW			PORTNUM2PIN(PC,9)
 
 // Test point

@@ -24,8 +24,8 @@
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
-static int encoder=NO_MOVE;
-static int encoder_sw=IDLE_;
+static int encoder = NO_MOVE;
+static int encoder_sw = IDLE_;
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -36,91 +36,88 @@ static int encoder_sw=IDLE_;
 void Encoder_Init(void)
 {
 
-	gpioMode(PIN_CH_A,INPUT_PULLUP);
-	gpioMode(PIN_CH_B,INPUT_PULLUP);
-	gpioMode(PIN_DEC_SW,INPUT_PULLUP);
-	SysTick_AddCallback(Encoder_Update, 5000);
-	SysTick_AddCallback(EncoderSwitch_Update, 20000);
+	gpioMode(PIN_CH_A, INPUT_PULLUP);
+	gpioMode(PIN_CH_B, INPUT_PULLUP);
+	gpioMode(PIN_DEC_SW, INPUT_PULLUP);
+	SysTick_AddCallback(Encoder_Update, 5);//todo ojo que aca antes decia 5000 pero con el nuevo systick creo que debe ser menos
+	SysTick_AddCallback(EncoderSwitch_Update, 20); //todo: aca igual, decia 20000, con 100-200 no anda long key press
 }
 
 void Encoder_Update(void)
 {
 
-	static int state=IDLE;
-	bool CH_A=gpioRead(PIN_CH_A);
-	bool CH_B=gpioRead(PIN_CH_B);
+	static int state = IDLE;
+	bool CH_A = gpioRead(PIN_CH_A);
+	bool CH_B = gpioRead(PIN_CH_B);
 	encoder= IDLE;
-	/*****************************************/
-	// Máquina de Estados
 
+	// Máquina de Estados
 	switch (state)
 	{
 
 		case IDLE:
 			if (!CH_A & CH_B)
-				state=ACW1;
+				state = ACW1;
 			else if (CH_A & !CH_B)
-				state=CW1;
+				state = CW1;
 			else
-				state=IDLE;
+				state = IDLE;
 			break;
 		case ACW1:
 			if (CH_A & CH_B)
-				state=ACW3;
+				state = ACW3;
 			else if (!CH_A & !CH_B)
-				state=ACW2;
+				state = ACW2;
 			else
-				state=ACW1;
+				state = ACW1;
 			break;
 		case ACW2:
 			if (!CH_A & CH_B)
-				state=ACW1;
+				state = ACW1;
 			else if (!CH_A & !CH_B)
-				state=ACW2;
+				state = ACW2;
 			else
-				state=ACW3;
+				state = ACW3;
 			break;
 		case ACW3:
 			if (CH_A & CH_B)
 			{
-				state=IDLE;
-				encoder= LEFT_TURN;
+				state = IDLE;
+				encoder = LEFT_TURN;
 			}
 			else if (!CH_A & !CH_B)
-				state=ACW2;
+				state = ACW2;
 			else
-				state=ACW3;
+				state = ACW3;
 			break;
 		case CW1:
 			if (!CH_A & !CH_B)
-				state=CW2;
+				state = CW2;
 			else if (CH_A & CH_B)
-				state=CW3;
+				state = CW3;
 			else
-				state=CW1;
+				state = CW1;
 			break;
 		case CW2:
 			if (CH_A & !CH_B)
-				state=CW1;
+				state = CW1;
 			else if (!CH_A & !CH_B)
-				state=CW2;
+				state = CW2;
 			else
-				state=CW3;
+				state = CW3;
 			break;
 		case CW3:
 			if (CH_A & CH_B)
 			{
-				state=IDLE;
-				encoder= RIGHT_TURN;
+				state = IDLE;
+				encoder = RIGHT_TURN;
 			}
 			else if (!CH_A & !CH_B)
-				state=CW2;
+				state = CW2;
 			else
-				state=CW3;
+				state = CW3;
 			break;
 	}
-
-
 }
 
 void EncoderSwitch_Update(void)

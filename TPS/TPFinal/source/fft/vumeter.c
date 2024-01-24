@@ -1,3 +1,9 @@
+/***************************************************************************//**
+  @file     vumeter.c
+  @brief    Vumeter functions
+  @author   Grupo 5
+ ******************************************************************************/
+
 #include "arm_math.h"
 #include "math.h"
 #include "matrix_display.h"
@@ -20,11 +26,33 @@ static int VU_Values[NUMBER_OF_BANDS];
 static colors_t Color_Matrix[VUMETER_HEIGHT * NUMBER_OF_BANDS];
 
 
+/*******************************************************************************
+ * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
+ ******************************************************************************/
+
+/*!
+ * @brief fills the Color_Matrix local array with the given values
+ *
+ * @param vumeterValues: cumeter values array passed by reference
+ *
+ * @return void
+ */
+void VU_Fill_Color_Matrix(int * vumeterValues);
+
+
+void Fill_Spiral_Display(void);
+
+
+
+/*******************************************************************************
+ *                        GLOBAL FUNCTION DEFINITIONS
+ ******************************************************************************/
+
+
 void VU_Init()
 {
     arm_rfft_fast_init_f32(&rfft_fast_instance, SAMPLE_LENGTH);
 }
-
 
 
 int VU_FFT(float32_t * inputSignal, float32_t SR, int lowerFreq, int higherFreq)
@@ -72,6 +100,7 @@ int VU_FFT(float32_t * inputSignal, float32_t SR, int lowerFreq, int higherFreq)
         	temp += (FFT_Mag[j] > NOISE_THRES)? FFT_Mag[j] : 0;
         }
         int roundedHeight = (int)(temp/MAX_AMPLITUDE);
+
         //int roundedHeight = floor((vumeterValues[i]/(higherBin - lowerBin))/1000);
         VU_Values[i] += (roundedHeight > VUMETER_HEIGHT ? VUMETER_HEIGHT : roundedHeight)/AVERAGE;
 
@@ -79,15 +108,43 @@ int VU_FFT(float32_t * inputSignal, float32_t SR, int lowerFreq, int higherFreq)
         Next_Bin_Freq *= Freq_Jump;
     } 
 
-    average = (average+1)%AVERAGE;
+    average = (average + 1) % AVERAGE;
     if(average == 0)
     {
     	VU_Fill_Color_Matrix(VU_Values);
-    	for(int j = 0; j <  NUMBER_OF_BANDS; j++)
-    		 VU_Values[j] = 0;
+    	for(int j = 0; j <  NUMBER_OF_BANDS; j++)//todo aca puse corchetes si se rompe todo fue este el error
+    	{
+    		VU_Values[j] = 0;
+    	}
     }
     return 0;
 }
+
+
+void VU_Clear_Display()
+{
+    for(int i = 0; i < NUMBER_OF_BANDS; i++)
+    {
+    	for(int j = 0; j < VUMETER_HEIGHT; j++)
+    	{
+    		Color_Matrix[j*8 + i] = CLEAN;
+    	}
+    	VU_Values[i] = 0;
+    }
+
+    VU_Draw_Display();
+}
+
+
+void VU_Draw_Display()
+{
+    md_writeBuffer(Color_Matrix);
+}
+
+
+/***************************************************************************//**
+  LOCAL FUNCTIONS
+ ******************************************************************************/
 
 void VU_Fill_Color_Matrix(int * vumeterValues)
 {
@@ -109,24 +166,6 @@ void VU_Fill_Color_Matrix(int * vumeterValues)
     	}
     }
     
-}
-
-void VU_Clear_Display()
-{
-    for(int i = 0; i < NUMBER_OF_BANDS; i++)
-    {
-    	for(int j = 0; j < VUMETER_HEIGHT; j++)
-    	{
-    		Color_Matrix[j*8 + i] = CLEAN;
-    	}
-    	VU_Values[i] = 0;
-    }
-    VU_Draw_Display();
-}
-
-void VU_Draw_Display()
-{
-    md_writeBuffer(Color_Matrix);
 }
 
 
@@ -213,3 +252,6 @@ void Fill_Spiral_Display(void)
 		step++;
 	}
 }
+
+
+
