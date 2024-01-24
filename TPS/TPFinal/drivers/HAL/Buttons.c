@@ -23,10 +23,11 @@
 
 
 // ESTO VA EN BOARD.H
-#define PIN_PLAY_BTN		PORTNUM2PIN(PC,8)
-#define PIN_STOP_BTN		PORTNUM2PIN(PC,1)
-#define PIN_PREV_BTN		PORTNUM2PIN(PB,19)
-#define PIN_NEXT_BTN		PORTNUM2PIN(PB,18)
+#define PIN_PREV_BTN		PORTNUM2PIN(PB,18)
+#define PIN_PLAY_BTN		PORTNUM2PIN(PB,19)
+#define PIN_NEXT_BTN		PORTNUM2PIN(PC,1)
+#define PIN_STOP_BTN		PORTNUM2PIN(PC,2)
+
 
 
 /*******************************************************************************
