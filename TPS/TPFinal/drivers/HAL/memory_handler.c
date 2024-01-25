@@ -19,7 +19,7 @@
 #include "diskio.h"
 #include "component/SD/sdmmc_config.h"
 
-#include "memory_manager.h"
+#include "memory_handler.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/

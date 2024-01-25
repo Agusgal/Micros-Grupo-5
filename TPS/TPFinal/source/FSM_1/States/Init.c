@@ -9,7 +9,7 @@
 
 
 #include "../../EventQueue/queue.h"
-#include "memory_manager.h"
+#include "memory_handler.h"
 #include "power_mode_switch.h"
 
 void startProgram(void)

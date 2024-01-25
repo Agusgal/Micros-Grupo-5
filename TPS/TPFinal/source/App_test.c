@@ -13,8 +13,8 @@
 #include <stdint.h>
 
 
-
-#include "component/fatfs/fsl_sd_disk/fsl_sd_disk.h"
+#include "../HAL/memory_handler.h"
+#include "mp3_handler/mp3_handler.h"
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -38,7 +38,8 @@
 /* Función que se llama 1 vez, al comienzo del programa */
 void App_Init_test (void)
 {
-
+	PowerMode_Init();
+	memory_handler_init();
 
 }
 
@@ -47,7 +48,11 @@ void App_Init_test (void)
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run_test (void)
 {
-
+	if(mh_SD_connected())
+	{
+		// Fetch the sd on conection event
+		mp3Handler_init();
+	}
 
 }
 

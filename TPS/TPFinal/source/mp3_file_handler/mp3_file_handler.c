@@ -18,7 +18,7 @@
  * PRIVATE VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
-MP3Object_t current_objects[FILE_ARRAY_SIZE] = {};
+static MP3Object_t current_objects[FILE_ARRAY_SIZE];
 static unsigned int objectsCounter = 0;
 
 /*
@@ -159,7 +159,7 @@ static void mp3Files_list_dir(char * path)
 	int nfile, ndir;
 
 	unsigned int i = strlen(path);
-	char * newPath[FILE_NAME_STRING_SIZE] = {0};
+	char newPath[FILE_NAME_STRING_SIZE] = {0};
 
 	strcpy(newPath, path);
 	char * fn = "./";
@@ -181,7 +181,10 @@ static void mp3Files_list_dir(char * path)
 		{
 			res = f_readdir(&dir, &fno);                   /* Read a directory item */
 			if (res != FR_OK || fno.fname[0] == 0) break;  /* Error or end of dir */
-			if (fno.fattrib & AM_DIR)
+
+			// !(fno.fattrib & (AM_HID | AM_SYS))
+			// Checks that the file is not a hidden file or system file
+			if ((!(fno.fattrib & (AM_HID | AM_SYS))) && (fno.fattrib & AM_DIR))
 			{            /* Directory */
 				// Complete the path of the new directory
 				char * fn = fno.fname;
@@ -190,10 +193,10 @@ static void mp3Files_list_dir(char * path)
 
 				mp3_object_type_t object_type = DIRECTORY;
 
-				mp3Files_AddObject(path, object_type);
+				mp3Files_AddObject(newPath, object_type);
 
 			}
-			else
+			else if (!(fno.fattrib & (AM_HID | AM_SYS)))
 			{                               /* File */
 				// Complete the path of the new file
 				char * fn = fno.fname;
@@ -202,9 +205,9 @@ static void mp3Files_list_dir(char * path)
 
 				mp3_object_type_t object_type = MP3_FILE;
 
-				if(mp3Files_isMp3File(path))
+				if(mp3Files_isMp3File(newPath))
 				{
-					mp3Files_AddObject(path, object_type);
+					mp3Files_AddObject(newPath, object_type);
 				}
 			}
 		}
