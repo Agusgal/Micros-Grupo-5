@@ -1,6 +1,6 @@
 /***************************************************************************/ /**
   @file     memory_handler.h
-  @brief    Memory System header
+  @brief    Memory Handler header
   @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 

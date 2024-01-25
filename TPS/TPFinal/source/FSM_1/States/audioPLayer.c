@@ -1,7 +1,7 @@
 /***************************************************************************/ /**
-  @file     add_user.c
-  @brief    add user state functions
-  @author   Grupo 5 - Lab de Micros
+  @file     AudioPlayer.h
+  @brief    Audio Reproductor using the DAC with PDB.
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 /*******************************************************************************

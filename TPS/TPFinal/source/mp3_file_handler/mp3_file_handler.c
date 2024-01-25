@@ -1,7 +1,7 @@
 
 /***************************************************************************/ /**
   @file     mp3_file_handler.c
-  @brief    MP3 File System functions
+  @brief    MP3 File Handler functions
   @author   Grupo 5 - Lab de Micros
  ******************************************************************************/
 

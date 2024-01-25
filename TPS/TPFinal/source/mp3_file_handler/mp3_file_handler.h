@@ -1,6 +1,6 @@
 /***************************************************************************/ /**
   @file     mp3_file_handler.h
-  @brief    Mp3 File System Handler header
+  @brief    Mp3 File Handler header
   @author   Grupo 5 - Lab de Micros
  ******************************************************************************/
 
@@ -41,12 +41,14 @@ void mp3Files_Init(void);
 
 /*
  * @brief Detects if a file's path corresponds to a .mp3 file.
+ * @param path: complete file's path.
+ * @return Flag that is true if the file extension is MP3
  * */
 bool mp3Files_isMp3File(char *path);
 
 
 /*
- * @brief Adds a file to the file system.
+ * @brief Adds an object to the file system.
  * @param path: complete file's path.
  * @param object_type: file, directory, return_dir or Null
  *
@@ -56,6 +58,7 @@ void mp3Files_AddObject(char *path, mp3_object_type_t object_type);
 
 /*
  * @brief Gets the first object of the file system.
+ * @return MP3Object struct containing path and object type.
  *
  * */
 MP3Object_t mp3Files_GetFirstObject(void);
@@ -63,25 +66,25 @@ MP3Object_t mp3Files_GetFirstObject(void);
 
 /*
  * @brief Gets the next object of the file system.
- * @param currentObject: The object that is considered the 'current' one. The 'next' file will be defined based on this param.
- * @return MP3Object_t next file of the file system.  If the current file is the last one, returns the first file.
+ * @param currentObject: The object that is considered the 'current' one. The 'next' object will be defined based on this param.
+ * @return MP3Object_t next object of the file system.  If the current object is the last one, returns the first one.
  *
  * */
 MP3Object_t mp3Files_GetNextObject(MP3Object_t currentObject);
 
 
 /*
- * @brief Gets the previous file of the file system.
- * @param currentObject: The file that is considered the 'current' one. The 'previous' file will be defined based on this param.
- * @return MP3Object_t previous file of the file system.  If the current file is the first one, returns the last file.
+ * @brief Gets the previous object of the file system.
+ * @param currentObject: The object that is considered the 'current' one. The 'previous' object will be defined based on this param.
+ * @return MP3Object_t previous object of the file system.  If the current obbject is the first one, returns the last one.
  *
  * */
 MP3Object_t mp3Files_GetPreviousObject(MP3Object_t currentObject);
 
 
 /*
- * @brief Gets the file's name of a MP3Object_t file.
- * @param object: The file whose file's name is wanted.
+ * @brief Gets the object's name of a MP3Object_t.
+ * @param The object whose name is wanted.
  * @return char * file's name. (Ex.: if file's path is "/dir0/dir1/hello.mp3", it's file's name is "hello.mp3");
  *
  * */
@@ -89,21 +92,25 @@ char* mp3Files_GetObjectName(MP3Object_t object);
 
 
 /*
- * @brief Gets the amount of files that exist in the file system.
+ * @brief Gets the amount of objects that exist in the file system.
+ * @return number of objects.
  */
 
 int mp3Files_GetObjectsCounter(void);
 
 
 /*
- * @brief Reset the file system and return a new first file.
+ * @brief Reset the file system.
+ * @return New first object in the file system.
  *
  * */
 MP3Object_t mp3Files_ResetObjects(void);
 
 
 /*
- * @brief Enter the specified directory
+ * @brief Enter the specified directory.
+ * @param Object (directory wanting to enter to).
+ * @return First object in the directory.
  *
  * */
 MP3Object_t mp3Files_Enter_Dir(MP3Object_t object);
@@ -111,13 +118,16 @@ MP3Object_t mp3Files_Enter_Dir(MP3Object_t object);
 
 /*
  * @brief Exit to the specified directory
- *
+ * @param Object (directory wanting to exit from).
+ * @return First object in the directory.
  * */
 MP3Object_t mp3Files_Exit_Dir(MP3Object_t object);
 
 
 /*
- * @Brief Get current directory path
+ * @Brief Retrieves the current directory of the current drive.
+ * @param Buffer to return path name.
+ * @param The length of the buffer.
  */
 void getCurrentDirectory(char* buff, unsigned int len);
 
