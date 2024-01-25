@@ -123,23 +123,32 @@ MP3Object_t mp3Files_ResetObjects(void)
 
 MP3Object_t mp3Files_Enter_Dir(MP3Object_t object)
 {
-	mp3Files_list_dir(object.path);
-	return mp3Files_GetFirstObject();
+	if (object.object_type == DIRECTORY)
+	{
+		mp3Files_list_dir(object.path);
+		return mp3Files_GetFirstObject();
+	}
+
 }
 
 
 MP3Object_t mp3Files_Exit_Dir(MP3Object_t object)
 {
-	// TODO: Check that there is in fact a parent directory
-	// See getCurrentDirectory()
-	char parentDir[FILE_NAME_STRING_SIZE];
-	char parentParentDir[FILE_NAME_STRING_SIZE];
+	if (object.object_type == RETURN_DIR)
+	{
+		char parentDir[FILE_NAME_STRING_SIZE];
+		char parentParentDir[FILE_NAME_STRING_SIZE];
 
-	getParentDirectory(object.path, parentDir);
-	getParentDirectory(parentDir, parentParentDir);
-	mp3Files_list_dir(parentParentDir);
+		getParentDirectory(object.path, parentDir);
+		getParentDirectory(parentDir, parentParentDir);
+		if (strcmp(parentParentDir, ".") == 0)
+		{
+			return mp3Files_GetFirstObject();
+		}
+		mp3Files_list_dir(parentParentDir);
 
-	return mp3Files_GetFirstObject();
+		return mp3Files_GetFirstObject();
+	}
 }
 
 
@@ -162,14 +171,14 @@ static void mp3Files_list_dir(char * path)
 	char newPath[FILE_NAME_STRING_SIZE] = {0};
 
 	strcpy(newPath, path);
-	char * fn = "./";
+	char * fn = "..";
 	*(newPath+i) = '/';
 	strcpy(newPath+i+1, fn);
 
 	// Save the first object as a return to previous directory object
 	objectsCounter = 0;
 
-	mp3Files_AddObject(path, RETURN_DIR);
+	mp3Files_AddObject(newPath, RETURN_DIR);
 
 	// Save the remaining objects
 
