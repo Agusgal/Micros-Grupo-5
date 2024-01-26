@@ -29,6 +29,7 @@ source \
 source/EventQueue \
 source/FSM_1 \
 source/FSM_1/States \
+source/Queues \
 source/equalizer \
 source/fft \
 source/mp3_file_handler \

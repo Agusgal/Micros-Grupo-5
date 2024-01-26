@@ -7,13 +7,13 @@
 /******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
+#include <mp3_decoder.h>
 #include <stdint.h>
 
 #include "mp3_handler.h"
 #include "../mp3_file_handler/mp3_file_handler.h"
 #include "memory_handler.h"
 #include "AudioPlayer.h"
-#include "decoder.h"
 #include "equalizer.h"
 
 #include "fsl_common.h"

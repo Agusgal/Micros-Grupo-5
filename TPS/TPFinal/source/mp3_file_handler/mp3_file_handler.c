@@ -141,7 +141,11 @@ MP3Object_t mp3Files_Exit_Dir(MP3Object_t object)
 
 		getParentDirectory(object.path, parentDir);
 		getParentDirectory(parentDir, parentParentDir);
-		if (strcmp(parentParentDir, ".") == 0)
+
+		char * a = ".";
+		a[0] = 1;
+
+		if (strcmp(parentParentDir, a) == 0)
 		{
 			return mp3Files_GetFirstObject();
 		}
@@ -242,6 +246,8 @@ static void getParentDirectory(char* filePath, char* parentDir)
         *lastSlash = '\0';
     } else {
         // No directory separator found, assuming the file is in the current directory
-        strcpy(parentDir, ".");
+    	char * a = ".";
+    	a[0] = 1;
+    	strcpy(parentDir, a);
     }
 }
