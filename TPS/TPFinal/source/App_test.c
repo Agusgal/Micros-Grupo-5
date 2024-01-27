@@ -50,29 +50,16 @@ void App_Init_test (void)
 void App_Run_test (void)
 {
 	MP3Object_t prueba;
-	MP3Object_t prueba2;
+
 	if(mh_SD_connected())
 	{
 		// Fetch the sd on conection event
 		mp3Handler_init();
-		prueba  = mp3Files_GetFirstObject();
-		prueba2 = mp3Files_GetNextObject(prueba);
-		prueba2 =  mp3Files_Enter_Dir(prueba2);
-		prueba2 = mp3Files_GetNextObject(prueba2);
-		prueba2 =  mp3Files_Enter_Dir(prueba2);
+		mp3Handler_nextObject();
+		mp3Handler_nextObject();
+		mp3Handler_nextObject();
+		mp3Handler_selectObject();
 
-		prueba2 = mp3Files_GetNextObject(prueba2);
-		prueba2 =  mp3Files_Enter_Dir(prueba2);
-
-		prueba2 = mp3Files_GetNextObject(prueba2);
-		prueba2 =  mp3Files_Enter_Dir(prueba2);
-
-		prueba = mp3Files_Exit_Dir(prueba2);
-		prueba = mp3Files_Exit_Dir(prueba);
-
-		prueba = mp3Files_Exit_Dir(prueba);
-		prueba = mp3Files_Exit_Dir(prueba);
-		prueba = mp3Files_Exit_Dir(prueba);
 	}
 
 }

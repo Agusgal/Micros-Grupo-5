@@ -15,6 +15,7 @@
 #include "memory_handler.h"
 #include "AudioPlayer.h"
 #include "equalizer.h"
+#include "../drivers/HAL/mp3_decoder.h"
 
 #include "fsl_common.h"
 #include "EventQueue/queue.h"
@@ -35,7 +36,7 @@ static bool init = false;
 
 static MP3Object_t currObject;
 
-static MP3Object_t playingFile;
+static MP3Object_t playingSongFile;
 
 static int maxObjectCount = 0;
 
@@ -96,17 +97,29 @@ bool mp3Handler_selectObject(void)
 		return false;
 	}
 
-	// If the file is a MP3 file, load audio
+	else
+	{
+		// If the file is a MP3 file, load audio
 
-	//playingFile = currFile;
+		playingSongFile = currObject;
 
-	//decoder_MP3LoadFile(playingFile.path);
-	/* Primeros dos buffer constante, no hay sonido */
-	//memset(g_bufferRead, 0x08, sizeof(g_bufferRead));
+		MP3Decoder_LoadFile(playingSongFile.path);
 
-	/* Podria buscar el sample rate y mandarlo */
-	//AudioPlayer_LoadSongInfo(g_bufferRead, 44100);
+		// For testing, decode the frame
+		uint8_t decodedDataBuffer[512];
+		uint32_t* numSamplesDecoded = 0;
 
-	//Audio_updateBuffer();
+		MP3Decoder_DecodeFrame(decodedDataBuffer, 512, numSamplesDecoded);
+
+		int i = 1;
+		/* Primeros dos buffer constante, no hay sonido */
+		//memset(g_bufferRead, 0x08, sizeof(g_bufferRead));
+
+		/* Podria buscar el sample rate y mandarlo */
+		//AudioPlayer_LoadSongInfo(g_bufferRead, 44100);
+
+		//Audio_updateBuffer();
+
+	}
 
 }

@@ -94,7 +94,7 @@ unsigned char read_ID3_info(const unsigned char tag_name,char * output_str, unsi
 						return 1;
 					}
 					//not unicode, go back to the beginning.
-					file_read(fp,output_str+2,l_to_read-3,fr_hdr_bytes);
+					file_read(fp,output_str+2,l_to_read-2,fr_hdr_bytes);	//TODO: (ALREADY DONE) l_to_read - 2 not l_to_read - 3 for obvious reasons (?
 					output_str[l_to_read-1] = 0; //make sure there's a null terminator.
 					//printf(" non unicode -> %s\n",output_str);
 					return 1;

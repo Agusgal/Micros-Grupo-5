@@ -144,7 +144,7 @@ bool MP3Decoder_LoadFile(const char* filename)
         remainingBytes = fileSize;
 
         // Read ID3 tag if it exits
-        decoder_readID3Tag();
+        readID3Tag();
 
         // flush file to buffer
         fill_buffer_with_mp3_data();
@@ -164,6 +164,8 @@ decoder_result_t MP3Decoder_DecodeFrame	(uint8_t* decodedDataBuffer,
 
     // Initialize the number of PCM samples decoded in 0
     *numSamplesDecoded = 0;
+
+    !fileIsOpened;
 
     if (!fileIsOpened)
     {
@@ -424,7 +426,7 @@ bool MP3Decoder_getFileTrackNum(char** trackNum_)
 
 void MP3Decoded_rewindFile(void)
 {
-	FSIZE_t currentFilePointer = f_tell(mp3FileObject);
+	FSIZE_t currentFilePointer = f_tell(&mp3FileObject);
 	currentFilePointer -= lastFrameLength;
 	remainingBytes += lastFrameLength;
 
@@ -453,7 +455,7 @@ void MP3Decoded_fastForwardFile(void)
 	if (remainingBytes < 0)
 	{
 		// If that is the case, go to the end
-		f_lseek(&mp3FileObject, f_size(mp3FileObject));
+		f_lseek(&mp3FileObject, f_size(&mp3FileObject));
 	}
 	else
 	{
@@ -524,7 +526,7 @@ static uint32_t mp3FileObjectSize()
 
 static void fill_buffer_with_mp3_data(void)
 {
-	/*	Start     Output		   Input     Space to read      End
+	/*	Start     Output	Data   Input     Space to read      End
 	 * 											new data
 	 *
 	 * 	|---------|O|--------------|I|............................|
