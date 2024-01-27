@@ -32,8 +32,13 @@ void mp3Handler_prevObject(void);
  */
 bool mp3Handler_selectObject(void);
 
-void Audio_deinit(void);
+/**
+ * @brief Selects the current object
+ *
+ */
+void mp3Handler_updateBuffer(void);
 
+void Audio_deinit(void);
 
 void Audio_playPrevFile(void);
 
@@ -48,8 +53,6 @@ char * Audio_getAlbum(void);
 char * Audio_getYear(void);
 
 void Audio_updateAll(void);
-
-void Audio_updateBuffer(void);
 
 void Audio_showFFT(void);
 

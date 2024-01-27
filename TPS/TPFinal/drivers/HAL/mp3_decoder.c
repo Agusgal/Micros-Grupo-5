@@ -157,14 +157,16 @@ bool MP3Decoder_LoadFile(const char* filename)
 }
 
 
-decoder_result_t MP3Decoder_DecodeFrame	(uint8_t* decodedDataBuffer,
+decoder_result_t MP3Decoder_DecodeFrame	(short* decodedDataBuffer,
 										uint32_t decodedBufferSize,
-										uint32_t* numSamplesDecoded)
+										uint32_t* numSamplesDecoded,
+										int sampleRate)
 {
     decoder_result_t res = DECODER_WORKED;
 
     // Initialize the number of PCM samples decoded in 0
     *numSamplesDecoded = 0;
+    *sampleRate = 0;
 
     if (!fileIsOpened)
     {
@@ -255,6 +257,7 @@ decoder_result_t MP3Decoder_DecodeFrame	(uint8_t* decodedDataBuffer,
 
             // Return the number of PCM samples decoded
             *numSamplesDecoded = lastFrameInfo.outputSamps;
+            *sampleRate = lastFrameInfo.samprate;
             res = DECODER_WORKED;
         }
 

@@ -136,8 +136,6 @@ void AudioPlayer_Init(void)
 void AudioPlayer_LoadSongInfo(uint16_t * firstSongFrame, uint16_t sampleRate)
 {
 	memcpy(activeBuffer, firstSongFrame, AUDIO_PLAYER_BUFF_SIZE * sizeof(uint16_t));
-	//activeBuffer = firstSongFrame;
-	//backBuffer = secondSongFrame;
 	backBufferFree = true;
 	g_index = 0U;
 

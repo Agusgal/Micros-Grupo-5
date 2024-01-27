@@ -71,9 +71,10 @@ bool MP3Decoder_LoadFile(const char* filename);
  * @param decodedsamples: The pointer to an uint_16 data to store there the number of samples decoded
  * @return true if it can open the mp3 file and false if it can not.
  */
-decoder_result_t MP3Decoder_DecodeFrame	(uint8_t* decodedDataBuffer,
+decoder_result_t MP3Decoder_DecodeFrame	(short* decodedDataBuffer,
 										uint32_t decodedBufferSize,
-										uint32_t* numSamplesDecoded);
+										uint32_t* numSamplesDecoded,
+										int sampleRate);
 
 
 /**
