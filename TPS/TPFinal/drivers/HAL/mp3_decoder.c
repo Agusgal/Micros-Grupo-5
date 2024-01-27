@@ -8,14 +8,14 @@
   *							INCLUDE HEADER FILES
   ******************************************************************************/
 
-#include <mp3_decoder.h>
+
 #include <string.h>
 #include <stdbool.h>
-#include <stdio.h>
 
 #include "ff.h"
 #include "pub/mp3dec.h"
 #include "read_id3.h"
+#include "mp3_decoder.h"
 
  /*******************************************************************************
  *					CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -151,6 +151,7 @@ bool MP3Decoder_LoadFile(const char* filename)
 
         // every worked okey
         res = true;
+
     }
     return res;
 }
@@ -164,8 +165,6 @@ decoder_result_t MP3Decoder_DecodeFrame	(uint8_t* decodedDataBuffer,
 
     // Initialize the number of PCM samples decoded in 0
     *numSamplesDecoded = 0;
-
-    !fileIsOpened;
 
     if (!fileIsOpened)
     {
@@ -274,10 +273,6 @@ decoder_result_t MP3Decoder_DecodeFrame	(uint8_t* decodedDataBuffer,
             if (remainingBytes <= lastFrameLength)
             {
                 return DECODER_END_OF_FILE;
-            }
-            else
-            {
-                printf("Error");
             }
         }
     }

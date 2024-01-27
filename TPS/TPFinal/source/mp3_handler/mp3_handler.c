@@ -7,7 +7,6 @@
 /******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-#include <mp3_decoder.h>
 #include <stdint.h>
 
 #include "mp3_handler.h"
@@ -107,9 +106,9 @@ bool mp3Handler_selectObject(void)
 
 		// For testing, decode the frame
 		uint8_t decodedDataBuffer[512];
-		uint32_t* numSamplesDecoded = 0;
+		uint32_t numSamplesDecoded = 0;
 
-		MP3Decoder_DecodeFrame(decodedDataBuffer, 512, numSamplesDecoded);
+		MP3Decoder_DecodeFrame(decodedDataBuffer, 512, &numSamplesDecoded);
 
 		int i = 1;
 		/* Primeros dos buffer constante, no hay sonido */
