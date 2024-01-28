@@ -16,16 +16,18 @@
 /*******************************************************************************
 * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
 ******************************************************************************/
-typedef enum
+typedef enum audioPlayerError
 {
     AP_NO_ERROR,
     AP_ERROR_BB_NOT_FREE
-} audioPlayerError;
+} audioPlayerError_t;
 
 /*******************************************************************************
 * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
 ******************************************************************************/
-#define AUDIO_PLAYER_BUFF_SIZE 1152U//2560U
+#define AUDIO_PLAYER_BUFF_SIZE 	1152
+
+#define DAC_ZERO_VOLT_VALUE		2048
 
 
 /*******************************************************************************
@@ -47,7 +49,7 @@ void AudioPlayer_LoadSongInfo(uint16_t *firstSongFrame, uint16_t sampleRate);
  *@brief Updates the sample rate that it's being used.
  *@param sampleRate, the new sample rate.
 */
-void AudioPlayer_UpdateSampleRate(uint16_t sampleRate);
+void AudioPlayer_UpdateSampleRate(uint32_t _sampleRate);
 
 /*!
  *@brief Checks if the back buffer is free or not, in order to know if it can be filled again or not yet.
@@ -60,7 +62,7 @@ bool AudioPlayer_IsBackBufferFree(void);
  * @param newBackBuffer, new buffer that will fill the back buffer.
  * @return if there was an error.
 */
-audioPlayerError AudioPlayer_UpdateBackBuffer(uint16_t *newBackBuffer);
+audioPlayerError_t AudioPlayer_UpdateBackBuffer(uint16_t * newBackBuffer, uint32_t _sampleRate);
 
 /*!
  * @brief Reproduces audio using the DAC, from the samples previously saved from the current song.

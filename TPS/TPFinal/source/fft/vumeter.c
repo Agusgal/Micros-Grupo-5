@@ -150,7 +150,7 @@ void VU_Fill_Color_Matrix(int * vumeterValues)
 {
     for(int i = 0; i < NUMBER_OF_BANDS; i++)
     {
-    	for(int j = 0; j<VUMETER_HEIGHT; j++)
+    	for(int j = 0; j < VUMETER_HEIGHT; j++)
     	{
     		if(vumeterValues[i] > j)
 			{

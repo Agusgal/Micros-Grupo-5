@@ -9,11 +9,11 @@
  ******************************************************************************/
 
 
+#include <FSM_1/States/audioPlayer_state.h>
 #include "FSM.h"
 #include "States/Init.h"
 #include "States/idle.h"
 #include "States/file_selection.h"
-#include "States/audioPLayer.h"
 #include "States/equalizer.h"
 
 /*******************************************************************************

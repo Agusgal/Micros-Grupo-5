@@ -6,7 +6,7 @@
 
 
 /*
- * Basado en ejemplo del SDK de DAC con PDB:
+ * Based on the SDK example of DAC with PDB:
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
@@ -48,6 +48,7 @@
 #define DAC_DATA_REG_ADDR      0x400cc000U
 #define DMA_IRQ_ID             DMA0_IRQn
 
+#define DMA_CHANEL (0U)
 
 /*******************************************************************************
 * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -56,44 +57,55 @@
  * @brief Initialize the EDMA.
  */
 static void EDMA_Configuration(void);
+
+
 /*!
  * @brief Initialize the DMAMUX.
  */
 static void DMAMUX_Configuration(void);
+
+
 /*!
  * @brief Initialize the PDB.
  */
 static void PDB_Configuration(void);
+
+
 /*!
  * @brief Initialize the DAC.
  */
 static void DAC_Configuration(void);
+
+
 /*!
  * @brief Callback function for EDMA.
  */
 static void Edma_Callback(edma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds);
 
+
+/*!
+ * @brief Performs the division between two ints, and returns the rounded result
+ */
+static uint32_t roundedDivide(uint32_t dividend, uint32_t divisor);
+
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-static edma_handle_t g_EDMA_Handle;                             /* Edma handler */
-static edma_transfer_config_t g_transferConfig;                 /* Edma transfer config. */
-static volatile uint32_t g_index = 0U; 							/* Index of the g_dacDataArray array. */
+static edma_handle_t audioPlayer_EDMA_Handle;                             /* Edma handler */
+static edma_transfer_config_t audioPlayer_transferConfig;                 /* Edma transfer config. */
+static volatile uint32_t sampleIndex = 0; 							/* Index of the g_dacDataArray array. */
 
-
-/*
-uint16_t buffers[2][AUDIO_PLAYER_BUFF_SIZE];
-uint16_t * activeBuffer = buffers[0];
-uint16_t * backBuffer= buffers[1];
-*/
+// Buffers
 static int16_t buffers[2][AUDIO_PLAYER_BUFF_SIZE];
-static int16_t * activeBuffer = buffers[0];
-static int16_t * backBuffer= buffers[1];
-static bool backBufferFree = false;
-static bool pause = false, stop = false;
-static int16_t mute[DAC_DATL_COUNT] = {2048U};
+static int16_t * activeBuffer = buffers[0];					// Active has the current playing sound
+static int16_t * backBuffer= buffers[1];					// Back has the next frame of sound to be played
 
-#define DMA_CHANEL (0U)
+static uint32_t backBufferSampleRate;
+
+static bool backBufferFree = false;
+static bool pause = false;
+
+static int16_t muteAudioBuffer[DAC_DATL_COUNT] = {DAC_ZERO_VOLT_VALUE};
 
 
 /*******************************************************************************
@@ -101,266 +113,172 @@ static int16_t mute[DAC_DATL_COUNT] = {2048U};
                        GLOBAL FUNCTION DEFINITIONS
 *******************************************************************************
 ******************************************************************************/
-
-void AudioPlayer_DEMOMode(void)
-{
-	AudioPlayer_UpdateSampleRate(44100);
-}
-
 void AudioPlayer_Init(void)
 {
 	//Todo el Init de DMA está en matrix, sin ese Init no corre el codigo.
 
 	//Sin esto aca se cuelga el programa xd
-	//DMAMUX_Init(DMAMUX);
-	//DMAMUX_SetSource(DMAMUX, DMA_CHANEL, FTM_DMA_SOURCE);
-	//DMAMUX_EnableChannel(DMAMUX, DMA_CHANEL);
+	DMAMUX_Init(DMAMUX);
+	DMAMUX_SetSource(DMAMUX, DMA_CHANEL, FTM_DMA_SOURCE);
+	DMAMUX_EnableChannel(DMAMUX, DMA_CHANEL);
 
 
 	for(uint8_t i = 0; i < DAC_DATL_COUNT; i++)
 	{
-		mute[i] = 0;
+		muteAudioBuffer[i] = 0;
 	}
 
-	/* Initialize DMAMUX. */
+	// Initialize DMAMUX.
 	DMAMUX_Configuration();
-	/* Initialize EDMA. */
+
+	// Initialize EDMA.
 	EDMA_Configuration();
-	/* Initialize the HW trigger source. */
-	// Lo de PDB se hace directamente en update sample rate porque esta relacionado.
+
+	// Initialize the HW trigger source.
 	PDB_Configuration();
-	/* Initialize DAC. */
+
+	// Initialize DAC.
 	DAC_Configuration();
 }
 
-void AudioPlayer_LoadSongInfo(uint16_t * firstSongFrame, uint16_t sampleRate)
+
+void AudioPlayer_LoadSongInfo(uint16_t * firstSongFrame, uint16_t _sampleRate)
 {
 	memcpy(activeBuffer, firstSongFrame, AUDIO_PLAYER_BUFF_SIZE * sizeof(uint16_t));
-	backBufferFree = true;
-	g_index = 0U;
 
-	AudioPlayer_UpdateSampleRate(sampleRate);
+	backBufferFree = true;
+	sampleIndex = 0;
+
+	backBufferSampleRate = _sampleRate;
+
+	AudioPlayer_UpdateSampleRate(backBufferSampleRate);
 }
 
 
-// Y para eso hay que chequear que a lo que usa PDB para triggerear no le afecte esto....
-void AudioPlayer_UpdateSampleRate(uint16_t sampleRate) //PDB_Configuration
+void AudioPlayer_setSampleRate(uint32_t _sampleRate)
 {
+	backBufferSampleRate = _sampleRate;
+}
+
+
+void AudioPlayer_UpdateSampleRate(uint32_t _sampleRate)
+{
+	// PDB_Configuration
     pdb_config_t pdbConfigStruct;
     pdb_dac_trigger_config_t pdbDacTriggerConfigStruct;
     PDB_GetDefaultConfig(&pdbConfigStruct);
 
-    /*//Para 50MHz
-	if(sampleRate == 8000)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor10;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, 625);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 625);
-	}
-	else if(sampleRate == 11025)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, 4535);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 4535);
-	}
-	else if(sampleRate == 12000)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, 4167);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 4167);
-	}
-	else if(sampleRate == 16000)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, 3125);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 3125);
-	}
-	else if(sampleRate == 22050)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider4;
-		PDB_SetModulusValue(PDB_BASEADDR, 567);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 567);
-	}
-	else if(sampleRate == 24000)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider2;
-		PDB_SetModulusValue(PDB_BASEADDR, 1041);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 1041);
-	}
-	else if(sampleRate == 32000)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, 1563);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 1563);
-	}
-	else if(sampleRate == 44100)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider2;
-		PDB_SetModulusValue(PDB_BASEADDR, 568);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 568);
-	}
-	else if(sampleRate == 48000)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider2;
-		PDB_SetModulusValue(PDB_BASEADDR, 521);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 521);
-	}
-	*/
-
-    //pARA 60MHz
-	if(sampleRate == 8000)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, 7500);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 7500);
-	}
-	else if(sampleRate == 11025)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, 5442);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 5442);
-	}
-	else if(sampleRate == 12000)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, 5000);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 5000);
-	}
-	else if(sampleRate == 16000)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, 3750);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 3750);
-	}
-	else if(sampleRate == 22050)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, 2721);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 2721);
-	}
-	else if(sampleRate == 24000)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, 2500);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 2500);
-	}
-	else if(sampleRate == 32000)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, 1875);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 1875);
-	}
-	else if(sampleRate == 44100)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, 1361);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 1361);
-	}
-	else if(sampleRate == 48000)
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, 1250);
-		PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, 1250);
-	}
-
+    /*
 	else //For testing with DEMO case
 	{
 		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor40;
 		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
 		PDB_SetModulusValue(PDB_BASEADDR, PDB_MODULUS_VALUE);
-	}
+	}*/
 
-	// Pongo estas configuraciones de PDB aca porque necesitan info del sample rate
-	pdbConfigStruct.enableContinuousMode        = true;
+	pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
+	pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
+
+	// Perform the required division
+	PDB_SetModulusValue(PDB_BASEADDR, roundedDivide(60000000UL, _sampleRate));
+	PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, roundedDivide(60000000UL, _sampleRate));
+
+	pdbConfigStruct.enableContinuousMode = true;
+
 	PDB_Init(PDB_BASEADDR, &pdbConfigStruct);
 	PDB_EnableInterrupts(PDB_BASEADDR, kPDB_DelayInterruptEnable);
 	PDB_SetCounterDelayValue(PDB_BASEADDR, PDB_DELAY_VALUE);
 
-    /* Set DAC trigger. */
+    // Set DAC trigger
     pdbDacTriggerConfigStruct.enableExternalTriggerInput = false;
     pdbDacTriggerConfigStruct.enableIntervalTrigger      = true;
     PDB_SetDACTriggerConfig(PDB_BASEADDR, PDB_DAC_CHANNEL, &pdbDacTriggerConfigStruct);
 
-    /* Load PDB values. */
+    // Load PDB values
     PDB_DoLoadValues(PDB_BASEADDR);
 }
 
-audioPlayerError AudioPlayer_UpdateBackBuffer(uint16_t * newBackBuffer)
+
+audioPlayerError_t AudioPlayer_UpdateBackBuffer(uint16_t * newBackBuffer, uint32_t _sampleRate)
 {
 	if(backBufferFree)
 	{
-		memcpy( backBuffer, newBackBuffer, AUDIO_PLAYER_BUFF_SIZE * sizeof(uint16_t));
+		memcpy(backBuffer, newBackBuffer, AUDIO_PLAYER_BUFF_SIZE * sizeof(uint16_t));
 		backBufferFree = false;
+
+		// Update the backBuffer
+		backBufferSampleRate = _sampleRate;
 		return AP_NO_ERROR;
 	}
 	else
+	{
 		return AP_ERROR_BB_NOT_FREE;
+	}
 }
+
 
 bool AudioPlayer_IsBackBufferFree(void)
 {
 	return backBufferFree;
 }
 
+
 void AudioPlayer_Play(void)
 {
-	g_index = 0U;
-	stop = false;
+	sampleIndex = 0;
+
 	if(pause)
 	{
 		pause = false;
 		return;
 	}
+
 	// DMAMUX:
     DMAMUX_EnableChannel(DMAMUX_BASEADDR, DMA_CHANNEL);
 
 	// EDMA:
-	 EDMA_PrepareTransfer(&g_transferConfig, (void *)(activeBuffer + g_index), sizeof(uint16_t),
-	                         (void *)DAC_DATA_REG_ADDR, sizeof(uint16_t), DAC_DATL_COUNT * sizeof(uint16_t),
-	                         DAC_DATL_COUNT * sizeof(uint16_t), kEDMA_MemoryToMemory);
-	 EDMA_SubmitTransfer(&g_EDMA_Handle, &g_transferConfig);
-	 /* Enable interrupt when transfer is done. */
-	 EDMA_EnableChannelInterrupts(DMA_BASEADDR, DMA_CHANNEL, kEDMA_MajorInterruptEnable);
+    edma_transfer_config_t * config = &audioPlayer_transferConfig;
 
-	 /* Enable transfer. */
-	EDMA_StartTransfer(&g_EDMA_Handle);
+    // Source
+    void *srcAddr = (void *)(activeBuffer + sampleIndex);
+    uint32_t srcWidth = sizeof(uint16_t);
 
-	// PDB:
+    // Address
+    void *destAddr = (void *)DAC_DATA_REG_ADDR;
+    uint32_t destWidth =  sizeof(uint16_t);
+    uint32_t bytesEachRequest = DAC_DATL_COUNT * sizeof(uint16_t);
+    uint32_t transferBytes = DAC_DATL_COUNT * sizeof(uint16_t);
+    edma_transfer_type_t type = kEDMA_MemoryToMemory;
+
+    EDMA_PrepareTransfer(config,
+						  srcAddr,
+						  srcWidth,
+						  destAddr,
+						  destWidth,
+						  bytesEachRequest,
+						  transferBytes,
+						  type);
+
+	EDMA_SubmitTransfer(&audioPlayer_EDMA_Handle, &audioPlayer_transferConfig);
+
+	// Enable interrupt when transfer is done.
+	EDMA_EnableChannelInterrupts(DMA_BASEADDR, DMA_CHANNEL, kEDMA_MajorInterruptEnable);
+
+	// Enable transfer.
+	EDMA_StartTransfer(&audioPlayer_EDMA_Handle);
 
 	// DAC:
-	/* Enable DMA. */
+	// Enable DMA.
 	DAC_EnableBufferInterrupts(DAC_BASEADDR, kDAC_BufferReadPointerTopInterruptEnable);
 	DAC_EnableBufferDMA(DAC_BASEADDR, true);
 
 	PDB_DoSoftwareTrigger(PDB_BASEADDR);
 }
 
+
 void AudioPlayer_Pause(void)
 {
 	pause = true;
-}
-
-void AudioPlayer_Stop(void)
-{
-	stop = true;
 }
 
 
@@ -369,61 +287,48 @@ void AudioPlayer_Stop(void)
                        LOCAL FUNCTION DEFINITIONS
 *******************************************************************************
 ******************************************************************************/
-
 static void EDMA_Configuration(void)
 {
-    /*
-     *
-    edma_config_t userConfig;
-
-    EDMA_GetDefaultConfig(&userConfig);
-    EDMA_Init(DMA_BASEADDR, &userConfig);
-     *
-     *
-     */
-	EDMA_CreateHandle(&g_EDMA_Handle, DMA_BASEADDR, DMA_CHANNEL);
-    EDMA_SetCallback(&g_EDMA_Handle, Edma_Callback, NULL);
+	EDMA_CreateHandle(&audioPlayer_EDMA_Handle, DMA_BASEADDR, DMA_CHANNEL);
+    EDMA_SetCallback(&audioPlayer_EDMA_Handle, Edma_Callback, NULL);
 }
+
 
 static void DMAMUX_Configuration(void)
 {
-    /* Configure DMAMUX */
+    // Configure DMAMUX
     // Init en matrix // DMAMUX_Init(DMAMUX_BASEADDR);
-    DMAMUX_SetSource(DMAMUX_BASEADDR, DMA_CHANNEL, DMA_DAC_SOURCE); /* Map ADC source to channel 0 */
+    DMAMUX_SetSource(DMAMUX_BASEADDR, DMA_CHANNEL, DMA_DAC_SOURCE);
 }
 
-/* Enable the trigger source of PDB. */
+
 static void PDB_Configuration(void)
 {
+	// Enable the trigger source of PDB.
     pdb_config_t pdbConfigStruct;
     pdb_dac_trigger_config_t pdbDacTriggerConfigStruct;
 
-    /*
-     * pdbConfigStruct.loadValueMode = kPDB_LoadValueImmediately;
-     * pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-     * pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor40;
-     * pdbConfigStruct.triggerInputSource = kPDB_TriggerSoftware;
-     * pdbConfigStruct.enableContinuousMode = true;
-     */
     PDB_GetDefaultConfig(&pdbConfigStruct);
+
     // Paso esto a load song info para cambiar los valores para el PDB
     pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor40;
-    pdbConfigStruct.enableContinuousMode        = true;
+    pdbConfigStruct.enableContinuousMode = true;
+
     PDB_Init(PDB_BASEADDR, &pdbConfigStruct);
     PDB_EnableInterrupts(PDB_BASEADDR, kPDB_DelayInterruptEnable);
     PDB_SetModulusValue(PDB_BASEADDR, PDB_MODULUS_VALUE);
     PDB_SetCounterDelayValue(PDB_BASEADDR, PDB_DELAY_VALUE);
 
-
-    /* Set DAC trigger. */
+    // Set DAC trigger.
     pdbDacTriggerConfigStruct.enableExternalTriggerInput = false;
-    pdbDacTriggerConfigStruct.enableIntervalTrigger      = true;
+    pdbDacTriggerConfigStruct.enableIntervalTrigger = true;
     PDB_SetDACTriggerConfig(PDB_BASEADDR, PDB_DAC_CHANNEL, &pdbDacTriggerConfigStruct);
     PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, PDB_DAC_INTERVAL_VALUE);
 
-    /* Load PDB values. */
+    // Load PDB values.
     PDB_DoLoadValues(PDB_BASEADDR);
 }
+
 
 static void DAC_Configuration(void)
 {
@@ -432,47 +337,102 @@ static void DAC_Configuration(void)
 
     DAC_GetDefaultConfig(&dacConfigStruct);
     DAC_Init(DAC_BASEADDR, &dacConfigStruct);
-    DAC_Enable(DAC_BASEADDR, true); /* Enable output. */
+    DAC_Enable(DAC_BASEADDR, true);
 
-    /* Configure the DAC buffer. */
+    // Configure the DAC buffer.
     DAC_EnableBuffer(DAC_BASEADDR, true);
     DAC_GetDefaultBufferConfig(&dacBufferConfigStruct);
     dacBufferConfigStruct.triggerMode = kDAC_BufferTriggerByHardwareMode;
     DAC_SetBufferConfig(DAC_BASEADDR, &dacBufferConfigStruct);
-    DAC_SetBufferReadPointer(DAC_BASEADDR, 0U); /* Make sure the read pointer to the start. */
+
+    // Make sure the read pointer to the start.
+    DAC_SetBufferReadPointer(DAC_BASEADDR, 0U);
 }
+
 
 static void Edma_Callback(edma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds)
 {
-    /* Clear Edma interrupt flag. */
+    // Clear Edma interrupt flag.
     EDMA_ClearChannelStatusFlags(DMA_BASEADDR, DMA_CHANNEL, kEDMA_InterruptFlag);
-    /* Setup transfer */
 
+    // Setup transfer
     void * srcAdd = NULL;
-    if(pause || stop)
+
+    if(pause)
 	{
-		srcAdd = mute;
+		srcAdd = muteAudioBuffer;
 	}
+
     else
     {
-    	g_index += DAC_DATL_COUNT; //TODO: si esto queda aca, tiene que haber una primera transferencia antes.
-		if (g_index == AUDIO_PLAYER_BUFF_SIZE)
+    	sampleIndex += DAC_DATL_COUNT; //TODO: si esto queda aca, tiene que haber una primera transferencia antes.
+
+    	if (sampleIndex == AUDIO_PLAYER_BUFF_SIZE)
 		{
-			g_index = 0U;
+    		// If the activeBuffer was completely transferred
+			sampleIndex = 0;
+
+			// Load backBuffer as new activeBuffer
+			// and clear backBuffer
 			void * temp = activeBuffer;
 			activeBuffer = backBuffer;
 			backBuffer = temp;
 			backBufferFree = true;
+
+			// Update the sampleRate with the one loaded in the backBuffer
+			AudioPlayer_UpdateSampleRate(backBufferSampleRate);
 		}
-		srcAdd = (activeBuffer + g_index);
+
+		srcAdd = (activeBuffer + sampleIndex);
     }
 
-    EDMA_PrepareTransfer(&g_transferConfig, (void *)(srcAdd), sizeof(uint16_t),
-                        (void *)DAC_DATA_REG_ADDR, sizeof(uint16_t), DAC_DATL_COUNT * sizeof(uint16_t),
-                        DAC_DATL_COUNT * sizeof(uint16_t), kEDMA_MemoryToMemory);
+	// EDMA:
+    edma_transfer_config_t * config = &audioPlayer_transferConfig;
+
+    // Source
+    uint32_t srcWidth = sizeof(uint16_t);
+
+    // Address
+    void *destAddr = (void *)DAC_DATA_REG_ADDR;
+    uint32_t destWidth =  sizeof(uint16_t);
+    uint32_t bytesEachRequest = DAC_DATL_COUNT * sizeof(uint16_t);
+    uint32_t transferBytes = DAC_DATL_COUNT * sizeof(uint16_t);
+    edma_transfer_type_t type = kEDMA_MemoryToMemory;
+
+    EDMA_PrepareTransfer(config,
+						  srcAdd,
+						  srcWidth,
+						  destAddr,
+						  destWidth,
+						  bytesEachRequest,
+						  transferBytes,
+						  type);
+
+    EDMA_SetTransferConfig(DMA_BASEADDR, DMA_CHANNEL, &audioPlayer_transferConfig, NULL);
+
+    // Enable transfer.
+    EDMA_StartTransfer(&audioPlayer_EDMA_Handle);
+}
 
 
-    EDMA_SetTransferConfig(DMA_BASEADDR, DMA_CHANNEL, &g_transferConfig, NULL);
-    /* Enable transfer. */
-    EDMA_StartTransfer(&g_EDMA_Handle);
+static uint32_t roundedDivide(uint32_t dividend, uint32_t divisor)
+{
+    // Ensure divisor is not zero to avoid division by zero
+    if (divisor == 0)
+    {
+        return 0; // You can handle this error in your own way
+    }
+
+    // Perform the division
+    uint32_t quotient = dividend / divisor;
+    uint32_t remainder = dividend % divisor;
+
+    // Calculate the rounded result
+    if (2 * remainder >= divisor)
+    {
+        // Round up
+        quotient += 1;
+    }
+
+    return quotient;
 }

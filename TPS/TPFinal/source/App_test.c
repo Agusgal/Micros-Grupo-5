@@ -15,7 +15,8 @@
 
 #include "../HAL/memory_handler.h"
 #include "mp3_handler/mp3_handler.h"
-#include "mp3_file_handler/mp3_file_handler.h"
+#include "power_mode_switch.h"
+#include "AudioPlayer.h"
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -41,21 +42,17 @@ void App_Init_test (void)
 {
 	PowerMode_Init();
 	memory_handler_init();
-
+	AudioPlayer_Init();
 }
-
 
 
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run_test (void)
 {
-	MP3Object_t prueba;
-
 	if(mh_SD_connected())
 	{
 		// Fetch the sd on conection event
 		mp3Handler_init();
-		mp3Handler_nextObject();
 		mp3Handler_nextObject();
 		mp3Handler_nextObject();
 		mp3Handler_selectObject();

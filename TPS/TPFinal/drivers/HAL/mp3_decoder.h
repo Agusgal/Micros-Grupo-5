@@ -74,7 +74,7 @@ bool MP3Decoder_LoadFile(const char* filename);
 decoder_result_t MP3Decoder_DecodeFrame	(short* decodedDataBuffer,
 										uint32_t decodedBufferSize,
 										uint32_t* numSamplesDecoded,
-										int sampleRate);
+										int* sampleRate);
 
 
 /**
@@ -84,7 +84,7 @@ decoder_result_t MP3Decoder_DecodeFrame	(short* decodedDataBuffer,
  * @return true if the function can get the info of the last frame
 		   and false if it can not (usually because there was no last frame)
  */
-bool MP3Decoder_GetLastFrameChannelCount(uint8_t* channelCount);
+bool MP3Decoder_GetLastFrameNumOfChannels(uint8_t* channelCount);
 
 
 /**

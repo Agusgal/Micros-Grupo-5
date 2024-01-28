@@ -136,7 +136,6 @@ MP3Object_t mp3Files_Enter_Dir(MP3Object_t object)
 		mp3Files_list_dir(object.path);
 		return mp3Files_GetFirstObject();
 	}
-
 }
 
 

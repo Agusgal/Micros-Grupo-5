@@ -58,7 +58,7 @@ static uint32_t mp3FileObjectSize(void);
 /*
 * @brief  This function fills buffer with info encoded in mp3 file and update the pointers
 */
-static void fill_buffer_with_mp3_data(void);
+static void fill_buffer_with_mp3_frame(void);
 
 
 /**
@@ -146,10 +146,9 @@ bool MP3Decoder_LoadFile(const char* filename)
         // Read ID3 tag if it exits
         readID3Tag();
 
-        // flush file to buffer
-        fill_buffer_with_mp3_data();
+        // Fill buffer with the first frame
+        fill_buffer_with_mp3_frame();
 
-        // every worked okey
         res = true;
 
     }
@@ -160,7 +159,7 @@ bool MP3Decoder_LoadFile(const char* filename)
 decoder_result_t MP3Decoder_DecodeFrame	(short* decodedDataBuffer,
 										uint32_t decodedBufferSize,
 										uint32_t* numSamplesDecoded,
-										int sampleRate)
+										int* sampleRate)
 {
     decoder_result_t res = DECODER_WORKED;
 
@@ -206,7 +205,7 @@ decoder_result_t MP3Decoder_DecodeFrame	(short* decodedDataBuffer,
         }
 
         // Read data and store it in the buffer
-        fill_buffer_with_mp3_data();
+        fill_buffer_with_mp3_frame();
 
     	/*	Start     Data    Input     	     					End
     	 * 	Output
@@ -289,7 +288,7 @@ decoder_result_t MP3Decoder_DecodeFrame	(short* decodedDataBuffer,
 }
 
 
-bool MP3Decoder_GetLastFrameChannelCount(uint8_t* channelCount)
+bool MP3Decoder_GetLastFrameNumOfChannels(uint8_t* channelCount)
 {
     // we assume that there are no last frame.
     bool ret = false;
@@ -345,10 +344,9 @@ bool MP3Decoder_getFileTitle(char ** title_)
 {
     if(hasID3)
     {
-        //here we verify that the title is not Unknown
+        // Verify that the title is not Unknown
         if ( strcmp(title,"Unknown") != 0)
         {
-            //if you are here it means that the song has tags and the title is not Unknown
             (*title_) = title;
             return true;
         }
@@ -357,15 +355,13 @@ bool MP3Decoder_getFileTitle(char ** title_)
 }
 
 
-
 bool MP3Decoder_getFileAlbum(char** album_)
 {
 	if(hasID3)
     {
-        //here we verify that the album is not Unknown
+        // Verify that the album is not Unknown
         if ( strcmp(album,"Unknown") != 0)
         {
-            //if you are here it means that the song has tags and the album is not Unknown
             (*album_) = album;
             return true;
         }
@@ -378,10 +374,9 @@ bool MP3Decoder_getFileArtist(char** artist_)
 {
 	if(hasID3)
     {
-        //here we verify that the artist is not Unknown
-        if ( strcmp(artist,"Unknown") != 0)
+        // Verify that the artist is not Unknown
+        if (strcmp(artist, "Unknown") != 0)
         {
-            //if you are here it means that the song has tags and the artist is not Unknown
             (*artist_) = artist;
             return true;
         }
@@ -394,10 +389,9 @@ bool MP3Decoder_getFileYear(char** year_)
 {
 	if(hasID3)
     {
-        //here we verify that the year is not Unknown
+        // Verify that the year is not Unknown
         if ( strcmp(year,"Unknown") != 0)
         {
-            //if you are here it means that the song has tags and the year is not Unknown
             (*year_) = year;
             return true;
         }
@@ -410,10 +404,9 @@ bool MP3Decoder_getFileTrackNum(char** trackNum_)
 {
 	if(hasID3)
     {
-        //here we verify that the trackNum is not Unknown
+        // Verify that the trackNum is not Unknown
         if ( strcmp(trackNum,"Unknown") != 0)
         {
-            //if you are here it means that the song has tags and the trackNum is not Unknown
             (*trackNum_) = trackNum;
             return true;
         }
@@ -503,7 +496,7 @@ static void readID3Tag(void)
     }
     else
     {
-    	// Position the internal file pointer where the data starts (the beggining)
+    	// Position the internal file pointer where the data starts (the beginning)
         f_rewind(&mp3FileObject);
     }
 }
@@ -520,7 +513,7 @@ static uint32_t mp3FileObjectSize()
 }
 
 
-static void fill_buffer_with_mp3_data(void)
+static void fill_buffer_with_mp3_frame(void)
 {
 	/*	Start     Output	Data   Input     Space to read      End
 	 * 											new data

@@ -15,6 +15,7 @@
 #include "AudioPlayer.h"
 #include "equalizer.h"
 #include "../drivers/HAL/mp3_decoder.h"
+#include "../fft/vumeter.h"
 
 #include "fsl_common.h"
 #include "EventQueue/queue.h"
@@ -32,6 +33,7 @@
  ******************************************************************************/
 static bool playing = false;
 static bool init = false;
+static uint32_t sampleRate = 44100;
 
 static MP3Object_t currObject;
 
@@ -98,17 +100,19 @@ bool mp3Handler_selectObject(void)
 	else
 	{
 		// If the file is a MP3 file, load audio
-
 		playingSongFile = currObject;
 
 		MP3Decoder_LoadFile(playingSongFile.path);
 
-		// Primeros dos buffer constante, no hay sonido */
-		memset(processedAudioBuffer, 0x08, sizeof(processedAudioBuffer));
+		// First two buffers in 0V, no sound
+		memset(processedAudioBuffer, DAC_ZERO_VOLT_VALUE, sizeof(processedAudioBuffer));
 
-		AudioPlayer_LoadSongInfo(processedAudioBuffer, 44100);
+		sampleRate = 44100;
 
-		mp3Handler_updateBuffer();
+		// Set a default sampleRate for first buffers
+		AudioPlayer_LoadSongInfo(processedAudioBuffer, sampleRate);
+
+		mp3Handler_updateAudioPlayerBackBuffer();
 
 		return true;
 
@@ -117,24 +121,24 @@ bool mp3Handler_selectObject(void)
 }
 
 
-void mp3Handler_updateBuffer(void)
+void mp3Handler_updateAudioPlayerBackBuffer(void)
 {
-	uint16_t numOfSamples = 0;
+	uint32_t numOfSamples = 0;
 	uint8_t numOfChannels = 1;
 	float effects_in[BUFFER_SIZE];
 	float effects_out[BUFFER_SIZE];
 
-	AudioPlayer_UpdateBackBuffer(processedAudioBuffer);
+	AudioPlayer_UpdateBackBuffer(processedAudioBuffer, sampleRate);
 
 	// Clean buffers to rewrite
 	memset(processedAudioBuffer, 0, sizeof(processedAudioBuffer));
 	memset(decoder_buffer, 0, sizeof(decoder_buffer));
 
 	// Fetch the new frame
-	decoder_return_t res = MP3Decoder_DecodeFrame(decoder_buffer, 2*BUFFER_SIZE, &numOfSamples, &sampleRate);
+	decoder_result_t res = MP3Decoder_DecodeFrame(decoder_buffer, 2*BUFFER_SIZE, &numOfSamples, &sampleRate);
 
 	// Get the number of channels in the frame
-	MP3Decoder_GetLastFramenumOfChannels(&numOfChannels);
+	MP3Decoder_GetLastFrameNumOfChannels(&numOfChannels);
 
 	// Scale from int16 to float[-1;1]
 	float coef = 1.0/32768.0;
@@ -152,12 +156,12 @@ void mp3Handler_updateBuffer(void)
 		// If stereo, sum L + R
 		for (index = 0; index < BUFFER_SIZE; index++)
 		{
-			effects_in[index] = (decoder_buffer[index] + decoder_buffer[index + 1]) * coef;
+			effects_in[index] = (decoder_buffer[index * 2] + decoder_buffer[index * 2 + 1]) * coef;
 		}
 	}
 
-	// TODO: Juampi effects
-	equalizer_equalize(effects_in, effects_out);
+	// Apply audio effects
+	EQ_Apply(effects_in, effects_out);
 
 	// Apply volume and
 	// Scale to 12 bits, to fit in the DAC
@@ -179,23 +183,24 @@ void mp3Handler_updateBuffer(void)
 
 	}
 
+	// Compute FFT and set the vumeter
 	VU_FFT(effects_out, sampleRate, 80, 10000);
 }
 
 
 void mp3Handler_showFFT(void)
 {
-	vumeterRefresh_draw_display();
+	VU_Draw_Display();
 }
 
 
 void mp3Handler_updateAll(void)
 {
-	mp3Handler_updateBuffer();
+	mp3Handler_updateAudioPlayerBackBuffer();
 	mp3Handler_showFFT();
+}
 
-
-mp3Handler_void mp3Handler_play(void)
+void mp3Handler_play(void)
 {
 	AudioPlayer_Play();
 	playing = true;
@@ -215,7 +220,7 @@ void mp3Handler_toggle(void)
 
 void mp3Handler_stop(void)
 {
-	decoder_MP3LoadFile(currFile.path);
+	MP3Decoder_LoadFile(currObject.path);
 	AudioPlayer_Pause();
 	playing = false;
 }
@@ -224,9 +229,9 @@ void mp3Handler_stop(void)
 char * mp3Handler_getName(void)
 {
 	char * ret;
-	if(!decoder_getFileTitle(&ret))
+	if(!MP3Decoder_getFileTitle(&ret))
 	{
-		ret = FileSystem_GetFileName(playingFile);
+		ret = mp3Files_GetObjectName(playingSongFile);
 	}
 	return ret;
 }
@@ -235,7 +240,7 @@ char * mp3Handler_getName(void)
 char * mp3Handler_getArtist(void)
 {
 	char * ret;
-	if(!decoder_getFileArtist(&ret))
+	if(!MP3Decoder_getFileArtist(&ret))
 	{
 		ret = "-";
 	}
@@ -246,7 +251,7 @@ char * mp3Handler_getArtist(void)
 char * mp3Handler_getAlbum(void)
 {
 	char * ret;
-	if(!decoder_getFileAlbum(&ret))
+	if(!MP3Decoder_getFileAlbum(&ret))
 	{
 		ret = "-";
 	}
@@ -254,10 +259,10 @@ char * mp3Handler_getAlbum(void)
 }
 
 
-char mp3Handler_o_getYear(void)
+char* mp3Handler_getYear(void)
 {
 	char * ret;
-	if(!decoder_getFileYear(&ret))
+	if(!MP3Decoder_getFileYear(&ret))
 	{
 		ret = "-";
 	}
@@ -269,15 +274,13 @@ void mp3Handler_IncVolume(void)
 {
 	vol += (vol >= MAX_VOLUME)? 0 : 1;
 	vol2send = vol+40;
-	esp_Send(2, &vol2send, 1);
 }
 
 
 void mp3Handler_DecVolume(void)
 {
 	vol -= (vol > 0) ? 1 : 0;
-	vol2send = vol+40;
-	esp_Send(2, &vol2send, 1);
+	vol2send = vol + 40;
 }
 
 
@@ -291,6 +294,7 @@ void mp3Handler_setVolume(char value)
 {
 	if(vol <= 40 && vol >=0)
 	{
-		vol = value;
+		vol = (uint8_t)value;
 	}
 }
+

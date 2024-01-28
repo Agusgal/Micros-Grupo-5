@@ -4,8 +4,8 @@
   @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
-#ifndef MP3_HANDLER_H_
-#define MP3_HANDLER_H_
+#ifndef _MP3_HANDLER_H_
+#define _MP3_HANDLER_H_
 
 #include <stdbool.h>
 
@@ -38,37 +38,37 @@ bool mp3Handler_selectObject(void);
  */
 void mp3Handler_updateBuffer(void);
 
-void Audio_deinit(void);
+void mp3Handler_deinit(void);
 
-void Audio_playPrevFile(void);
+void mp3Handler_playPrevFile(void);
 
-void Audio_playNextFile(void);
+void mp3Handler_playNextFile(void);
 
-char * Audio_getCurrentName(void);
+char * mp3Handler_getCurrentName(void);
 
-char * Audio_getArtist(void);
+char * mp3Handler_getArtist(void);
 
-char * Audio_getAlbum(void);
+char * mp3Handler_getAlbum(void);
 
-char * Audio_getYear(void);
+char * mp3Handler_getYear(void);
 
-void Audio_updateAll(void);
+void mp3Handler_updateAll(void);
 
-void Audio_showFFT(void);
+void mp3Handler_showFFT(void);
 
-void Audio_play(void);
+void mp3Handler_play(void);
 
-void Audio_toggle(void);
+void mp3Handler_toggle(void);
 
-void Audio_stop(void);
+void mp3Handler_stop(void);
 
 
-void Audio_IncVolume(void);
+void mp3Handler_IncVolume(void);
 
-void Audio_DecVolume(void);
+void mp3Handler_DecVolume(void);
 
-char Audio_getVolume(void);
+char mp3Handler_getVolume(void);
 
-void Audio_setVolume(char value);
+void mp3Handler_setVolume(char value);
 
-#endif /* MP3_HANDLER_H_ */
+#endif /* _MP3_HANDLER_H_ */
