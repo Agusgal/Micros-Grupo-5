@@ -110,6 +110,8 @@ bool mp3Handler_selectObject(void)
 
 		mp3Handler_updateBuffer();
 
+		return true;
+
 	}
 
 }

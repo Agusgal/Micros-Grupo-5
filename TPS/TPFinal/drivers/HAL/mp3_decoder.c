@@ -438,8 +438,6 @@ void MP3Decoded_rewindFile(void)
 	{
 		f_lseek(&mp3FileObject, currentFilePointer);
 	}
-
-
 }
 
 

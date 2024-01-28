@@ -71,10 +71,18 @@ MP3Object_t mp3Files_GetFirstObject(void)
 {
 	if (objectsCounter == 0)
 	{
+		// If there are no objects, including RETURN_DIR, return a NULL_OBJECT
 		MP3Object_t nullFile = {.object_type = NULL_OBJECT, .index = -1, .path = ""};
 		return nullFile;
 	}
-	return current_objects[0];
+	else if (objectsCounter == 1)
+	{
+		// Return folder to return to previous folder
+		return current_objects[0];
+	}
+
+	// Return the first object, that is not to return to previous folder
+	return current_objects[1];
 }
 
 
@@ -175,7 +183,7 @@ static void mp3Files_list_dir(char * path)
 	char newPath[FILE_NAME_STRING_SIZE] = {0};
 
 	strcpy(newPath, path);
-	char * fn = "..";
+	char * fn = "...";
 	*(newPath+i) = '/';
 	strcpy(newPath+i+1, fn);
 
