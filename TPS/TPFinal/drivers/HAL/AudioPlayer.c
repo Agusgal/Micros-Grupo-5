@@ -117,10 +117,10 @@ void AudioPlayer_Init(void)
 {
 	//Todo el Init de DMA está en matrix, sin ese Init no corre el codigo.
 
-	//Sin esto aca se cuelga el programa xd
-	DMAMUX_Init(DMAMUX);
-	DMAMUX_SetSource(DMAMUX, DMA_CHANEL, FTM_DMA_SOURCE);
-	DMAMUX_EnableChannel(DMAMUX, DMA_CHANEL);
+	//Sin esto aca se cuelga el programa
+	// DMAMUX_Init(DMAMUX);
+	// DMAMUX_SetSource(DMAMUX, DMA_CHANEL, FTM_DMA_SOURCE);
+	// DMAMUX_EnableChannel(DMAMUX, DMA_CHANEL);
 
 
 	for(uint8_t i = 0; i < DAC_DATL_COUNT; i++)
@@ -400,7 +400,7 @@ static void Edma_Callback(edma_handle_t *handle, void *userData, bool transferDo
     edma_transfer_type_t type = kEDMA_MemoryToMemory;
 
     EDMA_PrepareTransfer(config,
-						  srcAdd,
+						  (void*) srcAdd,
 						  srcWidth,
 						  destAddr,
 						  destWidth,

@@ -76,9 +76,21 @@ void mp3Handler_nextObject(void)
 }
 
 
+void mp3Handler_nextMP3File(void)
+{
+	currObject =  mp3Files_GetNextMP3File(currObject);
+}
+
+
 void mp3Handler_prevObject(void)
 {
 	currObject = mp3Files_GetPreviousObject(currObject);
+}
+
+
+void mp3Handler_prevMP3File(void)
+{
+	currObject = mp3Files_GetPreviousMP3File(currObject);
 }
 
 
@@ -88,11 +100,11 @@ bool mp3Handler_selectObject(void)
 	{
 		if (currObject.object_type == DIRECTORY)
 		{
-			 mp3Files_Enter_Dir(currObject);
+			currObject = mp3Files_Enter_Dir(currObject);
 		}
 		else if (currObject.object_type == RETURN_DIR)
 		{
-			mp3Files_Exit_Dir(currObject);
+			currObject = mp3Files_Exit_Dir(currObject);
 		}
 		return false;
 	}
@@ -161,7 +173,15 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 	}
 
 	// Apply audio effects
+	// TODO: chequear por qué se rompe al llamar a las funciones de math de arm
 	EQ_Apply(effects_in, effects_out);
+
+	// Bypass EQ_Apply por testing (EQ_Apply broken)
+	uint32_t i;
+	for (i = 0; i < BUFFER_SIZE; i++)
+	{
+		effects_out[i] = effects_in[i];
+	}
 
 	// Apply volume and
 	// Scale to 12 bits, to fit in the DAC
@@ -199,6 +219,33 @@ void mp3Handler_updateAll(void)
 	mp3Handler_updateAudioPlayerBackBuffer();
 	mp3Handler_showFFT();
 }
+
+
+void mp3Handler_playNextSong(void)
+{
+	mp3Handler_nextMP3File();
+
+	if (currObject.object_type == MP3_FILE)
+	{
+		mp3Handler_selectObject();
+		mp3Handler_play();
+	}
+
+}
+
+
+void mp3Handler_playPreviousSong(void)
+{
+	mp3Handler_prevMP3File();
+
+	if (currObject.object_type == MP3_FILE)
+	{
+		mp3Handler_selectObject();
+		mp3Handler_play();
+	}
+
+}
+
 
 void mp3Handler_play(void)
 {

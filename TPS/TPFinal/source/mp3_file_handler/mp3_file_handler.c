@@ -97,6 +97,24 @@ MP3Object_t mp3Files_GetNextObject(MP3Object_t currentObject)
 }
 
 
+MP3Object_t mp3Files_GetNextMP3File(MP3Object_t currentObject)
+{
+	uint32_t i;
+	unsigned int nextObjectIndex;
+
+	for (i = 1; i < objectsCounter; i++)
+	{
+		nextObjectIndex = (currentObject.index + i) % objectsCounter;
+
+		if (current_objects[nextObjectIndex].object_type == MP3_FILE)
+			return current_objects[nextObjectIndex];
+	}
+
+	// If no other MP3_FILES
+	return currentObject;
+}
+
+
 MP3Object_t mp3Files_GetPreviousObject(MP3Object_t currentObject)
 {
 	unsigned int previousObjectIndex = currentObject.index - 1;
@@ -105,6 +123,33 @@ MP3Object_t mp3Files_GetPreviousObject(MP3Object_t currentObject)
 		previousObjectIndex = objectsCounter - 1;
 	}
 	return current_objects[previousObjectIndex];
+}
+
+
+MP3Object_t mp3Files_GetPreviousMP3File(MP3Object_t currentObject)
+{
+	uint32_t i;
+	uint32_t nextObjectIndex;
+
+	for (i = 1; i < objectsCounter; i++)
+	{
+		nextObjectIndex = (currentObject.index + objectsCounter - i) % objectsCounter;
+
+		if (current_objects[nextObjectIndex].object_type == MP3_FILE)
+			return current_objects[nextObjectIndex];
+	}
+
+	// If no other MP3_FILES
+	if (currentObject.object_type != MP3_FILE)
+	{
+		MP3Object_t nullFile = {.object_type = NULL_OBJECT, .index = -1, .path = ""};
+		return nullFile;
+	}
+	else
+	{
+		// If the current object is an MP3_FILE, return it
+		return currentObject;
+	}
 }
 
 

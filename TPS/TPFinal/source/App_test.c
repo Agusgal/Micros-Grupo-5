@@ -18,6 +18,10 @@
 #include "power_mode_switch.h"
 #include "AudioPlayer.h"
 #include "../HAL/mp3_decoder.h"
+#include "../HAL/matrix_display.h"
+#include "fft/vumeter.h"
+#include "equalizer/equalizer.h"
+#include "EventQueue/queue.h"
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -42,9 +46,13 @@
 void App_Init_test (void)
 {
 	PowerMode_Init();
+	queue_Init();
 	memory_handler_init();
 	MP3Decoder_Init();
+	md_Init();
 	AudioPlayer_Init();
+	VU_Init();
+	EQ_Init();
 }
 
 
@@ -58,6 +66,28 @@ void App_Run_test (void)
 		mp3Handler_nextObject();
 		mp3Handler_nextObject();
 		mp3Handler_selectObject();
+
+		// Selecciono canción
+		mp3Handler_selectObject();
+
+		mp3Handler_play();
+
+		while(1)
+		{
+			if(AudioPlayer_IsBackBufferFree())
+			{
+				 mp3Handler_updateAll();
+			}
+			if(get_Queue_Status())
+			{
+				Event_Type event;
+				event = pull_Queue_Element();
+				if (event == NEXT_SONG_EV)
+				{
+					mp3Handler_playPreviousSong();
+				}
+			}
+		}
 
 	}
 

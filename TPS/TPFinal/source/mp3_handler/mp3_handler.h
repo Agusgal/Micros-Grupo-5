@@ -22,9 +22,22 @@ void mp3Handler_nextObject(void);
 
 
 /**
+ * @brief Loads next object
+ */
+void mp3Handler_nextMP3File(void);
+
+
+/**
  * @brief Loads previous
  */
 void mp3Handler_prevObject(void);
+
+
+/**
+ * @brief Loads previous
+ */
+void mp3Handler_prevMP3File(void);
+
 
 /**
  * @brief Selects the current object
@@ -32,43 +45,65 @@ void mp3Handler_prevObject(void);
  */
 bool mp3Handler_selectObject(void);
 
+
 /**
- * @brief Selects the current object
+ * @brief Update AudioPlayer Back buffer
  *
  */
-void mp3Handler_updateBuffer(void);
+void mp3Handler_updateAudioPlayerBackBuffer(void);
+
+
+/**
+ *  @brief Play next_song
+ */
+void mp3Handler_playNextSong(void);
+
+
+/**
+ *  @brief Play previous song
+ */
+void mp3Handler_playPreviousSong(void);
+
 
 void mp3Handler_deinit(void);
 
-void mp3Handler_playPrevFile(void);
-
-void mp3Handler_playNextFile(void);
 
 char * mp3Handler_getCurrentName(void);
 
+
 char * mp3Handler_getArtist(void);
+
 
 char * mp3Handler_getAlbum(void);
 
+
 char * mp3Handler_getYear(void);
 
+
 void mp3Handler_updateAll(void);
+
 
 void mp3Handler_showFFT(void);
 
 void mp3Handler_play(void);
 
+
 void mp3Handler_toggle(void);
+
 
 void mp3Handler_stop(void);
 
 
 void mp3Handler_IncVolume(void);
 
+
 void mp3Handler_DecVolume(void);
+
 
 char mp3Handler_getVolume(void);
 
+
 void mp3Handler_setVolume(char value);
+
 
 #endif /* _MP3_HANDLER_H_ */

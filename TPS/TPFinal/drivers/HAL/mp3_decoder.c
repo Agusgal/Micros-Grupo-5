@@ -87,8 +87,8 @@ static uint32_t      	lastFrameLength;   	// Last frame length
 
 // MP3-encoded buffer data
 static uint8_t 		mp3FrameBuffer[NUMBER_BYTES_PER_FRAME] __attribute__((aligned(4)));
-static uint32_t    	mp3BufferOut;  // Index of the next element to be read (first element in buffer)
-static uint32_t     mp3BufferIn;   // Index of the next element to be loaded (after the last element in buffer)
+static int32_t    	mp3BufferOut;  // Index of the next element to be read (first element in buffer)
+static int32_t     mp3BufferIn;   // Index of the next element to be loaded (after the last element in buffer)
 
 
 // ID3 tag data
@@ -215,7 +215,7 @@ decoder_result_t MP3Decoder_DecodeFrame	(short* decodedDataBuffer,
     	 *							(mp3FrameBuffer)
     	 */
         // Search for the mp3 frame header in the buffer
-        uint32_t offset = MP3FindSyncWord(mp3FrameBuffer + mp3BufferOut, mp3BufferIn);
+        int32_t offset = MP3FindSyncWord(mp3FrameBuffer + mp3BufferOut, mp3BufferIn);
         if (offset >= 0)
         {
             mp3BufferOut += offset;

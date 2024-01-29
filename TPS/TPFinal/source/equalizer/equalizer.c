@@ -326,7 +326,7 @@ void EQ_Apply(float32_t* inputF32, float32_t * outputF32)
     q31_t outputQ31[BLOCKSIZE];
 
     for(int i=0; i < NUMBER_OF_BLOCKS; i++)
-  {
+    {
 
     /* ----------------------------------------------------------------------
     ** Convert block of input data from float to Q31

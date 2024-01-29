@@ -60,9 +60,7 @@ void Player_Stop(void)
 
 void Player_PlayNextSong(void)
 {
-	Audio_nextFile();
-	Audio_selectFile();
-	Audio_play();
+	mp3Handler_playNextSong();
 	printFileInfo();
 }
 
