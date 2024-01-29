@@ -450,7 +450,6 @@ void MP3Decoded_fastForwardFile(void)
 	{
 		f_lseek(&mp3FileObject, currentFilePointer);
 	}
-
 }
 
 
@@ -529,7 +528,7 @@ static void fill_buffer_with_mp3_frame(void)
     uint8_t* free_space = &mp3FrameBuffer[mp3BufferIn];
 
     // Read from mp3BufferIn to the end of the buffer or until there's no more data
-    bytesRead = readMp3Data(free_space, (NUMBER_BYTES_PER_FRAME - 1 - mp3BufferIn));
+    bytesRead = readMp3Data(free_space, (NUMBER_BYTES_PER_FRAME - mp3BufferIn));
 
     // Update Input Index (if bytesRead == NUMBER_BYTES_PER_FRAME - mp3BufferIn - 1)
     // Then mp3BufferIn will point just outside the buffer

@@ -17,6 +17,7 @@
 #include "mp3_handler/mp3_handler.h"
 #include "power_mode_switch.h"
 #include "AudioPlayer.h"
+#include "../HAL/mp3_decoder.h"
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -42,6 +43,7 @@ void App_Init_test (void)
 {
 	PowerMode_Init();
 	memory_handler_init();
+	MP3Decoder_Init();
 	AudioPlayer_Init();
 }
 

@@ -16,6 +16,7 @@
 #include <FSM_1/FSM.h>
 
 #include "Drivers/HAL/Encoder.h"
+#include "Drivers/HAL/mp3_decoder.h"
 
 #include "fsl_common.h"
 #include "power_mode_switch.h"
@@ -84,6 +85,7 @@ void App_Init (void)
 	md_Init();  //Agrego implementacion de la documentacion para poder inicializar el audio player.
 
 	//MP3 decoder Init
+	MP3Decoder_DecoderInit();
 
 	//Audio PLayer Init, para poder inicializarlo debe estar inicializado el DMA, sino tira error turbio.
 	AudioPlayer_Init();
