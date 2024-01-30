@@ -21,7 +21,7 @@
 
 #include "vumeter.h"
 
-//#include "memory_manager.h"
+#include "../../drivers/HAl/memory_handler.h"
 #include "../mp3_handler/mp3_handler.h"
 
 

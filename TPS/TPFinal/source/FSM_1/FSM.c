@@ -17,6 +17,7 @@
 #include "States/equalizer.h"
 #include "States/audioPlayer_state.h"
 
+
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -88,7 +89,7 @@ state FILE_SELECT_STATE[] =
 		//{Player_InitState, FILE_SELECTED_EV, AUDIO_PLAYER_STATE},
 
 		//Audio Player
-		//{Audio_updateAll, FILL_BUFFER_EV, FILE_SELECT_STATE},
+		{FileSelection_MP3_UpdateAll, FILL_BUFFER_EV, FILE_SELECT_STATE},
 		{FileSelection_PlayNextSong, NEXT_SONG_EV, FILE_SELECT_STATE},
 		{FileSelection_PlayPrevSong, PREV_SONG_EV, FILE_SELECT_STATE},
 

@@ -73,14 +73,14 @@ void FileSelection_InitState(void)
 
 void FileSelection_NextFile(void)
 {
-	//Audio_nextFile();
-	//printFileInfo();
+	mp3Handler_nextObject();
+	printFileInfo();
 }
 
 void FileSelection_PreviousFile(void)
 {
-	//Audio_prevFile();
-	//printFileInfo();
+	mp3Handler_prevObject();
+	printFileInfo();
 }
 
 void FileSelection_SelectFile(void)
@@ -93,24 +93,29 @@ void FileSelection_SelectFile(void)
 	if(mp3Handler_selectObject())
 	{
 		/* Start decoding the file and play the audio player */
-		//Audio_play();
+		mp3Handler_play();
 		push_Queue_Element(FILE_SELECTED_EV);
 		return;
 	}
 }
 
+
 void FileSelection_PlayNextSong(void)
 {
-	//Audio_playNextFile();
-	//Audio_play();
+	mp3Handler_playNextSong();
 }
+
 
 void FileSelection_PlayPrevSong(void)
 {
-	//Audio_playPrevFile();
-	//Audio_play();
+	mp3Handler_playPreviousSong();
 }
 
+
+void FileSelection_MP3_UpdateAll(void)
+{
+	mp3Handler_updateAll();
+}
 
 /*******************************************************************************
  *******************************************************************************
@@ -132,13 +137,14 @@ static void printFileInfo(void)
 	//LCD_clearDisplay();
 
 	//Get file name from audio module
-	char * name = mp3Handler_getName();
+	char * name = mp3Handler_getCurrentName();
 	uint8_t path[50];
 
 
 	memset(path, 0x20, 50);
 	memcpy(path, name, strlen(name));
 
-	OLED_write_Text(20, 42, path);
+	//todo: hay que ver si el casteo éste está bien, parece que no xd
+	OLED_write_Text(20, 42, (char*)path);
 
 }

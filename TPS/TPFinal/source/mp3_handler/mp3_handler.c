@@ -207,6 +207,14 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 }
 
 
+char * mp3Handler_getCurrentName(void)
+{
+	char * ret;
+	ret = mp3Files_GetObjectName(currObject);
+	return ret;
+}
+
+
 void mp3Handler_deinit(void)
 {
 	mp3Handler_stop();

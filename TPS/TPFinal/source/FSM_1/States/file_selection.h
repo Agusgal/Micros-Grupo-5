@@ -35,6 +35,13 @@ void FileSelection_PreviousFile(void);
  */
 void FileSelection_SelectFile(void);
 
+
+/*
+ * @brief	Selects the current file.
+ */
+void FileSelection_MP3_UpdateAll(void);
+
+
 /*
  * @brief Start playing the next song in the background
  */

@@ -68,6 +68,9 @@ void mp3Handler_playPreviousSong(void);
 void mp3Handler_deinit(void);
 
 
+char * mp3Handler_getName(void);
+
+
 char * mp3Handler_getCurrentName(void);
 
 
