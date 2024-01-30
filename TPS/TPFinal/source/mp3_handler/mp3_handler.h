@@ -1,6 +1,6 @@
 /***************************************************************************/ /**
   @file     mp3_handler.c
-  @brief
+  @brief	Handles MP3 functions like playing songs and finding metadata
   @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
@@ -64,6 +64,9 @@ void mp3Handler_playNextSong(void);
  */
 void mp3Handler_playPreviousSong(void);
 
+/**
+ *  @brief Play previous song
+ */
 
 void mp3Handler_deinit(void);
 

@@ -84,7 +84,7 @@ static void Edma_Callback(edma_handle_t *handle, void *userData, bool transferDo
 
 
 /*!
- * @brief Performs the division between two ints, and returns the rounded result
+ * @brief Performs the division between two unsigned ints, and returns the rounded result
  */
 static uint32_t roundedDivide(uint32_t dividend, uint32_t divisor);
 
