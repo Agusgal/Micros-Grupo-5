@@ -165,6 +165,7 @@ state EQUALIZER_STATE[] =
 
 
 
+
 state* fsm_dispatcher(state* p_state, Event_Type curr_event)
 {
 	bool flag = 1;

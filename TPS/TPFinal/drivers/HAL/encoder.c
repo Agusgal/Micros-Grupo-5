@@ -38,7 +38,7 @@ void Encoder_Init(void)
 
 	gpioMode(PIN_CH_A, INPUT_PULLUP);
 	gpioMode(PIN_CH_B, INPUT_PULLUP);
-	gpioMode(PIN_DEC_SW, INPUT_PULLUP);
+	gpioMode(PIN_ENC_SW, INPUT_PULLUP);
 	SysTick_AddCallback(Encoder_Update, 5);//todo ojo que aca antes decia 5000 pero con el nuevo systick creo que debe ser menos
 	SysTick_AddCallback(EncoderSwitch_Update, 20); //todo: aca igual, decia 20000, con 100-200 no anda long key press
 }
@@ -124,7 +124,7 @@ void EncoderSwitch_Update(void)
 {
 	static int sw_state = LOW;
 	static int duration_counter=0;
-	bool sw_Read=gpioRead(PIN_DEC_SW);
+	bool sw_Read=gpioRead(PIN_ENC_SW);
 	if ((sw_state==LOW) && (sw_Read == LOW))
 	{
 		sw_state = HIGH;

@@ -75,19 +75,18 @@ void App_Init (void)
 	SysTick_Init();
 	Timer_Init();
 
+	//Init Queue
+	queue_Init();
+
 	//Memory Init
 	memory_handler_init();
 
-	// Initialize the SSD1306 OLED display
-	OLED_Init();
-	OLED_Refresh();
-	OLED_Clear();
-
-	//Matrix Init
-	md_Init();
 
 	//MP3 decoder Init
 	MP3Decoder_Init();
+
+	//Matrix Init
+	md_Init();
 
 	//Audio PLayer Init, para poder inicializarlo debe estar inicializado el DMA, sino tira error turbio.
 	AudioPlayer_Init();
@@ -98,10 +97,13 @@ void App_Init (void)
 	//Equalizer Init
 	EQ_Init();
 
-	//todo: Daytime Init
+	// Initialize the SSD1306 OLED display
+	OLED_Init();
+	OLED_Refresh();
+	OLED_Clear();
 
-	//Init Queue
-	queue_Init();
+
+	//todo: Daytime Init
 
 	//Init Encoder
 	Encoder_Init();

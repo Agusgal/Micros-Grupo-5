@@ -134,7 +134,7 @@ static void printFileInfo(void)
 {
 	//todo: ojo con filenames muy grandes, conviene agrandar buffer auxiliar.
 
-
+	OLED_Clear();
 	//Get file name from audio module
 	char * name = mp3Handler_getCurrentName();
 	uint8_t path[50];

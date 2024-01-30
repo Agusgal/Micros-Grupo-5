@@ -80,6 +80,8 @@ void App_Run_test (void)
 			{
 				Event_Type event;
 				event = pull_Queue_Element();
+
+				// TODO: hacer que pase a la siguiente canción
 				if (event == NEXT_SONG_EV)
 				{
 					mp3Handler_playPreviousSong();

@@ -216,7 +216,7 @@ char * mp3Handler_getCurrentName(void)
 
 void mp3Handler_deinit(void)
 {
-	mp3Handler_stop();
+	//mp3Handler_stop();
 
 	MP3Decoder_shutDown();
 
