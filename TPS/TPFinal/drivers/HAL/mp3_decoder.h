@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     decoder.h
   @brief    decoder header
-  @author   Team 2 - Lab de Micros
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 /*******************************************************************************
@@ -63,12 +63,13 @@ bool MP3Decoder_LoadFile(const char* filename);
 		  want store the next frame info and decode it.
 		  if there were no errors decoding, then update the pointers
 		  to use in the next decoder instance.
- * @param outBuffer: the buffer were we will store the de decoded data. this has to be short because
+ * @param decodedDataNuffer: the buffer were we will store the decoded data. This has to be short because
 					  with that we insure that it uses 16 bits (if it had been int we can not assure
 					  that because int could be 16 or 32 bits). Anyway it could be uint_16 but with that
 					  we would be ensuring that the data is an unsigned data and we dont know that
- * @param bufferSize: the size of the buffer were we will store the decoded data.
- * @param decodedsamples: The pointer to an uint_16 data to store there the number of samples decoded
+ * @param decodedBufferSize: the size of the buffer were we will store the decoded data.
+ * @param numSamplesDecoded: The pointer to an uint_32 data to store there the number of samples decoded
+ * @param sampleRate: pointer to the sampleRate needed.
  * @return true if it can open the mp3 file and false if it can not.
  */
 decoder_result_t MP3Decoder_DecodeFrame	(short* decodedDataBuffer,
@@ -100,48 +101,54 @@ void MP3Decoder_GetTagData(char* _title_, char* _album_, char* _artist_, char* _
 
 /**
  * @brief getter of hasID3
- * @return: the value of hasID3, true if the son has ID3 false if it hasnt.
+ * @return: the value of hasID3, true if the son has ID3 false if it doesn't.
  */
 bool MP3Decoder_hasID3(void);
 
 
 /**
- * @brief: Close file if open
+ * @brief: Close file if it is open.
+ * @return true if successfully shut down the file.
  */
 bool MP3Decoder_shutDown(void);
 
 
 /**
- * @brief: Get the current file's title it changes the char* passed as a pointer to pointer to char
+ * @brief: Get the current file's title.
  * @param title_: is a pointer to the char pointer (array of chars) that forms the title word.
+ * @return: true if hasID3 returns true.
  */
 bool MP3Decoder_getFileTitle(char ** title_);
 
 
 /**
- * @brief: Get the current file's album, it changes the char* passed as a pointer to pointer to char
+ * @brief: Get the current file's album.
  * @param album_: is a pointer to the char pointer (array of chars) that forms the album word.
+ * @return: true if hasID3 returns true.
  */
 bool MP3Decoder_getFileAlbum(char** album_);
 
 
 /**
- * @brief: Get the current file's artist, it changes the char* passed as a pointer to pointer to char
+ * @brief: Get the current file's artist.
  * @param artist_: is a pointer to the char pointer (array of chars) that forms the artist word.
+ * @return: true if hasID3 returns true.
  */
 bool MP3Decoder_getFileArtist(char** artist_);
 
 
 /**
- * @brief: Get the current file's year, it changes the char* passed as a pointer to pointer to char
- * @param year_: is a pointer to the char pointer (array of chars) that forms the year word, because is a number forms with the ascii values (chars)
+ * @brief: Get the current file's year.
+ * @param year_: is a pointer to the char pointer (array of chars) that forms the year word.
+ * @return: true if hasID3 returns true.
  */
 bool MP3Decoder_getFileYear(char** year_);
 
 
 /**
- * @brief: Get the current file's track number, it changes the char* passed as a pointer to pointer to char
- * @param trackNum_: is a pointer to the char pointer (array of chars) that forms the Track number word, because is a number forms with the ascii values (chars)
+ * @brief: Get the current file's track number.
+ * @param trackNum_: is a pointer to the char pointer (array of chars) that forms the Track number word.
+ * @return: true if hasID3 returns true.
  */
 bool MP3Decoder_getFileTrackNum(char** trackNum_);
 

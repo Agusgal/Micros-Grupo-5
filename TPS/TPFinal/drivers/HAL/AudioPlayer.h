@@ -53,13 +53,14 @@ void AudioPlayer_UpdateSampleRate(uint32_t _sampleRate);
 
 /*!
  *@brief Checks if the back buffer is free or not, in order to know if it can be filled again or not yet.
- *@return Indication about tje back buffer's condition: free or not.
+ *@return Indication about the back buffer's condition: free or not.
 */
 bool AudioPlayer_IsBackBufferFree(void);
 
 /*!
  * @brief Updates the back buffer.
  * @param newBackBuffer, new buffer that will fill the back buffer.
+ * @param sampleRate needed.
  * @return if there was an error.
 */
 audioPlayerError_t AudioPlayer_UpdateBackBuffer(uint16_t * newBackBuffer, uint32_t _sampleRate);
@@ -74,15 +75,5 @@ void AudioPlayer_Play(void);
 */
 void AudioPlayer_Pause(void);
 
-/*!
- * @brief Pauses the audio reproduction and goes back to the beginning of the current song,
- *  so that if you chose play afterwards, the song starts from the beginning again.
-*/
-void AudioPlayer_Stop(void);
-
-/*!
- * @brief A demo mode to test audio reproduction.
-*/
-void AudioPlayer_DEMOMode(void);
 
 #endif /* _AUDIO_PLAYER_H_ */

@@ -1,6 +1,6 @@
 /***************************************************************************/ /**
   @file     mp3_handler.c
-  @brief
+  @brief    Handles MP3 functions like playing songs and finding metadata
   @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
@@ -173,7 +173,6 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 	}
 
 	// Apply audio effects
-	// TODO: chequear por qué se rompe al llamar a las funciones de math de arm
 	EQ_Apply(effects_in, effects_out);
 
 	// Bypass EQ_Apply por testing (EQ_Apply broken)
