@@ -296,7 +296,7 @@ void mp3Handler_stop(void)
 }
 
 
-char * mp3Handler_getName(void)
+char * mp3Handler_getTitle(void)
 {
 	char * ret;
 	if(!MP3Decoder_getFileTitle(&ret))

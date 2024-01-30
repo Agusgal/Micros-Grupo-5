@@ -7,25 +7,32 @@
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
+
+#include <FSM_1/States/equalizer_state.h>
+#include "../../mp3_handler/mp3_handler.h"
 #include "equalizer.h"
-//#include "LCD_GDM1602A.h"
+
 #include "../../EventQueue/queue.h"
 #include "Timer.h"
-#include "equalizer.h"
+#include "OLEDdisplay.h"
+
+#include <stdio.h>
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
+
 #define TITLE_TIME 2000
 #define OPTIONS_COUNT 6
-//#define OPTION_VALUES_ARRAY_SIZE	NUMBER_OF_BANDS
-//#define MAX_BAND_GAIN	MAX_GAIN
-//#define	MIN_BAND_GAIN	-MAX_GAIN
+#define OPTION_VALUES_ARRAY_SIZE	NUMBER_OF_BANDS
+#define MAX_BAND_GAIN	MAX_GAIN
+#define	MIN_BAND_GAIN	-MAX_GAIN
 
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
+
 typedef enum
 {
 	DEFAULT,
@@ -35,6 +42,7 @@ typedef enum
 	CLASSIC,
 	CUSTOM
 } options_t;
+
 /*******************************************************************************
  * GLOBAL VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
@@ -53,7 +61,7 @@ static bool settingCustom = false;
 static uint8_t currentBand = 0;
 static int32_t currentBandValue = 0;
 
-/*
+
 int optionValues[5][OPTION_VALUES_ARRAY_SIZE] =
 	{{0, 0, 0, 0,  0, 0, 0, 0}, 	//default
 	 {0, 0, 1, 3,-10,-2,-1, 3}, 	//rock
@@ -61,7 +69,7 @@ int optionValues[5][OPTION_VALUES_ARRAY_SIZE] =
 	 {0, 0, 0, 0,  2, 2, 3,-3},		//pop
 	 {0, 0,-1,-6,  0, 1, 1, 3}		//classic
 };
-*/
+
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -94,25 +102,25 @@ static void showCustomBandSetting(void);
 
 void Effects_InitState(void)
 {
-	//LCD_clearDisplay();
-	//LCD_stopMove(0);
-	//showTitle();
-	//currentOptionIndex = 0;
+	OLED_Clear();
+	showTitle();
+	currentOptionIndex = 0;
 }
 
 void Effects_NextOption(void)
 {
-   /*
 	if (showingTitle)
-        userInteractionStopsTitle();
+	{
+		userInteractionStopsTitle();
+	}
     else if (settingCustom)
     {
-    	currentBandValue +=1;
+    	currentBandValue += 1;
     	if (currentBandValue == MAX_BAND_GAIN +1)
     	{
     		currentBandValue = MIN_BAND_GAIN;
     	}
-    	equalizer_set_band_gain(currentBand+1, currentBandValue);
+    	EQ_Set_Band_Gain(currentBand+1, currentBandValue);
     	showCustomBandSetting();
     }
     else
@@ -124,14 +132,15 @@ void Effects_NextOption(void)
             currentOptionIndex++;
         setCurrentOption();
     }
-	*/
 }
 
 void Effects_PreviousOption(void)
 {
-    /*
+
 	if (showingTitle)
-        userInteractionStopsTitle();
+	{
+		userInteractionStopsTitle();
+	}
     else if(settingCustom)
     {
     	currentBandValue -=1;
@@ -139,7 +148,7 @@ void Effects_PreviousOption(void)
 		{
 			currentBandValue = MAX_BAND_GAIN;
 		}
-		equalizer_set_band_gain(currentBand+1, currentBandValue);
+		EQ_Set_Band_Gain(currentBand+1, currentBandValue);
 		showCustomBandSetting();
     }
     else
@@ -151,14 +160,16 @@ void Effects_PreviousOption(void)
             currentOptionIndex--;
         setCurrentOption();
     }
-    */
+
 }
 
 void Effects_SelectOption(void)
 {
 
-	/*if (showingTitle)
-        userInteractionStopsTitle();
+	if (showingTitle)
+	{
+		userInteractionStopsTitle();
+	}
     else if(settingCustom)
     {
     	if (currentBand == OPTION_VALUES_ARRAY_SIZE - 1)
@@ -169,31 +180,29 @@ void Effects_SelectOption(void)
     	else
     	{
     		currentBand += 1;
-    		currentBandValue = equalizer_get_band_gain(currentBand+1);
+    		currentBandValue = EQ_Get_Band_Gain(currentBand + 1);
     		showCustomBandSetting();
     	}
     }
     else
     {
-    	//LCD_clearDisplay();
-        if (currentOptionIndex == OPTIONS_COUNT-1)
+    	OLED_Clear();
+        if (currentOptionIndex == OPTIONS_COUNT - 1)
         {
         	settingCustom = true;
         	currentBand = 0;
-        	currentBandValue = equalizer_get_band_gain(currentBand+1);
+        	currentBandValue = EQ_Get_Band_Gain(currentBand + 1);
         	showCustomBandSetting();
         }
         else
         {
         	for (int i = 0; i < OPTION_VALUES_ARRAY_SIZE; i++)
         	{
-        		equalizer_set_band_gain(i+1, optionValues[currentOptionIndex][i]);
+        		EQ_Set_Band_Gain(i + 1, optionValues[currentOptionIndex][i]);
         	}
-        	emitEvent(CHANGE_MODE_EV);
+        	push_Queue_Element(CHANGE_MODE_EV);
         }
     }
-    */
-
 }
 
 
@@ -204,9 +213,10 @@ void Effects_Back(void)
 		settingCustom = false;
 		//LCD_clearRow(1);
 		setCurrentOption();
-	}else
+	}
+	else
 	{
-		//emitEvent(CHANGE_MODE_EV);
+		push_Queue_Element(CHANGE_MODE_EV);
 	}
 }
 
@@ -220,6 +230,13 @@ void Effects_SetEffect(char option)
 	}
 	*/
 }
+
+
+void Equalizer_MP3_UpdateAll(void)
+{
+	mp3Handler_updateAll();
+}
+
 /*******************************************************************************
  *******************************************************************************
                         LOCAL FUNCTION DEFINITIONS
@@ -227,11 +244,10 @@ void Effects_SetEffect(char option)
  ******************************************************************************/
 static void showTitle(void)
 {
-	//LCD_stopMove(0);
-	//LCD_stopMove(1);
-	//LCD_clearDisplay();
-	//LCD_clearRow(0);
-	//LCD_writeStrInPos("Efectos         ", 16, 0, 0);
+	OLED_Clear();
+
+	OLED_write_Text(22, 22, "Efectos         ");
+
 	showingTitle = true;
 	titleTimerID = Timer_AddCallback(&stopShowingTitle, TITLE_TIME, true);
 }
@@ -239,7 +255,7 @@ static void showTitle(void)
 static void stopShowingTitle(void)
 {
 	showingTitle = false;
-	//LCD_clearDisplay();
+	OLED_Clear();
 	setCurrentOption();
 }
 
@@ -252,38 +268,40 @@ static void userInteractionStopsTitle(void)
 
 static void showCustomBandSetting(void)
 {
-	//LCD_clearDisplay();
-	//LCD_writeStrInPos(frequencyBandsTitles[currentBand], 16, 0, 0);
+	OLED_Clear();
+	OLED_write_Text(22, 22, frequencyBandsTitles[currentBand]);
 
-	//char bandGainText[16] = "                ";
-	//int writtenChars = sprintf(bandGainText, "%ddB", currentBandValue);
-	//bandGainText[writtenChars] = ' ';
-	//LCD_writeStrInPos(bandGainText, 16, 1, 0);
+	char bandGainText[16] = "                ";
+	int writtenChars = sprintf(bandGainText, "%ddB", currentBandValue);
+	bandGainText[writtenChars] = ' ';
+
+	OLED_write_Text(22, 42, frequencyBandsTitles[currentBand]);
 }
+
 
 static void setCurrentOption(void)
 {
-    //LCD_clearDisplay();
-	LCD_stopMove(0);
+    OLED_Clear();
+
     switch (currentOptionIndex)
     {
     case DEFAULT:
-		//LCD_writeStrInPos("DEFAULT             ", 16, 0, 0);
+    	OLED_write_Text(22, 22, "DEFAULT         ");
 		break;
     case ROCK:
-    	//LCD_writeStrInPos("ROCK                ", 16, 0, 0);
+    	OLED_write_Text(22, 22, "ROCK         ");
         break;
     case JAZZ:
-    	//LCD_writeStrInPos("JAZZ                ", 16, 0, 0);
+    	OLED_write_Text(22, 22, "JAZZ         ");
         break;
     case POP:
-    	//LCD_writeStrInPos("POP                 ", 16, 0, 0);
+    	OLED_write_Text(22, 22, "POP         ");
         break;
     case CLASSIC:
-		//LCD_writeStrInPos("CLASSIC             ", 16, 0, 0);
+    	OLED_write_Text(22, 22, "CLASSIC         ");
 		break;
     case CUSTOM:
-    	//LCD_writeStrInPos("CUSTOM              ", 16, 0, 0);
+    	OLED_write_Text(22, 22, "CUSTOM         ");
 		break;
     }
 }

@@ -14,7 +14,7 @@
 #include "States/Init.h"
 #include "States/idle.h"
 #include "States/file_selection.h"
-#include "States/equalizer.h"
+#include "States/equalizer_state.h"
 #include "States/audioPlayer_state.h"
 
 
@@ -64,7 +64,7 @@ state IDLE_STATE[] =
 		{pass, END_TABLE, IDLE_STATE}
 };
 
-//TODO: descomentar lineas comentadas y arreglar funciones renombradas modificadas, etc
+
 state FILE_SELECT_STATE[] =
 {
 		//moving through files
@@ -73,7 +73,7 @@ state FILE_SELECT_STATE[] =
 		{FileSelection_PreviousFile, PREV_EV, FILE_SELECT_STATE},
 
 		//Encoder
-		//{Effects_InitState, ENCODER_PRESS_EV, EFFECTS_STATE},
+		{Effects_InitState, ENCODER_PRESS_EV, EQUALIZER_STATE},
 		{FileSelection_NextFile, ENCODER_RIGHT_EV, FILE_SELECT_STATE},
 		{FileSelection_PreviousFile, ENCODER_LEFT_EV, FILE_SELECT_STATE},
 
@@ -84,9 +84,8 @@ state FILE_SELECT_STATE[] =
 		{Idle_InitState, SD_OUT_EV, IDLE_STATE},
 		{Idle_InitState, TIMEOUT_EV, IDLE_STATE},
 
-
 		//File Selected
-		//{Player_InitState, FILE_SELECTED_EV, AUDIO_PLAYER_STATE},
+		{Player_InitState, FILE_SELECTED_EV, AUDIO_PLAYER_STATE},
 
 		//Audio Player
 		{FileSelection_MP3_UpdateAll, FILL_BUFFER_EV, FILE_SELECT_STATE},
@@ -97,11 +96,11 @@ state FILE_SELECT_STATE[] =
 		{pass, END_TABLE, FILE_SELECT_STATE}
 };
 
-//TODO: descomentar lineas comentadas y arreglar funciones renombradas modificadas, etc
+
 state AUDIO_PLAYER_STATE[] =
 {
 		//Buttons
-		{Player_ToggleMusic, PLAYPAUSE_EV, AUDIO_PLAYER_STATE}, //play y pausa.
+		{Player_ToggleMusic, PLAYPAUSE_EV, AUDIO_PLAYER_STATE},
 		{Player_Stop, STOP_EV, AUDIO_PLAYER_STATE},
 		{Player_PlayNextSong, NEXT_EV, AUDIO_PLAYER_STATE},
 		{Player_PlayPreviousSong, PREV_EV, AUDIO_PLAYER_STATE},
@@ -114,17 +113,14 @@ state AUDIO_PLAYER_STATE[] =
 		//Apagar con long key press
 		{Idle_InitState, ENCODER_LKP_EV, IDLE_STATE},
 
-
 		//SD
 		{Idle_InitState, SD_OUT_EV, IDLE_STATE},
 		{Idle_InitState, TIMEOUT_EV, IDLE_STATE},
 
-
 		//Audio
-		//{Audio_updateAll, FILL_BUFFER_EV, AUDIO_PLAYER_STATE},      el callback viene de audiomanager.
+		{Player_MP3_UpdateAll, FILL_BUFFER_EV, AUDIO_PLAYER_STATE},
 		{Player_PlayNextSong, NEXT_SONG_EV, AUDIO_PLAYER_STATE},
 		{Player_PlayPreviousSong, PREV_SONG_EV, AUDIO_PLAYER_STATE},
-
 
 		//End of Table
 		{pass, END_TABLE, AUDIO_PLAYER_STATE}
@@ -153,7 +149,7 @@ state EQUALIZER_STATE[] =
 		{Player_InitState, CHANGE_MODE_EV, AUDIO_PLAYER_STATE},
 
 		//Audio
-		//{Audio_updateAll, FILL_BUFFER_EV, EQUALIZER_STATE},       el callback viene de audiomanager.
+		{Equalizer_MP3_UpdateAll, FILL_BUFFER_EV, EQUALIZER_STATE},
 		{FileSelection_PlayNextSong, NEXT_SONG_EV, EQUALIZER_STATE},
 		{FileSelection_PlayPrevSong, PREV_SONG_EV, EQUALIZER_STATE},
 

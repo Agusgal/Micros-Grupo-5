@@ -15,8 +15,7 @@
 
 #include <FSM_1/FSM.h>
 
-#include "Drivers/HAL/Encoder.h"
-#include "Drivers/HAL/mp3_decoder.h"
+#include "mp3_decoder.h"
 
 #include "fsl_common.h"
 #include "power_mode_switch.h"
@@ -36,6 +35,10 @@
 #include "AudioPlayer.h"
 
 #include "EventQueue/queue.h"
+
+#include "memory_handler.h"
+
+#include "equalizer.h"
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -74,7 +77,7 @@ void App_Init (void)
 	Timer_Init();
 
 	//Memory Init
-
+	memory_handler_init();
 
 	// Initialize the SSD1306 OLED display
 	OLED_Init();
@@ -82,10 +85,10 @@ void App_Init (void)
 	OLED_Clear();
 
 	//Matrix Init
-	md_Init();  //Agrego implementacion de la documentacion para poder inicializar el audio player.
+	md_Init();
 
 	//MP3 decoder Init
-	MP3Decoder_DecoderInit();
+	MP3Decoder_Init();
 
 	//Audio PLayer Init, para poder inicializarlo debe estar inicializado el DMA, sino tira error turbio.
 	AudioPlayer_Init();
@@ -94,14 +97,17 @@ void App_Init (void)
 	VU_Init();
 
 	//Equalizer Init
+	EQ_Init();
 
-	//Daytime Init
+	//todo: Daytime Init
 
 	//Init Queue
 	queue_Init();
 
 	//Init Encoder
 	Encoder_Init();
+
+	//Init Buttons
 	Buttons_Init();
 
 	//Init fsm
@@ -149,17 +155,16 @@ void fill_queue(void)
 	}
 
 	//Check for memory events
-	/*
-	if(Mm_SDConnection())
+	if(mh_SD_connected())
 	{
 		push_Queue_Element(SD_IN_EV);
 	}
 
-	if(Mm_SDDesconnection())
+	if(mh_SD_disconnected())
 	{
 		push_Queue_Element(SD_OUT_EV);
 	}
-	*/
+
 
 	//Check for AudioPLayer Events
 	if (AudioPlayer_IsBackBufferFree())

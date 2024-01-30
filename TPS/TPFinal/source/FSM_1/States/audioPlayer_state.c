@@ -7,20 +7,24 @@
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-#include <FSM_1/States/audioPlayer_state.h>
+
+
 #include <stdbool.h>
 #include <string.h>
 
+#include <FSM_1/States/audioPlayer_state.h>
+
 #include "../../EventQueue/queue.h"
 #include "../../mp3_handler/mp3_handler.h"
-//#include "LCD_GDM1602A.h"
+#include "../../mp3_file_handler/mp3_file_handler.h"
 
-//#include "vumeterRefresh.h"
+#include "OLEDdisplay.h"
+
 
 #include "AudioPlayer.h"
 #include "ff.h"
-#include "../../mp3_file_handler/mp3_file_handler.h"
 #include "Timer.h"
+
 
 #define VOLUME_TIME		(5000U)
 /*******************************************************************************
@@ -33,30 +37,36 @@ static int volumeTimerID = -1;
  * 	LOCAL FUNCTION DEFINITIONS
  *******************************************************************************/
 
+
 static void printFileInfo(void);
 static void showVolume(void);
 static void stopShowingVolume(void);
+
+
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
 
+
 void Player_InitState(void)
 {
 	printFileInfo();
 }
 
+
 void Player_ToggleMusic(void)
 {
-	Audio_toggle();
+	mp3Handler_toggle();
 }
 
 
 void Player_Stop(void)
 {
-	Audio_stop();
+	mp3Handler_stop();
 }
+
 
 void Player_PlayNextSong(void)
 {
@@ -64,68 +74,73 @@ void Player_PlayNextSong(void)
 	printFileInfo();
 }
 
+
 void Player_PlayPreviousSong(void)
 {
-	Audio_prevFile();
-	Audio_selectFile();
-	Audio_play();
+	mp3Handler_prevObject();
+	mp3Handler_selectObject();
+	mp3Handler_play();
 	printFileInfo();
 }
+
 
 void Player_IncVolume(void)
 {
 	// algo de mostrar en el display por un tiempo
-	Audio_IncVolume();
+	mp3Handler_IncVolume();
 	showVolume();
 }
+
 
 void Player_DecVolume(void)
 {
 	// algo de mostrar en el display por un tiempo
-	Audio_DecVolume();
+	mp3Handler_DecVolume();
 	showVolume();
 }
+
+
+void Player_MP3_UpdateAll(void)
+{
+	mp3Handler_updateAll();
+}
+
 
 /*******************************************************************************
  *******************************************************************************
                         LOCAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
+
+
 static void printFileInfo(void)
 {
-	/*
 	char path[50], data[400];
 	memset(data, 0x20, 400);
 	memset(path, 0x20, 50);
-	char * name = Audio_getName();
-	char * artist = Audio_getArtist();
-	char * album = Audio_getAlbum();
-	char * year = Audio_getYear();
+
+	char * name = mp3Handler_getTitle();
+	char * artist = mp3Handler_getArtist();
+	char * album = mp3Handler_getAlbum();
+	char * year = mp3Handler_getYear();
 	char * gather[] = {"Artista: ", artist, " Album: ", album, " Year: ", year};
 
-	uint16_t len = strlen(name);
-	len += (DISPLAY_COLUMNS-(len%DISPLAY_COLUMNS));
+
+	//todo: arreglar esto con funciones de OLED que anden bien.
 	memcpy(path, name, strlen(name));
-	LCD_writeShiftingStr(path,  len, 0, MIDIUM);
 
+	OLED_Clear();
+	OLED_write_Text(20, 22, (char*)path);
 
-
-	len = 0;
-	for(int k = 0; k < sizeof(gather)/sizeof(gather[0]); k++)
-	{
-		memcpy(data + len, gather[k], strlen(gather[k]));
-		len += strlen(gather[k]);
-	}
-	len += (DISPLAY_COLUMNS-(len%DISPLAY_COLUMNS));
-	LCD_writeShiftingStr(data,  len, 1, MIDIUM);
-	*/
+	OLED_write_Text(20, 42, (char*)gather);
 }
+
 
 static void showVolume(void)
 {
 	if(!showingVolume)
 	{
-		//LCD_clearDisplay();
+		OLED_Clear();
 		volumeTimerID = Timer_AddCallback(stopShowingVolume, VOLUME_TIME, true);
 	}
 	else
@@ -135,13 +150,15 @@ static void showVolume(void)
 
 	char str2wrt[11] = "Volumen: --";
 
-	char vol = Audio_getVolume();
+	char vol = mp3Handler_getVolume();
+
 	str2wrt[9] = vol/10 != 0? 0x30 + vol/10 : ' ';
 	str2wrt[10] = 0x30 + (char)vol%10;
 
-	//LCD_writeStrInPos(str2wrt, sizeof(str2wrt)/sizeof(str2wrt[0]), 0, 0);
+	OLED_write_Text(20, 22, (char*)str2wrt);
 	showingVolume = true;
 }
+
 
 static void stopShowingVolume(void)
 {

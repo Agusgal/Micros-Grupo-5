@@ -22,6 +22,8 @@ void Player_PlayPreviousSong(void);
 void Player_IncVolume(void);
 void Player_DecVolume(void);
 
+void Player_MP3_UpdateAll(void);
+
 void Player_Off(void);
 
 #endif /* PLAYER_STATE_H*/
