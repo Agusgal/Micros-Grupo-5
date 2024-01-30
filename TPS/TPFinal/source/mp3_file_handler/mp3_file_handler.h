@@ -74,7 +74,7 @@ MP3Object_t mp3Files_GetNextObject(MP3Object_t currentObject);
 
 
 /*
- * @brief Gets the next object of the file system.
+ * @brief Gets the next MP3 File of the file system.
  * @param currentObject: The object that is considered the 'current' one. The 'next' object will be defined based on this param.
  * @return MP3Object_t next object of the file system.  If the current object is the last one, returns the first one.
  *
@@ -85,16 +85,16 @@ MP3Object_t mp3Files_GetNextMP3File(MP3Object_t currentObject);
 /*
  * @brief Gets the previous object of the file system.
  * @param currentObject: The object that is considered the 'current' one. The 'previous' object will be defined based on this param.
- * @return MP3Object_t previous object of the file system.  If the current obbject is the first one, returns the last one.
+ * @return MP3Object_t previous object of the file system.  If the current object is the first one, returns the last one.
  *
  * */
 MP3Object_t mp3Files_GetPreviousObject(MP3Object_t currentObject);
 
 
 /*
- * @brief Gets the previous object of the file system.
+ * @brief Gets the previous MP3 File of the file system.
  * @param currentObject: The object that is considered the 'current' one. The 'previous' object will be defined based on this param.
- * @return MP3Object_t previous object of the file system.  If the current obbject is the first one, returns the last one.
+ * @return MP3Object_t previous object of the file system.  If the current object is the first one, returns the last one.
  *
  * */
 MP3Object_t mp3Files_GetPreviousMP3File(MP3Object_t currentObject);

@@ -41,7 +41,7 @@ bool mh_SD_connected(void);
 
 /*!
  * @brief Checks if SD card was pulled out and them SD status turns into IDLE.
- * @return true if disconnected event ocurred.
+ * @return true if disconnected event occurred.
  */
 bool mh_SD_disconnected(void);
 
