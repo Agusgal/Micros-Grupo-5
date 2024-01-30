@@ -8,8 +8,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-//todo: tambien vuela.
-#define TITLE_TIME 5000
+
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
@@ -18,7 +17,6 @@
 #include <string.h>
 
 #include "../../mp3_handler/mp3_handler.h"
-//#include "AudioPlayer.h"
 
 #include "file_selection.h"
 #include "../../EventQueue/queue.h"
@@ -26,7 +24,7 @@
 
 #include "Timer.h"
 #include "OLEDdisplay.h"
-//#include "LCD_GDM1602A.h"
+
 //#include "memory_manager.h"
 //#include "file_system_manager.h"
 //#include "decoder.h"
@@ -36,8 +34,8 @@
 /*******************************************************************************
  * GLOBAL VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
-static bool showingTitle;
-static int titleTimerID = -1;
+
+
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -49,11 +47,6 @@ static int titleTimerID = -1;
  */
 static void showTitle(void);
 
-
-/**
- * @brief Stops showing the title of the state on the display.
- */
-static void stopShowingTitle(void);
 
 
 /**
@@ -70,8 +63,10 @@ static void printFileInfo(void);
 
 void FileSelection_InitState(void)
 {
+	//todo: mejorar OLED para mostrar mejor la pantalla de titulo...
 	showTitle();
-	//Audio_init();
+
+	mp3Handler_init();
 
 	printFileInfo();
 }
@@ -122,39 +117,28 @@ void FileSelection_PlayPrevSong(void)
  *                         LOCAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
+
 static void showTitle(void)
 {
 	OLED_Clear();
 	OLED_write_Text(20, 22, "Choose file:");
-
-	//showingTitle = true;
-	//titleTimerID = Timer_AddCallback(&stopShowingTitle, TITLE_TIME, true);
 }
-
-//todo esto vuela me parece
-static void stopShowingTitle(void)
-{
-	showingTitle = false;
-	//LCD_clearDisplay();
-	printFileInfo();
-	//showFiles();
-}
-
 
 
 static void printFileInfo(void)
 {
 	//todo: ojo con filenames muy grandes, conviene agrandar buffer auxiliar.
+
 	//LCD_clearDisplay();
 
 	//Get file name from audio module
-	//char * name = Audio_getCurrentName();
+	char * name = mp3Handler_getName();
 	uint8_t path[50];
 
 
-	//memset(path, 0x20, 50);
-	//memcpy(path, name, strlen(name));
+	memset(path, 0x20, 50);
+	memcpy(path, name, strlen(name));
 
-	//OLED_write_Text(20, 42, path);
+	OLED_write_Text(20, 42, path);
 
 }

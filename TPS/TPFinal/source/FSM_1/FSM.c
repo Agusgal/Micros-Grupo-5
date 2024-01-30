@@ -9,12 +9,13 @@
  ******************************************************************************/
 
 
-#include <FSM_1/States/audioPlayer_state.h>
+
 #include "FSM.h"
 #include "States/Init.h"
 #include "States/idle.h"
 #include "States/file_selection.h"
 #include "States/equalizer.h"
+#include "States/audioPlayer_state.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -62,7 +63,7 @@ state IDLE_STATE[] =
 		{pass, END_TABLE, IDLE_STATE}
 };
 
-
+//TODO: descomentar lineas comentadas y arreglar funciones renombradas modificadas, etc
 state FILE_SELECT_STATE[] =
 {
 		//moving through files
@@ -95,7 +96,7 @@ state FILE_SELECT_STATE[] =
 		{pass, END_TABLE, FILE_SELECT_STATE}
 };
 
-
+//TODO: descomentar lineas comentadas y arreglar funciones renombradas modificadas, etc
 state AUDIO_PLAYER_STATE[] =
 {
 		//Buttons
@@ -166,12 +167,7 @@ state EQUALIZER_STATE[] =
  ******************************************************************************/
 
 
-/**
- * @brief determines next state and executes transition functions based on current event, current state and fsm table.
- * @param p_state: pointer to current state inside the fsm state table.
- * @param curr_event: latest event, it came from the event queue.
- * @return pointer to the next state following the logic of the state table.
- */
+
 state* fsm_dispatcher(state* p_state, Event_Type curr_event)
 {
 	bool flag = 1;
@@ -196,20 +192,14 @@ state* fsm_dispatcher(state* p_state, Event_Type curr_event)
 }
 
 
-/**
- * @brief returns initial state of the fsm, gets called at the beginning of the program.
- * @return pointer to the initial state of the fsm.
- */
+
 state* get_initial_state()
 {
 	return INIT_STATE;
 }
 
 
-/**
- * @brief function executed at the beginning of the fsm.
- * @return nothing.
- */
+
 void start_fsm()
 {
 	//welcome_animation();

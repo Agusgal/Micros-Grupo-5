@@ -15,17 +15,17 @@
 void startProgram(void)
 {
 	//Some SD card shenanigans
-	/*
-	if(Mm_SDConnection())
+
+	if(mh_SD_connected())
 	{
 		// Fetch the sd on conection event
 		push_Queue_Element(SD_IN_EV);
 	}
-	else if(Mm_IsSDPresent())
+	else if(mh_is_SD_connected())
 	{
 		//The sd is present but the event has been fetch while not able to handle
 		push_Queue_Element(SD_IN_EV);
-	}*/
+	}
 
 	// Start the idle state, not best practice to do here ( ͡° ͜ʖ ͡°)
 	Idle_InitState();
