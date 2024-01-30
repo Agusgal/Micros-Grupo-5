@@ -29,30 +29,27 @@
 
 
 // On Board User Switches
-#define PIN_SW2         PORTNUM2PIN(PC,6) // PTC6
-#define PIN_SW3         PORTNUM2PIN(PA,4) // PTA4
+#define PIN_SW2         PORTNUM2PIN(PC,6)
+#define PIN_SW3         PORTNUM2PIN(PA,4)
 
 #define SW_ACTIVE       LOW
 #define SW_INPUT_TYPE   INPUT_PULLDOWN
 
-// External buttons
-#define PIN_SW_A		PORTNUM2PIN(PC,11)
-#define PIN_SW_B		PORTNUM2PIN(PB,11)
-#define PIN_SW_C		PORTNUM2PIN(PB,10)
-#define PIN_SW_D		PORTNUM2PIN(PB, 3)
 
-// Encoder pin's
-#define ENCODER_A		PORTNUM2PIN(PB,18) // PTB18
-#define ENCODER_B		PORTNUM2PIN(PB,19) // PTB19
-#define ENCODER_SW  	PORTNUM2PIN(PC,10) // PTC10
+// Buttons
+#define PIN_NEXT_BTN		PORTNUM2PIN(PA,2)
+#define PIN_PLAY_BTN		PORTNUM2PIN(PC,2)
+#define PIN_PREV_BTN		PORTNUM2PIN(PC,3)
+#define PIN_STOP_BTN		PORTNUM2PIN(PC,8)
 
-//Encoder Pins
+
+// Encoder Pins
 #define PIN_CH_A			PORTNUM2PIN(PC,0)
 #define PIN_CH_B			PORTNUM2PIN(PC,7)
-#define PIN_DEC_SW			PORTNUM2PIN(PC,9)
+#define PIN_ENC_SW			PORTNUM2PIN(PC,9)
 
 // Test point
-#define TP				PORTNUM2PIN(PC,5) // PTC4
+#define TP				PORTNUM2PIN(PC,5)
 #define TP2				PORTNUM2PIN(PC,7)
 /*******************************************************************************
  ******************************************************************************/

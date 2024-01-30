@@ -45,7 +45,6 @@
  ******************************************************************************/
 
 
-
 /**
  * @brief captures events generated within the drivers and inside states and fills the eventqueue. Gets called continously.
  * @return nothing.
@@ -129,7 +128,6 @@ void App_Run (void)
 	{
 		current_state = fsm_dispatcher(current_state, event);
 	}
-
 }
 
 

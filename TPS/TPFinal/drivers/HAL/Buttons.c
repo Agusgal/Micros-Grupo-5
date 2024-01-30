@@ -7,11 +7,11 @@
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
+#include <stdio.h>
 
+#include "board.h"
 #include "gpio.h"
 #include "EventQueue/queue.h"
-#include <stdio.h>
-#include "board.h"
 #include "Buttons.h"
 #include "Systick.h"
 
@@ -22,11 +22,6 @@
 #define LKP_COUNTER 5 * S_TO_US / BUTTON_CALLBACK_PERIOD
 
 
-// ESTO VA EN BOARD.H
-#define PIN_NEXT_BTN		PORTNUM2PIN(PB,18)
-#define PIN_PLAY_BTN		PORTNUM2PIN(PB,19)
-#define PIN_PREV_BTN		PORTNUM2PIN(PC,3)
-#define PIN_STOP_BTN		PORTNUM2PIN(PC,8)
 
 
 
@@ -107,7 +102,7 @@ void Buttons_Update(void)
 
 void ButtonConfig(void)
 {
-	for (int i=0;i<BUTTON_SIZE;i++)
+	for (int i=0; i < BUTTON_SIZE;i++)
 	{
 		gpioMode(pins[i],INPUT_PULLUP);
 		buttons[i].pin=pins[i];
