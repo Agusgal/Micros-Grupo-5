@@ -22,7 +22,7 @@
 #include "vumeter.h"
 
 //#include "memory_manager.h"
-//#include "audio_manager.h"
+#include "../mp3_handler/mp3_handler.h"
 
 
 
@@ -76,21 +76,20 @@ static void emitStartEv(void);
 
 void Idle_InitState(void)
 {
-	//todo esto esta aca solo para probar.
-	VU_Clear_Display();
-
 	//DeInit some modules for Initialization
-	//Audio_deinit();
+	mp3Handler_deinit();
 
-	//timeCallbackId = Timer_AddCallback(changePowerMode, 1000, true); //Delay until related stuff is finished
+	timeCallbackId = Timer_AddCallback(changePowerMode, 1000, true); //Delay until related stuff is finished
 }
 
 void Idle_OnUserInteraction(void)
 {
 	//Memory stuff
-	/*
-	if (!Mm_IsSDPresent())
+	if (!mh_is_SD_connected())
+	{
 		return;
+	}
+
 	setEnergyConsumptionMode(HIGH_CONSUMPTION);
 
 	if(timeCallbackId != -1)
@@ -98,8 +97,8 @@ void Idle_OnUserInteraction(void)
 		Timer_Delete(timeCallbackId);
 		timeCallbackId = -1;
 	}
-	*/
 
+	//todo: si lo llegamos a hacer...
 	//Daytime_Disable();
 
 
@@ -135,8 +134,12 @@ static void changePowerMode(void)
 	setEnergyConsumptionMode(LOW_CONSUMPTION);
 	timeCallbackId = -1;
 
+	//todo: creo que el oled no pint nada aca
 	//OLED_UpdateClock();
+
+	//todo: si hacemos dia/hora hay que agregar esto
 	//DayTime_Enable();
+
 	SysTick_UpdateClk();
 }
 
@@ -144,7 +147,10 @@ static void changePowerMode(void)
 static void emitStartEv(void)
 {
 	timeCallbackId = -1;
+
+	//todo: no se si va esto xd
 	//OLED_UpdateClock();
+
 	SysTick_UpdateClk();
 	push_Queue_Element(START_EV);
 }

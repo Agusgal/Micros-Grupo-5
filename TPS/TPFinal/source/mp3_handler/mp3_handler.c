@@ -65,7 +65,6 @@ void mp3Handler_init(void)
 		// Search for the number of objects in the main directory
 		maxObjectCount = mp3Files_GetObjectsCounter();
 
-		init = !init;
 	}
 }
 
@@ -205,6 +204,23 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 
 	// Compute FFT and set the vumeter
 	VU_FFT(effects_out, sampleRate, 80, 10000);
+}
+
+
+void mp3Handler_deinit(void)
+{
+	mp3Handler_stop();
+
+	MP3Decoder_shutDown();
+
+	mh_SD_disconnect();
+
+	mp3Files_ResetObjects();
+
+	VU_Clear_Display();
+
+	playing = false;
+	init = false;
 }
 
 
