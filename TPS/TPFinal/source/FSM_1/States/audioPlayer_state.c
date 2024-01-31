@@ -113,24 +113,36 @@ void Player_MP3_UpdateAll(void)
 
 static void printFileInfo(void)
 {
-	char path[500], data[400];
-	memset(data, 0x20, 400);
-	memset(path, 0x20, 50);
+	char path[150], gather[400];
+
+	memset(path, 0x20, 150);
+	memset(gather, 0x0, 400);
+
+	path[149] = 0;
+
 
 	char * name = mp3Handler_getTitle();
 	char * artist = mp3Handler_getArtist();
 	char * album = mp3Handler_getAlbum();
 	char * year = mp3Handler_getYear();
-	char * gather[] = {"Artista: ", artist, " Album: ", album, " Year: ", year};
+
+	strcat(gather, "Artista: ");
+	strcat(gather, artist);
+	strcat(gather, " Album: ");
+	strcat(gather, album);
+	strcat(gather, " Year: ");
+	strcat(gather,  year);
+
+	//char * gather[] = {"Artista: ", artist, " Album: ", album, " Year: ", year};
 
 
 	//todo: arreglar esto con funciones de OLED que anden bien.
 	memcpy(path, name, strlen(name));
 
 	OLED_Clear();
-	OLED_write_Text(20, 22, (char*)path);
+	OLED_write_Text(10, 22, (char*)path);
 
-	OLED_write_Text(20, 42, (char*)gather);
+	OLED_write_Text(10, 42, gather);
 }
 
 

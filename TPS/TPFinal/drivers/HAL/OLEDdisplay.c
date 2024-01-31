@@ -456,7 +456,7 @@ static void rollCLB(void)
 
 	if(roll)
 	{
-		shiftPageLeft(4, 2);
+		//shiftPageLeft(4, 2);
 		OLED_Refresh();
 	}
 	else
