@@ -74,7 +74,7 @@ static void OLED_Data (uint8_t *Data)
 	xfer.subaddress = 0x40;
 	xfer.subaddressSize = 1;
 
-	I2C_MasterTransferBlocking(I2C0, &xfer);
+	I2C_MasterTransferNonBlocking(I2C0, &handle, &xfer);
 }
 
 static void OLED_Reset (void)
