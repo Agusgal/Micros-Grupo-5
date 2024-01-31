@@ -218,7 +218,7 @@ void OLED_Init(void)
 	screenString = "WELCOME!";
 	toggleRoll();
 
-	OLEDtimerClbID = Timer_AddCallback(rollCLB, 15, false); // 15 es bastante rapido.
+	OLEDtimerClbID = Timer_AddCallback(rollCLB, 20, false); // 15 es bastante rapido.
 }
 
 
@@ -421,7 +421,7 @@ static void rollCLB(void)
 {
 
 	size_t count;
-	if (I2C_MasterTransferGetCount(I2C0, &handle, &count) != kStatus_I2C_Busy)
+	if (I2C_MasterTransferGetCount(I2C0, &handle, &count) != kStatus_Success)
 	{
 		return;
 	}
