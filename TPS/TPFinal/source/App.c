@@ -122,7 +122,7 @@ void App_Init (void)
 	// Initialize the SSD1306 OLED display
 	OLED_Init();
 	OLED_Refresh();
-	OLED_Clear();
+	//OLED_Clear();
 
 
 	//todo: Daytime Init
