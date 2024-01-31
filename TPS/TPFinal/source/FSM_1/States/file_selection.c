@@ -138,12 +138,12 @@ static void printFileInfo(void)
 	//OLED_Clear();
 	//Get file name from audio module
 	char * name = mp3Handler_getCurrentName();
-	uint8_t path[500];
+	uint8_t path[150];
 
 
 	memset(path, 0x20, 50);
 	memcpy(path, name, strlen(name));
 
 	//todo: hay que ver si el casteo éste está bien, parece que no xd
-	OLED_write_Text(10, 42, (char*)path);
+	OLED_write_Text(10, 32, (char*)path);
 }
