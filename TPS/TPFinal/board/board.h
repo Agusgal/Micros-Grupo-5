@@ -49,8 +49,8 @@
 #define PIN_ENC_SW			PORTNUM2PIN(PC,9)
 
 // Test point
-#define TP				PORTNUM2PIN(PC,5)
-#define TP2				PORTNUM2PIN(PC,7)
+#define TP				PORTNUM2PIN(PC,16)
+#define TP2				PORTNUM2PIN(PC,17)
 /*******************************************************************************
  ******************************************************************************/
 

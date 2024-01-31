@@ -3,6 +3,24 @@
   @brief    Application functions
   @author   Grupo 5
  ******************************************************************************/
+/*
+ * todo:	-Hacer andar el display con el scroll
+ * 			-(ver lo de i2c y que no sea bloqueante)
+ *
+ *			- Poder salir de la carpeta, al estar reproduciendo
+ *			(dar opción de navegar mientras se reproduce una canción)
+ *
+ *			- Hacer que al pasar de canción, o terminar la canción, el buffer quede con el último
+ *			valor escrito (para evitar el sonido entre canciones)
+ *
+ *			- Al terminar una canción, pasó que se crashea el programa
+ *
+ * 			- Previous song, si se presiona 2 veces en 3 segundos, vaya a la canción anterior
+ * 				En caso contrario, vuelva a reproducir la canción actual
+ *
+ *
+ *
+ */
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
@@ -42,6 +60,8 @@
 
 #include "mp3_handler/mp3_handler.h"
 
+
+#include "board.h"
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
@@ -112,6 +132,11 @@ void App_Init (void)
 
 	//Init Buttons
 	Buttons_Init();
+
+	gpioMode(TP,OUTPUT);
+	gpioMode(TP2,OUTPUT);
+
+
 
 	//Init fsm
 	current_state = get_initial_state();

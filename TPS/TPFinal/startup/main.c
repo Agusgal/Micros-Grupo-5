@@ -3,7 +3,7 @@
   @brief    FW main
   @author   Nicolás Magliola
  ******************************************************************************/
-#define TEST_LuyBruno
+//#define TEST_LuyBruno
 #include "hardware.h"
 
 void App_Init_test (void);

@@ -242,7 +242,7 @@ static int getArrayEffectiveLength(SysTickElement sysTickElements[])
 
 __ISR__ SysTick_Handler(void)
 {
-	gpioToggle(TP);
+	gpioWrite(TP, true);
 
 	for (int i = 0; i < (getArrayEffectiveLength(sysTickElements)); i++) //Iterates through all the elements.
 	{
@@ -257,5 +257,5 @@ __ISR__ SysTick_Handler(void)
 		}
 	}
 
-	gpioToggle(TP);
+	gpioWrite(TP, false);
 }

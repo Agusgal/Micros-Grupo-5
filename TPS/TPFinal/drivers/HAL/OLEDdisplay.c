@@ -47,6 +47,7 @@ static void toggleRoll(void);
 static void OLED_Command (uint8_t Cmd)
 {
 	i2c_master_transfer_t xfer = {0};
+	i2c_master_handle_t handle;
 
 	xfer.data = &Cmd;
 	xfer.dataSize = sizeof(Cmd);
@@ -56,13 +57,14 @@ static void OLED_Command (uint8_t Cmd)
 	xfer.subaddress = 0x0;
 	xfer.subaddressSize = 1;
 
-	I2C_MasterTransferBlocking(I2C0, &xfer);
+	I2C_MasterTransferNonBlocking(I2C0, &handle, &xfer);
 
 }
 
 static void OLED_Data (uint8_t *Data)
 {
 	i2c_master_transfer_t xfer = {0};
+	i2c_master_handle_t handle;
 
 	/*Start Transfer*/
 	xfer.data = Data;
@@ -73,7 +75,7 @@ static void OLED_Data (uint8_t *Data)
 	xfer.subaddress = 0x40;
 	xfer.subaddressSize = 1;
 
-	I2C_MasterTransferBlocking(I2C0, &xfer);
+	I2C_MasterTransferNonBlocking(I2C0, &handle, &xfer);
 
 }
 
@@ -222,7 +224,7 @@ void OLED_Init(void)
 	screenString = "WELCOME!";
 	toggleRoll();
 
-	//OLEDtimerClbID = Timer_AddCallback(rollCLB, 15, false); // 15 es bastante rapido.
+	OLEDtimerClbID = Timer_AddCallback(rollCLB, 15, false); // 15 es bastante rapido.
 }
 
 void OLED_Refresh(void)

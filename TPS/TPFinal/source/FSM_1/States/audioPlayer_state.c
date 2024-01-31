@@ -77,9 +77,7 @@ void Player_PlayNextSong(void)
 
 void Player_PlayPreviousSong(void)
 {
-	mp3Handler_prevObject();
-	mp3Handler_selectObject();
-	mp3Handler_play();
+	mp3Handler_playPreviousSong();
 	printFileInfo();
 }
 
