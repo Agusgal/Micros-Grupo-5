@@ -222,7 +222,7 @@ void OLED_Init(void)
 	screenString = "WELCOME!";
 	toggleRoll();
 
-	OLEDtimerClbID = Timer_AddCallback(rollCLB, 15, false); // 15 es bastante rapido.
+	//OLEDtimerClbID = Timer_AddCallback(rollCLB, 15, false); // 15 es bastante rapido.
 }
 
 void OLED_Refresh(void)

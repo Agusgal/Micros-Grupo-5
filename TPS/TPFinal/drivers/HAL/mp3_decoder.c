@@ -272,10 +272,13 @@ decoder_result_t MP3Decoder_DecodeFrame	(short* decodedDataBuffer,
         {
         	// This should be an error
         	// We'll indicate that the file has ended
-            if (remainingBytes <= lastFrameLength)
+
+        	/*if (remainingBytes <= lastFrameLength)
             {
                 return DECODER_END_OF_FILE;
-            }
+            }*/
+
+            return DECODER_END_OF_FILE;
         }
     }
     else

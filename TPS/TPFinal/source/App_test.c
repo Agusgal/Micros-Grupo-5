@@ -22,6 +22,10 @@
 #include "fft/vumeter.h"
 #include "equalizer/equalizer.h"
 #include "EventQueue/queue.h"
+#include "OLEDdisplay.h"
+
+#include "SysTick.h"
+#include "Timer.h"
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -46,6 +50,10 @@
 void App_Init_test (void)
 {
 	PowerMode_Init();
+
+	SysTick_Init();
+	Timer_Init();
+
 	queue_Init();
 	memory_handler_init();
 	MP3Decoder_Init();
@@ -53,6 +61,10 @@ void App_Init_test (void)
 	AudioPlayer_Init();
 	VU_Init();
 	EQ_Init();
+
+	// Initialize the SSD1306 OLED display
+	OLED_Init();
+	OLED_Refresh();
 }
 
 
@@ -66,6 +78,7 @@ void App_Run_test (void)
 		mp3Handler_selectObject();
 
 		// Selecciono canción
+		mp3Handler_nextObject();
 		mp3Handler_selectObject();
 
 		mp3Handler_play();
@@ -81,10 +94,9 @@ void App_Run_test (void)
 				Event_Type event;
 				event = pull_Queue_Element();
 
-				// TODO: hacer que pase a la siguiente canción
 				if (event == NEXT_SONG_EV)
 				{
-					mp3Handler_playPreviousSong();
+					mp3Handler_playNextSong();
 				}
 			}
 		}

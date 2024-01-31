@@ -40,6 +40,8 @@
 
 #include "equalizer.h"
 
+#include "mp3_handler/mp3_handler.h"
+
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
@@ -169,7 +171,8 @@ void fill_queue(void)
 	//Check for AudioPLayer Events
 	if (AudioPlayer_IsBackBufferFree())
 	{
-		push_Queue_Element(FILL_BUFFER_EV);
+		//push_Queue_Element(FILL_BUFFER_EV);
+		mp3Handler_updateAll();
 	}
 
 
