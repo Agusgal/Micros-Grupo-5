@@ -33,6 +33,9 @@ int OLEDtimerClbID = -1;
 static bool roll = false;
 static char* screenString;
 
+
+volatile bool completionFlag = false;
+volatile bool nakFlag        = false;
 i2c_master_handle_t handle;
 
 static void rollCLB(void);
@@ -192,6 +195,22 @@ static int OLED_Render_Char (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, int8_t 
 	return 0;
 }
 
+
+static void i2c_master_callback(I2C_Type *base, i2c_master_handle_t *handle, status_t status, void *userData)
+{
+    /* Signal transfer success when received success status. */
+    if (status == kStatus_Success)
+    {
+        completionFlag = true;
+    }
+    /* Signal transfer success when received success status. */
+    if ((status == kStatus_I2C_Nak) || (status == kStatus_I2C_Addr_Nak))
+    {
+        nakFlag = true;
+    }
+}
+
+
 void OLED_Init(void)
 {
 	//Initialize I2C module
@@ -202,6 +221,7 @@ void OLED_Init(void)
 
 	I2C_InitModule();
 
+	I2C_MasterTransferCreateHandle(I2C0, &handle, i2c_master_callback, NULL);
 
 	/*Give the display a reset*/
 	OLED_Reset();
@@ -478,6 +498,7 @@ static void toggleRoll()
 {
 	roll = !roll;
 }
+
 
 
 
