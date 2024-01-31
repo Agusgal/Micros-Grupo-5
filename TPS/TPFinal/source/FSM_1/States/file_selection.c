@@ -126,7 +126,8 @@ void FileSelection_MP3_UpdateAll(void)
 static void showTitle(void)
 {
 	OLED_Clear();
-	OLED_write_Text(20, 22, "Choose file:");
+	OLED_Refresh();
+	OLED_write_Text(10, 16, "Choose file:");
 }
 
 
@@ -134,7 +135,7 @@ static void printFileInfo(void)
 {
 	//todo: ojo con filenames muy grandes, conviene agrandar buffer auxiliar.
 
-	OLED_Clear();
+	//OLED_Clear();
 	//Get file name from audio module
 	char * name = mp3Handler_getCurrentName();
 	uint8_t path[500];
@@ -144,6 +145,5 @@ static void printFileInfo(void)
 	memcpy(path, name, strlen(name));
 
 	//todo: hay que ver si el casteo éste está bien, parece que no xd
-	OLED_write_Text(20, 42, (char*)path);
-
+	OLED_write_Text(10, 42, (char*)path);
 }
