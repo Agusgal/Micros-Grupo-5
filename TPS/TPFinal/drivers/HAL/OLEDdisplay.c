@@ -33,6 +33,8 @@ int OLEDtimerClbID = -1;
 static bool roll = false;
 static char* screenString;
 
+i2c_master_handle_t handle;
+
 static void rollCLB(void);
 
 static void shiftPageLeft(uint8_t page, uint8_t Scale);
@@ -47,7 +49,6 @@ static void toggleRoll(void);
 static void OLED_Command (uint8_t Cmd)
 {
 	i2c_master_transfer_t xfer = {0};
-	i2c_master_handle_t handle;
 
 	xfer.data = &Cmd;
 	xfer.dataSize = sizeof(Cmd);
@@ -57,14 +58,12 @@ static void OLED_Command (uint8_t Cmd)
 	xfer.subaddress = 0x0;
 	xfer.subaddressSize = 1;
 
-	I2C_MasterTransferNonBlocking(I2C0, &handle, &xfer);
-
+	I2C_MasterTransferBlocking(I2C0, &xfer);
 }
 
 static void OLED_Data (uint8_t *Data)
 {
 	i2c_master_transfer_t xfer = {0};
-	i2c_master_handle_t handle;
 
 	/*Start Transfer*/
 	xfer.data = Data;
@@ -82,12 +81,8 @@ static void OLED_Data (uint8_t *Data)
 static void OLED_Reset (void)
 {
 	OLED_Command(OLED_DISPLAYON);
-//	for(int i=0; i<1000; i++);					//delay 1ms
 	OLED_Command(OLED_DISPLAYOFF);
-//	for(int i=0; i<1000; i++);					//delay 1ms
 	OLED_Command(OLED_DISPLAYON);
-//	for(int i=0; i<10000; i++);					//delay 10ms
-
 }
 
 static void OLED_Config_Display (void)
@@ -137,7 +132,6 @@ static void OLED_Config_Display (void)
 	OLED_Command(OLED_SETLOWCOLUMN | 0x0);  // low col = 0
 	OLED_Command(OLED_SETHIGHCOLUMN | 0x0);  // hi col = 0
 	OLED_Command(OLED_SETSTARTLINE | 0x0); // line #0
-
 }
 
 
@@ -227,16 +221,16 @@ void OLED_Init(void)
 	OLEDtimerClbID = Timer_AddCallback(rollCLB, 15, false); // 15 es bastante rapido.
 }
 
+
 void OLED_Refresh(void)
 {
-
 	OLED_Command(0xb0);
 	OLED_Command(((0&0xf0)>>4) | 0x10);
 	OLED_Command((0&0x0f) | 0x01);
 
 	OLED_Data(&OLED_Buffer[0]);
-
 }
+
 
 //todo: resetear el buffer temporal tambien.
 void OLED_Clear(void)
@@ -244,12 +238,14 @@ void OLED_Clear(void)
 	memset(OLED_Buffer, 0, sizeof(OLED_Buffer));
 }
 
+
 void OLED_Fill(uint8_t Pattern)
 {
 
 	memset(OLED_Buffer, Pattern, sizeof(OLED_Buffer));
 
 }
+
 
 void OLED_Display_Mode (uint8_t Mode)
 {
@@ -264,6 +260,7 @@ void OLED_Display_Mode (uint8_t Mode)
 	}
 
 }
+
 
 void OLED_Set_Pixel (uint8_t X_axis, uint8_t Y_axis, uint8_t SC)
 {
@@ -286,6 +283,7 @@ void OLED_Set_Pixel (uint8_t X_axis, uint8_t Y_axis, uint8_t SC)
 	}
 }
 
+
 void OLED_Set_Scroll_Pixel (uint8_t X_axis, uint8_t Y_axis, uint8_t SC)
 {
 	int page = 0;
@@ -305,6 +303,7 @@ void OLED_Set_Scroll_Pixel (uint8_t X_axis, uint8_t Y_axis, uint8_t SC)
 			break;
 	}
 }
+
 
 static int OLED_Render_Scroll_Char(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, int8_t String, uint8_t Scale)
 {
@@ -420,6 +419,14 @@ void OLED_write_Text(uint8_t X_axis, uint8_t Y_axis, char* String)
 
 static void rollCLB(void)
 {
+
+	size_t count;
+	if (I2C_MasterTransferGetCount(I2C0, &handle, &count) != kStatus_I2C_Busy)
+	{
+		return;
+	}
+
+
 	static bool start = true;
 	if (start)
 	{

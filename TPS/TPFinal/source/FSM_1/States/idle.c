@@ -79,7 +79,7 @@ void Idle_InitState(void)
 	//DeInit some modules for Initialization
 	mp3Handler_deinit();
 
-	timeCallbackId = Timer_AddCallback(changePowerMode, 1000, true); //Delay until related stuff is finished
+	//timeCallbackId = Timer_AddCallback(changePowerMode, 1000, true); //Delay until related stuff is finished
 }
 
 void Idle_OnUserInteraction(void)
@@ -90,7 +90,7 @@ void Idle_OnUserInteraction(void)
 		return;
 	}
 
-	setEnergyConsumptionMode(HIGH_CONSUMPTION);
+	//setEnergyConsumptionMode(HIGH_CONSUMPTION);
 
 	if(timeCallbackId != -1)
 	{
