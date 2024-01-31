@@ -137,7 +137,7 @@ static void printFileInfo(void)
 	OLED_Clear();
 	//Get file name from audio module
 	char * name = mp3Handler_getCurrentName();
-	uint8_t path[50];
+	uint8_t path[500];
 
 
 	memset(path, 0x20, 50);

@@ -113,7 +113,7 @@ void Player_MP3_UpdateAll(void)
 
 static void printFileInfo(void)
 {
-	char path[50], data[400];
+	char path[500], data[400];
 	memset(data, 0x20, 400);
 	memset(path, 0x20, 50);
 
