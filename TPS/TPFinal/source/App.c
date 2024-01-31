@@ -141,7 +141,6 @@ void App_Init (void)
 	//Init fsm
 	current_state = get_initial_state();
 	start_fsm();
-
 }
 
 
