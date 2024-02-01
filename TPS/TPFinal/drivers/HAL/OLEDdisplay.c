@@ -255,6 +255,8 @@ void OLED_Refresh(void)
 void OLED_Clear(void)
 {
 	memset(OLED_Buffer, 0, sizeof(OLED_Buffer));
+	memset(OLED_Scroll_Buffer[0], 0, sizeof(OLED_Scroll_Buffer[0]));
+	memset(OLED_Scroll_Buffer[1], 0, sizeof(OLED_Scroll_Buffer[1]));
 }
 
 
@@ -303,7 +305,7 @@ void OLED_Set_Pixel (uint8_t X_axis, uint8_t Y_axis, uint8_t SC)
 }
 
 
-void OLED_Set_Scroll_Pixel (uint8_t X_axis, uint8_t Y_axis, uint8_t SC)
+void OLED_Set_Scroll_Pixel(uint8_t X_axis, uint8_t Y_axis, uint8_t SC)
 {
 	int page = 0;
 
@@ -374,7 +376,7 @@ static int OLED_Render_Scroll_Char(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, i
 }
 
 
-void OLED_Set_Text (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, uint8_t Scale)
+void OLED_Set_Text(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, uint8_t Scale)
 {
 	uint16_t Cont;
 	uint16_t xscaled;
@@ -387,7 +389,6 @@ void OLED_Set_Text (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, ui
 
 	for (Cont = 0; String[Cont] != '\0'; Cont++)
 	{
-		// Catch overflow when scaling!
 		xscaled = X_axis + (Cont * 5 * Scale);
 
 		OLED_Render_Scroll_Char(xscaled, Y_axis, SC, String[Cont], Scale);
@@ -477,7 +478,7 @@ static void shiftPageLeft(uint8_t page, uint8_t scale)
 	int strLength = strlen(screenString);
 
 	//todo: cambiar logica para que el scroll sea completo.
-	if ((index > (5 * scale * strLength) ) || index > OLED_WIDTH * 8)
+	if ((index > (5 * scale * strLength) ) || (index > OLED_WIDTH * 8))
 	{
 		index = 0;
 	}
