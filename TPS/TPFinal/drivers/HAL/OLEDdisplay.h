@@ -141,6 +141,16 @@ void OLED_Refresh(void);
  */
 void OLED_Clear(void);
 
+
+/*!
+ * @brief Clear the buffer.
+ *
+ * This function clear (with 0) the buffer for the display.
+ *
+ * @param void.
+ */
+void OLED_Scroll_Clear(void);
+
 /*!
  * @brief Fill the Buffer
  *

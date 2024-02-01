@@ -258,6 +258,12 @@ void OLED_Clear(void)
 	memset(OLED_Scroll_Buffer[1], 0, sizeof(OLED_Scroll_Buffer[1]));
 }
 
+void OLED_Scroll_Clear(void)
+{
+	memset(OLED_Scroll_Buffer[0], 0, sizeof(OLED_Scroll_Buffer[0]));
+	memset(OLED_Scroll_Buffer[1], 0, sizeof(OLED_Scroll_Buffer[1]));
+}
+
 
 void OLED_Fill(uint8_t Pattern)
 {
@@ -382,6 +388,7 @@ void OLED_Set_Text(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, uin
 	if (strLength > 12)
 	{
 		roll = true;
+		OLED_Scroll_Clear();
 	}
 
 
@@ -389,14 +396,18 @@ void OLED_Set_Text(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, uin
 	{
 		xscaled = X_axis + (Cont * 5 * Scale);
 
-		if ((xscaled > OLED_WIDTH * 8))
+		if (roll)
 		{
-			//Do nothing
+			if ((xscaled > OLED_WIDTH * 8))
+			{
+				//Do nothing
+			}
+			else
+			{
+				OLED_Render_Scroll_Char(xscaled, Y_axis, SC, String[Cont], Scale);
+			}
 		}
-		else
-		{
-			OLED_Render_Scroll_Char(xscaled, Y_axis, SC, String[Cont], Scale);
-		}
+
 
 
 		if ((xscaled > OLED_WIDTH))
