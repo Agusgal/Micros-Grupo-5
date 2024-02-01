@@ -115,14 +115,6 @@ static int16_t muteAudioBuffer[DAC_DATL_COUNT] = {DAC_ZERO_VOLT_VALUE};
 ******************************************************************************/
 void AudioPlayer_Init(void)
 {
-	//Todo el Init de DMA está en matrix, sin ese Init no corre el codigo.
-
-	//Sin esto aca se cuelga el programa
-	// DMAMUX_Init(DMAMUX);
-	// DMAMUX_SetSource(DMAMUX, DMA_CHANEL, FTM_DMA_SOURCE);
-	// DMAMUX_EnableChannel(DMAMUX, DMA_CHANEL);
-
-
 	for(uint8_t i = 0; i < DAC_DATL_COUNT; i++)
 	{
 		muteAudioBuffer[i] = 0;

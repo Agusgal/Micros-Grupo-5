@@ -146,7 +146,9 @@ state EQUALIZER_STATE[] =
 		//SD
 		{Idle_InitState, TIMEOUT_EV, IDLE_STATE},
 		{Idle_InitState, SD_OUT_EV, IDLE_STATE},
-		{Player_InitState, CHANGE_MODE_EV, AUDIO_PLAYER_STATE},
+
+		//Change mode if selected
+		{FileSelection_InitState, CHANGE_MODE_EV, FILE_SELECT_STATE},
 
 		//Audio
 		{Equalizer_MP3_UpdateAll, FILL_BUFFER_EV, EQUALIZER_STATE},
