@@ -84,7 +84,6 @@ void Player_PlayPreviousSong(void)
 
 void Player_IncVolume(void)
 {
-	// algo de mostrar en el display por un tiempo
 	mp3Handler_IncVolume();
 	showVolume();
 }
@@ -92,7 +91,6 @@ void Player_IncVolume(void)
 
 void Player_DecVolume(void)
 {
-	// algo de mostrar en el display por un tiempo
 	mp3Handler_DecVolume();
 	showVolume();
 }
@@ -165,6 +163,8 @@ static void showVolume(void)
 	str2wrt[9] = vol/10 != 0? 0x30 + vol/10 : ' ';
 	str2wrt[10] = 0x30 + (char)vol%10;
 
+	OLED_Clear();
+	OLED_Refresh();
 	OLED_write_Text(20, 22, (char*)str2wrt);
 	showingVolume = true;
 }
