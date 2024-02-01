@@ -32,7 +32,6 @@ static int encoder_sw = IDLE_;
  *******************************************************************************
  ******************************************************************************/
 
-//todo ver si el periodo de los callbacks es el correcto
 void Encoder_Init(void)
 {
 

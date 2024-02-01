@@ -5,7 +5,11 @@
  ******************************************************************************/
 
 /*
- * todo:	-Hacer andar el OELD con el scroll
+ * todo:	-Hacer andar el OLED con el scroll
+ *
+ *
+ * 			- Testear estado de efectos
+ *			- Testear/debuguear matriz OLED
  *
  *
  *			- Poder salir de la carpeta, al estar reproduciendo
@@ -14,13 +18,13 @@
  *			- Hacer que al pasar de canción, o terminar la canción, el buffer quede con el último
  *			valor escrito (para evitar el sonido entre canciones)
  *
- *			- Al terminar una canción, pasó que se crashea el programa
- *
- * 			- Previous song, si se presiona 2 veces en 3 segundos, vaya a la canción anterior
- * 				En caso contrario, vuelva a reproducir la canción actual
- *
  *			- Testear estado de efectos
  *			- Testear/debuguear matriz OLED
+ *
+ *
+ *			- Previous song, si se presiona 2 veces en 3 segundos, vaya a la canción anterior
+ * 				En caso contrario, vuelva a reproducir la canción actual
+ *
  *
  */
 
@@ -129,6 +133,7 @@ void App_Init (void)
 
 	//todo: Daytime Init
 
+
 	//Init Encoder
 	Encoder_Init();
 
@@ -137,7 +142,6 @@ void App_Init (void)
 
 	gpioMode(TP,OUTPUT);
 	gpioMode(TP2,OUTPUT);
-
 
 
 	//Init fsm
