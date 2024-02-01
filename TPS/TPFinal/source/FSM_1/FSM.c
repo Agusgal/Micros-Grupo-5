@@ -135,8 +135,8 @@ state EQUALIZER_STATE[] =
 		{Effects_NextOption, NEXT_EV, EQUALIZER_STATE},
 		{Effects_PreviousOption, PREV_EV, EQUALIZER_STATE},
 
-		//Encoder
-		{Player_InitState, ENCODER_PRESS_EV, AUDIO_PLAYER_STATE},
+		//Encoder, if pressed go back to file selection
+		{FileSelection_InitState, ENCODER_PRESS_EV, FILE_SELECT_STATE},
 		{Effects_NextOption, ENCODER_RIGHT_EV, EQUALIZER_STATE},
 		{Effects_PreviousOption, ENCODER_LEFT_EV, EQUALIZER_STATE},
 
