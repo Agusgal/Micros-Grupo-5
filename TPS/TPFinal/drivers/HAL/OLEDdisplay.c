@@ -44,6 +44,7 @@ static void shiftPageLeft(uint8_t page, uint8_t Scale);
 static int OLED_Render_Scroll_Char (uint16_t X_axis, uint8_t Y_axis, uint8_t SC, int8_t String, uint8_t Scale);
 static void toggleRoll(void);
 
+static uint32_t stringLength = 0;
 
 /*******************************************************************************
  * Code
@@ -449,6 +450,7 @@ void OLED_write_Text(uint8_t X_axis, uint8_t Y_axis, char* String)
 	if (strLength > 12)
 	{
 		roll = true;
+		stringLength = strLength;
 	}
 
 	screenString = String;
@@ -492,10 +494,8 @@ static void shiftPageLeft(uint8_t page, uint8_t scale)
     static int index = 0;
 	int startIndex = page * OLED_WIDTH;
 
-	int strLength = strlen(screenString);
 
-
-	if ((index > (5 * scale * strLength) ) || (index > OLED_WIDTH * 8))
+	if ((index > (5 * scale * stringLength) ) || (index > OLED_WIDTH * 8))
 	{
 		index = 0;
 	}
