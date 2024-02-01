@@ -25,7 +25,7 @@
 
 /*! @brief OLED buffer */
 static uint8_t OLED_Buffer[(OLED_WIDTH * OLED_HEIGHT) / 8];
-static uint8_t OLED_Scroll_Buffer[2][OLED_WIDTH * 8];
+static uint8_t OLED_Scroll_Buffer[2][OLED_WIDTH * 16];
 
 static bool isInit = false;
 int OLEDtimerClbID = -1;
@@ -234,7 +234,7 @@ void OLED_Init(void)
 
 	//Configure start message with roll ON
 	isInit = true;
-	screenString = "WELCOME!";
+	screenString = "WELCOME!WELCOME!WELCOME!WELCOME!";
 	toggleRoll();
 
 	OLEDtimerClbID = Timer_AddCallback(rollCLB, 20, false); // 15 es bastante rapido.
@@ -251,7 +251,6 @@ void OLED_Refresh(void)
 }
 
 
-//todo: resetear el buffer temporal tambien.
 void OLED_Clear(void)
 {
 	memset(OLED_Buffer, 0, sizeof(OLED_Buffer));
@@ -262,9 +261,7 @@ void OLED_Clear(void)
 
 void OLED_Fill(uint8_t Pattern)
 {
-
 	memset(OLED_Buffer, Pattern, sizeof(OLED_Buffer));
-
 }
 
 
@@ -329,7 +326,7 @@ void OLED_Set_Scroll_Pixel(uint8_t X_axis, uint8_t Y_axis, uint8_t SC)
 static int OLED_Render_Scroll_Char(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, int8_t String, uint8_t Scale)
 {
 
-	Y_axis /= 8;
+	Y_axis %= 8;
 	uint8_t px, py;
 	uint16_t start_pos;
 
@@ -391,7 +388,15 @@ void OLED_Set_Text(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, uin
 	{
 		xscaled = X_axis + (Cont * 5 * Scale);
 
-		OLED_Render_Scroll_Char(xscaled, Y_axis, SC, String[Cont], Scale);
+		if ((xscaled > OLED_WIDTH * 8))
+		{
+			//Do nothing
+		}
+		else
+		{
+			OLED_Render_Scroll_Char(xscaled, Y_axis, SC, String[Cont], Scale);
+		}
+
 
 		if ((xscaled > OLED_WIDTH))
 		{
@@ -452,7 +457,7 @@ static void rollCLB(void)
 	static bool start = true;
 	if (start)
 	{
-		OLED_Set_Text(24, 32, kOLED_Pixel_Set, screenString, 2);
+		OLED_Set_Text(10, 32, kOLED_Pixel_Set, screenString, 2);
 		OLED_Refresh();
 		start = false;
 	}
@@ -460,7 +465,7 @@ static void rollCLB(void)
 
 	if(roll)
 	{
-		//shiftPageLeft(4, 2);
+		shiftPageLeft(4, 2);
 		OLED_Refresh();
 	}
 	else
@@ -477,7 +482,7 @@ static void shiftPageLeft(uint8_t page, uint8_t scale)
 
 	int strLength = strlen(screenString);
 
-	//todo: cambiar logica para que el scroll sea completo.
+
 	if ((index > (5 * scale * strLength) ) || (index > OLED_WIDTH * 8))
 	{
 		index = 0;
