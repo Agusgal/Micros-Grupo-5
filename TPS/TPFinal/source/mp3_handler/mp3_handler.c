@@ -21,6 +21,10 @@
 #include "EventQueue/queue.h"
 
 
+static void mp3Handler_selectNextSong(void);
+
+static void mp3Handler_selectPreviousSong(void);
+
 /******************************************************************************
  * DEFINES
  ******************************************************************************/
@@ -46,6 +50,9 @@ SDK_ALIGN(static short decoder_buffer[2*BUFFER_SIZE], SD_BUFFER_ALIGN_SIZE);
 
 static uint8_t vol = 15;
 static char vol2send = 15 + 40;
+
+static float vol_ending_song = 15;
+static uint8_t next_prev_song = 0; //0: nothing; 1: next_song; 2: prev_song
 /******************************************************************************
 
  ******************************************************************************/
@@ -174,13 +181,6 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 	// Apply audio effects
 	EQ_Apply(effects_in, effects_out);
 
-	// Bypass EQ_Apply por testing (EQ_Apply broken)
-	uint32_t i;
-	for (i = 0; i < BUFFER_SIZE; i++)
-	{
-		effects_out[i] = effects_in[i];
-	}
-
 	// Apply volume and
 	// Scale to 12 bits, to fit in the DAC
 	coef = (vol * 1.0) / MAX_VOLUME;
@@ -189,16 +189,53 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 		processedAudioBuffer[index] = (effects_out[index]*coef+1)*2048;
 	}
 
-	// Complete the rest of the buffer with 0V
+	// Complete the rest of the buffer with the last value
 	if (res == DECODER_END_OF_FILE)
 	{
+		uint16_t last_value = processedAudioBuffer[(numOfSamples / numOfChannels) - 1] ;
 		for (uint32_t index = (numOfSamples / numOfChannels); index < BUFFER_SIZE ; index++)
 		{
-			processedAudioBuffer[index] = 2048;
+			processedAudioBuffer[index] = last_value;
 		}
 
 		push_Queue_Element(NEXT_SONG_EV);
 
+	}
+
+	// This makes a fading effect if the user wants to change song
+	if(next_prev_song == 1)
+	{
+		vol_ending_song -= 0.4;
+		coef = ((vol_ending_song) * 1.0) / MAX_VOLUME;
+		for (index = 0; index < BUFFER_SIZE; index++)
+		{
+			processedAudioBuffer[index] = (effects_out[index]*coef+1)*2048;
+		}
+
+		if(vol_ending_song < 0)
+		{
+			next_prev_song = 0;
+			mp3Handler_selectNextSong();
+		}
+	}
+	else if(next_prev_song == 2)
+	{
+		vol_ending_song -= 0.4;
+		coef = ((vol_ending_song) * 1.0) / MAX_VOLUME;
+		for (index = 0; index < BUFFER_SIZE; index++)
+		{
+			processedAudioBuffer[index] = (effects_out[index]*coef+1)*2048;
+		}
+
+		if(vol_ending_song < 0)
+		{
+			next_prev_song = 0;
+			mp3Handler_selectPreviousSong();
+		}
+	}
+	else
+	{
+		vol_ending_song = vol;
 	}
 
 	// Compute FFT and set the vumeter
@@ -243,8 +280,12 @@ void mp3Handler_updateAll(void)
 	mp3Handler_showFFT();
 }
 
-
 void mp3Handler_playNextSong(void)
+{
+	next_prev_song = 1;
+}
+
+static void mp3Handler_selectNextSong(void)
 {
 	mp3Handler_nextMP3File();
 
@@ -256,8 +297,12 @@ void mp3Handler_playNextSong(void)
 
 }
 
-
 void mp3Handler_playPreviousSong(void)
+{
+	next_prev_song = 2;
+}
+
+static void mp3Handler_selectPreviousSong(void)
 {
 	mp3Handler_prevMP3File();
 

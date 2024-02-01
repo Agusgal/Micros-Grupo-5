@@ -125,7 +125,7 @@ void AudioPlayer_Init(void)
 
 	for(uint8_t i = 0; i < DAC_DATL_COUNT; i++)
 	{
-		muteAudioBuffer[i] = 0;
+		muteAudioBuffer[i] = DAC_ZERO_VOLT_VALUE;
 	}
 
 	// Initialize DMAMUX.

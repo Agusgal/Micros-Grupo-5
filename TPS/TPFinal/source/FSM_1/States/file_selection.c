@@ -97,6 +97,10 @@ void FileSelection_SelectFile(void)
 		push_Queue_Element(FILE_SELECTED_EV);
 		return;
 	}
+	else
+	{
+		printFileInfo();
+	}
 }
 
 
