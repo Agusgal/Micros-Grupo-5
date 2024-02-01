@@ -494,6 +494,7 @@ static void shiftPageLeft(uint8_t page, uint8_t scale)
 	index++;
 }
 
+
 static void toggleRoll()
 {
 	roll = !roll;

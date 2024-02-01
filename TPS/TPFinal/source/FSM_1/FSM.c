@@ -166,8 +166,6 @@ state EQUALIZER_STATE[] =
  ******************************************************************************/
 
 
-
-
 state* fsm_dispatcher(state* p_state, Event_Type curr_event)
 {
 	bool flag = 1;
@@ -192,7 +190,6 @@ state* fsm_dispatcher(state* p_state, Event_Type curr_event)
 }
 
 
-
 state* get_initial_state()
 {
 	return INIT_STATE;
@@ -214,6 +211,8 @@ static void pass(void)
 {
 
 }
+
+
 
 
 /*******************************************************************************

@@ -5,15 +5,13 @@
  ******************************************************************************/
 
 /*
- * todo:	-Hacer andar el OLED con el scroll
+ * todo:	- Hacer andar el OLED con el scroll
  *
  *			- Agregar que se pueda cambiar de efectos desde reproduccion de sonido
  *
  *			- Al volver para atras desde audio player arreglar programa que se cuelga.
  *
  * 			- Testear estado de efectos, en especial banda customizada
- *			- Testear/debuguear matriz OLED
- *
  *
  *			- Poder salir de la carpeta, al estar reproduciendo
  *			(dar opción de navegar mientras se reproduce una canción)
