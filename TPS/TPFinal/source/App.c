@@ -9,6 +9,8 @@
  *
  *			- Agregar que se pueda cambiar de efectos desde reproduccion de sonido
  *
+ *			- Al volver para atras desde audio player arreglar programa que se cuelga.
+ *
  * 			- Testear estado de efectos, en especial banda customizada
  *			- Testear/debuguear matriz OLED
  *
