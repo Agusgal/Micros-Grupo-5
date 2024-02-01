@@ -374,7 +374,6 @@ static int OLED_Render_Scroll_Char(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, i
 }
 
 
-
 void OLED_Set_Text (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, uint8_t Scale)
 {
 	uint16_t Cont;
@@ -404,6 +403,7 @@ void OLED_Set_Text (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, ui
 	}
 }
 
+
 void OLED_Copy_Image(const uint8_t *Img, uint16_t size)
 {
 
@@ -417,10 +417,12 @@ void OLED_Copy_Image(const uint8_t *Img, uint16_t size)
 	}
 }
 
+
 bool OLEDisInit()
 {
 	return isInit;
 }
+
 
 void OLED_write_Text(uint8_t X_axis, uint8_t Y_axis, char* String)
 {
@@ -436,9 +438,9 @@ void OLED_write_Text(uint8_t X_axis, uint8_t Y_axis, char* String)
 	OLED_Set_Text(X_axis, Y_axis, kOLED_Pixel_Set, screenString, 2);
 }
 
+
 static void rollCLB(void)
 {
-
 	size_t count;
 	if (I2C_MasterTransferGetCount(I2C0, &handle, &count) != kStatus_Success)
 	{
@@ -453,6 +455,7 @@ static void rollCLB(void)
 		OLED_Refresh();
 		start = false;
 	}
+
 
 	if(roll)
 	{
@@ -474,7 +477,7 @@ static void shiftPageLeft(uint8_t page, uint8_t scale)
 	int strLength = strlen(screenString);
 
 	//todo: cambiar logica para que el scroll sea completo.
-	if (index > (6 * scale * strLength))
+	if ((index > (5 * scale * strLength) ) || index > OLED_WIDTH * 8)
 	{
 		index = 0;
 	}
