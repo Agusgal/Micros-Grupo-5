@@ -3,9 +3,10 @@
   @brief    Application functions
   @author   Grupo 5
  ******************************************************************************/
+
 /*
- * todo:	-Hacer andar el display con el scroll
- * 			-(ver lo de i2c y que no sea bloqueante)
+ * todo:	-Hacer andar el OELD con el scroll
+ *
  *
  *			- Poder salir de la carpeta, al estar reproduciendo
  *			(dar opción de navegar mientras se reproduce una canción)
@@ -18,7 +19,8 @@
  * 			- Previous song, si se presiona 2 veces en 3 segundos, vaya a la canción anterior
  * 				En caso contrario, vuelva a reproducir la canción actual
  *
- *
+ *			- Testear estado de efectos
+ *			- Testear/debuguear matriz OLED
  *
  */
 

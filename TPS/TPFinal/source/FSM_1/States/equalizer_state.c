@@ -102,7 +102,6 @@ static void showCustomBandSetting(void);
 
 void Effects_InitState(void)
 {
-	OLED_Clear();
 	showTitle();
 	currentOptionIndex = 0;
 }
