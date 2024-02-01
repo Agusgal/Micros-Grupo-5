@@ -3,9 +3,15 @@
   @brief    Application functions
   @author   Grupo 5
  ******************************************************************************/
+
 /*
- * todo:	-Hacer andar el display con el scroll
- * 			-(ver lo de i2c y que no sea bloqueante)
+ * todo:	-Hacer andar el OLED con el scroll
+ *
+ *			- Agregar que se pueda cambiar de efectos desde reproduccion de sonido
+ *
+ * 			- Testear estado de efectos, en especial banda customizada
+ *			- Testear/debuguear matriz OLED
+ *
  *
  *			- Poder salir de la carpeta, al estar reproduciendo
  *			(dar opción de navegar mientras se reproduce una canción)
@@ -13,11 +19,8 @@
  *			- Hacer que al pasar de canción, o terminar la canción, el buffer quede con el último
  *			valor escrito (para evitar el sonido entre canciones)
  *
- *			- Al terminar una canción, pasó que se crashea el programa
- *
- * 			- Previous song, si se presiona 2 veces en 3 segundos, vaya a la canción anterior
+ *			- Previous song, si se presiona 2 veces en 3 segundos, vaya a la canción anterior
  * 				En caso contrario, vuelva a reproducir la canción actual
- *
  *
  *
  */
@@ -127,6 +130,7 @@ void App_Init (void)
 
 	//todo: Daytime Init
 
+
 	//Init Encoder
 	Encoder_Init();
 
@@ -137,10 +141,8 @@ void App_Init (void)
 	gpioMode(TP2,OUTPUT);
 
 
-
 	//Init fsm
 	current_state = get_initial_state();
-	start_fsm();
 }
 
 

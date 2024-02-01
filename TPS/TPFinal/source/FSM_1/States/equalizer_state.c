@@ -102,7 +102,6 @@ static void showCustomBandSetting(void);
 
 void Effects_InitState(void)
 {
-	OLED_Clear();
 	showTitle();
 	currentOptionIndex = 0;
 }
@@ -187,6 +186,7 @@ void Effects_SelectOption(void)
     else
     {
     	OLED_Clear();
+    	//Set custom effect, todo: como funciona esto xd?
         if (currentOptionIndex == OPTIONS_COUNT - 1)
         {
         	settingCustom = true;
@@ -220,28 +220,19 @@ void Effects_Back(void)
 	}
 }
 
-void Effects_SetEffect(char option)
-{
-	/*
-	currentOptionIndex = option;
-	for (int i = 0; i < OPTION_VALUES_ARRAY_SIZE; i++)
-	{
-		equalizer_set_band_gain(i+1, optionValues[currentOptionIndex][i]);
-	}
-	*/
-}
-
 
 void Equalizer_MP3_UpdateAll(void)
 {
 	mp3Handler_updateAll();
 }
 
+
 /*******************************************************************************
  *******************************************************************************
                         LOCAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
+
 static void showTitle(void)
 {
 	OLED_Clear();
@@ -265,6 +256,7 @@ static void userInteractionStopsTitle(void)
 	titleTimerID = -1;
 	stopShowingTitle();
 }
+
 
 static void showCustomBandSetting(void)
 {

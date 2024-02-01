@@ -46,6 +46,5 @@ void Effects_Back(void);
 
 void Equalizer_MP3_UpdateAll(void);
 
-void Effects_SetEffect(char option);
 
 #endif /* EFFECTS_STATE_H */

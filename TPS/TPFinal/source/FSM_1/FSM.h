@@ -75,13 +75,6 @@ state* fsm_dispatcher(state* p_state, Event_Type curr_event);
 state* get_initial_state(void);
 
 
-//TODO: revisar si esta funcion va aca o podria estar en otro archivo u ordenada de otra manera.
-/**
- * @brief function executed at the beginning of the fsm.
- * @return nothing.
- */
-void start_fsm(void);
-
 
 /*******************************************************************************
  ******************************************************************************/

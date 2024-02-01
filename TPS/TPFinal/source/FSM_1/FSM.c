@@ -110,8 +110,8 @@ state AUDIO_PLAYER_STATE[] =
 		{Player_IncVolume, ENCODER_RIGHT_EV, AUDIO_PLAYER_STATE},
 		{Player_DecVolume, ENCODER_LEFT_EV, AUDIO_PLAYER_STATE},
 
-		//Apagar con long key press
-		{Idle_InitState, ENCODER_LKP_EV, IDLE_STATE},
+		//Con long key press pongo efectos, todo: chequear funcionamiento, pausas, etc
+		{Effects_InitState, ENCODER_LKP_EV, EQUALIZER_STATE},
 
 		//SD
 		{Idle_InitState, SD_OUT_EV, IDLE_STATE},
@@ -131,12 +131,12 @@ state EQUALIZER_STATE[] =
 {
 		//Buttons
 		{Effects_SelectOption, PLAYPAUSE_EV, EQUALIZER_STATE},
-		{Effects_Back, STOP_EV, EQUALIZER_STATE},
+		//{Effects_Back, STOP_EV, EQUALIZER_STATE},
 		{Effects_NextOption, NEXT_EV, EQUALIZER_STATE},
 		{Effects_PreviousOption, PREV_EV, EQUALIZER_STATE},
 
-		//Encoder
-		{Player_InitState, ENCODER_PRESS_EV, AUDIO_PLAYER_STATE},
+		//Encoder, if pressed go back to file selection
+		{FileSelection_InitState, ENCODER_PRESS_EV, FILE_SELECT_STATE},
 		{Effects_NextOption, ENCODER_RIGHT_EV, EQUALIZER_STATE},
 		{Effects_PreviousOption, ENCODER_LEFT_EV, EQUALIZER_STATE},
 
@@ -146,7 +146,9 @@ state EQUALIZER_STATE[] =
 		//SD
 		{Idle_InitState, TIMEOUT_EV, IDLE_STATE},
 		{Idle_InitState, SD_OUT_EV, IDLE_STATE},
-		{Player_InitState, CHANGE_MODE_EV, AUDIO_PLAYER_STATE},
+
+		//Change mode if selected
+		{FileSelection_InitState, CHANGE_MODE_EV, FILE_SELECT_STATE},
 
 		//Audio
 		{Equalizer_MP3_UpdateAll, FILL_BUFFER_EV, EQUALIZER_STATE},
@@ -194,13 +196,6 @@ state* fsm_dispatcher(state* p_state, Event_Type curr_event)
 state* get_initial_state()
 {
 	return INIT_STATE;
-}
-
-
-
-void start_fsm()
-{
-	//welcome_animation();
 }
 
 
