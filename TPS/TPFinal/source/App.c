@@ -7,6 +7,7 @@
 /*
  * todo:	-Hacer andar el OLED con el scroll
  *
+ *			- Agregar que se pueda cambair de efectos desde reproduccion de sonido
  *
  * 			- Testear estado de efectos
  *			- Testear/debuguear matriz OLED

@@ -186,6 +186,7 @@ void Effects_SelectOption(void)
     else
     {
     	OLED_Clear();
+    	//Set custom effect, todo: como funciona esto xd?
         if (currentOptionIndex == OPTIONS_COUNT - 1)
         {
         	settingCustom = true;

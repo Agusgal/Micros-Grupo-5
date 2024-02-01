@@ -131,7 +131,7 @@ state EQUALIZER_STATE[] =
 {
 		//Buttons
 		{Effects_SelectOption, PLAYPAUSE_EV, EQUALIZER_STATE},
-		{Effects_Back, STOP_EV, EQUALIZER_STATE},
+		//{Effects_Back, STOP_EV, EQUALIZER_STATE},
 		{Effects_NextOption, NEXT_EV, EQUALIZER_STATE},
 		{Effects_PreviousOption, PREV_EV, EQUALIZER_STATE},
 
