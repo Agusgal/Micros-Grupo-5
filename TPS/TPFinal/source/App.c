@@ -7,7 +7,7 @@
 /*
  * todo:	-Hacer andar el OLED con el scroll
  *
- *			- Agregar que se pueda cambair de efectos desde reproduccion de sonido
+ *			- Agregar que se pueda cambiar de efectos desde reproduccion de sonido
  *
  * 			- Testear estado de efectos, en especial banda customizada
  *			- Testear/debuguear matriz OLED
@@ -18,10 +18,6 @@
  *
  *			- Hacer que al pasar de canción, o terminar la canción, el buffer quede con el último
  *			valor escrito (para evitar el sonido entre canciones)
- *
- *			- Testear estado de efectos
- *			- Testear/debuguear matriz OLED
- *
  *
  *			- Previous song, si se presiona 2 veces en 3 segundos, vaya a la canción anterior
  * 				En caso contrario, vuelva a reproducir la canción actual
