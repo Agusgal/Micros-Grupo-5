@@ -9,7 +9,7 @@
  *
  *			- Agregar que se pueda cambair de efectos desde reproduccion de sonido
  *
- * 			- Testear estado de efectos
+ * 			- Testear estado de efectos, en especial banda customizada
  *			- Testear/debuguear matriz OLED
  *
  *
