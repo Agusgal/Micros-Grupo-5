@@ -180,7 +180,7 @@ void OLED_Set_Pixel (uint8_t X_axis, uint8_t Y_axis, uint8_t SC);
  * @param Y_axis Coordinate in the y axis.
  * @param SC Select between Set or Clear.
  */
-void OLED_Set_Scroll_Pixel (uint8_t X_axis, uint8_t Y_axis, uint8_t SC);
+void OLED_Set_Scroll_Pixel (uint16_t X_axis, uint16_t Y_axis, uint8_t SC);
 
 
 

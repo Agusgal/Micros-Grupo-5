@@ -25,7 +25,7 @@
 
 /*! @brief OLED buffer */
 static uint8_t OLED_Buffer[(OLED_WIDTH * OLED_HEIGHT) / 8];
-static uint8_t OLED_Scroll_Buffer[2][OLED_WIDTH * 16];
+static uint8_t OLED_Scroll_Buffer[2][OLED_WIDTH * 8];
 
 static bool isInit = false;
 int OLEDtimerClbID = -1;
@@ -41,7 +41,7 @@ i2c_master_handle_t handle;
 static void rollCLB(void);
 
 static void shiftPageLeft(uint8_t page, uint8_t Scale);
-static int OLED_Render_Scroll_Char (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, int8_t String, uint8_t Scale);
+static int OLED_Render_Scroll_Char (uint16_t X_axis, uint8_t Y_axis, uint8_t SC, int8_t String, uint8_t Scale);
 static void toggleRoll(void);
 
 
@@ -302,7 +302,7 @@ void OLED_Set_Pixel (uint8_t X_axis, uint8_t Y_axis, uint8_t SC)
 }
 
 
-void OLED_Set_Scroll_Pixel(uint8_t X_axis, uint8_t Y_axis, uint8_t SC)
+void OLED_Set_Scroll_Pixel(uint16_t X_axis, uint16_t Y_axis, uint8_t SC)
 {
 	int page = 0;
 
@@ -323,11 +323,11 @@ void OLED_Set_Scroll_Pixel(uint8_t X_axis, uint8_t Y_axis, uint8_t SC)
 }
 
 
-static int OLED_Render_Scroll_Char(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, int8_t String, uint8_t Scale)
+static int OLED_Render_Scroll_Char(uint16_t X_axis, uint8_t Y_axis, uint8_t SC, int8_t String, uint8_t Scale)
 {
 
 	Y_axis %= 8;
-	uint8_t px, py;
+	uint16_t px, py;
 	uint16_t start_pos;
 
 	if ((X_axis >= OLED_WIDTH * 8))//|| (Y_axis >= 16))
@@ -335,7 +335,7 @@ static int OLED_Render_Scroll_Char(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, i
 		return 1;
 	}
 
-	start_pos = ((uint8_t)String) * 7;			// Characters have a 7 row offset
+	start_pos = ((uint16_t)String) * 7;			// Characters have a 7 row offset
 	for (px = 0; px < 5; px++)
 	{
 		for (py = 0; py < 7; py++)
@@ -383,6 +383,7 @@ void OLED_Set_Text(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, uin
 	{
 		roll = true;
 	}
+
 
 	for (Cont = 0; String[Cont] != '\0'; Cont++)
 	{
