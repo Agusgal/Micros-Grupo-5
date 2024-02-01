@@ -75,12 +75,10 @@ void App_Run_test (void)
 	{
 		// Fetch the sd on conection event
 		mp3Handler_init();
-		mp3Handler_nextObject();
-		mp3Handler_nextObject();
+		mp3Handler_prevObject();
+		mp3Handler_prevObject();
 		// Selecciono canción
-		mp3Handler_nextObject();
-		mp3Handler_nextObject();
-		mp3Handler_nextObject();
+		mp3Handler_selectObject();
 		mp3Handler_selectObject();
 
 		mp3Handler_play();

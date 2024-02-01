@@ -106,7 +106,7 @@ void md_Init(void)
 		EDMA_SetCallback(&g_EDMA_Handle, md_dmaCallback, NULL);
 
 		/* FTM Stuff */ //Init in PTC5
-		PWM_Init(0, FTM_CH_0, FTM_PSC_x1, 2, 4, 4, FTM_lAssertedHigh,
+		PWM_Init(0, FTM_CH_0, FTM_PSC_x1, 2, 1, 4, FTM_lAssertedHigh,
 				FTM_MODULO, LOW_DUTY, FTM_DMA_ON);
 
 		/* Prepare the next transfer */
