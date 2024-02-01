@@ -110,8 +110,8 @@ state AUDIO_PLAYER_STATE[] =
 		{Player_IncVolume, ENCODER_RIGHT_EV, AUDIO_PLAYER_STATE},
 		{Player_DecVolume, ENCODER_LEFT_EV, AUDIO_PLAYER_STATE},
 
-		//Apagar con long key press
-		{Idle_InitState, ENCODER_LKP_EV, IDLE_STATE},
+		//Con long key press pongo efectos, todo: chequear funcionamiento, pausas, etc
+		{Effects_InitState, ENCODER_LKP_EV, EQUALIZER_STATE},
 
 		//SD
 		{Idle_InitState, SD_OUT_EV, IDLE_STATE},
@@ -197,9 +197,6 @@ state* get_initial_state()
 {
 	return INIT_STATE;
 }
-
-
-
 
 
 /*******************************************************************************

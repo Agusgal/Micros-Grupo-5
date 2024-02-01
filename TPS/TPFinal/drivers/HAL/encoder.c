@@ -20,7 +20,7 @@
 
 #define IDLE 0
 #define ENCODER_CALLBACK_PERIOD 20000
-#define FIVE_SECOND_COUNTER 5 * S_TO_US / ENCODER_CALLBACK_PERIOD
+#define FIVE_SECOND_COUNTER 3 * S_TO_US / ENCODER_CALLBACK_PERIOD
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
