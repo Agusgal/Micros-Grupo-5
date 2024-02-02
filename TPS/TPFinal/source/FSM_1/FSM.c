@@ -73,7 +73,7 @@ state FILE_SELECT_STATE[] =
 		{FileSelection_PreviousFile, PREV_EV, FILE_SELECT_STATE},
 
 		//Encoder
-		{Idle_InitState, ENCODER_PRESS_EV, IDLE_STATE},
+		//{Idle_InitState, ENCODER_PRESS_EV, IDLE_STATE},
 		{FileSelection_NextFile, ENCODER_RIGHT_EV, FILE_SELECT_STATE},
 		{FileSelection_PreviousFile, ENCODER_LEFT_EV, FILE_SELECT_STATE},
 
