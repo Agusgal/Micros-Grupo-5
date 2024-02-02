@@ -105,7 +105,7 @@ state AUDIO_PLAYER_STATE[] =
 		{Player_PlayNextSong, NEXT_EV, AUDIO_PLAYER_STATE},
 		{Player_PlayPreviousSong, PREV_EV, AUDIO_PLAYER_STATE},
 
-		//Encoder, todo: check press return play/pause etc...
+		//Encoder
 		{FileSelection_ReturnState, ENCODER_PRESS_EV, FILE_SELECT_STATE},
 		{Player_IncVolume, ENCODER_RIGHT_EV, AUDIO_PLAYER_STATE},
 		{Player_DecVolume, ENCODER_LEFT_EV, AUDIO_PLAYER_STATE},
@@ -171,8 +171,6 @@ state EQUALIZER_FROM_PLAYER_STATE[] =
 		{Effects_NextOption, ENCODER_RIGHT_EV, EQUALIZER_FROM_PLAYER_STATE},
 		{Effects_PreviousOption, ENCODER_LEFT_EV, EQUALIZER_FROM_PLAYER_STATE},
 
-		//Apagar long key press
-		{Idle_InitState, ENCODER_LKP_EV, IDLE_STATE},
 
 		//SD
 		{Idle_InitState, TIMEOUT_EV, IDLE_STATE},
