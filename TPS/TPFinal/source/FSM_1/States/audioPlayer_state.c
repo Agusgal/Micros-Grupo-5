@@ -127,7 +127,7 @@ static void printFileInfo(void)
 
 	strcat(gather, "Song: ");
 	strcat(gather, name);
-	strcat(gather, "Artist: ");
+	strcat(gather, " Artist: ");
 	strcat(gather, artist);
 	strcat(gather, " Album: ");
 	strcat(gather, album);
