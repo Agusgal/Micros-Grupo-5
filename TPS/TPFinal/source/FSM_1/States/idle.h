@@ -3,17 +3,20 @@
   @brief    Idle state
   @author   Grupo 5 - Lab de Micros
  ******************************************************************************/
+
 #ifndef IDLE_STATE_H
 #define IDLE_STATE_H
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
+
 #include <stdint.h>
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
+
 /**
  * @brief Initializes the idle state
  */
@@ -24,6 +27,6 @@ void Idle_InitState(void);
  */
 void Idle_OnUserInteraction(void);
 
-void Idle_UpdateTime(void);
+void UpdateTime(void);
 
 #endif /* IDLE_STATE_H */
