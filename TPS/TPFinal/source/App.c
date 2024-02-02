@@ -6,7 +6,7 @@
 
 /*
  * todo:
- *			- Cuando vuelvo a IDLE desde cualquier lado se rompe, DeInit volviendo a idle parece que rompe el programa.
+ *			- Cuando vuelvo a IDLE se rompe, la unic amanera de volver a IDLE es sacando la SD. ARREGLAR
  *
  *			- En audioplayer al cambiar volumen no se actualiza el valor del mismo en pantalla.
  *
@@ -16,6 +16,8 @@
  *			- Previous song, si se presiona 2 veces en 3 segundos, vaya a la canción anterior
  * 				En caso contrario, vuelva a reproducir la canción actual.
  *
+ *			- Hay un bug turbio cuando hacemos long key press al mismo tiempo que esta modificando volumen, NO HACERLO
+ *			despues de un rato por alguna razon va a efectos.
  *
  */
 
