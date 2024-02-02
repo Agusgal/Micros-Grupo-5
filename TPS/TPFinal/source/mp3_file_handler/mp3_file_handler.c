@@ -208,7 +208,7 @@ MP3Object_t mp3Files_GetPreviousObject(MP3Object_t currentObject)
 	if(currentObject.object_type == DIRECTORY || currentObject.object_type == RETURN_DIR)
 	{
 		// If the current Object is a directory
-		if (previousObjectIndex == 0)
+		if (currentObject.index == 0)
 		{
 			// If the next index is out of range, go to the songs list
 			previousObjectIndex = songsCounter;
@@ -232,7 +232,7 @@ MP3Object_t mp3Files_GetPreviousObject(MP3Object_t currentObject)
 	}
 	else
 	{
-		if (previousObjectIndex == 0)
+		if (currentObject.index == 0)
 		{
 			// If the next index is out of range, go to the directories
 			return current_directories[directoriesCounter-1];
@@ -249,7 +249,7 @@ MP3Object_t mp3Files_GetPreviousObject(MP3Object_t currentObject)
 MP3Object_t mp3Files_GetPreviousMP3File(MP3Object_t currentObject)
 {
 	unsigned int previousObjectIndex = currentObject.index - 1;
-	if (previousObjectIndex == 0)
+	if (currentObject.index == 0)
 	{
 		previousObjectIndex = songsCounter-1;
 	}
