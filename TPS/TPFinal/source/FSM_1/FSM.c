@@ -67,20 +67,20 @@ state IDLE_STATE[] =
 
 state FILE_SELECT_STATE[] =
 {
-		//moving through files
+		//Buttons
 		{FileSelection_SelectFile, PLAYPAUSE_EV, FILE_SELECT_STATE},
 		{FileSelection_NextFile, NEXT_EV, FILE_SELECT_STATE},
 		{FileSelection_PreviousFile, PREV_EV, FILE_SELECT_STATE},
 
 		//Encoder
-		{Effects_InitState, ENCODER_PRESS_EV, EQUALIZER_STATE},
+		{Idle_InitState, ENCODER_PRESS_EV, IDLE_STATE},
 		{FileSelection_NextFile, ENCODER_RIGHT_EV, FILE_SELECT_STATE},
 		{FileSelection_PreviousFile, ENCODER_LEFT_EV, FILE_SELECT_STATE},
 
-		//Turn off/Reset
-		{Idle_InitState, ENCODER_LKP_EV, IDLE_STATE},
+		//Go to equalizer
+		{Effects_InitState, ENCODER_LKP_EV, EQUALIZER_FROM_FILES_STATE},
 
-		//SD
+		//SD todo: hay que reiniciar EVERYTHING
 		{Idle_InitState, SD_OUT_EV, IDLE_STATE},
 		{Idle_InitState, TIMEOUT_EV, IDLE_STATE},
 
@@ -101,17 +101,17 @@ state AUDIO_PLAYER_STATE[] =
 {
 		//Buttons
 		{Player_ToggleMusic, PLAYPAUSE_EV, AUDIO_PLAYER_STATE},
-		{Player_Stop, STOP_EV, AUDIO_PLAYER_STATE},
+		//{Player_Stop, STOP_EV, AUDIO_PLAYER_STATE},
 		{Player_PlayNextSong, NEXT_EV, AUDIO_PLAYER_STATE},
 		{Player_PlayPreviousSong, PREV_EV, AUDIO_PLAYER_STATE},
 
-		//Encoder
+		//Encoder, todo: check press return play/pause etc...
 		{FileSelection_InitState, ENCODER_PRESS_EV, FILE_SELECT_STATE},
 		{Player_IncVolume, ENCODER_RIGHT_EV, AUDIO_PLAYER_STATE},
 		{Player_DecVolume, ENCODER_LEFT_EV, AUDIO_PLAYER_STATE},
 
-		//Con long key press pongo efectos, todo: chequear funcionamiento, pausas, etc
-		{Effects_InitState, ENCODER_LKP_EV, EQUALIZER_STATE},
+		//Go to equalizer
+		{Effects_InitState, ENCODER_LKP_EV, EQUALIZER_FROM_PLAYER_STATE},
 
 		//SD
 		{Idle_InitState, SD_OUT_EV, IDLE_STATE},
@@ -127,18 +127,17 @@ state AUDIO_PLAYER_STATE[] =
 };
 
 
-state EQUALIZER_STATE[] =
+state EQUALIZER_FROM_FILES_STATE[] =
 {
 		//Buttons
-		{Effects_SelectOption, PLAYPAUSE_EV, EQUALIZER_STATE},
-		//{Effects_Back, STOP_EV, EQUALIZER_STATE},
-		{Effects_NextOption, NEXT_EV, EQUALIZER_STATE},
-		{Effects_PreviousOption, PREV_EV, EQUALIZER_STATE},
+		{Effects_SelectOption, PLAYPAUSE_EV, EQUALIZER_FROM_FILES_STATE},
+		{Effects_NextOption, NEXT_EV, EQUALIZER_FROM_FILES_STATE},
+		{Effects_PreviousOption, PREV_EV, EQUALIZER_FROM_FILES_STATE},
 
 		//Encoder, if pressed go back to file selection
 		{FileSelection_InitState, ENCODER_PRESS_EV, FILE_SELECT_STATE},
-		{Effects_NextOption, ENCODER_RIGHT_EV, EQUALIZER_STATE},
-		{Effects_PreviousOption, ENCODER_LEFT_EV, EQUALIZER_STATE},
+		{Effects_NextOption, ENCODER_RIGHT_EV, EQUALIZER_FROM_FILES_STATE},
+		{Effects_PreviousOption, ENCODER_LEFT_EV, EQUALIZER_FROM_FILES_STATE},
 
 		//Apagar long key press
 		{Idle_InitState, ENCODER_LKP_EV, IDLE_STATE},
@@ -151,12 +150,46 @@ state EQUALIZER_STATE[] =
 		{FileSelection_InitState, CHANGE_MODE_EV, FILE_SELECT_STATE},
 
 		//Audio
-		{Equalizer_MP3_UpdateAll, FILL_BUFFER_EV, EQUALIZER_STATE},
-		{FileSelection_PlayNextSong, NEXT_SONG_EV, EQUALIZER_STATE},
-		{FileSelection_PlayPrevSong, PREV_SONG_EV, EQUALIZER_STATE},
+		{Equalizer_MP3_UpdateAll, FILL_BUFFER_EV, EQUALIZER_FROM_FILES_STATE},
+		{FileSelection_PlayNextSong, NEXT_SONG_EV, EQUALIZER_FROM_FILES_STATE},
+		{FileSelection_PlayPrevSong, PREV_SONG_EV, EQUALIZER_FROM_FILES_STATE},
 
-		{pass, END_TABLE, EQUALIZER_STATE}
+		{pass, END_TABLE, EQUALIZER_FROM_FILES_STATE}
 };
+
+
+
+state EQUALIZER_FROM_PLAYER_STATE[] =
+{
+		//Buttons
+		{Effects_SelectOption, PLAYPAUSE_EV, EQUALIZER_FROM_PLAYER_STATE},
+		//{Effects_Back, STOP_EV, EQUALIZER_STATE},
+		{Effects_NextOption, NEXT_EV, EQUALIZER_FROM_PLAYER_STATE},
+		{Effects_PreviousOption, PREV_EV, EQUALIZER_FROM_PLAYER_STATE},
+
+		//Encoder, if pressed go back to file selection
+		{Player_InitState, ENCODER_PRESS_EV, AUDIO_PLAYER_STATE},
+		{Effects_NextOption, ENCODER_RIGHT_EV, EQUALIZER_FROM_PLAYER_STATE},
+		{Effects_PreviousOption, ENCODER_LEFT_EV, EQUALIZER_FROM_PLAYER_STATE},
+
+		//Apagar long key press
+		{Idle_InitState, ENCODER_LKP_EV, IDLE_STATE},
+
+		//SD
+		{Idle_InitState, TIMEOUT_EV, IDLE_STATE},
+		{Idle_InitState, SD_OUT_EV, IDLE_STATE},
+
+		//Change mode if selected
+		{Player_InitState, CHANGE_MODE_EV, AUDIO_PLAYER_STATE},
+
+		//Audio
+		{Equalizer_MP3_UpdateAll, FILL_BUFFER_EV, EQUALIZER_FROM_PLAYER_STATE},
+		{FileSelection_PlayNextSong, NEXT_SONG_EV, EQUALIZER_FROM_PLAYER_STATE},
+		{FileSelection_PlayPrevSong, PREV_SONG_EV, EQUALIZER_FROM_PLAYER_STATE},
+
+		{pass, END_TABLE, EQUALIZER_FROM_PLAYER_STATE}
+};
+
 
 
 /*******************************************************************************
