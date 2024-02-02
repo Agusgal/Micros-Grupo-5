@@ -5,25 +5,16 @@
  ******************************************************************************/
 
 /*
- * todo:	- Cuando seleccionas efecto desde audioplayer se rompe el sonido.
+ * todo:
+ *			- Cuando vuelvo a IDLE desde cualquier lado se rompe, DeInit volviendo a idle parece que rompe el programa.
  *
- *			- Cuando vuelvo a IDLE desde File System se rompe.
- *
- *			- En audioplayer al cambiar volumen no se actualiza el valor del mismo en pantalla
- *
- *			- Bug cuando se sube el volumen
- *
- *			- Poner en ingles el texto de printfileinfo
- *
- *			- Subir frecuencia de encoder
- *
- *			- DeInit volviendo a idle parece que rompe el programa
+ *			- En audioplayer al cambiar volumen no se actualiza el valor del mismo en pantalla.
  *
  *			- Hacer que al pasar de canción, o terminar la canción, el buffer quede con el último
- *			valor escrito (para evitar el sonido entre canciones)
+ *			valor escrito (para evitar el sonido entre canciones).
  *
  *			- Previous song, si se presiona 2 veces en 3 segundos, vaya a la canción anterior
- * 				En caso contrario, vuelva a reproducir la canción actual
+ * 				En caso contrario, vuelva a reproducir la canción actual.
  *
  *
  */
@@ -149,7 +140,6 @@ void App_Init (void)
 	//Init fsm
 	current_state = get_initial_state();
 }
-
 
 
 /* Función que se llama constantemente en un ciclo infinito */

@@ -124,17 +124,17 @@ static void printFileInfo(void)
 	char * album = mp3Handler_getAlbum();
 	char * year = mp3Handler_getYear();
 
-	strcat(gather, "Artista: ");
+
+	strcat(gather, "Song: ");
+	strcat(gather, name);
+	strcat(gather, "Artist: ");
 	strcat(gather, artist);
 	strcat(gather, " Album: ");
 	strcat(gather, album);
 	strcat(gather, " Year: ");
 	strcat(gather,  year);
 
-	//char * gather[] = {"Artista: ", artist, " Album: ", album, " Year: ", year};
 
-
-	//todo: arreglar esto con funciones de OLED que anden bien.
 	memcpy(path, name, strlen(name));
 
 	OLED_Clear();
