@@ -235,7 +235,7 @@ void Equalizer_MP3_UpdateAll(void)
 static void showTitle(void)
 {
 	OLED_Clear();
-	OLED_write_Text(22, 22, "Efectos");
+	OLED_write_Text(22, 15, "Efectos");
 
 	showingTitle = true;
 	titleTimerID = Timer_AddCallback(&stopShowingTitle, TITLE_TIME, true);
@@ -276,22 +276,22 @@ static void setCurrentOption(void)
     switch (currentOptionIndex)
     {
     case DEFAULT:
-    	OLED_write_Text(22, 22, "DEFAULT         ");
+    	OLED_write_Text(22, 22, "DEFAULT");
 		break;
     case ROCK:
-    	OLED_write_Text(22, 22, "ROCK         ");
+    	OLED_write_Text(22, 22, "ROCK");
         break;
     case JAZZ:
-    	OLED_write_Text(22, 22, "JAZZ         ");
+    	OLED_write_Text(22, 22, "JAZZ");
         break;
     case POP:
-    	OLED_write_Text(22, 22, "POP         ");
+    	OLED_write_Text(22, 22, "POP");
         break;
     case CLASSIC:
-    	OLED_write_Text(22, 22, "CLASSIC         ");
+    	OLED_write_Text(22, 22, "CLASSIC");
 		break;
     case CUSTOM:
-    	OLED_write_Text(22, 22, "CUSTOM         ");
+    	OLED_write_Text(22, 22, "CUSTOM");
 		break;
     }
 }

@@ -7,6 +7,8 @@
 /*
  * todo:	- Cuando seleccionas efecto desde audioplayer se rompe el sonido.
  *
+ *			- Cuando vuelvo a IDLE desde File System se rompe.
+ *
  *			- Al volver para atras desde audio player arreglar programa que se cuelga.
  *
  *			- Poder salir de la carpeta, al estar reproduciendo

@@ -21,6 +21,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
+
 //TODO: reubicar este define en un lugar mas apropiado
 #define END_TABLE 0xFF
 
@@ -52,9 +53,6 @@ extern state AUDIO_PLAYER_STATE[];
 extern state EQUALIZER_STATE[];
 extern state EQUALIZER_FROM_PLAYER_STATE[];
 extern state EQUALIZER_FROM_FILES_STATE[];
-
-
-
 
 
 /*******************************************************************************

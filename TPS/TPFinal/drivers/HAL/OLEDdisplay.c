@@ -42,7 +42,6 @@ static void rollCLB(void);
 
 static void shiftPageLeft(uint8_t page, uint8_t Scale);
 static int OLED_Render_Scroll_Char (uint16_t X_axis, uint8_t Y_axis, uint8_t SC, int8_t String, uint8_t Scale);
-static void toggleRoll(void);
 
 static uint32_t stringLength = 0;
 static int index = 0;
@@ -236,8 +235,11 @@ void OLED_Init(void)
 
 	//Configure start message with roll ON
 	isInit = true;
-	screenString = "WELCOME!WELCOME!WELCOME!WELCOME!";
-	toggleRoll();
+
+	screenString = "WELCOME! ABCDE! FGHI! JKLMN!";
+	OLED_Set_Text(10, 32, kOLED_Pixel_Set, screenString, 2);
+	OLED_Refresh();
+
 
 	OLEDtimerClbID = Timer_AddCallback(rollCLB, 20, false); // 15 es bastante rapido.
 }
@@ -473,15 +475,6 @@ static void rollCLB(void)
 	}
 
 
-	static bool start = true;
-	if (start)
-	{
-		OLED_Set_Text(10, 32, kOLED_Pixel_Set, screenString, 2);
-		OLED_Refresh();
-		start = false;
-	}
-
-
 	if(roll)
 	{
 		shiftPageLeft(4, 2);
@@ -527,11 +520,6 @@ static void shiftPageLeft(uint8_t page, uint8_t scale)
 	index++;
 }
 
-
-static void toggleRoll()
-{
-	roll = !roll;
-}
 
 
 
