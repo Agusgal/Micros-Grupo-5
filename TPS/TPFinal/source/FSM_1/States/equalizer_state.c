@@ -271,7 +271,7 @@ static void showCustomBandSetting(void)
 	int writtenChars = sprintf(bandGainText, "%ddB", currentBandValue);
 	bandGainText[writtenChars] = ' ';
 
-	OLED_write_Text(22, 32, frequencyBandsTitles[currentBand]);
+	OLED_write_Text(22, 32, bandGainText);
 }
 
 
