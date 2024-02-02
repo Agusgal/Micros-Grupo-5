@@ -453,11 +453,14 @@ void OLED_write_Text(uint8_t X_axis, uint8_t Y_axis, char* String)
 		roll = true;
 		stringLength = strLength;
 		index = 0;
+		screenString = String;
+	}
+	else
+	{
+		roll = false;
 	}
 
-	screenString = String;
-
-	OLED_Set_Text(X_axis, Y_axis, kOLED_Pixel_Set, screenString, 2);
+	OLED_Set_Text(X_axis, Y_axis, kOLED_Pixel_Set, String, 2);
 }
 
 
@@ -495,23 +498,31 @@ static void shiftPageLeft(uint8_t page, uint8_t scale)
 {
 	int startIndex = page * OLED_WIDTH;
 
-
-	if ((index > (5 * scale * stringLength) ) || (index > OLED_WIDTH * 8))
+	// Make the string come back
+	if ((index > (int)(5 * scale * (stringLength + 1)) ) || (index > (int)(OLED_WIDTH * 8)))
 	{
-		index = 0;
+		index = - OLED_WIDTH - OLED_WIDTH / 10;
 	}
 
 
 	for (int i = 0; i < OLED_WIDTH; i++)
 	{
-		OLED_Buffer[startIndex + i] = OLED_Scroll_Buffer[0][i + index];
+		if((i + index) >= 0 && (i + index) < OLED_WIDTH * 8)
+		{
+			OLED_Buffer[startIndex + i] = OLED_Scroll_Buffer[0][i + index];
+		}
+
 	}
 
 	startIndex = (page + 1) * OLED_WIDTH;
 	for (int i = 0; i < OLED_WIDTH; i++)
 	{
-		OLED_Buffer[startIndex + i] = OLED_Scroll_Buffer[1][i + index];
+		if((i + index) >= 0 && (i + index) < OLED_WIDTH * 8)
+		{
+			OLED_Buffer[startIndex + i] = OLED_Scroll_Buffer[1][i + index];
+		}
 	}
+
 
 	index++;
 }
