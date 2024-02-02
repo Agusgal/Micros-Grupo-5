@@ -21,13 +21,13 @@
  *					CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-#define NUMBER_BYTES_PER_FRAME 	2560
+#define NUMBER_BYTES_PER_FRAME 	3200
 
 #define BYTES_PER_READ_OPERATION	512
 
 #define DECODER_NORMAL_MODE 0
 
-#define ErrorGettingNextFrameInfo 0
+#define NO_ERROR_INFO 0
 
 #define DEFAULT_ID3 "Unknown"
 
@@ -222,27 +222,37 @@ decoder_result_t MP3Decoder_DecodeFrame	(short* decodedDataBuffer,
             remainingBytes -= offset;
         }
 
+        // If offset is negative, we should continue (maybe the SyncWord is in the next buffer)
+        // Bytes remaining is te variable that analizes this cases
+
         MP3FrameInfo nextFrameInfo;
 
         // Read the next frame information and check that the number of PCM
         // samples do not exceed the
         int err = MP3GetNextFrameInfo(helixDecoder, &nextFrameInfo, mp3FrameBuffer + mp3BufferOut);
-        if (err == ErrorGettingNextFrameInfo)
+
+        if (err == NO_ERROR_INFO)
         {
+        	// If no error, but the number of samples exceedes the output buffer, it is an error
             if (nextFrameInfo.outputSamps > decodedBufferSize)
             {
                 return DECODER_OVERFLOW;
             }
         }
 
+        // If there was an error, maybe the found SYNCWord was not a proper SYNCWord
+        // Continue reading to find the proper SYNCWord
+
         uint8_t* mp3DataStart = mp3FrameBuffer + mp3BufferOut;
         int bytesLeft = mp3BufferIn - mp3BufferOut;
 
-        // DECODE A MP3 FRAME (Finally, what we were here for!)
+        // DECODE A MP3 FRAME (Finally, what we came here for!)
         int res = MP3Decode(helixDecoder, &mp3DataStart, &(bytesLeft), decodedDataBuffer, DECODER_NORMAL_MODE);
 
         if (res == ERR_MP3_NONE)
         {
+        	//If no error
+
             // Calculate the length of the mp3Frame that was decoded
             uint32_t decodedBytes = mp3BufferIn - mp3BufferOut - bytesLeft;
             lastFrameLength = decodedBytes;
@@ -259,26 +269,11 @@ decoder_result_t MP3Decoder_DecodeFrame	(short* decodedDataBuffer,
             *sampleRate = lastFrameInfo.samprate;
             res = DECODER_WORKED;
         }
-
-        // If the file came to the end:
-        else if (res == ERR_MP3_INDATA_UNDERFLOW || res == ERR_MP3_MAINDATA_UNDERFLOW)
-        {
-            if (remainingBytes == 0)
-            {
-                return DECODER_END_OF_FILE;
-            }
-        }
         else
         {
         	// This should be an error
         	// We'll indicate that the file has ended
-
-        	/*if (remainingBytes <= lastFrameLength)
-            {
-                return DECODER_END_OF_FILE;
-            }*/
-
-            return DECODER_END_OF_FILE;
+			return DECODER_END_OF_FILE;
         }
     }
     else

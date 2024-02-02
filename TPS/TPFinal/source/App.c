@@ -8,11 +8,6 @@
  * todo:
  *			- Cuando vuelvo a IDLE se rompe, la unic amanera de volver a IDLE es sacando la SD. ARREGLAR
  *
- *			- En audioplayer al cambiar volumen no se actualiza el valor del mismo en pantalla.
- *
- *			- Hacer que al pasar de canción, o terminar la canción, el buffer quede con el último
- *			valor escrito (para evitar el sonido entre canciones).
- *
  *			- Previous song, si se presiona 2 veces en 3 segundos, vaya a la canción anterior
  * 				En caso contrario, vuelva a reproducir la canción actual.
  *
