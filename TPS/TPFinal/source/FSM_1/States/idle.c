@@ -77,6 +77,7 @@ static void emitStartEv(void);
 void Idle_InitState(void)
 {
 	//DeInit some modules for Initialization
+	//todo: parece que deinit rompe el programa.
 	mp3Handler_deinit();
 
 	//timeCallbackId = Timer_AddCallback(changePowerMode, 1000, true); //Delay until related stuff is finished

@@ -9,10 +9,15 @@
  *
  *			- Cuando vuelvo a IDLE desde File System se rompe.
  *
- *			- Al volver para atras desde audio player arreglar programa que se cuelga.
+ *			- En audioplayer al cambiar volumen no se actualiza el valor del mismo en pantalla
  *
- *			- Poder salir de la carpeta, al estar reproduciendo
- *			(dar opción de navegar mientras se reproduce una canción)
+ *			- Bug cuando se sube el volumen
+ *
+ *			- Poner en ingles el texto de printfileinfo
+ *
+ *			- Subir frecuencia de encoder
+ *
+ *			- DeInit volviendo a idle parece que rompe el programa
  *
  *			- Hacer que al pasar de canción, o terminar la canción, el buffer quede con el último
  *			valor escrito (para evitar el sonido entre canciones)

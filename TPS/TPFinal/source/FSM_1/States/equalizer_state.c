@@ -119,16 +119,20 @@ void Effects_NextOption(void)
     	{
     		currentBandValue = MIN_BAND_GAIN;
     	}
-    	EQ_Set_Band_Gain(currentBand+1, currentBandValue);
+    	EQ_Set_Band_Gain(currentBand + 1, currentBandValue);
     	showCustomBandSetting();
     }
     else
     {
         uint8_t max = OPTIONS_COUNT - 1;
         if (currentOptionIndex == max - 1)
-            currentOptionIndex = 0;
+        {
+        	currentOptionIndex = 0;
+        }
         else
-            currentOptionIndex++;
+        {
+        	currentOptionIndex++;
+        }
         setCurrentOption();
     }
 }
@@ -154,12 +158,15 @@ void Effects_PreviousOption(void)
     {
         uint8_t max = OPTIONS_COUNT - 1;
         if (currentOptionIndex == 0)
-            currentOptionIndex = max - 1;
+        {
+        	currentOptionIndex = max - 1;
+        }
         else
-            currentOptionIndex--;
+        {
+        	currentOptionIndex--;
+        }
         setCurrentOption();
     }
-
 }
 
 void Effects_SelectOption(void)
@@ -260,7 +267,7 @@ static void showCustomBandSetting(void)
 	OLED_Clear();
 	OLED_write_Text(22, 22, frequencyBandsTitles[currentBand]);
 
-	char bandGainText[16] = "                ";
+	char bandGainText[16] = "";
 	int writtenChars = sprintf(bandGainText, "%ddB", currentBandValue);
 	bandGainText[writtenChars] = ' ';
 
