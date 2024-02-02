@@ -210,7 +210,6 @@ void Effects_Back(void)
 	if (settingCustom)
 	{
 		settingCustom = false;
-		//LCD_clearRow(1);
 		setCurrentOption();
 	}
 	else

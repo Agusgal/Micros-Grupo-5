@@ -158,7 +158,6 @@ state EQUALIZER_FROM_FILES_STATE[] =
 };
 
 
-
 state EQUALIZER_FROM_PLAYER_STATE[] =
 {
 		//Buttons

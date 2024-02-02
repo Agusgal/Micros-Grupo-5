@@ -138,9 +138,9 @@ static void printFileInfo(void)
 	memcpy(path, name, strlen(name));
 
 	OLED_Clear();
-	OLED_write_Text(10, 22, (char*)path);
+	OLED_write_Text(10, 16, (char*)path);
 
-	OLED_write_Text(10, 42, gather);
+	OLED_write_Text(10, 32, gather);
 }
 
 

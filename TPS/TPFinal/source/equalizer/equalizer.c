@@ -276,13 +276,12 @@ void EQ_Init(void)
           &biquadStateBandQ31[5][0], 2);
 }
 
+
 /**
  * @brief Sets  equalizer filter gains.
  * @param gain  number in dB with the desired gain of the filter
  * @param band selected band in which to change gain (between 1 and NUMBER_OF_BANDS)
  */
-
-
 void EQ_Set_Band_Gain (int32_t band, int32_t gain)
 {
     if(band < 3 )
@@ -299,6 +298,7 @@ void EQ_Set_Band_Gain (int32_t band, int32_t gain)
     }
 	bandGains[band-1] = gain;
 }
+
 
 /**
  * @brief returns equalizer filter gains.

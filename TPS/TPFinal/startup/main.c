@@ -33,4 +33,3 @@ int main (void)
         App_Run(); /* Program-specific loop  */
 	#endif
 }
-
