@@ -11,15 +11,23 @@
 #include <stdlib.h>
 #include "ff.h"
 
-#define FILE_ARRAY_SIZE 200
+#define FILE_ARRAY_SIZE 		100
 #define FILE_NAME_STRING_SIZE	200
 
 /*******************************************************************************
  * PRIVATE VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
-static MP3Object_t current_objects[FILE_ARRAY_SIZE];
-static unsigned int objectsCounter = 0;
+static MP3Object_t current_directories[FILE_ARRAY_SIZE];
+static unsigned int directoriesCounter = 0;
+
+static MP3Object_t current_songs[FILE_ARRAY_SIZE];
+static unsigned int songsCounter = 0;
+
+static MP3Object_t playing_songs[FILE_ARRAY_SIZE];
+static unsigned int playingSongsCounter = 0;
+
+
 
 /*
  *
@@ -38,7 +46,10 @@ static void getParentDirectory(char* filePath, char* parentDir);
 void mp3Files_Init(void)
 {
 	// Set path in 0
-	objectsCounter = 0;
+	directoriesCounter = 0;
+	songsCounter = 0;
+	playingSongsCounter = 0;
+
 	char path[FILE_NAME_STRING_SIZE] = {0};
 	mp3Files_list_dir("");
 }
@@ -58,46 +69,121 @@ bool mp3Files_isMp3File(char *path)
 }
 
 
-void mp3Files_AddObject(char *path, mp3_object_type_t object_type)
+void mp3Files_AddDirectory(char *path, mp3_object_type_t object_type)
 {
-	strcpy(current_objects[objectsCounter].path, path);
-	current_objects[objectsCounter].index = objectsCounter;
-	current_objects[objectsCounter].object_type = object_type;
-	objectsCounter++;
+	strcpy(current_directories[directoriesCounter].path, path);
+	current_directories[directoriesCounter].index = directoriesCounter;
+	current_directories[directoriesCounter].object_type = object_type;
+	directoriesCounter++;
+}
+
+
+void mp3Files_AddSong(char *path, mp3_object_type_t object_type)
+{
+	strcpy(current_songs[songsCounter].path, path);
+	current_songs[songsCounter].index = songsCounter;
+	current_songs[songsCounter].object_type = object_type;
+	songsCounter++;
+}
+
+
+void mp3Files_AddPlayingSongs(char *path, mp3_object_type_t object_type)
+{
+	strcpy(playing_songs[playingSongsCounter].path, path);
+	playing_songs[playingSongsCounter].index = playingSongsCounter;
+	playing_songs[playingSongsCounter].object_type = object_type;
+	playingSongsCounter++;
 }
 
 
 MP3Object_t mp3Files_GetFirstObject(void)
 {
-	if (objectsCounter == 0)
+	if (directoriesCounter == 0 && songsCounter == 0)
 	{
 		// If there are no objects, including RETURN_DIR, return a NULL_OBJECT
 		MP3Object_t nullFile = {.object_type = NULL_OBJECT, .index = -1, .path = ""};
 		return nullFile;
 	}
-	else if (objectsCounter == 1)
+	else if (directoriesCounter == 1 && songsCounter == 0)
 	{
-		// Return folder to return to previous folder
-		return current_objects[0];
+		// Return folder to return to previous folder if there is only one folder
+		return current_directories[0];
+	}
+	else if(directoriesCounter > 1)
+	{
+		// If there are more than one folder, then the second one is the first directory
+		return current_directories[1];
+	}
+	else if(songsCounter > 0)
+	{
+		// If there are songs, and no first directory, return the first song
+		return current_songs[0];
 	}
 
 	// Return the first object, that is not to return to previous folder
-	return current_objects[1];
+	return current_directories[1];
 }
 
 
 MP3Object_t mp3Files_GetNextObject(MP3Object_t currentObject)
 {
 	unsigned int nextObjectIndex = currentObject.index + 1;
-	if (nextObjectIndex == objectsCounter)
+
+	if(currentObject.object_type == DIRECTORY || currentObject.object_type == RETURN_DIR)
 	{
-		nextObjectIndex = 0;
+		// If the current Object is a directory
+		if (nextObjectIndex == directoriesCounter)
+		{
+			// If the next index is out of range, go to the songs list
+			nextObjectIndex = 0;
+			if (nextObjectIndex == songsCounter)
+			{
+				// If the next index is out of range, return the first directory (no mp3 files)
+				return current_directories[nextObjectIndex];
+			}
+			else
+			{
+				// Return the first song
+				return current_songs[nextObjectIndex];
+			}
+		}
+		else
+		{
+			// If the next index is on range, return the next directory
+			return current_directories[nextObjectIndex];
+		}
+
 	}
-	return current_objects[nextObjectIndex];
+	else
+	{
+		// If the current Object is a song
+		if (nextObjectIndex == songsCounter)
+		{
+			// If the next index is out of range, go to the directories list
+			nextObjectIndex = 0;
+			return current_directories[nextObjectIndex];
+		}
+		else
+		{
+			// If the next index is on range, return the next song
+			return current_songs[nextObjectIndex];
+		}
+	}
 }
 
 
 MP3Object_t mp3Files_GetNextMP3File(MP3Object_t currentObject)
+{
+	unsigned int nextObjectIndex = currentObject.index + 1;
+	if (nextObjectIndex == songsCounter)
+	{
+		nextObjectIndex = 0;
+	}
+	return current_songs[nextObjectIndex];
+}
+
+/*
+MP3Object_t mp3Files_GetNextMP3File2(MP3Object_t currentObject)
 {
 	uint32_t i;
 	unsigned int nextObjectIndex;
@@ -112,21 +198,66 @@ MP3Object_t mp3Files_GetNextMP3File(MP3Object_t currentObject)
 
 	// If no other MP3_FILES
 	return currentObject;
-}
+}*/
 
 
 MP3Object_t mp3Files_GetPreviousObject(MP3Object_t currentObject)
 {
 	unsigned int previousObjectIndex = currentObject.index - 1;
-	if (currentObject.index == 0)
+
+	if(currentObject.object_type == DIRECTORY || currentObject.object_type == RETURN_DIR)
 	{
-		previousObjectIndex = objectsCounter - 1;
+		// If the current Object is a directory
+		if (previousObjectIndex == 0)
+		{
+			// If the next index is out of range, go to the songs list
+			previousObjectIndex = songsCounter;
+			if (previousObjectIndex == 0)
+			{
+				// If the next index is out of range, return the first directory (no mp3 files)
+				return current_directories[directoriesCounter-1]; //TODO: SI FALLA, ES POR EL -1
+			}
+			else
+			{
+				// Return the first song
+				return current_songs[songsCounter-1];
+			}
+		}
+		else
+		{
+			// If the next index is on range, return the next directory
+			return current_directories[previousObjectIndex];
+		}
+
 	}
-	return current_objects[previousObjectIndex];
+	else
+	{
+		if (previousObjectIndex == 0)
+		{
+			// If the next index is out of range, go to the directories
+			return current_directories[directoriesCounter-1];
+		}
+		else
+		{
+			// If the next index is on range, return the next directory
+			return current_songs[previousObjectIndex];
+		}
+	}
 }
 
 
 MP3Object_t mp3Files_GetPreviousMP3File(MP3Object_t currentObject)
+{
+	unsigned int previousObjectIndex = currentObject.index - 1;
+	if (previousObjectIndex == 0)
+	{
+		previousObjectIndex = songsCounter-1;
+	}
+	return current_songs[previousObjectIndex];
+}
+
+/*
+MP3Object_t mp3Files_GetPreviousMP3File2(MP3Object_t currentObject)
 {
 	uint32_t i;
 	uint32_t nextObjectIndex;
@@ -150,7 +281,7 @@ MP3Object_t mp3Files_GetPreviousMP3File(MP3Object_t currentObject)
 		// If the current object is an MP3_FILE, return it
 		return currentObject;
 	}
-}
+}*/
 
 
 char* mp3Files_GetObjectName(MP3Object_t object)
@@ -163,13 +294,14 @@ char* mp3Files_GetObjectName(MP3Object_t object)
 
 int mp3Files_GetObjectsCounter(void)
 {
-	return objectsCounter;
+	return directoriesCounter;
 }
 
 
 MP3Object_t mp3Files_ResetObjects(void)
 {
-	objectsCounter = 0;
+	directoriesCounter = 0;
+	songsCounter = 0;
 	return mp3Files_GetFirstObject();
 }
 
@@ -227,9 +359,10 @@ static void mp3Files_list_dir(char * path)
 	strcpy(newPath+i+1, fn);
 
 	// Save the first object as a return to previous directory object
-	objectsCounter = 0;
+	directoriesCounter = 0;
+	songsCounter = 0;
 
-	mp3Files_AddObject(newPath, RETURN_DIR);
+	mp3Files_AddDirectory(newPath, RETURN_DIR);
 
 	// Save the remaining objects
 
@@ -253,7 +386,7 @@ static void mp3Files_list_dir(char * path)
 
 				mp3_object_type_t object_type = DIRECTORY;
 
-				mp3Files_AddObject(newPath, object_type);
+				mp3Files_AddDirectory(newPath, object_type);
 
 			}
 			else if (!(fno.fattrib & (AM_HID | AM_SYS)))
@@ -267,7 +400,7 @@ static void mp3Files_list_dir(char * path)
 
 				if(mp3Files_isMp3File(newPath))
 				{
-					mp3Files_AddObject(newPath, object_type);
+					mp3Files_AddSong(newPath, object_type);
 				}
 			}
 		}

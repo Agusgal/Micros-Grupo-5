@@ -26,6 +26,7 @@ typedef struct
 {
   char path[STR_SIZE];
   int index;
+  int track_num;
   mp3_object_type_t object_type;
 
 } MP3Object_t;
@@ -53,7 +54,23 @@ bool mp3Files_isMp3File(char *path);
  * @param object_type: file, directory, return_dir or Null
  *
  * */
-void mp3Files_AddObject(char *path, mp3_object_type_t object_type);
+void mp3Files_AddDirectory(char *path, mp3_object_type_t object_type);
+
+/*
+ * @brief Adds an object to the file system.
+ * @param path: complete file's path.
+ * @param object_type: file, directory, return_dir or Null
+ *
+ * */
+void mp3Files_AddSong(char *path, mp3_object_type_t object_type);
+
+/*
+ * @brief Adds an object to the file system.
+ * @param path: complete file's path.
+ * @param object_type: file, directory, return_dir or Null
+ *
+ * */
+void mp3Files_AddPlayingSongs(char *path, mp3_object_type_t object_type);
 
 
 /*
