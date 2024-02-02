@@ -125,16 +125,6 @@ MP3Object_t mp3Files_GetFirstObject(void)
 }
 
 
-void updatePlayingSongs(void)
-{
-	uint32_t i;
-	for(i = 0; i < songsCounter; i++)
-	{
-		playing_songs[i] == current_songs[i];
-	}
-}
-
-
 MP3Object_t mp3Files_GetNextObject(MP3Object_t currentObject)
 {
 	unsigned int nextObjectIndex = currentObject.index + 1;
@@ -181,16 +171,6 @@ MP3Object_t mp3Files_GetNextObject(MP3Object_t currentObject)
 	}
 }
 
-
-MP3Object_t mp3Files_GetNextMP3File(MP3Object_t currentObject)
-{
-	unsigned int nextObjectIndex = currentObject.index + 1;
-	if (nextObjectIndex == playingSongsCounter)
-	{
-		nextObjectIndex = 0;
-	}
-	return playing_songs[nextObjectIndex];
-}
 
 /*
 MP3Object_t mp3Files_GetNextMP3File2(MP3Object_t currentObject)
@@ -253,6 +233,27 @@ MP3Object_t mp3Files_GetPreviousObject(MP3Object_t currentObject)
 			return current_songs[previousObjectIndex];
 		}
 	}
+}
+
+
+void updatePlayingSongs(void)
+{
+	uint32_t i;
+	for(i = 0; i < songsCounter; i++)
+	{
+		playing_songs[i] = current_songs[i];
+	}
+}
+
+
+MP3Object_t mp3Files_GetNextMP3File(MP3Object_t currentObject)
+{
+	unsigned int nextObjectIndex = currentObject.index + 1;
+	if (nextObjectIndex == playingSongsCounter)
+	{
+		nextObjectIndex = 0;
+	}
+	return playing_songs[nextObjectIndex];
 }
 
 
