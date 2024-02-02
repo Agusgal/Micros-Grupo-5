@@ -51,8 +51,7 @@ SDK_ALIGN(static short decoder_buffer[2*BUFFER_SIZE], SD_BUFFER_ALIGN_SIZE);
 static uint8_t vol = 15;
 static char vol2send = 15 + 40;
 
-static float vol_ending_song = 15;
-static uint8_t next_prev_song = 0; //0: nothing; 1: next_song; 2: prev_song
+
 /******************************************************************************
 
  ******************************************************************************/
@@ -202,42 +201,6 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 
 	}
 
-	// This makes a fading effect if the user wants to change song
-	if(next_prev_song == 1)
-	{
-		vol_ending_song -= 0.4;
-		coef = ((vol_ending_song) * 1.0) / MAX_VOLUME;
-		for (index = 0; index < BUFFER_SIZE; index++)
-		{
-			processedAudioBuffer[index] = (effects_out[index]*coef+1)*2048;
-		}
-
-		if(vol_ending_song < 0)
-		{
-			next_prev_song = 0;
-			mp3Handler_selectNextSong();
-		}
-	}
-	else if(next_prev_song == 2)
-	{
-		vol_ending_song -= 0.4;
-		coef = ((vol_ending_song) * 1.0) / MAX_VOLUME;
-		for (index = 0; index < BUFFER_SIZE; index++)
-		{
-			processedAudioBuffer[index] = (effects_out[index]*coef+1)*2048;
-		}
-
-		if(vol_ending_song < 0)
-		{
-			next_prev_song = 0;
-			mp3Handler_selectPreviousSong();
-		}
-	}
-	else
-	{
-		vol_ending_song = vol;
-	}
-
 	// Compute FFT and set the vumeter
 	VU_FFT(effects_out, sampleRate, 80, 10000);
 }
@@ -280,12 +243,8 @@ void mp3Handler_updateAll(void)
 	mp3Handler_showFFT();
 }
 
-void mp3Handler_playNextSong(void)
-{
-	next_prev_song = 1;
-}
 
-static void mp3Handler_selectNextSong(void)
+void mp3Handler_playNextSong(void)
 {
 	mp3Handler_nextMP3File();
 
@@ -297,12 +256,8 @@ static void mp3Handler_selectNextSong(void)
 
 }
 
-void mp3Handler_playPreviousSong(void)
-{
-	next_prev_song = 2;
-}
 
-static void mp3Handler_selectPreviousSong(void)
+void mp3Handler_playPreviousSong(void)
 {
 	mp3Handler_prevMP3File();
 

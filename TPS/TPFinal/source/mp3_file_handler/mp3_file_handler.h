@@ -82,6 +82,12 @@ MP3Object_t mp3Files_GetFirstObject(void);
 
 
 /*
+ * @brief	Updates the playing songs list
+ *
+ * */
+void updatePlayingSongs(void);
+
+/*
  * @brief Gets the next object of the file system.
  * @param currentObject: The object that is considered the 'current' one. The 'next' object will be defined based on this param.
  * @return MP3Object_t next object of the file system.  If the current object is the last one, returns the first one.
