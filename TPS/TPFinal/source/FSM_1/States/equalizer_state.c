@@ -49,14 +49,14 @@ typedef enum
 static bool showingTitle;
 static int titleTimerID = -1;
 static uint8_t currentOptionIndex = 0;
-static char * frequencyBandsTitles [] = {"80Hz Band       ",
-										 "160Hz Band      ",
-										 "320Hz Band      ",
-										 "640Hz Band      ",
-										 "1.28kHz Band    ",
-										 "2.5kHz Band     ",
-										 "5kHz Band       ",
-										 "10kHz Band      "};
+static char * frequencyBandsTitles [] = {"80Hz Band",
+										 "160Hz Band",
+										 "320Hz Band",
+										 "640Hz Band",
+										 "1.28kHz Band",
+										 "2.5kHz Band",
+										 "5kHz Band",
+										 "10kHz Band"};
 static bool settingCustom = false;
 static uint8_t currentBand = 0;
 static int32_t currentBandValue = 0;
@@ -192,7 +192,6 @@ void Effects_SelectOption(void)
     else
     {
     	OLED_Clear();
-    	//Set custom effect, todo: como funciona esto xd?
         if (currentOptionIndex == OPTIONS_COUNT - 1)
         {
         	settingCustom = true;
@@ -238,6 +237,7 @@ void Equalizer_MP3_UpdateAll(void)
  *******************************************************************************
  ******************************************************************************/
 
+
 static void showTitle(void)
 {
 	OLED_Clear();
@@ -247,12 +247,14 @@ static void showTitle(void)
 	titleTimerID = Timer_AddCallback(&stopShowingTitle, TITLE_TIME, true);
 }
 
+
 static void stopShowingTitle(void)
 {
 	showingTitle = false;
 	OLED_Clear();
 	setCurrentOption();
 }
+
 
 static void userInteractionStopsTitle(void)
 {
@@ -271,7 +273,7 @@ static void showCustomBandSetting(void)
 	int writtenChars = sprintf(bandGainText, "%ddB", currentBandValue);
 	bandGainText[writtenChars] = ' ';
 
-	OLED_write_Text(22, 32, frequencyBandsTitles[currentBand]);
+	OLED_write_Text(22, 32, bandGainText);
 }
 
 
