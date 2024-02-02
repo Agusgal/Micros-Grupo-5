@@ -64,10 +64,10 @@ static int32_t currentBandValue = 0;
 
 int optionValues[5][OPTION_VALUES_ARRAY_SIZE] =
 	{{0, 0, 0, 0,  0, 0, 0, 0}, 	//default
-	 {0, 0, 1, 3,-10,-2,-1, 3}, 	//rock
-	 {0, 0, 2, 5, -6,-2,-1, 2},		//jazz
-	 {0, 0, 0, 0,  2, 2, 3,-3},		//pop
-	 {0, 0,-1,-6,  0, 1, 1, 3}		//classic
+	 {-2,-2, 1, 1, 1, 5, 5, 5}, 	//rock
+	 {2, 2, 2, -6, -6,-6, 4, 4},	//jazz
+	 {5, 5, 0, 0,  2, 2, 5, 5},		//pop
+	 {4, 4,-6,-6, 1, 1, 3, 3}		//classic
 };
 
 
