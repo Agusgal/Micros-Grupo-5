@@ -106,7 +106,7 @@ state AUDIO_PLAYER_STATE[] =
 		{Player_PlayPreviousSong, PREV_EV, AUDIO_PLAYER_STATE},
 
 		//Encoder, todo: check press return play/pause etc...
-		{FileSelection_InitState, ENCODER_PRESS_EV, FILE_SELECT_STATE},
+		{FileSelection_ReturnState, ENCODER_PRESS_EV, FILE_SELECT_STATE},
 		{Player_IncVolume, ENCODER_RIGHT_EV, AUDIO_PLAYER_STATE},
 		{Player_DecVolume, ENCODER_LEFT_EV, AUDIO_PLAYER_STATE},
 

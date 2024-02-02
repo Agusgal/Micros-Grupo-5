@@ -35,6 +35,10 @@ void FileSelection_PreviousFile(void);
  */
 void FileSelection_SelectFile(void);
 
+/**
+ * @brief Returns to the fileSelection state
+ */
+void FileSelection_ReturnState(void);
 
 /*
  * @brief	Selects the current file.

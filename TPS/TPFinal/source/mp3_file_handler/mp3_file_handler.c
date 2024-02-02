@@ -244,6 +244,8 @@ void updatePlayingSongs(void)
 	{
 		playing_songs[i] = current_songs[i];
 	}
+
+	playingSongsCounter = songsCounter;
 }
 
 

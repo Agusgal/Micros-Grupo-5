@@ -25,6 +25,8 @@ static void mp3Handler_selectNextSong(void);
 
 static void mp3Handler_selectPreviousSong(void);
 
+static void loadPlayingSong(void);
+
 /******************************************************************************
  * DEFINES
  ******************************************************************************/
@@ -81,21 +83,21 @@ void mp3Handler_nextObject(void)
 }
 
 
-void mp3Handler_nextMP3File(void)
-{
-	currObject =  mp3Files_GetNextMP3File(currObject);
-}
-
-
 void mp3Handler_prevObject(void)
 {
 	currObject = mp3Files_GetPreviousObject(currObject);
 }
 
 
+void mp3Handler_nextMP3File(void)
+{
+	playingSongFile =  mp3Files_GetNextMP3File(playingSongFile);
+}
+
+
 void mp3Handler_prevMP3File(void)
 {
-	currObject = mp3Files_GetPreviousMP3File(currObject);
+	playingSongFile = mp3Files_GetPreviousMP3File(playingSongFile);
 }
 
 
@@ -117,19 +119,11 @@ bool mp3Handler_selectObject(void)
 	else
 	{
 		// If the file is a MP3 file, load audio
+		updatePlayingSongs();
+
 		playingSongFile = currObject;
 
-		MP3Decoder_LoadFile(playingSongFile.path);
-
-		// First two buffers in 0V, no sound
-		memset(processedAudioBuffer, DAC_ZERO_VOLT_VALUE, sizeof(processedAudioBuffer));
-
-		sampleRate = 44100;
-
-		// Set a default sampleRate for first buffers
-		AudioPlayer_LoadSongInfo(processedAudioBuffer, sampleRate);
-
-		mp3Handler_updateAudioPlayerBackBuffer();
+		loadPlayingSong();
 
 		return true;
 
@@ -250,7 +244,7 @@ void mp3Handler_playNextSong(void)
 
 	if (currObject.object_type == MP3_FILE)
 	{
-		mp3Handler_selectObject();
+		loadPlayingSong();
 		mp3Handler_play();
 	}
 
@@ -263,7 +257,7 @@ void mp3Handler_playPreviousSong(void)
 
 	if (currObject.object_type == MP3_FILE)
 	{
-		mp3Handler_selectObject();
+		loadPlayingSong();
 		mp3Handler_play();
 	}
 
@@ -366,5 +360,20 @@ void mp3Handler_setVolume(char value)
 	{
 		vol = (uint8_t)value;
 	}
+}
+
+static void loadPlayingSong(void)
+{
+	MP3Decoder_LoadFile(playingSongFile.path);
+
+	// First two buffers in 0V, no sound
+	memset(processedAudioBuffer, DAC_ZERO_VOLT_VALUE, sizeof(processedAudioBuffer));
+
+	sampleRate = 44100;
+
+	// Set a default sampleRate for first buffers
+	AudioPlayer_LoadSongInfo(processedAudioBuffer, sampleRate);
+
+	mp3Handler_updateAudioPlayerBackBuffer();
 }
 
