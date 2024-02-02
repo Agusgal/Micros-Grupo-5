@@ -265,13 +265,13 @@ static void userInteractionStopsTitle(void)
 static void showCustomBandSetting(void)
 {
 	OLED_Clear();
-	OLED_write_Text(22, 22, frequencyBandsTitles[currentBand]);
+	OLED_write_Text(22, 16, frequencyBandsTitles[currentBand]);
 
 	char bandGainText[16] = "";
 	int writtenChars = sprintf(bandGainText, "%ddB", currentBandValue);
 	bandGainText[writtenChars] = ' ';
 
-	OLED_write_Text(22, 42, frequencyBandsTitles[currentBand]);
+	OLED_write_Text(22, 32, frequencyBandsTitles[currentBand]);
 }
 
 
