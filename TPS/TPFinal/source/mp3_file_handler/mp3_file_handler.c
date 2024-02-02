@@ -11,14 +11,15 @@
 #include <stdlib.h>
 #include "ff.h"
 
-#define FILE_ARRAY_SIZE 		100
-#define FILE_NAME_STRING_SIZE	200
+#define DIRECTORY_ARRAY_SIZE 	20
+#define FILE_ARRAY_SIZE 		50
+#define FILE_NAME_STRING_SIZE	150
 
 /*******************************************************************************
  * PRIVATE VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
-static MP3Object_t current_directories[FILE_ARRAY_SIZE];
+static MP3Object_t current_directories[DIRECTORY_ARRAY_SIZE];
 static unsigned int directoriesCounter = 0;
 
 static MP3Object_t current_songs[FILE_ARRAY_SIZE];
