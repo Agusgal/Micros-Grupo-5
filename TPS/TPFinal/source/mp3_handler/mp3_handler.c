@@ -242,7 +242,7 @@ void mp3Handler_playNextSong(void)
 {
 	mp3Handler_nextMP3File();
 
-	if (currObject.object_type == MP3_FILE)
+	if (playingSongFile.object_type == MP3_FILE)
 	{
 		loadPlayingSong();
 		mp3Handler_play();
@@ -255,7 +255,7 @@ void mp3Handler_playPreviousSong(void)
 {
 	mp3Handler_prevMP3File();
 
-	if (currObject.object_type == MP3_FILE)
+	if (playingSongFile.object_type == MP3_FILE)
 	{
 		loadPlayingSong();
 		mp3Handler_play();
