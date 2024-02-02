@@ -70,6 +70,13 @@ void FileSelection_InitState(void)
 	printFileInfo();
 }
 
+void FileSelection_ReturnState(void)
+{
+	showTitle();
+
+	printFileInfo();
+}
+
 void FileSelection_NextFile(void)
 {
 	mp3Handler_nextObject();
