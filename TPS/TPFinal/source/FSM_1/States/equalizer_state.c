@@ -164,7 +164,6 @@ void Effects_PreviousOption(void)
 
 void Effects_SelectOption(void)
 {
-
 	if (showingTitle)
 	{
 		userInteractionStopsTitle();
@@ -236,8 +235,7 @@ void Equalizer_MP3_UpdateAll(void)
 static void showTitle(void)
 {
 	OLED_Clear();
-
-	OLED_write_Text(22, 22, "Efectos         ");
+	OLED_write_Text(22, 22, "Efectos");
 
 	showingTitle = true;
 	titleTimerID = Timer_AddCallback(&stopShowingTitle, TITLE_TIME, true);

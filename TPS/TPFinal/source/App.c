@@ -5,13 +5,9 @@
  ******************************************************************************/
 
 /*
- * todo:	- Hacer andar el OLED con el scroll
- *
- *			- Agregar que se pueda cambiar de efectos desde reproduccion de sonido
+ * todo:	- Cuando seleccionas efecto desde audioplayer se rompe el sonido.
  *
  *			- Al volver para atras desde audio player arreglar programa que se cuelga.
- *
- * 			- Testear estado de efectos, en especial banda customizada
  *
  *			- Poder salir de la carpeta, al estar reproduciendo
  *			(dar opción de navegar mientras se reproduce una canción)

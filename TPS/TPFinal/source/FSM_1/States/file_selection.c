@@ -63,7 +63,6 @@ static void printFileInfo(void);
 
 void FileSelection_InitState(void)
 {
-	//todo: mejorar OLED para mostrar mejor la pantalla de titulo...
 	showTitle();
 
 	mp3Handler_init();
@@ -85,10 +84,6 @@ void FileSelection_PreviousFile(void)
 
 void FileSelection_SelectFile(void)
 {
-	// AGUS PRESTÁ ATENCIÓN, NO DEBERÍA ROMPER NADA, PERO FIJATE
-	// SI NO ES UN MP3 FILE, LA FSM DEBERÍA SEGUIR EN EL MISMO ESTADO, COMO SI NO HUBIERA
-	// PASADO NADA
-
 	// If the file is an MP3 File
 	if(mp3Handler_selectObject())
 	{
@@ -121,11 +116,13 @@ void FileSelection_MP3_UpdateAll(void)
 	mp3Handler_updateAll();
 }
 
+
 /*******************************************************************************
  *******************************************************************************
  *                         LOCAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
+
 
 static void showTitle(void)
 {
@@ -137,13 +134,11 @@ static void showTitle(void)
 
 static void printFileInfo(void)
 {
-	//todo: ojo con filenames muy grandes, conviene agrandar buffer auxiliar.
-
 	OLED_Clear();
 	OLED_write_Text(10, 16, "Choose file:");
+
 	//Get file name from audio module
 	char * name = mp3Handler_getCurrentName();
 
-	//todo: hay que ver si el casteo éste está bien, parece que no xd
 	OLED_write_Text(10, 32, (char*)name);
 }

@@ -50,6 +50,9 @@ extern state IDLE_STATE[];
 extern state FILE_SELECT_STATE[];
 extern state AUDIO_PLAYER_STATE[];
 extern state EQUALIZER_STATE[];
+extern state EQUALIZER_FROM_PLAYER_STATE[];
+extern state EQUALIZER_FROM_FILES_STATE[];
+
 
 
 
