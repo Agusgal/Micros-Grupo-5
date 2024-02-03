@@ -9,15 +9,13 @@
  ******************************************************************************/
 #include <stdint.h>
 #include <stdlib.h>
-
+#include <vumeter/vumeter.h>
 #include "mp3_handler.h"
 #include "../mp3_file_handler/mp3_file_handler.h"
 #include "memory_handler.h"
 #include "AudioPlayer.h"
 #include "equalizer.h"
 #include "../drivers/HAL/mp3_decoder.h"
-#include "../fft/vumeter.h"
-
 #include "fsl_common.h"
 #include "EventQueue/queue.h"
 

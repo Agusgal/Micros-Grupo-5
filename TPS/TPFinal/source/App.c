@@ -29,8 +29,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdint.h>
-
-
+#include <vumeter/vumeter.h>
 #include "mp3_decoder.h"
 
 #include "fsl_common.h"
@@ -46,8 +45,6 @@
 #include "matrix_display.h"
 #include "Buttons.h"
 #include "Encoder.h"
-#include "vumeter.h"
-
 #include "AudioPlayer.h"
 
 #include "EventQueue/queue.h"

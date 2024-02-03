@@ -9,9 +9,9 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include startup/subdir.mk
+-include source/vumeter/subdir.mk
 -include source/mp3_handler/subdir.mk
 -include source/mp3_file_handler/subdir.mk
--include source/fft/subdir.mk
 -include source/equalizer/subdir.mk
 -include source/drivers/SDK/subdir.mk
 -include source/drivers/MCAL/subdir.mk
