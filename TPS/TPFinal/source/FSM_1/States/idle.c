@@ -96,15 +96,13 @@ void UpdateTime()
 
 	char dateString[16];
 	char timeString[16];
-	snprintf(dateString, sizeof(dateString), "   %02hd-%02hd-%04hd     ", date.day, date.month, date.year);
-	snprintf(timeString, sizeof(timeString), "    %02hd:%02hd:%02hd      ", date.hour,date.minute, date.second);
+	snprintf(dateString, sizeof(dateString), "%02hd-%02hd-%04hd", date.day, date.month, date.year);
+	snprintf(timeString, sizeof(timeString), "%02hd:%02hd:%02hd", date.hour,date.minute, date.second);
 
 
-	OLED_write_Text(0, 0, timeString);
+	OLED_Clear_First_Page();
+	OLED_Write_Time(timeString, dateString);
 	OLED_Refresh();
-
-	//OLED_write_Text(0, 0, dateString);
-	//OLED_Refresh();
 }
 
 

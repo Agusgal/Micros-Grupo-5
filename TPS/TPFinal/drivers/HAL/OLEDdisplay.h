@@ -206,7 +206,7 @@ void OLED_Set_Scroll_Pixel (uint16_t X_axis, uint16_t Y_axis, uint8_t SC);
  * @param String The text string to be sending.
  * @param Scale Select the size of the Text.
  */
-void OLED_Set_Text (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, uint8_t Scale);
+void OLED_Set_Text (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, uint8_t Scale, bool fromtTime);
 
 /*!
  * @brief Set o Clear a group pixels in the buffer.
@@ -220,6 +220,12 @@ void OLED_Set_Text (uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, ui
  * @param SC Select between Set or Clear.
  */
 void OLED_Fill_Rect (uint8_t X_axis, uint8_t Y_axis, uint8_t Width, uint8_t Height, uint8_t SC);
+
+
+void OLED_Write_Time(char * timestring, char* datestring);
+
+void OLED_Clear_First_Page(void);
+
 
 void OLED_Copy_Image(const uint8_t *Img, uint16_t size);
 

@@ -6,13 +6,15 @@
 
 /*
  * todo:
- *			- Cuando vuelvo a IDLE se rompe, la unic amanera de volver a IDLE es sacando la SD. ARREGLAR
+ *			- Cuando vuelvo a IDLE se rompe, la unic manera de volver a IDLE es sacando la SD. ARREGLAR
  *
  *			- Previous song, si se presiona 2 veces en 3 segundos, vaya a la canción anterior
  * 				En caso contrario, vuelva a reproducir la canción actual.
  *
  *			- Hay un bug turbio cuando hacemos long key press al mismo tiempo que esta modificando volumen, NO HACERLO
  *			despues de un rato por alguna razon va a efectos.
+ *
+ *			- TEstear si dia y hora anda SIEMPRE, solo fue testeado file selection state
  *
  */
 
@@ -49,6 +51,8 @@
 
 #include "EventQueue/queue.h"
 
+#include "FSM_1/States/idle.h"
+#include "datetime.h"
 #include "memory_handler.h"
 
 #include "equalizer.h"
@@ -121,8 +125,9 @@ void App_Init (void)
 	//OLED_Clear();
 
 
-	//todo: Daytime Init
-
+	//todo:
+	DateTime_Init(UpdateTime);
+	DateTime_Enable();
 
 	//Init Encoder
 	Encoder_Init();
