@@ -42,12 +42,6 @@ int timeCallbackId = -1;
  ******************************************************************************/
 
 
-/**
- * @brief Shows the current time on the display.
- */
-//static void showTime(void);
-
-
 /*
  *@brief Callback after changing to high power mode
  */
@@ -81,10 +75,6 @@ void Idle_OnUserInteraction(void)
 		Timer_Delete(timeCallbackId);
 		timeCallbackId = -1;
 	}
-
-
-	//Datetime_Disable();
-
 
 	timeCallbackId = Timer_AddCallback(emitStartEv, 3000, true); //Delay until clock stabilizes
 }
