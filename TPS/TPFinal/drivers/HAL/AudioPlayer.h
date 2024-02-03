@@ -39,11 +39,11 @@ typedef enum audioPlayerError
 void AudioPlayer_Init(void);
 
 /*!
- *@brief Loads a song's info.
+ *@brief Loads a song's first frame and sampleRate
  *@param firstSongFrame first song's frame's samples.
  *@param song's sample rate.
  */
-void AudioPlayer_LoadSongInfo(uint16_t *firstSongFrame, uint16_t sampleRate);
+void AudioPlayer_LoadSong(uint16_t *firstSongFrame, uint16_t sampleRate);
 
 /*!
  *@brief Updates the sample rate that it's being used.

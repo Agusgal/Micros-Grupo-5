@@ -139,6 +139,7 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 	float effects_in[BUFFER_SIZE];
 	float effects_out[BUFFER_SIZE];
 
+	// Update with the previous processed audio
 	AudioPlayer_UpdateBackBuffer(processedAudioBuffer, sampleRate);
 
 	// Clean buffers to rewrite
@@ -182,13 +183,13 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 		processedAudioBuffer[index] = (effects_out[index]*coef+1)*2048;
 	}
 
-	// Complete the rest of the buffer with the last value
 	if (res == DECODER_END_OF_FILE)
 	{
-		uint16_t last_value = processedAudioBuffer[(numOfSamples / numOfChannels) - 1] ;
+		// Complete the rest of the buffer with 0V
+
 		for (uint32_t index = (numOfSamples / numOfChannels); index < BUFFER_SIZE ; index++)
 		{
-			processedAudioBuffer[index] = last_value;
+			processedAudioBuffer[index] = DAC_ZERO_VOLT_VALUE;
 		}
 
 		push_Queue_Element(NEXT_SONG_EV);
@@ -372,7 +373,7 @@ static void loadPlayingSong(void)
 	sampleRate = 44100;
 
 	// Set a default sampleRate for first buffers
-	AudioPlayer_LoadSongInfo(processedAudioBuffer, sampleRate);
+	AudioPlayer_LoadSong(processedAudioBuffer, sampleRate);
 
 	mp3Handler_updateAudioPlayerBackBuffer();
 }
