@@ -236,7 +236,7 @@ void OLED_Init(void)
 	//Configure start message with roll ON
 	isInit = true;
 
-	screenString = "WELCOME! ABCDE! FGHI! JKLMN!";
+	screenString = "WELCOME!";
 	OLED_Set_Text(10, 32, kOLED_Pixel_Set, screenString, 2, false);
 	OLED_Refresh();
 
