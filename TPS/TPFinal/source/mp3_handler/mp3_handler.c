@@ -175,30 +175,14 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 	// 2 - Apply audio effects
 	EQ_Apply(effects_in, effects_out);
 
-	// Find maximun (abs_value) of effects out buffer, to normalize before applying volume
-	float max = abs(effects_out[0]);
 
-	for (index = 1; index < BUFFER_SIZE; index++)
-	{
-		if(abs(effects_out[index]) > max)
-		{
-			max = effects_out[index];
-		}
-	}
-
-	if(max < EPSILON)
-	{
-		// If max is zero, make it not zero, but as small as possible
-		max = EPSILON;
-	}
-
-	// 3 - Normalize, 4 - apply volume and
-	// 5 - Scale to 12 bits, to fit in the DAC
+	// 3 - apply volume and
+	// 4 - Scale to 12 bits, to fit in the DAC
 	coef = (vol * 1.0) / MAX_VOLUME;
 
 	for (index = 0; index < BUFFER_SIZE; index++)
 	{
-		processedAudioBuffer[index] = ((effects_out[index] / max) * coef + 1 ) * DAC_ZERO_VOLT_VALUE;
+		processedAudioBuffer[index] = (effects_out[index] * coef + 1) * DAC_ZERO_VOLT_VALUE;
 	}
 
 	if (res == DECODER_END_OF_FILE)
