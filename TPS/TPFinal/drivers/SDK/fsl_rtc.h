@@ -5,6 +5,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
+
 #ifndef _FSL_RTC_H_
 #define _FSL_RTC_H_
 

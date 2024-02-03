@@ -368,7 +368,11 @@ static void loadPlayingSong(void)
 	MP3Decoder_LoadFile(playingSongFile.path);
 
 	// First two buffers in 0V, no sound
-	memset(processedAudioBuffer, DAC_ZERO_VOLT_VALUE, sizeof(processedAudioBuffer));
+	int i;
+	for(i = 0; i < BUFFER_SIZE; i++)
+	{
+		processedAudioBuffer[i] = DAC_ZERO_VOLT_VALUE;
+	}
 
 	sampleRate = 44100;
 

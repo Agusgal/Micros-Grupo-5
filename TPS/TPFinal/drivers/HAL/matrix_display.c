@@ -26,7 +26,7 @@
 #define DMA_CHANEL (0U)
 
 #define FTM_PRESCALE   0                                               // Configuration of the FTM driver
-#define FTM_MODULO     75//62                                              // for 800kbps rate needed in WS2812 leds
+#define FTM_MODULO     75//63                                              // for 800kbps rate needed in WS2812 leds
 #define HIGH_DUTY      50//42                                              // Duty value for '1' binit
 #define LOW_DUTY       24//20                                              // Duty value for '0' binit
 #define OFF_DUTY	   2

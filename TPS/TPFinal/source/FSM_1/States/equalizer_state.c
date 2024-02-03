@@ -103,6 +103,7 @@ static void showCustomBandSetting(void);
 void Effects_InitState(void)
 {
 	showTitle();
+	settingCustom = false;
 	currentOptionIndex = 0;
 }
 

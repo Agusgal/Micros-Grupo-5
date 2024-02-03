@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include <vumeter.h>
 #include "fsl_device_registers.h"
-
+#include "Systick.h"
 
 #define SAMPLE_LENGTH       FFT_SIZE
 #define NUMBER_OF_BANDS     8  
@@ -24,6 +24,18 @@ static float32_t FFT_Cplx[SAMPLE_LENGTH];
 static float32_t FFT_Mag[SAMPLE_LENGTH/2];
 static int VU_Values[NUMBER_OF_BANDS];
 static colors_t Color_Matrix[VUMETER_HEIGHT * NUMBER_OF_BANDS];
+static uint8_t timer_id;
+static colors_t Image_Matrix_5[VUMETER_HEIGHT * NUMBER_OF_BANDS]=
+		{
+				YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,
+				YELLOW,YELLOW,RED,RED,RED,RED,YELLOW,YELLOW,
+				YELLOW,YELLOW,RED,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,
+				YELLOW,YELLOW,RED,RED,RED,RED,YELLOW,YELLOW,
+				YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,RED,YELLOW,YELLOW,
+				YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,RED,YELLOW,YELLOW,
+				YELLOW,YELLOW,RED,RED,RED,RED,YELLOW,YELLOW,
+				YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,
+		};
 
 
 /*******************************************************************************
@@ -52,6 +64,7 @@ void Fill_Spiral_Display(void);
 void VU_Init()
 {
     arm_rfft_fast_init_f32(&rfft_fast_instance, SAMPLE_LENGTH);
+    //timer_id=SysTick_AddCallback(Fill_Spiral_Display, 50);
 }
 
 
@@ -150,7 +163,7 @@ void VU_Fill_Color_Matrix(int * vumeterValues)
 {
     for(int i = 0; i < NUMBER_OF_BANDS; i++)
     {
-    	for(int j = 0; j < VUMETER_HEIGHT; j++)
+    	for(int j = 0; j<VUMETER_HEIGHT; j++)
     	{
     		if(vumeterValues[i] > j)
 			{
@@ -175,82 +188,67 @@ void Fill_Spiral_Display(void)
 	static int i=0;
 	static int j=0;
 	static bool done=false;
-	static colors_t color= YELLOW;
-	Color_Matrix[ (NUMBER_OF_BANDS - i - 1) + j * 8] = color;
+	Color_Matrix[8*i+j] = Image_Matrix_5[8*i+j+1];
 	if (!done)
 	{
-		if (step<7)
+		if (step<6)
 			j++;
-		else if (step<14)
+		else if (step<13)
 			i++;
-		else if (step<21)
+		else if (step<20)
 			j--;
-		else if (step<27)
+		else if (step<26)
 			i--;
-		else if (step<33)
+		else if (step<32)
 			j++;
-		else if (step<38)
+		else if (step<37)
 		{
-			if (step==33)
-				color=RED;
-			else if (step==37)
-				color=YELLOW;
 			i++;
 		}
-		else if (step<43)
+		else if (step<42)
 		{
 			j--;
 		}
-		else if (step<47)
+		else if (step<46)
 		{
-			if (step==43)
-				color=RED;
 			i--;
 		}
-		else if (step<51)
+		else if (step<50)
 		{
-			if (step==47)
-				color=YELLOW;
-			else if (step==49)
-				color=RED;
 			j++;
 		}
-		else if (step<54)
+		else if (step<53)
 		{
-			if (step==51)
-				color=YELLOW;
 			i++;
 		}
-		else if (step<57)
+		else if (step<56)
 		{
-			if (step==54)
-				color=RED;
 			j--;
 		}
-		else if (step<59)
+		else if (step<58)
 		{
-			if (step==57)
-				color=YELLOW;
 			i--;
 		}
-		else if (step<61)
+		else if (step<60)
 		{
-			if (step==60)
-				color=RED;
 			j++;
+		}
+		else if (step==60)
+		{
+			i++;
 		}
 		else if (step==61)
 		{
-			i++;
-		}
-		else if (step==62)
-		{
-			color=YELLOW;
 			j--;
 			done=true;
 		}
+		else if (step==62)
+		{
+			Systick_PauseCallback(timer_id);
+		}
 		step++;
 	}
+	 VU_Draw_Display();
 }
 
 
