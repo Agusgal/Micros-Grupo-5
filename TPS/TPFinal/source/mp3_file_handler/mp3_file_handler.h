@@ -132,19 +132,10 @@ char* mp3Files_GetObjectName(MP3Object_t object);
 
 
 /*
- * @brief Gets the amount of objects that exist in the file system.
- * @return number of objects.
- */
-
-int mp3Files_GetObjectsCounter(void);
-
-
-/*
  * @brief Reset the file system.
- * @return New first object in the file system.
  *
  * */
-MP3Object_t mp3Files_ResetObjects(void);
+void mp3Files_Reset(void);
 
 
 /*

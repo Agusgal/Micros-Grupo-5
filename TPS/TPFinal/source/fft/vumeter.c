@@ -65,7 +65,7 @@ void Fill_Spiral_Display(void);
 void VU_Init()
 {
     arm_rfft_fast_init_f32(&rfft_fast_instance, SAMPLE_LENGTH);
-    //timer_id=SysTick_AddCallback(Fill_Spiral_Display, 50);
+    timer_id=SysTick_AddCallback(Fill_Spiral_Display, 50);
 }
 
 
@@ -241,10 +241,11 @@ void Fill_Spiral_Display(void)
 		else if (step==61)
 		{
 			j--;
-			done=true;
+
 		}
 		else if (step==62)
 		{
+			done=true;
 			Systick_PauseCallback(timer_id);
 		}
 		step++;

@@ -12,7 +12,7 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define TIMER_ISR_PERIOD 10 //10ms (Systick period is 1ms)
+#define TIMER_ISR_PERIOD 10 //1ms (Systick period is 1ms)
 #define INITIAL_TIMER_ELEMENTS_ARRAY_LENGTH 20
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS

@@ -45,8 +45,6 @@ static MP3Object_t currObject;
 
 static MP3Object_t playingSongFile;
 
-static int maxObjectCount = 0;
-
 SDK_ALIGN(static uint16_t processedAudioBuffer[BUFFER_SIZE] , SD_BUFFER_ALIGN_SIZE);
 SDK_ALIGN(static short decoder_buffer[2*BUFFER_SIZE], SD_BUFFER_ALIGN_SIZE);
 
@@ -69,9 +67,6 @@ void mp3Handler_init(void)
 
 		// Search for the first object
 		currObject = mp3Files_GetFirstObject();
-
-		// Search for the number of objects in the main directory
-		maxObjectCount = mp3Files_GetObjectsCounter();
 
 	}
 }
@@ -213,13 +208,13 @@ char * mp3Handler_getCurrentName(void)
 
 void mp3Handler_deinit(void)
 {
-	//mp3Handler_stop();
+	mp3Handler_stop();
 
 	MP3Decoder_shutDown();
 
 	mh_SD_disconnect();
 
-	mp3Files_ResetObjects();
+	mp3Files_Reset();
 
 	VU_Clear_Display();
 
@@ -288,7 +283,8 @@ void mp3Handler_toggle(void)
 void mp3Handler_stop(void)
 {
 	MP3Decoder_LoadFile(currObject.path);
-	AudioPlayer_Pause();
+	AudioPlayer_Play();
+	AudioPlayer_Stop();
 	playing = false;
 }
 

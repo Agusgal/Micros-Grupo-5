@@ -104,6 +104,7 @@ static uint32_t backBufferSampleRate;
 
 static bool backBufferFree = false;
 static bool pause = false;
+static bool stop = true;
 
 static int16_t muteAudioBuffer[DAC_DATL_COUNT] = {DAC_ZERO_VOLT_VALUE};
 
@@ -218,6 +219,7 @@ bool AudioPlayer_IsBackBufferFree(void)
 void AudioPlayer_Play(void)
 {
 	sampleIndex = 0;
+	stop = false;
 
 	if(pause)
 	{
@@ -273,6 +275,10 @@ void AudioPlayer_Pause(void)
 	pause = true;
 }
 
+void AudioPlayer_Stop(void)
+{
+	stop = true;
+}
 
 /*******************************************************************************
 *******************************************************************************
@@ -350,7 +356,7 @@ static void Edma_Callback(edma_handle_t *handle, void *userData, bool transferDo
     // Setup transfer
     void * srcAdd = NULL;
 
-    if(pause)
+    if(pause || stop)
 	{
 		srcAdd = muteAudioBuffer;
 	}

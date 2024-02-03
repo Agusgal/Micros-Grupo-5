@@ -319,17 +319,11 @@ char* mp3Files_GetObjectName(MP3Object_t object)
 }
 
 
-int mp3Files_GetObjectsCounter(void)
-{
-	return directoriesCounter;
-}
-
-
-MP3Object_t mp3Files_ResetObjects(void)
+void mp3Files_Reset(void)
 {
 	directoriesCounter = 0;
 	songsCounter = 0;
-	return mp3Files_GetFirstObject();
+	playingSongsCounter = 0;
 }
 
 

@@ -38,7 +38,7 @@ void Encoder_Init(void)
 	gpioMode(PIN_CH_A, INPUT_PULLUP);
 	gpioMode(PIN_CH_B, INPUT_PULLUP);
 	gpioMode(PIN_ENC_SW, INPUT_PULLUP);
-	SysTick_AddCallback(Encoder_Update, 5);//todo ojo que aca antes decia 5000 pero con el nuevo systick creo que debe ser menos
+	SysTick_AddCallback(Encoder_Update, 10);//todo ojo que aca antes decia 5000 pero con el nuevo systick creo que debe ser menos
 	SysTick_AddCallback(EncoderSwitch_Update, 10); //todo: aca igual, decia 20000, con 100-200 no anda long key press
 }
 

@@ -122,7 +122,6 @@ void mh_SD_mount(void)
 
 void mh_SD_disconnect(void)
 {
-
 	f_mount(NULL, driveBuffer, 1U);
 	g_sd.initReady = false;
 }
