@@ -14,12 +14,12 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
+#include <FSM/States/file_selection.h>
 #include <stdbool.h>
 #include <string.h>
 
 #include "../../mp3_handler/mp3_handler.h"
 
-#include "file_selection.h"
 #include "../../EventQueue/queue.h"
 
 

@@ -8,7 +8,7 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
-#include <FSM_1/States/equalizer_state.h>
+#include <FSM/States/equalizer_state.h>
 #include "../../mp3_handler/mp3_handler.h"
 #include "equalizer.h"
 

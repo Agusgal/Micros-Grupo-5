@@ -8,10 +8,10 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
+#include <FSM/States/idle.h>
 #include <stdio.h>
 
 #include "datetime.h"
-#include "idle.h"
 #include "../../EventQueue/queue.h"
 
 #include "OLEDdisplay.h"

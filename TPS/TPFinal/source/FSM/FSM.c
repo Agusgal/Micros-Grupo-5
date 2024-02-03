@@ -10,12 +10,12 @@
 
 
 
-#include "FSM.h"
-#include "States/Init.h"
-#include "States/idle.h"
-#include "States/file_selection.h"
-#include "States/equalizer_state.h"
-#include "States/audioPlayer_state.h"
+#include <FSM/FSM.h>
+#include <FSM/States/audioPlayer_state.h>
+#include <FSM/States/equalizer_state.h>
+#include <FSM/States/file_selection.h>
+#include <FSM/States/idle.h>
+#include <FSM/States/Init.h>
 
 
 /*******************************************************************************
