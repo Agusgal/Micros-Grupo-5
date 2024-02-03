@@ -26,7 +26,6 @@ typedef struct
 {
   char path[STR_SIZE];
   int index;
-  int track_num;
   mp3_object_type_t object_type;
 
 } MP3Object_t;
