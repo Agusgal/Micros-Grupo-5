@@ -168,14 +168,14 @@ void VU_Fill_Color_Matrix(int * vumeterValues)
     		if(vumeterValues[i] > j)
 			{
 				if(j >= 7)
-					Color_Matrix[ (NUMBER_OF_BANDS - i - 1) + j * 8] = RED;
+					Color_Matrix[i+(7-j)*8] = RED;
 				else if(j >= 4)
-					Color_Matrix[ (NUMBER_OF_BANDS - i - 1) + j * 8] = YELLOW;
+					Color_Matrix[i+(7-j)*8] = YELLOW;
 				else
-					Color_Matrix[ (NUMBER_OF_BANDS - i - 1) + j * 8] = GREEN;
+					Color_Matrix[i+(7-j)*8] = GREEN;
 			}
 			else
-				Color_Matrix[(NUMBER_OF_BANDS - i - 1) + j * 8] = CLEAN;
+				Color_Matrix[i+(7-j)*8] = CLEAN;
     	}
     }
     
