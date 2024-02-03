@@ -27,12 +27,17 @@ static void mp3Handler_selectPreviousSong(void);
 
 static void loadPlayingSong(void);
 
+
+static void abs_value(float x);
+
 /******************************************************************************
  * DEFINES
  ******************************************************************************/
 
 #define BUFFER_SIZE (AUDIO_PLAYER_BUFF_SIZE)
 #define MAX_VOLUME	(40U)
+
+#define EPSILON 	1.19e-07
 
 /*******************************************************************************
  * LOCAL VARIABLES
@@ -175,12 +180,30 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 	// Apply audio effects
 	EQ_Apply(effects_in, effects_out);
 
-	// Apply volume and
+	// Find maximun (abs_value) of effects out buffer, to normalize before applying volume
+	float max = abs_value(effects_out[0]);
+
+	for (index = 1; index < BUFFER_SIZE; index++)
+	{
+		if(abs_value(effect_out[index]) > max)
+		{
+			max = effect_out[index];
+		}
+	}
+
+	if(max < EPSILON)
+	{
+		// If max is zero, make it not zero, but as small as possible
+		max = EPSILON;
+	}
+
+	// Normalize, apply volume and
 	// Scale to 12 bits, to fit in the DAC
 	coef = (vol * 1.0) / MAX_VOLUME;
+
 	for (index = 0; index < BUFFER_SIZE; index++)
 	{
-		processedAudioBuffer[index] = (effects_out[index]*coef+1)*2048;
+		processedAudioBuffer[index] = ((effects_out[index] / max) * coef + 1 ) * 2048;
 	}
 
 	if (res == DECODER_END_OF_FILE)
@@ -380,5 +403,14 @@ static void loadPlayingSong(void)
 	AudioPlayer_LoadSong(processedAudioBuffer, sampleRate);
 
 	mp3Handler_updateAudioPlayerBackBuffer();
+}
+
+static void abs_value(float x)
+{
+	if (x < 0)
+	{
+		return -x;
+	}
+	return x;
 }
 
