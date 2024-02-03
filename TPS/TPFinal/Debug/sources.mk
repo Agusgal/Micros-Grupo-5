@@ -2,15 +2,15 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-OBJ_SRCS := 
-S_SRCS := 
 ASM_SRCS := 
 C_SRCS := 
-S_UPPER_SRCS := 
+OBJ_SRCS := 
 O_SRCS := 
+S_SRCS := 
+S_UPPER_SRCS := 
+C_DEPS := 
 EXECUTABLES := 
 OBJS := 
-C_DEPS := 
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
@@ -22,14 +22,13 @@ component/helix/real \
 component/id3 \
 component/lists \
 device \
-drivers/HAL \
-drivers/MCAL \
-drivers/SDK \
 source \
 source/EventQueue \
-source/FSM_1 \
-source/FSM_1/States \
-source/Queues \
+source/FSM \
+source/FSM/States \
+source/drivers/HAL \
+source/drivers/MCAL \
+source/drivers/SDK \
 source/equalizer \
 source/fft \
 source/mp3_file_handler \

@@ -9,10 +9,9 @@
  ******************************************************************************/
 
 
+#include <FSM/States/audioPlayer_state.h>
 #include <stdbool.h>
 #include <string.h>
-
-#include <FSM_1/States/audioPlayer_state.h>
 
 #include "../../EventQueue/queue.h"
 #include "../../mp3_handler/mp3_handler.h"

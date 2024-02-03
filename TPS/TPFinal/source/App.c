@@ -23,13 +23,13 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
+#include <FSM/FSM.h>
+#include <FSM/States/idle.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdint.h>
 
-
-#include <FSM_1/FSM.h>
 
 #include "mp3_decoder.h"
 
@@ -52,7 +52,6 @@
 
 #include "EventQueue/queue.h"
 
-#include "FSM_1/States/idle.h"
 #include "datetime.h"
 #include "memory_handler.h"
 

@@ -4,10 +4,8 @@
   @author   Grupo 5 - Lab de Micros
  ******************************************************************************/
 
-#include "Init.h"
-#include "idle.h"
-
-
+#include <FSM/States/idle.h>
+#include <FSM/States/Init.h>
 #include "../../EventQueue/queue.h"
 #include "memory_handler.h"
 #include "power_mode_switch.h"
