@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
 #include "ff.h"
 
 #define DIRECTORY_ARRAY_SIZE 	20
@@ -39,6 +40,18 @@ static void mp3Files_list_dir(char * path);
  *
  */
 static void getParentDirectory(char* filePath, char* parentDir);
+
+
+static void sortDirectoriesBuffer(void);
+
+
+static void sortSongsBuffer(void);
+
+
+static int compPathsAlphabeticalOrder (const void *_elem1, const void *_elem2);
+
+
+//static int compTrackNum (const void *_elem1, const void *_elem2);
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -51,7 +64,6 @@ void mp3Files_Init(void)
 	songsCounter = 0;
 	playingSongsCounter = 0;
 
-	char path[FILE_NAME_STRING_SIZE] = {0};
 	mp3Files_list_dir("");
 }
 
@@ -328,6 +340,10 @@ MP3Object_t mp3Files_Enter_Dir(MP3Object_t object)
 		mp3Files_list_dir(object.path);
 		return mp3Files_GetFirstObject();
 	}
+	else
+	{
+		return mp3Files_GetFirstObject();
+	}
 }
 
 
@@ -341,10 +357,12 @@ MP3Object_t mp3Files_Exit_Dir(MP3Object_t object)
 		getParentDirectory(object.path, parentDir);
 		getParentDirectory(parentDir, parentParentDir);
 
-		char * a = "";
-
 		mp3Files_list_dir(parentParentDir);
 
+		return mp3Files_GetFirstObject();
+	}
+	else
+	{
 		return mp3Files_GetFirstObject();
 	}
 }
@@ -420,6 +438,10 @@ static void mp3Files_list_dir(char * path)
 			}
 		}
 		f_closedir(&dir);
+
+		// Sort the buffers
+		sortDirectoriesBuffer();
+		sortSongsBuffer();
 	}
 	else
 	{
@@ -445,3 +467,59 @@ static void getParentDirectory(char* filePath, char* parentDir)
     	strcpy(parentDir, a);
     }
 }
+
+
+static void sortDirectoriesBuffer(void)
+{
+	// Sort
+	qsort(current_directories, directoriesCounter, sizeof(MP3Object_t), compPathsAlphabeticalOrder);
+
+	// Update indexes
+	uint32_t i;
+	for (i = 0; i < directoriesCounter; i++)
+	{
+		current_directories[i].index = i;
+	}
+}
+
+
+static void sortSongsBuffer(void)
+{
+	// Sort
+	qsort(current_songs, songsCounter, sizeof(MP3Object_t), compPathsAlphabeticalOrder);
+
+	// Update indexes
+	uint32_t i;
+	for (i = 0; i < songsCounter; i++)
+	{
+		current_songs[i].index = i;
+	}
+}
+
+
+static int compPathsAlphabeticalOrder (const void *_elem1, const void *_elem2)
+{
+	MP3Object_t * elem1, * elem2;
+
+	elem1 = (MP3Object_t *) _elem1;
+	elem2 = (MP3Object_t *) _elem2;
+
+	return strcmp(elem1->path, elem2->path);
+}
+
+/*
+static int compTrackNum (const void *_elem1, const void *_elem2)
+{
+	MP3Object_t * elem1, * elem2;
+
+	elem1 = (MP3Object_t *) _elem1;
+	elem2 = (MP3Object_t *) _elem2;
+
+	int f = elem1->track_num;
+	int s = elem2->track_num;
+
+    if (f > s) return  1;
+    if (f < s) return -1;
+
+    return 0;
+}*/

@@ -8,6 +8,7 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "mp3_handler.h"
 #include "../mp3_file_handler/mp3_file_handler.h"
@@ -21,11 +22,8 @@
 #include "EventQueue/queue.h"
 
 
-static void mp3Handler_selectNextSong(void);
-
-static void mp3Handler_selectPreviousSong(void);
-
 static void loadPlayingSong(void);
+
 
 /******************************************************************************
  * DEFINES
@@ -33,6 +31,8 @@ static void loadPlayingSong(void);
 
 #define BUFFER_SIZE (AUDIO_PLAYER_BUFF_SIZE)
 #define MAX_VOLUME	(40U)
+
+#define EPSILON 	1.19e-07
 
 /*******************************************************************************
  * LOCAL VARIABLES
@@ -139,6 +139,7 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 	float effects_in[BUFFER_SIZE];
 	float effects_out[BUFFER_SIZE];
 
+	// Update with the previous processed audio
 	AudioPlayer_UpdateBackBuffer(processedAudioBuffer, sampleRate);
 
 	// Clean buffers to rewrite
@@ -151,7 +152,7 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 	// Get the number of channels in the frame
 	MP3Decoder_GetLastFrameNumOfChannels(&numOfChannels);
 
-	// Scale from int16 to float[-1;1]
+	// 1 - Scale from int16 to float[-1;1]
 	float coef = 1.0/32768.0;
 	uint32_t index;
 
@@ -171,24 +172,42 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 		}
 	}
 
-	// Apply audio effects
+	// 2 - Apply audio effects
 	EQ_Apply(effects_in, effects_out);
 
-	// Apply volume and
-	// Scale to 12 bits, to fit in the DAC
-	coef = (vol * 1.0) / MAX_VOLUME;
-	for (index = 0; index < BUFFER_SIZE; index++)
+	// Find maximun (abs_value) of effects out buffer, to normalize before applying volume
+	float max = abs(effects_out[0]);
+
+	for (index = 1; index < BUFFER_SIZE; index++)
 	{
-		processedAudioBuffer[index] = (effects_out[index]*coef+1)*2048;
+		if(abs(effects_out[index]) > max)
+		{
+			max = effects_out[index];
+		}
 	}
 
-	// Complete the rest of the buffer with the last value
+	if(max < EPSILON)
+	{
+		// If max is zero, make it not zero, but as small as possible
+		max = EPSILON;
+	}
+
+	// 3 - Normalize, 4 - apply volume and
+	// 5 - Scale to 12 bits, to fit in the DAC
+	coef = (vol * 1.0) / MAX_VOLUME;
+
+	for (index = 0; index < BUFFER_SIZE; index++)
+	{
+		processedAudioBuffer[index] = ((effects_out[index] / max) * coef + 1 ) * DAC_ZERO_VOLT_VALUE;
+	}
+
 	if (res == DECODER_END_OF_FILE)
 	{
-		uint16_t last_value = processedAudioBuffer[(numOfSamples / numOfChannels) - 1] ;
+		// Complete the rest of the buffer with 0V
+
 		for (uint32_t index = (numOfSamples / numOfChannels); index < BUFFER_SIZE ; index++)
 		{
-			processedAudioBuffer[index] = last_value;
+			processedAudioBuffer[index] = DAC_ZERO_VOLT_VALUE;
 		}
 
 		push_Queue_Element(NEXT_SONG_EV);
@@ -376,7 +395,7 @@ static void loadPlayingSong(void)
 	sampleRate = 44100;
 
 	// Set a default sampleRate for first buffers
-	AudioPlayer_LoadSongInfo(processedAudioBuffer, sampleRate);
+	AudioPlayer_LoadSong(processedAudioBuffer, sampleRate);
 
 	mp3Handler_updateAudioPlayerBackBuffer();
 }

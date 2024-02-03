@@ -134,7 +134,7 @@ void AudioPlayer_Init(void)
 }
 
 
-void AudioPlayer_LoadSongInfo(uint16_t * firstSongFrame, uint16_t _sampleRate)
+void AudioPlayer_LoadSong(uint16_t * firstSongFrame, uint16_t _sampleRate)
 {
 	memcpy(activeBuffer, firstSongFrame, AUDIO_PLAYER_BUFF_SIZE * sizeof(uint16_t));
 

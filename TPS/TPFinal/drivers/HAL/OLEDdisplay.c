@@ -237,7 +237,7 @@ void OLED_Init(void)
 	isInit = true;
 
 	screenString = "WELCOME! ABCDE! FGHI! JKLMN!";
-	OLED_Set_Text(10, 32, kOLED_Pixel_Set, screenString, 2);
+	OLED_Set_Text(10, 32, kOLED_Pixel_Set, screenString, 2, false);
 	OLED_Refresh();
 
 
@@ -257,10 +257,18 @@ void OLED_Refresh(void)
 
 void OLED_Clear(void)
 {
-	memset(OLED_Buffer, 0, sizeof(OLED_Buffer));
+	//Agregue el OLED_WIDTH a esto para que nunca borre la primera pagina (fecha y hora)
+	memset(OLED_Buffer + OLED_WIDTH, 0, sizeof(OLED_Buffer) - OLED_WIDTH);
 	memset(OLED_Scroll_Buffer[0], 0, sizeof(OLED_Scroll_Buffer[0]));
 	memset(OLED_Scroll_Buffer[1], 0, sizeof(OLED_Scroll_Buffer[1]));
 }
+
+
+void OLED_Clear_First_Page(void)
+{
+	memset(OLED_Buffer, 0, sizeof(OLED_Buffer)/8);
+}
+
 
 void OLED_Scroll_Clear(void)
 {
@@ -382,14 +390,14 @@ static int OLED_Render_Scroll_Char(uint16_t X_axis, uint8_t Y_axis, uint8_t SC, 
 	return 0;
 }
 
-
-void OLED_Set_Text(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, uint8_t Scale)
+//Le agregue fortime si estoy escribiendo una fecha asi diferencia
+void OLED_Set_Text(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, uint8_t Scale, bool fromTime)
 {
 	uint16_t Cont;
 	uint16_t xscaled;
 
 	int strLength = strlen(String);
-	if (strLength > 12)
+	if (strLength > 12 && !fromTime)
 	{
 		roll = true;
 		OLED_Scroll_Clear();
@@ -408,7 +416,8 @@ void OLED_Set_Text(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, uin
 			}
 			else
 			{
-				OLED_Render_Scroll_Char(xscaled, Y_axis, SC, String[Cont], Scale);
+				if (!fromTime)//sacar si no anda
+					OLED_Render_Scroll_Char(xscaled, Y_axis, SC, String[Cont], Scale);
 			}
 		}
 
@@ -446,6 +455,13 @@ bool OLEDisInit()
 }
 
 
+void OLED_Write_Time(char* timestring, char* datestring)
+{
+	OLED_Set_Text(0,  0, kOLED_Pixel_Set, timestring, 1, true);
+	OLED_Set_Text(75, 0, kOLED_Pixel_Set, datestring, 1, true);
+}
+
+
 void OLED_write_Text(uint8_t X_axis, uint8_t Y_axis, char* String)
 {
 	int strLength = strlen(String);
@@ -462,7 +478,7 @@ void OLED_write_Text(uint8_t X_axis, uint8_t Y_axis, char* String)
 		roll = false;
 	}
 
-	OLED_Set_Text(X_axis, Y_axis, kOLED_Pixel_Set, String, 2);
+	OLED_Set_Text(X_axis, Y_axis, kOLED_Pixel_Set, String, 2, false);
 }
 
 

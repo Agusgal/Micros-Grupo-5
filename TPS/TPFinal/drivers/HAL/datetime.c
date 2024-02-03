@@ -60,15 +60,15 @@ void DateTime_Init(void (*callback)(void))
 	date = (rtc_datetime_t) {.year = 2024U,
 			.month = 2U,
 			.day = 2U,
-			.hour = 17U,
-			.minute = 45U,
+			.hour = 22U,
+			.minute = 38U,
 			.second = 0};
 
 
-	date.hour = (__TIME__[0] - '0')*10 + (__TIME__[1]-'0');
-	date.minute = (__TIME__[3] - '0')*10 + (__TIME__[4]-'0');
-	date.second = (__TIME__[6] - '0')*10 + (__TIME__[7]-'0');
-	date.day = (__DATE__[4] - '0')*10 + (__DATE__[5]-'0');
+	//date.hour = (__TIME__[0] - '0')*10 + (__TIME__[1]-'0');
+	//date.minute = (__TIME__[3] - '0')*10 + (__TIME__[4]-'0');
+	//date.second = (__TIME__[6] - '0')*10 + (__TIME__[7]-'0');
+	//date.day = (__DATE__[4] - '0')*10 + (__DATE__[5]-'0');
 
     rtc_config_t rtcConfig;
 

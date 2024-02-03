@@ -42,12 +42,6 @@ int timeCallbackId = -1;
  ******************************************************************************/
 
 
-/**
- * @brief Shows the current time on the display.
- */
-//static void showTime(void);
-
-
 /*
  *@brief Callback after changing to high power mode
  */
@@ -82,10 +76,6 @@ void Idle_OnUserInteraction(void)
 		timeCallbackId = -1;
 	}
 
-
-	//Datetime_Disable();
-
-
 	timeCallbackId = Timer_AddCallback(emitStartEv, 3000, true); //Delay until clock stabilizes
 }
 
@@ -96,15 +86,13 @@ void UpdateTime()
 
 	char dateString[16];
 	char timeString[16];
-	snprintf(dateString, sizeof(dateString), "   %02hd-%02hd-%04hd     ", date.day, date.month, date.year);
-	snprintf(timeString, sizeof(timeString), "    %02hd:%02hd:%02hd      ", date.hour,date.minute, date.second);
+	snprintf(dateString, sizeof(dateString), "%02hd-%02hd-%04hd", date.day, date.month, date.year);
+	snprintf(timeString, sizeof(timeString), "%02hd:%02hd:%02hd", date.hour,date.minute, date.second);
 
 
-	OLED_write_Text(0, 0, timeString);
+	OLED_Clear_First_Page();
+	OLED_Write_Time(timeString, dateString);
 	OLED_Refresh();
-
-	//OLED_write_Text(0, 0, dateString);
-	//OLED_Refresh();
 }
 
 
