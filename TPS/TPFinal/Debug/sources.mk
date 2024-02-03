@@ -30,8 +30,8 @@ source/drivers/HAL \
 source/drivers/MCAL \
 source/drivers/SDK \
 source/equalizer \
-source/fft \
 source/mp3_file_handler \
 source/mp3_handler \
+source/vumeter \
 startup \
 

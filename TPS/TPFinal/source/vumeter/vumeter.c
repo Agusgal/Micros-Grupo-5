@@ -7,9 +7,8 @@
 #include "arm_math.h"
 #include "math.h"
 #include <stdbool.h>
-
+#include <vumeter/vumeter.h>
 #include "matrix_display.h"
-#include <vumeter.h>
 #include "fsl_device_registers.h"
 #include "Systick.h"
 

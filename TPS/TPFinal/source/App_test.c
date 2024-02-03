@@ -11,15 +11,13 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdint.h>
-
-
+#include <vumeter/vumeter.h>
 #include "../HAL/memory_handler.h"
 #include "mp3_handler/mp3_handler.h"
 #include "power_mode_switch.h"
 #include "AudioPlayer.h"
 #include "../HAL/mp3_decoder.h"
 #include "../HAL/matrix_display.h"
-#include "fft/vumeter.h"
 #include "equalizer/equalizer.h"
 #include "EventQueue/queue.h"
 #include "OLEDdisplay.h"
