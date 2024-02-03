@@ -22,9 +22,9 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-//TODO: borrar esto, que hacen estos defines aca xd????? se rompera el programa si los borro?
-#define IDLE 0
-#define RISING_FLANK 2
+
+//#define IDLE 0
+//#define RISING_FLANK 2
 
 
 /*******************************************************************************

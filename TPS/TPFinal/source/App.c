@@ -14,8 +14,9 @@
  *			- Hay un bug turbio cuando hacemos long key press al mismo tiempo que esta modificando volumen, NO HACERLO
  *			despues de un rato por alguna razon va a efectos.
  *
- *			- TEstear si dia y hora anda SIEMPRE, solo fue testeado file selection state
+ *			- Testear si dia y hora anda SIEMPRE, solo fue testeado file selection state
  *
+ *			- Sacar lo de powermode
  */
 
 /*******************************************************************************
@@ -110,7 +111,7 @@ void App_Init (void)
 	//Matrix Init
 	md_Init();
 
-	//Audio PLayer Init, para poder inicializarlo debe estar inicializado el DMA, sino tira error turbio.
+	//Audio PLayer Init
 	AudioPlayer_Init();
 
 	//Vumeter Init
@@ -122,10 +123,8 @@ void App_Init (void)
 	// Initialize the SSD1306 OLED display
 	OLED_Init();
 	OLED_Refresh();
-	//OLED_Clear();
 
 
-	//todo:
 	DateTime_Init(UpdateTime);
 	DateTime_Enable();
 
