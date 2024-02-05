@@ -1,7 +1,7 @@
 /***************************************************************************//**
-  @file     gpio.h
-  @brief    Simple GPIO Pin services, similar to Arduino
-  @author   Nicolás Magliola
+  @file     Buttons.h
+  @brief    Buttons Driver Header
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 #ifndef _BUTTONS_H_
@@ -31,8 +31,16 @@
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
-
+/*!
+ *@brief Init for Buttons.
+ */
 void Buttons_Init(void);
+
+/*!
+ *@brief Gets button event.
+ *@param Button: which from the three buttons was pressed.
+ *@return Event_Type
+ */
 Event_Type getButtonEvent(uint8_t button);
 
 /*******************************************************************************

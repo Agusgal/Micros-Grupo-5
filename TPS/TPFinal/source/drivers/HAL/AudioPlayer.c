@@ -146,7 +146,6 @@ void AudioPlayer_LoadSong(uint16_t * firstSongFrame, uint16_t _sampleRate, uint3
 
 	backBufferSampleRate = _sampleRate;
 
-	//TODO: nextBufferSize
 	activeBufferSize = _activeBufferSize;
 
 	AudioPlayer_UpdateSampleRate(backBufferSampleRate);
@@ -199,7 +198,6 @@ audioPlayerError_t AudioPlayer_UpdateBackBuffer(uint16_t * newBackBuffer, uint32
 		// Update the backBuffer
 		backBufferSampleRate = _sampleRate;
 
-		//TODO: nextBufferSize
 		nextBufferSize = _nextBufferSize;
 		return AP_NO_ERROR;
 	}
@@ -295,7 +293,6 @@ static void EDMA_Configuration(void)
 static void DMAMUX_Configuration(void)
 {
     // Configure DMAMUX
-    // Init en matrix // DMAMUX_Init(DMAMUX_BASEADDR);
     DMAMUX_SetSource(DMAMUX_BASEADDR, DMA_CHANNEL, DMA_DAC_SOURCE);
 }
 
@@ -308,7 +305,7 @@ static void PDB_Configuration(void)
 
     PDB_GetDefaultConfig(&pdbConfigStruct);
 
-    pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor40;
+    pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
     pdbConfigStruct.enableContinuousMode = true;
 
     PDB_Init(PDB_BASEADDR, &pdbConfigStruct);
@@ -365,7 +362,6 @@ static void Edma_Callback(edma_handle_t *handle, void *userData, bool transferDo
     {
     	sampleIndex += DAC_DATL_COUNT;
 
-    	// TODO: cambiar a >= nextBufferSize, que se recibe como parámetro desde afuera en updateBackBuffer
     	// This should allow playing any sampleRate (MPEG2 and MPEG3 have different MP3_FRAME_SIZES)
     	if (sampleIndex >= activeBufferSize)
 		{

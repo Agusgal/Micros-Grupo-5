@@ -1,8 +1,8 @@
-/*
- * equalizer.c
- *
- *  Created on: Jan 22 2024
- *      Author: Grupo 5
+/*******************************************************************************
+  @file     equalizer.c
+  @brief    Equalizer por song effects.
+  @author   Grupo 5 - Labo de Micros
+ ******************************************************************************
  *  Basado en implementación de EQ de CMSIS
  *  https://www.keil.com/pack/doc/CMSIS/DSP/html/arm_graphic_equalizer_example_q31_8c-example.html#_a11
  */

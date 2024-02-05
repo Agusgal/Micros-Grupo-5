@@ -1,11 +1,11 @@
 /***************************************************************************/ /**
-  @file     Idle_state.h
+  @file     Idle.h
   @brief    Idle state
-  @author   Grupo 5 - Lab de Micros
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
-#ifndef IDLE_STATE_H
-#define IDLE_STATE_H
+#ifndef IDLE_H
+#define IDLE_H
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
@@ -29,4 +29,4 @@ void Idle_OnUserInteraction(void);
 
 void UpdateTime(void);
 
-#endif /* IDLE_STATE_H */
+#endif /* IDLE_H */

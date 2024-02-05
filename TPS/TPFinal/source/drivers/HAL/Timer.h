@@ -18,13 +18,13 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 /** Each TimerElement is used to store the callback which Timer needs to call.
- * @variable callbackID. An unique ID of the element.
- * @variable callback. The function to be called.
- * @variable counterLimit.  The quotient between the callback period and the Timer's ISR period.
+ * @param callbackID. An unique ID of the element.
+ * @param callback. The function to be called.
+ * @param counterLimit.  The quotient between the callback period and the Timer's ISR period.
  * 							Indicates the amount of times the Timer's ISR must occur before calling the callback.
- * @variable counter. Indicates the amount of times the Timer's ISR occurred. It's reestablished when counterLimit is reached.
- * @variable paused. Indicates whether the calling of a callback is paused or not.
- * @variable callOnce. callOnce The callback will be called only once and the cancelled.
+ * @param counter. Indicates the amount of times the Timer's ISR occurred. It's reestablished when counterLimit is reached.
+ * @param paused. Indicates whether the calling of a callback is paused or not.
+ * @param callOnce. callOnce The callback will be called only once and the cancelled.
  */
 typedef struct TimerElement
 {

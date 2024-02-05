@@ -4,8 +4,8 @@
   @author   Grupo 5 - Lab de Micros
  **********/
 
-#ifndef FILE_SELECTION_STATE_H
-#define FILE_SELECTION_STATE_H
+#ifndef FILE_SELECTION_H
+#define FILE_SELECTION_H
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
@@ -51,6 +51,9 @@ void FileSelection_MP3_UpdateAll(void);
  */
 void FileSelection_PlayNextSong(void);
 
+/*
+ * @brief Start playing the previous song in the background
+ */
 void FileSelection_PlayPrevSong(void);
 
-#endif //FILE_SELECTION_STATE_H
+#endif //FILE_SELECTION_H

@@ -1,7 +1,7 @@
-/***************************************************************************
+/*******************************************************************************
   @file     equalizer.h
-  @brief    ...
-  @author   Grupo 2
+  @brief    Equalizer por song effects Header.
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 #ifndef EQUALIZER_H
 #define EQUALIZER_H

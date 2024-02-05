@@ -24,7 +24,7 @@
  ******************************************************************************/
 
 /*
- * Init routine
+ * @brief Init routine
  */
 void memory_handler_init(void);
 

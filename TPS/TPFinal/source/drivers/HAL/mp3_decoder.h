@@ -1,5 +1,5 @@
 /***************************************************************************//**
-  @file     decoder.h
+  @file     mp3_decoder.h
   @brief    decoder header
   @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
@@ -52,22 +52,15 @@ void MP3Decoder_Init(void);
 /**
  * @brief This function open the encoded mp3 file, if it was open
 		  close it reset the values and open again
+ * @param filename: file's path.
  * @return true if it can open the mp3 file and false if it can not.
  */
 bool MP3Decoder_LoadFile(const char* filename);
 
 
 /**
- * @brief If the depth is not bigger than the MAX_DEPTH value
-          and if the file is open and there are bytes to decoder
-		  in that case read the mp3 file and find the sync word and
-		  want store the next frame info and decode it.
-		  if there were no errors decoding, then update the pointers
-		  to use in the next decoder instance.
- * @param decodedDataNuffer: the buffer were we will store the decoded data. This has to be short because
-					  with that we insure that it uses 16 bits (if it had been int we can not assure
-					  that because int could be 16 or 32 bits). Anyway it could be uint_16 but with that
-					  we would be ensuring that the data is an unsigned data and we dont know that
+ * @brief Decode next frame
+ * @param decodedDataNuffer: the buffer were we will store the decoded data.
  * @param decodedBufferSize: the size of the buffer were we will store the decoded data.
  * @param numSamplesDecoded: The pointer to an uint_32 data to store there the number of samples decoded
  * @param sampleRate: pointer to the sampleRate needed.
@@ -80,11 +73,9 @@ decoder_result_t MP3Decoder_DecodeFrame	(short* decodedDataBuffer,
 
 
 /**
- * @brief get the info of the last frame data and store it inside
-		  the pointer channelCount passed as an argument
+ * @brief get the number of channels from last frame.
  * @param channelCount: pointer to a variable where we will store the number of channels.
- * @return true if the function can get the info of the last frame
-		   and false if it can not (usually because there was no last frame)
+ * @return true if the function can get the info of the last frame.
  */
 bool MP3Decoder_GetLastFrameNumOfChannels(uint8_t* channelCount);
 

@@ -28,8 +28,10 @@ static void Timer_PISR(void);
 
 /*A TimerElement's array to store the callbacks, their period, and other variables needed.*/
 static TimerElement timerElements[INITIAL_TIMER_ELEMENTS_ARRAY_LENGTH];
+
 /*A counter that avoid the repetition of the IDs returned by Timer_AddCallback*/
 static int idCounter;
+
 /*Flag indicating initialization completed*/
 static bool alreadyInit = false;
 /*******************************************************************************

@@ -5,8 +5,8 @@
  ******************************************************************************/
 
 
-#ifndef FSL_SSD1306_I2C_H_
-#define FSL_SSD1306_I2C_H_
+#ifndef _OLEDDISPLAY_H_
+#define _OLEDDISPLAY_H_
 
 #include "fsl_common.h"
 #include "fsl_Font5x7.h"
@@ -50,8 +50,6 @@
 #define OLED_ONE_COLUMN_SCROLL_H_LEFT               (0x2D)
 
 
-//-----el display puede responder a alguna de estas 2 direcciones.
-//-----Si con una no funciona cambiar a la otra:
 #define SSD1306_ADDRESS_1							(0x3C)
 #define SSD1306_ADDRESS_4							(0x3D)
 
@@ -233,4 +231,4 @@ bool OLEDisInit(void);
 
 void OLED_write_Text(uint8_t X_axis, uint8_t Y_axis, char* string);
 
-#endif /* FSL_SSD1306_I2C_H_ */
+#endif /* _OLEDDISPLAY_H_ */

@@ -1,7 +1,7 @@
 /***************************************************************************/ /**
   @file     mp3_file_handler.h
   @brief    Mp3 File Handler header
-  @author   Grupo 5 - Lab de Micros
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 #ifndef MP3_FILE_HANDLER_H_

@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     vumeter.c
   @brief    Vumeter functions
-  @author   Grupo 5
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 #include "arm_math.h"
@@ -15,8 +15,8 @@
 #define SAMPLE_LENGTH       FFT_SIZE
 #define NUMBER_OF_BANDS     8  
 #define VUMETER_HEIGHT      8
-#define NOISE_THRES         5
-#define MAX_AMPLITUDE       100
+#define NOISE_THRES         1
+#define MAX_AMPLITUDE       60
 #define AVERAGE				2
 
 static arm_rfft_fast_instance_f32 rfft_fast_instance;
@@ -45,7 +45,7 @@ static colors_t Image_Matrix_5[VUMETER_HEIGHT * NUMBER_OF_BANDS]=
 /*!
  * @brief fills the Color_Matrix local array with the given values
  *
- * @param vumeterValues: cumeter values array passed by reference
+ * @param vumeterValues: vumeter values array passed by reference
  *
  * @return void
  */
@@ -114,7 +114,6 @@ int VU_FFT(float32_t * inputSignal, float32_t SR, int lowerFreq, int higherFreq)
         }
         int roundedHeight = (int)(temp/MAX_AMPLITUDE);
 
-        //int roundedHeight = floor((vumeterValues[i]/(higherBin - lowerBin))/1000);
         VU_Values[i] += (roundedHeight > VUMETER_HEIGHT ? VUMETER_HEIGHT : roundedHeight)/AVERAGE;
 
         Current_Bin_Freq = Next_Bin_Freq;
@@ -188,7 +187,7 @@ void Fill_Spiral_Display(void)
 	static int i=0;
 	static int j=0;
 	static bool done=false;
-	Color_Matrix[8*i+j] = Image_Matrix_5[8*i+j];
+	Color_Matrix[8*i+j] = Image_Matrix_5[8*(7-i)+(7-j)];
 	if (!done)
 	{
 		if (step<7)

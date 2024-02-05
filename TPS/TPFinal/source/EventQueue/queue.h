@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     queue.h
-  @brief    Event queue impelmentation
-  @author   Bruno Di Sanzo, Agustin Galdeman
+  @brief    Event queue impelmentation header
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 #ifndef _queue_H_

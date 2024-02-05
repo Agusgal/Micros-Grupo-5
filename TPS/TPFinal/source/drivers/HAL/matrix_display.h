@@ -35,8 +35,6 @@ typedef struct
 ****************************************************************************/
 /*
  * @brief: Initialize the matrix, preparing FTM0 channel 0 and DMA0 channel 1
- * @param: -
- * @return: -
  */
 void md_Init(void);
 
@@ -44,7 +42,6 @@ void md_Init(void);
 /*
  * @brief: Update the matrix buffer, it will be updated in the next dma callback, upto 4ms leter
  * @param: buffer, new buffer to write MUST be DISPLAY_SIZE long
- * @return:-
  */
 void md_writeBuffer(colors_t *buffer);
 
@@ -54,15 +51,6 @@ void md_writeBuffer(colors_t *buffer);
  * @return: The structed data
  */
 pixel_t md_makeColor(bool R, bool G, bool B);
-
-/*
- * @brief: Update new brigthness
- * @param: 	brigthness: could be between 0 to 255
- * 			it will be linearly adapted to the 8 brightness levels
- * @return: -
- */
-void md_setBrightness(uint8_t brigthness);
-
 
 #endif /* MATRIX_DISPLAY_H_ */
  

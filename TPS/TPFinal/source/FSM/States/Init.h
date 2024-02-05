@@ -1,18 +1,18 @@
 /***************************************************************************/ /**
-  @file     init_state.h
+  @file     init.h
   @brief    Init state functions.
-  @author   Grupo 5 - Lab de Micros
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
-#ifndef FSM_STATES_INIT_STATE_H_
-#define FSM_STATES_INIT_STATE_H_
+#ifndef INIT_H_
+#define INIT_H_
 
 
 
 /*
- * Do some weird stuff to work
+ * @brief starts program.
  */
 void startProgram(void);
 
 
-#endif /* FSM_STATES_INIT_STATE_H_ */
+#endif /* INIT_H_ */

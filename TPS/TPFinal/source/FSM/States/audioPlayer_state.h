@@ -1,7 +1,7 @@
 /***************************************************************************/ /**
-  @file     Player_state.h
+  @file     audioPlayer_state.h
   @brief    Player state header.
-  @author   Grupo 5 - Lab de Micros
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 #ifndef PLAYER_STATE_H

@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     FSM.c
   @brief    fsm functions.
-  @author   Grupo 5
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 /*******************************************************************************
@@ -21,11 +21,6 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-
-
-//#define IDLE 0
-//#define RISING_FLANK 2
-
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -80,7 +75,7 @@ state FILE_SELECT_STATE[] =
 		//Go to equalizer
 		{Effects_InitState, ENCODER_LKP_EV, EQUALIZER_FROM_FILES_STATE},
 
-		//SD todo: hay que reiniciar EVERYTHING
+
 		{Idle_InitState, SD_OUT_EV, IDLE_STATE},
 		{Idle_InitState, TIMEOUT_EV, IDLE_STATE},
 
@@ -139,7 +134,7 @@ state EQUALIZER_FROM_FILES_STATE[] =
 		{Effects_NextOption, ENCODER_RIGHT_EV, EQUALIZER_FROM_FILES_STATE},
 		{Effects_PreviousOption, ENCODER_LEFT_EV, EQUALIZER_FROM_FILES_STATE},
 
-		//Apagar long key press
+		//Goes to Idle if long key press
 		{Idle_InitState, ENCODER_LKP_EV, IDLE_STATE},
 
 		//SD
@@ -162,7 +157,6 @@ state EQUALIZER_FROM_PLAYER_STATE[] =
 {
 		//Buttons
 		{Effects_SelectOption, PLAYPAUSE_EV, EQUALIZER_FROM_PLAYER_STATE},
-		//{Effects_Back, STOP_EV, EQUALIZER_STATE},
 		{Effects_NextOption, NEXT_EV, EQUALIZER_FROM_PLAYER_STATE},
 		{Effects_PreviousOption, PREV_EV, EQUALIZER_FROM_PLAYER_STATE},
 
@@ -235,7 +229,6 @@ state* get_initial_state()
 
 /**
  * @brief dummy function.
- * @return nothing.
  */
 static void pass(void)
 {

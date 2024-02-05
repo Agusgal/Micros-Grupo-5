@@ -1,10 +1,8 @@
-/*
- * I2CWrapper.c
- *
- *  Created on: 8 ene. 2024
- *      Author: Agus
- */
-
+/***************************************************************************/ /**
+  @file     I2CWrapper.c
+  @brief    I2C Driver
+  @author   Grupo 5 - Lab. de Micros
+ ******************************************************************************/
 #include "I2CWrapper.h"
 
 void I2C_InitModule(void)

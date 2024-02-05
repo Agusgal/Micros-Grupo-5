@@ -1,9 +1,8 @@
-/*
- * I2CWrapper.h
- *
- *  Created on: 8 ene. 2024
- *      Author: Agus
- */
+/***************************************************************************/ /**
+  @file     I2CWrapper.c
+  @brief    I2C driver Header
+  @author   Grupo 5 - Lab. de Micros
+ ******************************************************************************/
 
 #ifndef DRIVERS_HAL_I2CWRAPPER_H_
 #define DRIVERS_HAL_I2CWRAPPER_H_

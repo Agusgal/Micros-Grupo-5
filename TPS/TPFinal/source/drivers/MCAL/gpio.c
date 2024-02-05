@@ -104,7 +104,7 @@ bool gpioIRQ(pin_t pin, uint8_t irqMode, pinIrqFun_t irqFun)
 	NVIC_EnableIRQ(PORTA_IRQn + port);
 
 	callbacks[port][num] = irqFun;
-	bool result = NVIC_GetEnableIRQ(PORTA_IRQn + port); // not implemented yet
+	bool result = NVIC_GetEnableIRQ(PORTA_IRQn + port);
 	return result;
 }
 

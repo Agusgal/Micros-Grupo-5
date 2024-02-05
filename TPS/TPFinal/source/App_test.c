@@ -1,7 +1,7 @@
 /***************************************************************************//**
-  @file     App.c
-  @brief    Application functions
-  @author   Grupo 5
+  @file     App_test.c
+  @brief    Application for testing functions
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 /*******************************************************************************
@@ -69,7 +69,7 @@ void App_Init_test (void)
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run_test (void)
 {
-	/*
+
 	if(mh_SD_connected())
 	{
 		// Fetch the sd on conection event
@@ -100,7 +100,7 @@ void App_Run_test (void)
 			}
 		}
 
-	}*/
+	}
 
 
 

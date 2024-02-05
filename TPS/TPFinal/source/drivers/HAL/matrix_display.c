@@ -25,10 +25,10 @@
 #define PIXEL_SIZE (24U)
 #define DMA_CHANEL (0U)
 
-#define FTM_PRESCALE   0                                               // Configuration of the FTM driver
-#define FTM_MODULO     75//63                                              // for 800kbps rate needed in WS2812 leds
-#define HIGH_DUTY      50//42                                              // Duty value for '1' binit
-#define LOW_DUTY       24//20                                              // Duty value for '0' binit
+#define FTM_PRESCALE   0                // Configuration of the FTM driver
+#define FTM_MODULO     75               // for 800kbps rate needed in WS2812 leds
+#define HIGH_DUTY      50               // Duty value for '1' binit
+#define LOW_DUTY       24               // Duty value for '0' binit
 #define OFF_DUTY	   2
 
 #define PRE			(0U)
@@ -165,17 +165,12 @@ void md_writeBuffer(colors_t *new_buffer)
 		default: break;
 		}
 	}
-	//change_buffer = true;
 
-	//if(change_buffer)
-	//{
 		if(currBuffer == buffers[0])
 			currBuffer = buffers[1];
 		else
 			currBuffer = buffers[0];
 
-	//	change_buffer = false;
-	//}
 
 	EDMA_PrepareTransfer(&g_transferConfig, (void *)(currBuffer), sizeof(uint16_t),
 									(void *)FTM_GetCnVAddress(0, 0), sizeof(uint16_t),
@@ -200,17 +195,6 @@ pixel_t md_makeColor(bool r, bool g, bool b)
 	return ret;
 }
 
-void md_setBrightness(uint8_t brigthness)
-{
-	/*uint8_t new_b = brigthness / 32;
-	//if(new_b == 0){new_b = 1;}
-	if(new_b >= 7){new_b = 6;}
-	if(bright != new_b)
-	{
-		bright = new_b;
-		md_writeBuffer(pixel_buffer);
-	}*/
-}
 
 /***************************************************************************
 *	LOCAL FUNCTION DEFINITIONS
@@ -223,7 +207,6 @@ static void md_dmaCallback(edma_handle_t *handle, void *userData, bool transferD
 	while(!FTM_IsInterruptPending (0,FTM_CH_0)){}; // Sync with CHF
 	FTM_StopClock(0);
 	FTM_onOM(0,0);
-	//Systick_ResumeCallback(timer_id);
 
 	transfer_done = true;
 }

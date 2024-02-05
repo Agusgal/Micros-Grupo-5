@@ -42,6 +42,7 @@ void AudioPlayer_Init(void);
  *@brief Loads a song's first frame and sampleRate
  *@param firstSongFrame first song's frame's samples.
  *@param song's sample rate.
+ *@param activeBufferSize: frame size.
  */
 void AudioPlayer_LoadSong(uint16_t * firstSongFrame, uint16_t _sampleRate, uint32_t _activeBufferSize);
 
@@ -61,6 +62,7 @@ bool AudioPlayer_IsBackBufferFree(void);
  * @brief Updates the back buffer.
  * @param newBackBuffer, new buffer that will fill the back buffer.
  * @param sampleRate needed.
+ * @param nextBufferSize: new buffer that will fill the next buffer.
  * @return if there was an error.
 */
 audioPlayerError_t AudioPlayer_UpdateBackBuffer(uint16_t * newBackBuffer, uint32_t _sampleRate, uint32_t _nextBufferSize);

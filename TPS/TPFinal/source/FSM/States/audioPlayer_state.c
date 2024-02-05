@@ -1,6 +1,6 @@
 /***************************************************************************/ /**
-  @file     AudioPlayer.h
-  @brief    Audio Reproductor using the DAC with PDB.
+  @file     audioPlayer_state.h
+  @brief    Audio Reproductor STATE using the DAC with PDB.
   @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 

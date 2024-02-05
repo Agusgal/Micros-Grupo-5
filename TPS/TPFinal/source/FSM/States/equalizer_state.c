@@ -1,7 +1,7 @@
 /***************************************************************************/ /**
-  @file     effects_state.c
-  @brief    Effects state functions.
-  @author   Grupo 5 - Lab de Micros
+  @file     equalizer_state.c
+  @brief    equalizer state functions.
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 /*******************************************************************************

@@ -1,7 +1,7 @@
 /***************************************************************************//**
-  @file     gpio.h
-  @brief    Simple GPIO Pin services, similar to Arduino
-  @author   Nicolás Magliola
+  @file     encoder.h
+  @brief    Encoder driver Header
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 #ifndef _ENCODER_H_
@@ -47,4 +47,4 @@ int getEncoder_State(void);
 /*******************************************************************************
  ******************************************************************************/
 
-#endif // _GPIO_H_
+#endif // _ENCODER_H_

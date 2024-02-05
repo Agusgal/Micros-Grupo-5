@@ -1,12 +1,12 @@
 /***************************************************************************//**
   @file     vumeter.h
   @brief    Vumeter functions
-  @author   Grupo 5
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 
-#ifndef _VU_H
-#define _VU_H
+#ifndef _VUMETER_H
+#define _VUMETER_H
 
 #include<stdio.h>
 #include<stdint.h>
@@ -19,7 +19,6 @@
 
 /*!
  * @brief Initializes vumeter
- * @param void.
  */
 void VU_Init();
 
@@ -39,18 +38,13 @@ int VU_FFT(float32_t * inputSignal, float32_t sampleRate, int lowerFreqBand, int
 
 /*!
  * @brief draws the content of Color_Matrix into the matrix display (using matrix driver)
- *
- * @param void
- *
- * @return void
  */
 void VU_Draw_Display(void);
 
 
 /*!
  * @brief Initializes vumeter
- * @param void.
  */
 void VU_Clear_Display();
 
-#endif
+#endif //_VUMETER_H

@@ -4,8 +4,7 @@
   @author   Grupo 5
  ******************************************************************************/
 
-/*----esta modificada para usar el I2C0, en caso de utilizar otro cambiar lo que diga I2C1 por la base del I2C usado--- */
-/*---- BASADO EN fsl_SSD1306.h para SPI de NXP ------*/
+/*---- Based in  fsl_SSD1306.h from NXP for SPI ------*/
 
 #include "OLEDdisplay.h"
 #include "I2CWrapper.h"
@@ -241,7 +240,7 @@ void OLED_Init(void)
 	OLED_Refresh();
 
 
-	OLEDtimerClbID = Timer_AddCallback(rollCLB, 20, false); // 15 es bastante rapido.
+	OLEDtimerClbID = Timer_AddCallback(rollCLB, 20, false);
 }
 
 
@@ -257,7 +256,7 @@ void OLED_Refresh(void)
 
 void OLED_Clear(void)
 {
-	//Agregue el OLED_WIDTH a esto para que nunca borre la primera pagina (fecha y hora)
+
 	memset(OLED_Buffer + OLED_WIDTH, 0, sizeof(OLED_Buffer) - OLED_WIDTH);
 	memset(OLED_Scroll_Buffer[0], 0, sizeof(OLED_Scroll_Buffer[0]));
 	memset(OLED_Scroll_Buffer[1], 0, sizeof(OLED_Scroll_Buffer[1]));
@@ -348,7 +347,7 @@ static int OLED_Render_Scroll_Char(uint16_t X_axis, uint8_t Y_axis, uint8_t SC, 
 	uint16_t px, py;
 	uint16_t start_pos;
 
-	if ((X_axis >= OLED_WIDTH * 8))//|| (Y_axis >= 16))
+	if ((X_axis >= OLED_WIDTH * 8))
 	{
 		return 1;
 	}
@@ -390,7 +389,7 @@ static int OLED_Render_Scroll_Char(uint16_t X_axis, uint8_t Y_axis, uint8_t SC, 
 	return 0;
 }
 
-//Le agregue fortime si estoy escribiendo una fecha asi diferencia
+
 void OLED_Set_Text(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, uint8_t Scale, bool fromTime)
 {
 	uint16_t Cont;
@@ -416,7 +415,7 @@ void OLED_Set_Text(uint8_t X_axis, uint8_t Y_axis, uint8_t SC, char* String, uin
 			}
 			else
 			{
-				if (!fromTime)//sacar si no anda
+				if (!fromTime)
 					OLED_Render_Scroll_Char(xscaled, Y_axis, SC, String[Cont], Scale);
 			}
 		}

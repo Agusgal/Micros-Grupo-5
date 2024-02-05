@@ -1,7 +1,7 @@
 /***************************************************************************/ /**
   @file     FTM.c
   @brief    FTM driver
-  @author   Daniel Jacoby y Grupo 5 - Lab de Micros
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 #include "ftm.h"
@@ -17,7 +17,7 @@ void PWM_Init(FTM_t id, FTM_Channel_t channel, FTM_Prescal_t prescaler,
 	FTM_Type *ftm = p_ftm[id];
 	PORT_Type *port = p_ports[port_ftm];
 
-	// CLock gatting ans enable irq
+	// CLock gating and enable irq
 
 	SIM->SCGC5 |= (SIM_SCGC5_PORTA_MASK << port_ftm);
 	NVIC_EnableIRQ(PORTA_IRQn + port_ftm);

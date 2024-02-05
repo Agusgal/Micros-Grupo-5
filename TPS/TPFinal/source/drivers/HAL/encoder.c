@@ -1,7 +1,7 @@
 /***************************************************************************//**
-  @file     App.c
-  @brief    Application functions
-  @author   Nicolás Magliola
+  @file     encoder.c
+  @brief    Encoder driver
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 /*******************************************************************************
@@ -38,8 +38,8 @@ void Encoder_Init(void)
 	gpioMode(PIN_CH_A, INPUT_PULLUP);
 	gpioMode(PIN_CH_B, INPUT_PULLUP);
 	gpioMode(PIN_ENC_SW, INPUT_PULLUP);
-	SysTick_AddCallback(Encoder_Update, 10);//todo ojo que aca antes decia 5000 pero con el nuevo systick creo que debe ser menos
-	SysTick_AddCallback(EncoderSwitch_Update, 10); //todo: aca igual, decia 20000, con 100-200 no anda long key press
+	SysTick_AddCallback(Encoder_Update, 10);
+	SysTick_AddCallback(EncoderSwitch_Update, 10);
 }
 
 void Encoder_Update(void)
@@ -51,7 +51,7 @@ void Encoder_Update(void)
 	bool CH_B = gpioRead(PIN_CH_B);
 	encoder= IDLE;
 
-	// Máquina de Estados
+	// State Machine
 	switch (state)
 	{
 
@@ -135,7 +135,7 @@ void EncoderSwitch_Update(void)
 		encoder_sw = RISING_FLANK;
 		duration_counter++;
 	}
-	else if (sw_state == LOW) // && sw_Read == HIGH pero no hace falta
+	else if (sw_state == LOW)
 	{
 		encoder_sw = IDLE_;
 		duration_counter = 0;

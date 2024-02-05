@@ -1,7 +1,7 @@
 /*******************************************************************************
   @file     UART.c
   @brief    UART Driver for K64F. Non-Blocking and using FIFO feature
-  @author   Grupo 5
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 
@@ -66,7 +66,7 @@ void UART_init (uint8_t id, uart_cfg_t config)
 {
 	uint8_t i;
 
-	/********* Tomo el puerto ***********/
+	/**************************************/
 	PORT_Type * arr_uart_ports[] = UART_PORTS;
 	uint8_t ports_number[] = {16,3,2,16,25};
 	PORT_Type * uart_port = arr_uart_ports[id];
@@ -156,7 +156,7 @@ uint8_t UART_write_msg(uint8_t id, const char* msg, uint8_t cant)
 
 	while((cant > len_write) && (((p_out_rear[id] + 2) % (MAX_BUFFER_LEN - 1)) != p_out_front[id])) // Buffer full
 	{
-		p_out_rear[id] = (p_out_rear[id] + 1) % (MAX_BUFFER_LEN - 1); // Incremento circular
+		p_out_rear[id] = (p_out_rear[id] + 1) % (MAX_BUFFER_LEN - 1);
 		buffer_out[id][p_out_rear[id]] = msg[len_write];
 		len_write++;
 	}
@@ -172,14 +172,14 @@ bool UART_is_tx_msg_complete(uint8_t id)
 
 unsigned char UART_Recieve_Data(void)
 {
-	while(((UART0->S1)& UART_S1_RDRF_MASK) ==0); // Espero recibir un caracter
-	return(UART0->D); //Devuelvo el caracter recibido
+	while(((UART0->S1)& UART_S1_RDRF_MASK) ==0);
+	return(UART0->D);
 }
 
 void UART_Send_Data(unsigned char tx_data)
 {
-	while(((UART0->S1)& UART_S1_TDRE_MASK) ==0); //Puedo Transmitir ?
-	UART0->D = tx_data; // Transmito
+	while(((UART0->S1)& UART_S1_TDRE_MASK) ==0);
+	UART0->D = tx_data;
 }
 
 
@@ -226,11 +226,11 @@ void UART_rx_tx_irq_handler(UART_Type * p_uart, uint8_t id)
 	if(ISR_TDRE(tmp))
 	{
 		uint8_t msg_len = MSG_LEN(p_out_rear[i], p_out_front[i], MAX_BUFFER_LEN);
-		if(msg_len != 0) // Si tengo caracteres en la cola lo mando
+		if(msg_len != 0)
 		{
 			tx_data = buffer_out[i][p_out_front[i]];
 			p_out_front[i] = (p_out_front[i] + 1) % (MAX_BUFFER_LEN - 1 );
-			p_uart->D = tx_data; // Transmito
+			p_uart->D = tx_data;
 
 			if(msg_len == 1) //Clear tie interrupt when buffer is empty
 				p_uart->C2 = (p_uart->C2 & ~UART_C2_TIE_MASK);
@@ -243,12 +243,10 @@ void UART_rx_tx_irq_handler(UART_Type * p_uart, uint8_t id)
 		rx_data=p_uart->D;
 		if (((p_in_rear[i] + 2) % (MAX_BUFFER_LEN - 1)) != p_in_front[i]) // Buffer full
 		{
-			p_in_rear[i] = (p_in_rear[i] + 1) % (MAX_BUFFER_LEN - 1); // Incremento circular
+			p_in_rear[i] = (p_in_rear[i] + 1) % (MAX_BUFFER_LEN - 1);
 			buffer_in[i][p_in_rear[i]] = rx_data;
 		}
 
-		//if(my_callback)
-		//	my_callback();
 
 	}
 

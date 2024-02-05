@@ -1,24 +1,8 @@
 /***************************************************************************//**
   @file     App.c
   @brief    Application functions
-  @author   Grupo 5
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
-
-/*
- * todo:
- *			- Cuando vuelvo a IDLE se rompe, la unic manera de volver a IDLE es sacando la SD. ARREGLAR
- *
- *			- Previous song, si se presiona 2 veces en 3 segundos, vaya a la canción anterior
- * 				En caso contrario, vuelva a reproducir la canción actual.
- *
- *			- Hay un bug turbio cuando hacemos long key press al mismo tiempo que esta modificando volumen, NO HACERLO
- *			despues de un rato por alguna razon va a efectos.
- *
- *			- Testear si dia y hora anda SIEM
- *			PRE, solo fue testeado file selection state
- *
- *			- Sacar lo de powermode
- */
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
@@ -167,7 +151,6 @@ void App_Run (void)
  */
 void fill_queue(void)
 {
-	//If OLED Init worked... begin. (only emits event one time)
 	static bool OLEDdone = false;
 	if(!OLEDdone && OLEDisInit())
 	{

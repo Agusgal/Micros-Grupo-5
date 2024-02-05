@@ -1,7 +1,7 @@
 /***************************************************************************/ /**
-  @file     init_state.c
+  @file     init.c
   @brief    Init state functions.
-  @author   Grupo 5 - Lab de Micros
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 #include <FSM/States/idle.h>

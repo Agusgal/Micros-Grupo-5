@@ -2,7 +2,7 @@
 /***************************************************************************/ /**
   @file     mp3_file_handler.c
   @brief    MP3 File Handler functions
-  @author   Grupo 5 - Lab de Micros
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 #include "mp3_file_handler.h"
@@ -30,15 +30,9 @@ static MP3Object_t playing_songs[FILE_ARRAY_SIZE];
 static unsigned int playingSongsCounter = 0;
 
 
-
-/*
- *
- */
 static void mp3Files_list_dir(char * path);
 
-/*
- *
- */
+
 static void getParentDirectory(char* filePath, char* parentDir);
 
 
@@ -51,7 +45,6 @@ static void sortSongsBuffer(void);
 static int compPathsAlphabeticalOrder (const void *_elem1, const void *_elem2);
 
 
-//static int compTrackNum (const void *_elem1, const void *_elem2);
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -185,24 +178,6 @@ MP3Object_t mp3Files_GetNextObject(MP3Object_t currentObject)
 }
 
 
-/*
-MP3Object_t mp3Files_GetNextMP3File2(MP3Object_t currentObject)
-{
-	uint32_t i;
-	unsigned int nextObjectIndex;
-
-	for (i = 1; i < objectsCounter; i++)
-	{
-		nextObjectIndex = (currentObject.index + i) % objectsCounter;
-
-		if (current_objects[nextObjectIndex].object_type == MP3_FILE)
-			return current_objects[nextObjectIndex];
-	}
-
-	// If no other MP3_FILES
-	return currentObject;
-}*/
-
 
 MP3Object_t mp3Files_GetPreviousObject(MP3Object_t currentObject)
 {
@@ -218,7 +193,7 @@ MP3Object_t mp3Files_GetPreviousObject(MP3Object_t currentObject)
 			if (previousObjectIndex == 0)
 			{
 				// If the next index is out of range, return the first directory (no mp3 files)
-				return current_directories[directoriesCounter-1]; //TODO: SI FALLA, ES POR EL -1
+				return current_directories[directoriesCounter-1];
 			}
 			else
 			{
@@ -282,33 +257,6 @@ MP3Object_t mp3Files_GetPreviousMP3File(MP3Object_t currentObject)
 	return playing_songs[previousObjectIndex];
 }
 
-
-/*
-MP3Object_t mp3Files_GetPreviousMP3File2(MP3Object_t currentObject)
-{
-	uint32_t i;
-	uint32_t nextObjectIndex;
-
-	for (i = 1; i < objectsCounter; i++)
-	{
-		nextObjectIndex = (currentObject.index + objectsCounter - i) % objectsCounter;
-
-		if (current_objects[nextObjectIndex].object_type == MP3_FILE)
-			return current_objects[nextObjectIndex];
-	}
-
-	// If no other MP3_FILES
-	if (currentObject.object_type != MP3_FILE)
-	{
-		MP3Object_t nullFile = {.object_type = NULL_OBJECT, .index = -1, .path = ""};
-		return nullFile;
-	}
-	else
-	{
-		// If the current object is an MP3_FILE, return it
-		return currentObject;
-	}
-}*/
 
 
 char* mp3Files_GetObjectName(MP3Object_t object)
@@ -501,19 +449,3 @@ static int compPathsAlphabeticalOrder (const void *_elem1, const void *_elem2)
 	return strcmp(elem1->path, elem2->path);
 }
 
-/*
-static int compTrackNum (const void *_elem1, const void *_elem2)
-{
-	MP3Object_t * elem1, * elem2;
-
-	elem1 = (MP3Object_t *) _elem1;
-	elem2 = (MP3Object_t *) _elem2;
-
-	int f = elem1->track_num;
-	int s = elem2->track_num;
-
-    if (f > s) return  1;
-    if (f < s) return -1;
-
-    return 0;
-}*/

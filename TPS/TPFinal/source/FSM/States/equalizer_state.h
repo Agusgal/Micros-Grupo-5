@@ -1,10 +1,10 @@
 /***************************************************************************/ /**
-  @file     effects_state.h
-  @brief    Effects state
+  @file     equalizer_state.h
+  @brief    Equalizer state header
   @author   Grupo 5 - Lab de Micros
  ******************************************************************************/
-#ifndef EFFECTS_STATE_H
-#define EFFECTS_STATE_H
+#ifndef EQUALIZER_STATE_H
+#define EQUALIZER_STATE_H
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
@@ -47,4 +47,4 @@ void Effects_Back(void);
 void Equalizer_MP3_UpdateAll(void);
 
 
-#endif /* EFFECTS_STATE_H */
+#endif /* EQUALIZER_STATE_H */

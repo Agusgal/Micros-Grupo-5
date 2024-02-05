@@ -1,5 +1,5 @@
 /*******************************************************************************
-  @file     decoder.c
+  @file     mp3_decoder.c
   @brief    file with the decoder function to use the library helix
   @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
@@ -271,7 +271,6 @@ decoder_result_t MP3Decoder_DecodeFrame	(short* decodedDataBuffer,
         }
         else
         {
-        	// This should be an error
         	// We'll indicate that the file has ended
 			return DECODER_END_OF_FILE;
         }

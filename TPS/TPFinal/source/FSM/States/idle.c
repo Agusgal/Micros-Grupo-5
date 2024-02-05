@@ -1,7 +1,7 @@
 /***************************************************************************/ /**
-  @file     idle_state.c
+  @file     idle.c
   @brief    Idle state functions.
-  @author   Grupo 5 - Lab de Micros
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 /*******************************************************************************
@@ -57,7 +57,6 @@ static void emitStartEv(void);
 void Idle_InitState(void)
 {
 	//DeInit some modules for Initialization
-	//todo: parece que deinit rompe el programa.
 	mp3Handler_deinit();
 }
 

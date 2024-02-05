@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     fsm.h
   @brief    finite state machine module, controls program flow
-  @author   Grupo 5
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 #ifndef _FSM_H_
@@ -21,10 +21,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-
-//TODO: reubicar este define en un lugar mas apropiado
 #define END_TABLE 0xFF
-
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS

@@ -1,7 +1,7 @@
 /***************************************************************************/ /**
-  @file     file_selection_state.c
+  @file     file_selection.c
   @brief    File Selection State Functions
-  @author   Grupo 5 - Lab de Micros
+  @author   Grupo 5 - Labo de Micros
  ******************************************************************************/
 
 /*******************************************************************************
@@ -25,11 +25,6 @@
 
 #include "Timer.h"
 #include "OLEDdisplay.h"
-
-//#include "memory_manager.h"
-//#include "file_system_manager.h"
-//#include "decoder.h"
-
 #include "power_mode_switch.h"
 
 /*******************************************************************************
