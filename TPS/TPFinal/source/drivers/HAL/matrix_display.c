@@ -128,6 +128,8 @@ void md_Init(void)
 
 void md_writeBuffer(colors_t *new_buffer)
 {
+	//gpioWrite(TP, true);
+
 	uint16_t i = 0;
 	volatile uint16_t * backBuffer = (currBuffer == buffers[0]) ? buffers[1]:buffers[0];
 
@@ -187,6 +189,7 @@ void md_writeBuffer(colors_t *new_buffer)
 	while(!FTM_IsInterruptPending (0,FTM_CH_0)){}; // Sync with CHF
 	FTM_offOM(0,0);
 
+	//gpioWrite(TP, false);
 
 }
 

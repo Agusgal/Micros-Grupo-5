@@ -101,6 +101,7 @@ static int16_t * activeBuffer = buffers[0];					// Active has the current playin
 static int16_t * backBuffer= buffers[1];					// Back has the next frame of sound to be played
 
 static uint32_t backBufferSampleRate;
+static uint32_t activeBufferSize = AUDIO_PLAYER_BUFF_SIZE;
 static uint32_t nextBufferSize = AUDIO_PLAYER_BUFF_SIZE;
 
 static bool backBufferFree = false;
@@ -136,7 +137,7 @@ void AudioPlayer_Init(void)
 }
 
 
-void AudioPlayer_LoadSong(uint16_t * firstSongFrame, uint16_t _sampleRate)
+void AudioPlayer_LoadSong(uint16_t * firstSongFrame, uint16_t _sampleRate, uint32_t _activeBufferSize)
 {
 	memcpy(activeBuffer, firstSongFrame, AUDIO_PLAYER_BUFF_SIZE * sizeof(uint16_t));
 
@@ -146,7 +147,7 @@ void AudioPlayer_LoadSong(uint16_t * firstSongFrame, uint16_t _sampleRate)
 	backBufferSampleRate = _sampleRate;
 
 	//TODO: nextBufferSize
-	// nextBufferSize = _nextBufferSize;
+	activeBufferSize = _activeBufferSize;
 
 	AudioPlayer_UpdateSampleRate(backBufferSampleRate);
 }
@@ -188,7 +189,7 @@ void AudioPlayer_UpdateSampleRate(uint32_t _sampleRate)
 }
 
 
-audioPlayerError_t AudioPlayer_UpdateBackBuffer(uint16_t * newBackBuffer, uint32_t _sampleRate)
+audioPlayerError_t AudioPlayer_UpdateBackBuffer(uint16_t * newBackBuffer, uint32_t _sampleRate, uint32_t _nextBufferSize)
 {
 	if(backBufferFree)
 	{
@@ -199,7 +200,7 @@ audioPlayerError_t AudioPlayer_UpdateBackBuffer(uint16_t * newBackBuffer, uint32
 		backBufferSampleRate = _sampleRate;
 
 		//TODO: nextBufferSize
-		// nextBufferSize = _nextBufferSize;
+		nextBufferSize = _nextBufferSize;
 		return AP_NO_ERROR;
 	}
 	else
@@ -307,7 +308,6 @@ static void PDB_Configuration(void)
 
     PDB_GetDefaultConfig(&pdbConfigStruct);
 
-    // Paso esto a load song info para cambiar los valores para el PDB
     pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor40;
     pdbConfigStruct.enableContinuousMode = true;
 
@@ -349,6 +349,7 @@ static void DAC_Configuration(void)
 
 static void Edma_Callback(edma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds)
 {
+	//gpioWrite(TP, true);
     // Clear Edma interrupt flag.
     EDMA_ClearChannelStatusFlags(DMA_BASEADDR, DMA_CHANNEL, kEDMA_InterruptFlag);
 
@@ -366,7 +367,7 @@ static void Edma_Callback(edma_handle_t *handle, void *userData, bool transferDo
 
     	// TODO: cambiar a >= nextBufferSize, que se recibe como parámetro desde afuera en updateBackBuffer
     	// This should allow playing any sampleRate (MPEG2 and MPEG3 have different MP3_FRAME_SIZES)
-    	if (sampleIndex == AUDIO_PLAYER_BUFF_SIZE)
+    	if (sampleIndex >= activeBufferSize)
 		{
     		// If the activeBuffer was completely transferred
 			sampleIndex = 0;
@@ -377,6 +378,8 @@ static void Edma_Callback(edma_handle_t *handle, void *userData, bool transferDo
 			activeBuffer = backBuffer;
 			backBuffer = temp;
 			backBufferFree = true;
+
+			activeBufferSize = nextBufferSize;
 
 			// Update the sampleRate with the one loaded in the backBuffer
 			AudioPlayer_UpdateSampleRate(backBufferSampleRate);
@@ -411,6 +414,8 @@ static void Edma_Callback(edma_handle_t *handle, void *userData, bool transferDo
 
     // Enable transfer.
     EDMA_StartTransfer(&audioPlayer_EDMA_Handle);
+
+    //gpioWrite(TP, false);
 }
 
 

@@ -61,6 +61,7 @@ void Buttons_Init(void)
 
 void Buttons_Update(void)
 {
+	//gpioWrite(TP, true);
 
 	bool reads[BUTTON_SIZE];
 	for (int i=0;i<BUTTON_SIZE;i++)
@@ -98,6 +99,8 @@ void Buttons_Update(void)
 			buttons[i].duration_counter=0;
 		}
 	}
+
+	//gpioWrite(TP, false);
 }
 
 void ButtonConfig(void)

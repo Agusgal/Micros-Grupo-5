@@ -43,7 +43,7 @@ void AudioPlayer_Init(void);
  *@param firstSongFrame first song's frame's samples.
  *@param song's sample rate.
  */
-void AudioPlayer_LoadSong(uint16_t *firstSongFrame, uint16_t sampleRate);
+void AudioPlayer_LoadSong(uint16_t * firstSongFrame, uint16_t _sampleRate, uint32_t _activeBufferSize);
 
 /*!
  *@brief Updates the sample rate that it's being used.
@@ -63,7 +63,7 @@ bool AudioPlayer_IsBackBufferFree(void);
  * @param sampleRate needed.
  * @return if there was an error.
 */
-audioPlayerError_t AudioPlayer_UpdateBackBuffer(uint16_t * newBackBuffer, uint32_t _sampleRate);
+audioPlayerError_t AudioPlayer_UpdateBackBuffer(uint16_t * newBackBuffer, uint32_t _sampleRate, uint32_t _nextBufferSize);
 
 /*!
  * @brief Reproduces audio using the DAC, from the samples previously saved from the current song.

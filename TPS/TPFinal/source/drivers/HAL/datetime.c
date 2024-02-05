@@ -140,12 +140,12 @@ void DateTime_Disable(void)
 
 void RTC_Seconds_IRQHandler(void)
 {
-	gpioToggle(TP);
+	//gpioWrite(TP, true);
 
     if (rtc_callback != NULL)
     	rtc_callback();
 
-    gpioToggle(TP);
+    //gpioWrite(TP, false);
 
     SDK_ISR_EXIT_BARRIER;
 }

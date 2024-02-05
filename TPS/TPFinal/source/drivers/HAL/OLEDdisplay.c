@@ -484,6 +484,7 @@ void OLED_write_Text(uint8_t X_axis, uint8_t Y_axis, char* String)
 
 static void rollCLB(void)
 {
+	//gpioWrite(TP, true);
 	size_t count;
 	if (I2C_MasterTransferGetCount(I2C0, &handle, &count) != kStatus_Success)
 	{
@@ -500,6 +501,8 @@ static void rollCLB(void)
 	{
 		OLED_Refresh();
 	}
+
+	//gpioWrite(TP, false);
 }
 
 

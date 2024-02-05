@@ -49,7 +49,7 @@ SDK_ALIGN(static short decoder_buffer[2*BUFFER_SIZE], SD_BUFFER_ALIGN_SIZE);
 static uint8_t vol = 15;
 static char vol2send = 15 + 40;
 
-
+static uint32_t nextBufferSize = BUFFER_SIZE;
 /******************************************************************************
 
  ******************************************************************************/
@@ -127,13 +127,16 @@ bool mp3Handler_selectObject(void)
 
 void mp3Handler_updateAudioPlayerBackBuffer(void)
 {
+
+	//gpioWrite(TP, true);
+
 	uint32_t numOfSamples = 0;
 	uint8_t numOfChannels = 1;
 	float effects_in[BUFFER_SIZE];
 	float effects_out[BUFFER_SIZE];
 
 	// Update with the previous processed audio
-	AudioPlayer_UpdateBackBuffer(processedAudioBuffer, sampleRate);
+	AudioPlayer_UpdateBackBuffer(processedAudioBuffer, sampleRate, nextBufferSize);
 
 	// Clean buffers to rewrite
 	memset(processedAudioBuffer, 0, sizeof(processedAudioBuffer));
@@ -187,12 +190,19 @@ void mp3Handler_updateAudioPlayerBackBuffer(void)
 			processedAudioBuffer[index] = DAC_ZERO_VOLT_VALUE;
 		}
 
+		nextBufferSize = BUFFER_SIZE;
 		push_Queue_Element(NEXT_SONG_EV);
 
+	}
+	else
+	{
+		nextBufferSize = (numOfSamples / numOfChannels);
 	}
 
 	// Compute FFT and set the vumeter
 	VU_FFT(effects_out, sampleRate, 80, 10000);
+
+	//gpioWrite(TP, false);
 }
 
 
@@ -373,8 +383,9 @@ static void loadPlayingSong(void)
 	sampleRate = 44100;
 
 	// Set a default sampleRate for first buffers
-	AudioPlayer_LoadSong(processedAudioBuffer, sampleRate);
+	AudioPlayer_LoadSong(processedAudioBuffer, sampleRate, BUFFER_SIZE);
 
+	nextBufferSize = BUFFER_SIZE;
 	mp3Handler_updateAudioPlayerBackBuffer();
 }
 
