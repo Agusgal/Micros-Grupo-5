@@ -232,7 +232,7 @@ static int getArrayEffectiveLength(TimerElement timerElements[])
 static void Timer_PISR(void)
 {
 	//gpioToggle(TP2);
-	gpioWrite(TP2, true);
+	//gpioWrite(TP2, true);
 
 	for (int i = 0; i < (getArrayEffectiveLength(timerElements)); i++) //Iterates through all the elements.
 	{
@@ -248,5 +248,5 @@ static void Timer_PISR(void)
 			timerElements[i].counter++;
 		}
 	}
-	gpioWrite(TP2, false);
+	//gpioWrite(TP2, false);
 }

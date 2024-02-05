@@ -2181,7 +2181,7 @@ void DSPI_SlaveTransferHandleIRQ(SPI_Type *base, dspi_slave_handle_t *handle)
 
 static void DSPI_CommonIRQHandler(SPI_Type *base, void *param)
 {
-	gpioToggle(TP);
+	//gpioToggle(TP);
 
     if (DSPI_IsMaster(base))
     {
@@ -2192,7 +2192,7 @@ static void DSPI_CommonIRQHandler(SPI_Type *base, void *param)
         s_dspiSlaveIsr(base, (dspi_slave_handle_t *)param);
     }
 
-    gpioToggle(TP);
+    //gpioToggle(TP);
 
     SDK_ISR_EXIT_BARRIER;
 }

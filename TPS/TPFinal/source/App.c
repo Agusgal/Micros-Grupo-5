@@ -14,7 +14,8 @@
  *			- Hay un bug turbio cuando hacemos long key press al mismo tiempo que esta modificando volumen, NO HACERLO
  *			despues de un rato por alguna razon va a efectos.
  *
- *			- Testear si dia y hora anda SIEMPRE, solo fue testeado file selection state
+ *			- Testear si dia y hora anda SIEM
+ *			PRE, solo fue testeado file selection state
  *
  *			- Sacar lo de powermode
  */

@@ -44,7 +44,7 @@ void Encoder_Init(void)
 
 void Encoder_Update(void)
 {
-	gpioWrite(TP, true);
+	//gpioWrite(TP, true);
 
 	static int state = IDLE;
 	bool CH_A = gpioRead(PIN_CH_A);
@@ -119,13 +119,13 @@ void Encoder_Update(void)
 			break;
 	}
 
-	gpioWrite(TP, false);
+	//gpioWrite(TP, false);
 }
 
 void EncoderSwitch_Update(void)
 {
 
-	gpioWrite(TP, true);
+	//gpioWrite(TP, true);
 	static int sw_state = LOW;
 	static int duration_counter=0;
 	bool sw_Read=gpioRead(PIN_ENC_SW);
@@ -157,7 +157,7 @@ void EncoderSwitch_Update(void)
 			encoder_sw = RELEASED;
 		duration_counter = 0;
 	}
-	gpioWrite(TP, false);
+	//gpioWrite(TP, false);
 }
 
 int getEncoderSwitch_State(void)

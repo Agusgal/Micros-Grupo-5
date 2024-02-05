@@ -16,7 +16,7 @@
 #define NUMBER_OF_BANDS     8  
 #define VUMETER_HEIGHT      8
 #define NOISE_THRES         5
-#define MAX_AMPLITUDE       50
+#define MAX_AMPLITUDE       100
 #define AVERAGE				2
 
 static arm_rfft_fast_instance_f32 rfft_fast_instance;
@@ -34,7 +34,7 @@ static colors_t Image_Matrix_5[VUMETER_HEIGHT * NUMBER_OF_BANDS]=
 				YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,RED,YELLOW,YELLOW,
 				YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,RED,YELLOW,YELLOW,
 				YELLOW,YELLOW,RED,RED,RED,RED,YELLOW,YELLOW,
-				YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,
+				YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW
 		};
 
 
@@ -125,7 +125,7 @@ int VU_FFT(float32_t * inputSignal, float32_t SR, int lowerFreq, int higherFreq)
     if(average == 0)
     {
     	VU_Fill_Color_Matrix(VU_Values);
-    	for(int j = 0; j <  NUMBER_OF_BANDS; j++)//todo aca puse corchetes si se rompe todo fue este el error
+    	for(int j = 0; j <  NUMBER_OF_BANDS; j++)
     	{
     		VU_Values[j] = 0;
     	}
@@ -168,14 +168,14 @@ void VU_Fill_Color_Matrix(int * vumeterValues)
     		if(vumeterValues[i] > j)
 			{
 				if(j >= 7)
-					Color_Matrix[i+(7-j)*8] = RED;
+					Color_Matrix[7-i+j*8] = RED;
 				else if(j >= 4)
-					Color_Matrix[i+(7-j)*8] = YELLOW;
+					Color_Matrix[7-i+j*8] = YELLOW;
 				else
-					Color_Matrix[i+(7-j)*8] = GREEN;
+					Color_Matrix[7-i+j*8] = GREEN;
 			}
 			else
-				Color_Matrix[i+(7-j)*8] = CLEAN;
+				Color_Matrix[7-i+j*8] = CLEAN;
     	}
     }
     
@@ -188,61 +188,61 @@ void Fill_Spiral_Display(void)
 	static int i=0;
 	static int j=0;
 	static bool done=false;
-	Color_Matrix[8*i+j] = Image_Matrix_5[8*i+j+1];
+	Color_Matrix[8*i+j] = Image_Matrix_5[8*i+j];
 	if (!done)
 	{
-		if (step<6)
+		if (step<7)
 			j++;
-		else if (step<13)
+		else if (step<14)
 			i++;
-		else if (step<20)
+		else if (step<21)
 			j--;
-		else if (step<26)
+		else if (step<27)
 			i--;
-		else if (step<32)
+		else if (step<33)
 			j++;
-		else if (step<37)
+		else if (step<38)
 		{
 			i++;
 		}
-		else if (step<42)
-		{
-			j--;
-		}
-		else if (step<46)
-		{
-			i--;
-		}
-		else if (step<50)
-		{
-			j++;
-		}
-		else if (step<53)
-		{
-			i++;
-		}
-		else if (step<56)
+		else if (step<43)
 		{
 			j--;
 		}
-		else if (step<58)
+		else if (step<47)
 		{
 			i--;
 		}
-		else if (step<60)
+		else if (step<51)
 		{
 			j++;
 		}
-		else if (step==60)
+		else if (step<54)
 		{
 			i++;
+		}
+		else if (step<57)
+		{
+			j--;
+		}
+		else if (step<59)
+		{
+			i--;
+		}
+		else if (step<61)
+		{
+			j++;
 		}
 		else if (step==61)
+		{
+			i++;
+		}
+		else if (step==62)
 		{
 			j--;
 
 		}
-		else if (step==62)
+		else if (step==63)
 		{
 			done=true;
 			Systick_PauseCallback(timer_id);

@@ -18,6 +18,7 @@
 #include "../drivers/HAL/mp3_decoder.h"
 #include "fsl_common.h"
 #include "EventQueue/queue.h"
+#include "board.h"
 
 
 static void loadPlayingSong(void);

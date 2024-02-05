@@ -1355,7 +1355,7 @@ void EDMA_AbortTransfer(edma_handle_t *handle)
 
 void EDMA_HandleIRQ(edma_handle_t *handle)
 {
-	gpioToggle(TP);
+	//gpioToggle(TP);
 
     assert(handle != NULL);
 
@@ -1448,7 +1448,7 @@ void EDMA_HandleIRQ(edma_handle_t *handle)
         }
     }
 
-    gpioToggle(TP);
+   //gpioToggle(TP);
 
 }
 

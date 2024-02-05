@@ -218,7 +218,7 @@ void UART_set_parity(UART_Type * uart, uart_parity_t parity)
 
 void UART_rx_tx_irq_handler(UART_Type * p_uart, uint8_t id)
 {
-	gpioToggle(TP);
+	//gpioToggle(TP);
 
 	unsigned char tmp, i, rx_data, tx_data;
 	i = id;
@@ -252,7 +252,7 @@ void UART_rx_tx_irq_handler(UART_Type * p_uart, uint8_t id)
 
 	}
 
-	gpioToggle(TP);
+	//gpioToggle(TP);
 }
 
 __ISR__ UART0_RX_TX_IRQHandler (void)
