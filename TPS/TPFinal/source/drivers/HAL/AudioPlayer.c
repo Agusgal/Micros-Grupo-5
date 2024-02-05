@@ -101,6 +101,7 @@ static int16_t * activeBuffer = buffers[0];					// Active has the current playin
 static int16_t * backBuffer= buffers[1];					// Back has the next frame of sound to be played
 
 static uint32_t backBufferSampleRate;
+static uint32_t nextBufferSize = AUDIO_PLAYER_BUFF_SIZE;
 
 static bool backBufferFree = false;
 static bool pause = false;
@@ -144,6 +145,9 @@ void AudioPlayer_LoadSong(uint16_t * firstSongFrame, uint16_t _sampleRate)
 
 	backBufferSampleRate = _sampleRate;
 
+	//TODO: nextBufferSize
+	// nextBufferSize = _nextBufferSize;
+
 	AudioPlayer_UpdateSampleRate(backBufferSampleRate);
 }
 
@@ -160,14 +164,6 @@ void AudioPlayer_UpdateSampleRate(uint32_t _sampleRate)
     pdb_config_t pdbConfigStruct;
     pdb_dac_trigger_config_t pdbDacTriggerConfigStruct;
     PDB_GetDefaultConfig(&pdbConfigStruct);
-
-    /*
-	else //For testing with DEMO case
-	{
-		pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor40;
-		pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
-		PDB_SetModulusValue(PDB_BASEADDR, PDB_MODULUS_VALUE);
-	}*/
 
 	pdbConfigStruct.dividerMultiplicationFactor = kPDB_DividerMultiplicationFactor1;
 	pdbConfigStruct.prescalerDivider = kPDB_PrescalerDivider1;
@@ -201,6 +197,9 @@ audioPlayerError_t AudioPlayer_UpdateBackBuffer(uint16_t * newBackBuffer, uint32
 
 		// Update the backBuffer
 		backBufferSampleRate = _sampleRate;
+
+		//TODO: nextBufferSize
+		// nextBufferSize = _nextBufferSize;
 		return AP_NO_ERROR;
 	}
 	else
@@ -363,8 +362,10 @@ static void Edma_Callback(edma_handle_t *handle, void *userData, bool transferDo
 
     else
     {
-    	sampleIndex += DAC_DATL_COUNT; //TODO: si esto queda aca, tiene que haber una primera transferencia antes.
+    	sampleIndex += DAC_DATL_COUNT;
 
+    	// TODO: cambiar a >= nextBufferSize, que se recibe como parámetro desde afuera en updateBackBuffer
+    	// This should allow playing any sampleRate (MPEG2 and MPEG3 have different MP3_FRAME_SIZES)
     	if (sampleIndex == AUDIO_PLAYER_BUFF_SIZE)
 		{
     		// If the activeBuffer was completely transferred
@@ -418,7 +419,7 @@ static uint32_t roundedDivide(uint32_t dividend, uint32_t divisor)
     // Ensure divisor is not zero to avoid division by zero
     if (divisor == 0)
     {
-        return 0; // You can handle this error in your own way
+        return 0;
     }
 
     // Perform the division
