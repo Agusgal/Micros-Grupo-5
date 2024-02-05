@@ -7,7 +7,7 @@
 /  that function to avoid silly memory consumption.                        /
 /-------------------------------------------------------------------------*/
 /*
-/ Copyright (C) 2014, ChaN, all right reserved.
+/ Copyright (C) 2022, ChaN, all right reserved.
 /
 / FatFs module is an open source software. Redistribution and use of FatFs in
 / source and binary forms, with or without modification, are permitted provided
