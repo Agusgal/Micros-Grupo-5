@@ -25,7 +25,7 @@ typedef enum audioPlayerError
 /*******************************************************************************
 * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
 ******************************************************************************/
-#define AUDIO_PLAYER_BUFF_SIZE 	1152
+#define AUDIO_PLAYER_BUFF_SIZE 	1152	// 1152 is the standard size of an MPEG-1 Frame
 
 #define DAC_ZERO_VOLT_VALUE		2048
 
@@ -75,5 +75,9 @@ void AudioPlayer_Play(void);
 */
 void AudioPlayer_Pause(void);
 
+/*!
+ * @brief Stops reproduction.
+*/
+void AudioPlayer_Stop(void);
 
 #endif /* _AUDIO_PLAYER_H_ */
