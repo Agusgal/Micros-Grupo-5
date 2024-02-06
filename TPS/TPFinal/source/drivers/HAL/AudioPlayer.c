@@ -7,6 +7,34 @@
 
 /*
  * Based on the SDK example of DAC with PDB:
+ *
+ * 	See pdb_dac_trigger.c and PDB For Kinetis K Series MCUs from Freescale
+ *
+ * 	In this file, PDB triggers the DAC. When the DAC buffer of 16 bytes empties,
+ * 	a DMA request is generated, loading the next 16 bytes of the activeBuffer to the
+ * 	DAC buffer.
+ *
+ * 	When a DMA major loop of the 16 bytes ends, a DMA interruption is called, which
+ * 	changes the source address of the next 16 bytes to the next 16 bytes of the activeBuffer.
+ *
+ * 	In this way, when the DAC buffer empties again, the new 16 bytes will be loaded.
+ *
+ * 	When the activeBuffer reaches its end, the backBuffer is loaded as the new activeBuffer.
+ * 	A variable that indicates that the backBuffer is free is then set true, and a function
+ * 	that retreives this value is to be used to indicate that the backBuffer should be loaded with new
+ * 	data.
+ *
+ *	We are counting on that the DMA interrupt subroutine that updates the source adress and the
+ *	new DMA configuration will last less than the time that the DAC takes to transfer all its 16
+ *	bytes.
+ *
+ *	Maybe the use of PIT and DMA would have been more efficient, as almost no intervention
+ *	of the CPU would be needed to update the DMA.
+ *
+ *
+ * 	*/
+
+ /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
@@ -261,6 +289,12 @@ void AudioPlayer_Play(void)
 
 	// DAC:
 	// Enable DMA.
+
+	/* At this point, the DMA is configured so that when the pointer to the internal buffer
+	 * of the DAC (16 bytes) generate a DMA request. In this way, the new 16 bytes are loaded
+	 * to the buffer. When the transfer is complete, the source address is updated in the
+	 * DMA major loop interrupt
+	 */
 	DAC_EnableBufferInterrupts(DAC_BASEADDR, kDAC_BufferReadPointerTopInterruptEnable);
 	DAC_EnableBufferDMA(DAC_BASEADDR, true);
 

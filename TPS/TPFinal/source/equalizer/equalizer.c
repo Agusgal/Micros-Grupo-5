@@ -6,6 +6,23 @@
  *  Basado en implementación de EQ de CMSIS
  *  https://www.keil.com/pack/doc/CMSIS/DSP/html/arm_graphic_equalizer_example_q31_8c-example.html#_a11
  */
+
+
+/*	READ-ME
+ *
+ *
+ * The equalizer consists in the cascade of 8, two stage, bi-quad equalizer filters.
+ *
+ * Each filter has 0db gain outside its band, and a variable gain between -10 db and 10dB
+ * (21 possible gains)
+ *
+ * Each of these configuration has 10 coefficients, 5 per stage, asumming, a0 = 1
+ *
+ * As the gain outside the filter is 0db, the filters are aplied in a cascaded fashion,
+ * without altering the neighbouring bands.
+ *
+ *
+ */
 #include "math_helper.h"
 #include "equalizer.h"
 
